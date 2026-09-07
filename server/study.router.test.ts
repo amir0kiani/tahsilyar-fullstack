@@ -76,5 +76,7 @@ describe("study AI procedures", () => {
     expect(result.title).toBe("برنامهٔ ثبت‌شدهٔ امروز");
     expect(result.sessions[0].subject).toBe("زیست‌شناسی");
     expect(invokeLLMMock).toHaveBeenCalledOnce();
+    const request = invokeLLMMock.mock.calls[0][0];
+    expect(request.responseFormat.json_schema.schema.properties.sessions.items.required).toContain("day");
   });
 });

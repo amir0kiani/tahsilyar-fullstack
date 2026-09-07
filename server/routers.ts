@@ -27,12 +27,13 @@ const planSchema = {
         properties: {
           subject: { type: "string" },
           topic: { type: "string" },
+          day: { type: "string", enum: ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"] },
           start: { type: "string" },
           end: { type: "string" },
           duration: { type: "string" },
           reason: { type: "string" },
         },
-        required: ["subject", "topic", "start", "end", "duration", "reason"],
+        required: ["subject", "topic", "day", "start", "end", "duration", "reason"],
         additionalProperties: false,
       },
     },
@@ -106,7 +107,7 @@ export const appRouter = router({
           messages: [
             {
               role: "system",
-              content: "تو برنامه‌ریز درسی تحصیل‌یار هستی. فقط از پاسخ‌های واقعی دانش‌آموز استفاده کن و هیچ داده‌ای را از خودت اضافه نکن. خروجی باید فقط JSON مطابق schema باشد. اگر پاسخ‌ها برای ساخت برنامه کافی نیستند، sessions را خالی برگردان و در summary بگو کدام اطلاعات باید تکمیل شود. برنامه را واقع‌بینانه، متعادل و فارسی بساز و بین جلسه‌ها استراحت کوتاه بگذار.",
+              content: "تو برنامه‌ریز درسی تحصیل‌یار هستی. فقط از پاسخ‌های واقعی دانش‌آموز استفاده کن و هیچ داده‌ای را از خودت اضافه نکن. خروجی باید فقط JSON مطابق schema باشد. برای هر جلسه، روز هفته را در فیلد day با یکی از شنبه تا جمعه تعیین کن تا برنامه در تقویم هفتگی نمایش داده شود. اگر پاسخ‌ها برای ساخت برنامه کافی نیستند، sessions را خالی برگردان و در summary بگو کدام اطلاعات باید تکمیل شود. برنامه را واقع‌بینانه، متعادل و فارسی بساز و بین جلسه‌ها استراحت کوتاه بگذار.",
             },
             {
               role: "user",

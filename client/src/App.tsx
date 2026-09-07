@@ -1,5 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import { useMemo, useState } from "react";
+import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import "./index.css";
 
 type Screen = "home" | "planning" | "companion" | "progress" | "schedule" | "profile";
@@ -9,10 +10,10 @@ type IconName =
   | "calendar_month" | "play_arrow" | "pause_circle" | "more_horiz" | "add" | "send" | "bolt"
   | "target" | "notifications" | "settings" | "logout" | "chevron_left" | "chevron_right"
   | "expand_more" | "edit" | "dark_mode" | "help" | "translate" | "close" | "done" | "schedule"
-  | "psychology" | "favorite" | "check";
+  | "psychology" | "favorite" | "check" | "light_mode";
 
 type ChatMessage = { from: "bot" | "user"; text: string };
-type PlanSession = { subject: string; topic: string; start: string; end: string; duration: string; reason: string };
+type PlanSession = { subject: string; topic: string; start: string; end: string; duration: string; reason: string; day?: string };
 type GeneratedPlan = { title: string; summary: string; sessions: PlanSession[]; focusTip: string };
 type CalendarItem = { subject: string; topic: string; start: string; end: string; duration?: string; reason?: string };
 type UserProfile = { name: string; email: string; answers: Record<string, string> };
@@ -20,11 +21,11 @@ type UserProfile = { name: string; email: string; answers: Record<string, string
 type PlannerStep = { title: string; eyebrow: string; question: string; options: string[] };
 
 const plannerSteps: PlannerStep[] = [
-  { title: "بازهٔ زمانی", eyebrow: "قدم اول", question: "امروز چقدر زمان برای درس خواندن داری؟", options: ["کمتر از ۲ ساعت", "۲ تا ۴ ساعت", "بیشتر از ۴ ساعت"] },
+  { title: "بازهٔ زمانی", eyebrow: "قدم اول", question: "در روزهای مطالعه چقدر زمان برای درس خواندن داری؟", options: ["۲ تا ۴ ساعت", "۴ تا ۶ ساعت", "۶ تا ۸ ساعت", "بیشتر از ۸ ساعت"] },
   { title: "زمان مطالعه", eyebrow: "قدم دوم", question: "چه ساعتی بیشترین تمرکز را داری؟", options: ["صبح‌ها", "بعدازظهرها", "شب‌ها"] },
   { title: "پایه و رشته", eyebrow: "قدم سوم", question: "مسیر تحصیلی‌ات را انتخاب کن", options: ["دوازدهم تجربی", "دوازدهم ریاضی", "دوازدهم انسانی"] },
   { title: "امتحان پیشرو", eyebrow: "قدم چهارم", question: "کدام آزمون به توجه بیشتری نیاز دارد؟", options: ["کنکور سراسری", "امتحانات نهایی", "آزمون آزمایشی"] },
-  { title: "دروس اجباری", eyebrow: "قدم پنجم", question: "کدام درس‌ها باید در برنامه باشند؟", options: ["زیست و شیمی", "ریاضی و فیزیک", "ادبیات و عربی"] },
+  { title: "دروس اجباری", eyebrow: "قدم پنجم", question: "کدام درس‌ها باید در برنامه باشند؟", options: [] },
   { title: "دروس حذفی", eyebrow: "قدم ششم", question: "برای امروز چه درسی را کنار بگذاریم؟", options: ["فعلاً هیچ‌کدام", "درس‌های مرورشده", "یک درس کم‌اهمیت"] },
   { title: "سطح انرژی", eyebrow: "قدم هفتم", question: "امروز حال و انرژی‌ات چطور است؟", options: ["پرانرژی‌ام", "معمولی", "کمی خسته‌ام"] },
 ];
@@ -37,6 +38,12 @@ const navItems: { id: Screen; label: string; icon: IconName }[] = [
   { id: "schedule", label: "برنامه درسی", icon: "calendar_month" },
   { id: "profile", label: "حساب من", icon: "person" },
 ];
+
+const subjectOptionsForTrack = (track: string) => {
+  if (track.includes("انسانی")) return ["ادبیات و عربی", "علوم و فنون ادبی و جامعه‌شناسی", "منطق و فلسفه"];
+  if (track.includes("ریاضی")) return ["ریاضی و فیزیک", "هندسه و گسسته", "شیمی و آمار"];
+  return ["زیست و شیمی", "ریاضی و فیزیک", "زمین‌شناسی و آزمایشگاه"];
+};
 
 const getDeviceDateLabel = (date = new Date()) => new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
   weekday: "long", year: "numeric", month: "long", day: "numeric",
@@ -133,6 +140,7 @@ function AppShell() {
   const [chatInput, setChatInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [generatedPlan, setGeneratedPlan] = useState<GeneratedPlan | null>(null);
+  const { theme, toggleTheme } = useTheme();
   const chatMutation = trpc.study.chat.useMutation();
   const planMutation = trpc.study.generatePlan.useMutation();
   const deviceDateLabel = getDeviceDateLabel();
@@ -141,6 +149,9 @@ function AppShell() {
   const currentProfileContext = profileContext(user ? { ...user, answers: Object.fromEntries(Object.entries(plannerAnswers).map(([index, answer]) => [plannerSteps[Number(index)]?.title ?? index, answer])) } : null);
   const showToast = (text: string) => { setToast(text); window.setTimeout(() => setToast(""), 2400); };
   const navigate = (next: Screen) => { setScreen(next); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const currentPlanner = useMemo(() => plannerStep === 4
+    ? { ...plannerSteps[plannerStep], options: subjectOptionsForTrack(plannerAnswers[2] || "دوازدهم تجربی") }
+    : plannerSteps[plannerStep], [plannerStep, plannerAnswers]);
 
   if (!user) return <Signup onSignup={(profile) => { setUser({ ...profile, answers: {} }); setScreen("planning"); showToast("اطلاعات پایه ثبت شد؛ حالا اطلاعات تحصیلی‌ات را وارد کن."); }} />;
 
@@ -182,12 +193,10 @@ function AppShell() {
   };
   const userName = user.name || "کاربر";
   const userGrade = user.answers["پایه و رشته"] || "ثبت نشده";
-  const currentPlanner = plannerSteps[plannerStep];
-
   return <div className="app-frame" dir="rtl"><aside className="sidebar"><div className="sidebar-logo"><LogoMark /></div><div className="sidebar-greeting"><span>فضای شخصی تو</span><strong>{userName}</strong></div><nav className="main-nav"><p className="nav-label">منوی اصلی</p>{navItems.map((item) => <button key={item.id} className={`nav-item ${screen === item.id ? "active" : ""}`} onClick={() => navigate(item.id)}><Icon name={item.icon} size={21} filled={screen === item.id} /><span>{item.label}</span>{item.id === "companion" && <i className="nav-dot" />}</button>)}</nav><div className="sidebar-bottom"><div className="mini-support"><div className="support-icon"><Icon name="favorite" size={18} filled /></div><div><strong>اطلاعاتت را کامل کن</strong><span>تا پاسخ دقیق بگیری</span></div><Icon name="arrow_back" size={16} /></div><button className="profile-mini" onClick={() => navigate("profile")}><span className="avatar">{getInitial(user.name)}</span><span><strong>{userName}</strong><small>{userGrade}</small></span><Icon name="more_horiz" size={20} /></button></div></aside>
-    <main className="main-area"><header className="topbar"><div className="topbar-mobile-logo"><LogoMark compact /></div><div className="breadcrumbs"><span>تحصیل‌یار</span><Icon name="chevron_left" size={17} /><strong>{navItems.find((item) => item.id === screen)?.label}</strong></div><div className="topbar-actions"><button className="icon-button notification-button" onClick={() => showToast("هنوز یادآوری ثبت نشده است.")}><Icon name="notifications" size={21} filled /></button><button className="user-chip" onClick={() => navigate("profile")}><span className="avatar">{getInitial(user.name)}</span><span>{userName}</span><Icon name="expand_more" size={18} /></button></div></header><div className="page-content">
+    <main className="main-area"><header className="topbar"><div className="topbar-mobile-logo"><LogoMark compact /></div><div className="breadcrumbs"><span>تحصیل‌یار</span><Icon name="chevron_left" size={17} /><strong>{navItems.find((item) => item.id === screen)?.label}</strong></div><div className="topbar-actions"><button className="icon-button" aria-label="تغییر حالت شب" onClick={toggleTheme}><Icon name={theme === "dark" ? "dark_mode" : "light_mode"} size={21} filled /></button><button className="icon-button notification-button" onClick={() => showToast("هنوز یادآوری ثبت نشده است.")}><Icon name="notifications" size={21} filled /></button><button className="user-chip" onClick={() => navigate("profile")}><span className="avatar">{getInitial(user.name)}</span><span>{userName}</span><Icon name="expand_more" size={18} /></button></div></header><div className="page-content">
       {screen === "home" && <HomeScreen navigate={navigate} plan={generatedPlan} completed={completed} onComplete={(id) => setCompleted((old) => old.includes(id) ? old.filter((item) => item !== id) : [...old, id])} showToast={showToast} deviceDate={deviceDateLabel} />}
-      {screen === "planning" && <PlanningScreen step={plannerStep} current={currentPlanner} answers={plannerAnswers} onAnswer={(answer) => setPlannerAnswers((old) => ({ ...old, [plannerStep]: answer }))} onNext={handlePlannerNext} onBack={() => plannerStep > 0 && setPlannerStep((step) => step - 1)} isGenerating={planMutation.isPending} />}
+      {screen === "planning" && <PlanningScreen step={plannerStep} current={currentPlanner} answers={plannerAnswers} onAnswer={(answer) => setPlannerAnswers((old) => plannerStep === 2 ? { ...old, [plannerStep]: answer, 4: "" } : { ...old, [plannerStep]: answer })} onNext={handlePlannerNext} onBack={() => plannerStep > 0 && setPlannerStep((step) => step - 1)} isGenerating={planMutation.isPending} />}
       {screen === "companion" && <CompanionScreen messages={messages} input={chatInput} setInput={setChatInput} onSend={sendMessage} isSending={chatMutation.isPending} hasProfile={answeredProfile} />}
       {screen === "progress" && <ProgressScreen plan={generatedPlan} completed={completed} />}
       {screen === "schedule" && <ScheduleScreen plan={generatedPlan} completed={completed} onToggle={(id) => setCompleted((old) => old.includes(id) ? old.filter((item) => item !== id) : [...old, id])} showToast={showToast} deviceDate={deviceDateLabel} onAddCalendar={addCurrentPlanToCalendar} />}
@@ -224,8 +233,10 @@ function ScheduleScreen({ plan, completed, onToggle, showToast, deviceDate, onAd
   const todayIndex = (today.getDay() + 1) % 7;
   const weekNames = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
   const weekDays = weekNames.map((day, index) => { const date = new Date(today); date.setDate(today.getDate() + index - todayIndex); return { day, number: new Intl.DateTimeFormat("fa-IR-u-ca-persian", { day: "numeric" }).format(date) }; });
-  const sessions = plan?.sessions ?? [];
-  return <div className="screen schedule-screen"><div className="screen-heading-row"><div><p className="eyebrow">تقویم مطالعه</p><h1>برنامهٔ <em>درسی</em> تو.</h1><p className="section-subtitle">{deviceDate} · زمان محلی گوشی</p></div><div className="schedule-actions"><span className="device-date-label"><Icon name="schedule" size={16} />{getDeviceTimeZone()}</span><button className="primary-button schedule-add" disabled={!sessions.length} onClick={onAddCalendar}><Icon name="calendar_month" size={18} />افزودن به تقویم</button></div></div><div className="week-strip">{weekDays.map((item, index) => <button className={index === todayIndex ? "today" : ""} key={item.day}><small>{item.day}</small><strong>{item.number}</strong>{index === todayIndex && <i />}</button>)}</div>{plan?.focusTip && <div className="schedule-note"><span className="soft-icon blue"><Icon name="auto_awesome" size={19} filled /></span><p><strong>نکتهٔ ساخته‌شده از داده‌های تو</strong><span>{plan.focusTip}</span></p><Icon name="chevron_left" size={18} /></div>}{sessions.length ? <section className="schedule-timeline">{sessions.map((session, index) => <div className="timeline-item" key={`${session.subject}-${index}`}><div className="timeline-time"><strong>{session.start}</strong><span>{session.duration}</span></div><div className={`timeline-line ${index === 0 ? "active" : ""}`}><i /></div><div className={`schedule-session card ${index === 0 ? "active-card" : ""}`}><div className={`subject-dot ${index % 3 === 0 ? "mint" : index % 3 === 1 ? "blue" : "lavender"}`}><Icon name="menu_book" size={18} /></div><div className="session-info"><strong>{session.subject}</strong><span>{session.topic}</span><small><Icon name="schedule" size={14} />{session.duration}</small></div><button className={`session-action ${completed.includes(index) ? "done-small" : index === 0 ? "primary-small" : "ghost-small"}`} onClick={() => { onToggle(index); if (!completed.includes(index)) showToast("جلسهٔ واقعی ثبت شد."); }}>{completed.includes(index) ? <><Icon name="check_circle" size={17} filled />انجام شد</> : index === 0 ? <><Icon name="play_arrow" size={17} />شروع جلسه</> : "در انتظار"}</button></div></div>)}</section> : <EmptyState icon="calendar_month" title="تقویم هنوز خالی است" description="تا وقتی برنامه‌ای بر اساس اطلاعات واقعی تو ساخته نشود، جلسه یا رویدادی در اینجا نمایش داده نمی‌شود." />}</div>;
+  const [selectedDay, setSelectedDay] = useState(weekNames[todayIndex]);
+  const allSessions = plan?.sessions ?? [];
+  const sessions = allSessions.filter((session) => !session.day || session.day === selectedDay);
+  return <div className="screen schedule-screen"><div className="screen-heading-row"><div><p className="eyebrow">تقویم مطالعه</p><h1>برنامهٔ <em>درسی</em> تو.</h1><p className="section-subtitle">{deviceDate} · زمان محلی گوشی</p></div><div className="schedule-actions"><span className="device-date-label"><Icon name="schedule" size={16} />{getDeviceTimeZone()}</span><button className="primary-button schedule-add" disabled={!allSessions.length} onClick={onAddCalendar}><Icon name="calendar_month" size={18} />افزودن به تقویم</button></div></div><div className="week-strip">{weekDays.map((item, index) => <button onClick={() => setSelectedDay(item.day)} className={`${selectedDay === item.day ? "today" : ""} ${index === todayIndex ? "current-day" : ""}`} key={item.day}><small>{item.day}</small><strong>{item.number}</strong>{index === todayIndex && <i />}</button>)}</div>{plan?.focusTip && <div className="schedule-note"><span className="soft-icon blue"><Icon name="auto_awesome" size={19} filled /></span><p><strong>نکتهٔ ساخته‌شده از داده‌های تو</strong><span>{plan.focusTip}</span></p><Icon name="chevron_left" size={18} /></div>}{sessions.length ? <section className="schedule-timeline">{sessions.map((session, index) => { const globalIndex = allSessions.indexOf(session); return <div className="timeline-item" key={`${session.subject}-${globalIndex}`}><div className="timeline-time"><strong>{session.start}</strong><span>{session.duration}</span></div><div className={`timeline-line ${index === 0 ? "active" : ""}`}><i /></div><div className={`schedule-session card ${index === 0 ? "active-card" : ""}`}><div className={`subject-dot ${index % 3 === 0 ? "mint" : index % 3 === 1 ? "blue" : "lavender"}`}><Icon name="menu_book" size={18} /></div><div className="session-info"><strong>{session.subject}</strong><span>{session.topic}</span><small><Icon name="schedule" size={14} />{session.duration}</small></div><button className={`session-action ${completed.includes(globalIndex) ? "done-small" : index === 0 ? "primary-small" : "ghost-small"}`} onClick={() => { onToggle(globalIndex); if (!completed.includes(globalIndex)) showToast("جلسهٔ واقعی ثبت شد."); }}>{completed.includes(globalIndex) ? <><Icon name="check_circle" size={17} filled />انجام شد</> : index === 0 ? <><Icon name="play_arrow" size={17} />شروع جلسه</> : "در انتظار"}</button></div></div>; })}</section> : <EmptyState icon="calendar_month" title="برای این روز جلسه‌ای ثبت نشده" description={allSessions.length ? "روز دیگری را از نوار هفته انتخاب کن تا جلسه‌های همان روز را ببینی." : "تا وقتی برنامه‌ای بر اساس اطلاعات واقعی تو ساخته نشود، جلسه یا رویدادی در اینجا نمایش داده نمی‌شود."} />}</div>;
 }
 
 function ProfileScreen({ user, completed, onLogout, showToast }: { user: UserProfile; completed: number[]; onLogout: () => void; showToast: (text: string) => void }) {
@@ -234,4 +245,4 @@ function ProfileScreen({ user, completed, onLogout, showToast }: { user: UserPro
   return <div className="screen profile-screen"><div className="profile-hero"><div className="profile-avatar-large">{getInitial(user.name)}</div><div><p className="eyebrow">پروفایل من</p><h1>{user.name || "نام ثبت نشده"}</h1><p>{user.email || "ایمیل ثبت نشده"}</p></div><button className="edit-profile" onClick={() => showToast("برای تغییر اطلاعات، از بخش برنامه‌ریزی پاسخ‌ها را دوباره ثبت کن.")}><Icon name="edit" size={17} />ویرایش</button></div><div className="profile-grid"><div className="profile-summary card"><div className="card-head"><span><p className="eyebrow">اطلاعات واقعی</p><h3>پروفایل تحصیلی</h3></span><span className="soft-icon mint"><Icon name="person_outline" size={20} /></span></div>{answers.length ? <div className="profile-answer-list">{answers.map(([key, value]) => <div key={key}><span>{key}</span><strong>{value}</strong></div>)}</div> : <div className="card-empty-copy"><strong>اطلاعات تحصیلی ثبت نشده</strong><span>برای تکمیل پروفایل، به برنامه‌ریزی برو.</span></div>}<div className="profile-recorded-count">{completed.length} جلسهٔ واقعی ثبت شده</div></div><div className="profile-settings card"><p className="eyebrow">تنظیمات حساب</p><h3>کنترل اطلاعات خودت</h3>{settings.map((setting) => <button className="setting-row" key={setting.title} onClick={() => showToast(`${setting.title}: ${setting.sub}`)}><span className="setting-icon"><Icon name={setting.icon} size={19} /></span><span><strong>{setting.title}</strong><small>{setting.sub}</small></span><Icon name="chevron_left" size={19} /></button>)}<button className="logout-button" onClick={onLogout}><Icon name="logout" size={18} />خروج از حساب</button></div></div></div>;
 }
 
-export default function App() { return <AppShell />; }
+export default function App() { return <ThemeProvider defaultTheme="light" switchable><AppShell /></ThemeProvider>; }

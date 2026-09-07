@@ -27,6 +27,33 @@
   font-synthesis: none;
 }
 
+html.dark {
+  --ink: #e5f2ef; --ink-soft: #a8c0bd; --deep: #8be0d5; --deep-2: #b0eee5;
+  --mint: #153d42; --aqua: #102d32; --sky: #183b4b; --cream: #0b1d21;
+  --line: #25454a; --white: #112a2e; --shadow: 0 18px 45px rgba(0,0,0,.22);
+  --shadow-small: 0 8px 24px rgba(0,0,0,.2); color-scheme: dark;
+}
+html.dark body, html.dark .app-frame { background: var(--cream); color: var(--ink); }
+html.dark .card, html.dark .session-row, html.dark .planner-card, html.dark .chat-card,
+html.dark .dna-card, html.dark .completed-list, html.dark .profile-settings,
+html.dark .profile-summary, html.dark .today-card, html.dark .exam-card {
+  background: var(--white); border-color: var(--line);
+}
+html.dark .sidebar { background: #0f282c; border-color: var(--line); }
+html.dark .topbar { background: rgba(11,29,33,.86); border-color: var(--line); }
+html.dark .nav-item.active, html.dark .profile-mini, html.dark .light-button { background: #183a3e; color: var(--ink); }
+html.dark .nav-item:hover, html.dark .week-strip button:hover { background: #183a3e; }
+html.dark .planner-card-side { background: linear-gradient(145deg, #153b3e, #112f34); }
+html.dark .option-item { background: #102b2f; border-color: var(--line); color: var(--ink-soft); }
+html.dark .option-item:hover { background: #173a3e; border-color: #3a7774; }
+html.dark .option-item.selected { background: #174b4b; color: var(--ink); }
+html.dark .input-shell { border-color: var(--line); }
+html.dark .input-shell input { color: var(--ink); }
+html.dark .message-bubble { background: #173b3d; color: var(--ink-soft); }
+html.dark .schedule-note { background: #12383a; border-color: #285958; }
+html.dark .schedule-session { background: var(--white); }
+html.dark .dna-ring::before, html.dark .donut-chart::before { background: var(--white); }
+
 * { box-sizing: border-box; }
 html { min-width: 320px; scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--cream); }
