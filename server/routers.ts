@@ -58,6 +58,14 @@ const extractText = (content: unknown) => {
 
 const cleanContext = (value: string | undefined, max = 400) => (value ?? "").trim().slice(0, max);
 
+const curriculumByTrack: Record<string, string[]> = {
+  انسانی: ["فارسی و نگارش", "عربی", "دین و زندگی", "زبان انگلیسی", "علوم و فنون ادبی", "جامعه‌شناسی", "روان‌شناسی", "فلسفه و منطق", "تاریخ", "جغرافیا", "اقتصاد", "ریاضی و آمار"],
+  ریاضی: ["فارسی و نگارش", "عربی", "دین و زندگی", "زبان انگلیسی", "ریاضی", "هندسه", "حسابان", "آمار و احتمال", "گسسته", "فیزیک", "شیمی"],
+  تجربی: ["فارسی و نگارش", "عربی", "دین و زندگی", "زبان انگلیسی", "زیست‌شناسی", "شیمی", "فیزیک", "ریاضی", "زمین‌شناسی"],
+};
+
+const curriculumFor = (track: string) => curriculumByTrack[Object.keys(curriculumByTrack).find((key) => track.includes(key)) ?? "تجربی"];
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -102,16 +110,18 @@ export const appRouter = router({
       }))
       .mutation(async ({ input }) => {
         const answers = Object.entries(input.answers).map(([step, answer]) => `${step}: ${answer}`).join("\n");
+        const track = Object.values(input.answers).find((answer) => /انسانی|ریاضی|تجربی/.test(answer)) ?? "تجربی";
+        const curriculum = curriculumFor(track);
         const response = await invokeLLM({
           model: "gemini-3-flash-preview",
           messages: [
             {
               role: "system",
-              content: "تو برنامه‌ریز درسی تحصیل‌یار هستی. فقط از پاسخ‌های واقعی دانش‌آموز استفاده کن و هیچ داده‌ای را از خودت اضافه نکن. خروجی باید فقط JSON مطابق schema باشد. برای هر جلسه، روز هفته را در فیلد day با یکی از شنبه تا جمعه تعیین کن تا برنامه در تقویم هفتگی نمایش داده شود. اگر پاسخ‌ها برای ساخت برنامه کافی نیستند، sessions را خالی برگردان و در summary بگو کدام اطلاعات باید تکمیل شود. برنامه را واقع‌بینانه، متعادل و فارسی بساز و بین جلسه‌ها استراحت کوتاه بگذار.",
+              content: `تو برنامه‌ریز درسی تحصیل‌یار هستی. فقط از پاسخ‌های واقعی دانش‌آموز استفاده کن و هیچ داده‌ای را از خودت اضافه نکن. خروجی باید فقط JSON مطابق schema باشد. برای هر جلسه، روز هفته را در فیلد day با یکی از شنبه تا جمعه تعیین کن تا برنامه در تقویم هفتگی نمایش داده شود. اگر پاسخ‌ها برای ساخت برنامه کافی نیستند، sessions را خالی برگردان و در summary بگو کدام اطلاعات باید تکمیل شود. برنامه را واقع‌بینانه، متعادل و فارسی بساز و بین جلسه‌ها استراحت کوتاه بگذار. فهرست معتبر کل دروس رشتهٔ انتخاب‌شده این است: ${curriculum.join("، ")}. فقط از همین فهرست برای subject استفاده کن. مقدار «دروس اولویت‌دار» فقط اولویت است، نه فهرست محدودکننده؛ بنابراین از همهٔ دروس معتبر برنامه‌ریزی کن و دروس اولویت‌دار را با تکرار یا سهم بیشتر در برنامه لحاظ کن. هیچ درس خارج از این فهرست نساز.`,
             },
             {
               role: "user",
-              content: `پاسخ‌های واقعی دانش‌آموز:\n${answers}\nتاریخ محلی دستگاه: ${cleanContext(input.deviceDate, 100)}\nمنطقه زمانی: ${cleanContext(input.timezone, 100)}\nپروفایل حساب: ${cleanContext(input.profile, 500)}\nفقط بر اساس همین داده‌ها برنامه بساز.`,
+              content: `پاسخ‌های واقعی دانش‌آموز:\n${answers}\nکل دروس مجاز رشته: ${curriculum.join("، ")}\nتاریخ محلی دستگاه: ${cleanContext(input.deviceDate, 100)}\nمنطقه زمانی: ${cleanContext(input.timezone, 100)}\nپروفایل حساب: ${cleanContext(input.profile, 500)}\nفقط بر اساس همین داده‌ها برنامه بساز و دروس اولویت‌دار را فقط به‌عنوان اولویت استفاده کن، نه حذف سایر دروس.`,
             },
           ],
           responseFormat: {
