@@ -1,5 +1,7 @@
 import { trpc } from "@/lib/trpc";
-import { useMemo, useState } from "react";
+import { startLogin } from "@/const";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { useEffect, useMemo, useState } from "react";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import "./index.css";
 
@@ -116,7 +118,7 @@ function LogoMark({ compact = false }: { compact?: boolean }) {
   </div>;
 }
 
-function Signup({ onSignup }: { onSignup: (profile: Pick<UserProfile, "name" | "email">) => void }) {
+function Signup({ onSignup, onLogin }: { onSignup: (profile: Pick<UserProfile, "name" | "email">) => void; onLogin: () => void }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -129,7 +131,7 @@ function Signup({ onSignup }: { onSignup: (profile: Pick<UserProfile, "name" | "
       <label>ایمیل<span>*</span><div className="input-shell"><Icon name="mail" size={21} /><input type="email" dir="ltr" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="email@example.com" /></div></label>
       <label>رمز عبور<span>*</span><div className="input-shell"><Icon name="lock" size={21} /><input type="password" dir="ltr" minLength={6} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="حداقل ۶ کاراکتر" /></div><small>رمز عبورت باید حداقل ۶ کاراکتر داشته باشد.</small></label>
       <button className="primary-button signup-button" type="submit" disabled={!canSubmit}>ساخت حساب و شروع <Icon name="arrow_back" size={19} /></button>
-    </form><div className="secure-note"><Icon name="lock" size={15} /> اطلاعاتت نزد تحصیل‌یار امن می‌ماند.</div></div></div>
+    </form><button className="back-button" type="button" onClick={onLogin}>ورود با حساب کاربری</button><div className="secure-note"><Icon name="lock" size={15} /> اطلاعاتت نزد تحصیل‌یار امن می‌ماند.</div></div></div>
   </main>;
 }
 
@@ -143,6 +145,8 @@ function AppShell() {
   const [chatInput, setChatInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [generatedPlan, setGeneratedPlan] = useState<GeneratedPlan | null>(null);
+  const auth = useAuth();
+  const latestPlanQuery = trpc.study.latestPlan.useQuery(undefined, { enabled: auth.isAuthenticated, retry: false });
   const { theme, toggleTheme } = useTheme();
   const chatMutation = trpc.study.chat.useMutation();
   const planMutation = trpc.study.generatePlan.useMutation();
@@ -150,19 +154,23 @@ function AppShell() {
   const deviceTimeZone = getDeviceTimeZone();
   const answeredProfile = useMemo(() => plannerSteps.every((_, index) => Boolean(plannerAnswers[index])), [plannerAnswers]);
   const currentProfileContext = profileContext(user ? { ...user, answers: Object.fromEntries(Object.entries(plannerAnswers).map(([index, answer]) => [plannerSteps[Number(index)]?.title ?? index, answer])) } : null);
+  useEffect(() => {
+    if (latestPlanQuery.data?.title && !generatedPlan) setGeneratedPlan(latestPlanQuery.data as unknown as GeneratedPlan);
+  }, [latestPlanQuery.data, generatedPlan]);
   const showToast = (text: string) => { setToast(text); window.setTimeout(() => setToast(""), 2400); };
   const navigate = (next: Screen) => { setScreen(next); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const currentPlanner = useMemo(() => plannerStep === 4
     ? { ...plannerSteps[plannerStep], options: subjectOptionsForTrack(plannerAnswers[2] || "دوازدهم تجربی") }
     : plannerSteps[plannerStep], [plannerStep, plannerAnswers]);
 
-  if (!user) return <Signup onSignup={(profile) => { setUser({ ...profile, answers: {} }); setScreen("planning"); showToast("اطلاعات پایه ثبت شد؛ حالا اطلاعات تحصیلی‌ات را وارد کن."); }} />;
+  if (!user) return <Signup onSignup={(profile) => { setUser({ ...profile, answers: {} }); setScreen("planning"); showToast("اطلاعات پایه ثبت شد؛ برای ذخیره‌سازی نهایی با حساب کاربری وارد شو."); }} onLogin={startLogin} />;
 
   const handlePlannerNext = () => {
     if (!plannerAnswers[plannerStep]) { showToast("برای ادامه باید این پاسخ را از خودت ثبت کنی."); return; }
     if (plannerStep < plannerSteps.length - 1) { setPlannerStep((step) => step + 1); return; }
+    if (!auth.isAuthenticated) { showToast("برای ذخیرهٔ پروفایل و ساخت برنامه، ابتدا وارد حساب کاربری شو."); startLogin(); return; }
     const answers = Object.fromEntries(Object.entries(plannerAnswers).map(([index, answer]) => [plannerSteps[Number(index)]?.title ?? index, answer]));
-    planMutation.mutate({ answers, deviceDate: deviceDateLabel, timezone: deviceTimeZone, profile: currentProfileContext }, {
+    planMutation.mutate({ answers, deviceDate: deviceDateLabel, timezone: deviceTimeZone }, {
       onSuccess: (plan) => {
         const nextPlan = plan as GeneratedPlan;
         setUser((current) => current ? { ...current, answers } : current);
@@ -180,10 +188,9 @@ function AppShell() {
     const value = chatInput.trim();
     if (!value || chatMutation.isPending) return;
     if (!answeredProfile || !currentProfileContext) { showToast("ابتدا اطلاعات تحصیلی‌ات را در برنامه‌ریزی کامل کن."); return; }
-    const history = messages.slice(-10).map((message) => ({ role: message.from === "bot" ? "assistant" as const : "user" as const, content: message.text }));
     setMessages((old) => [...old, { from: "user", text: value }]);
     setChatInput("");
-    chatMutation.mutate({ message: value, history, deviceDate: deviceDateLabel, timezone: deviceTimeZone, profile: currentProfileContext }, {
+    chatMutation.mutate({ message: value, deviceDate: deviceDateLabel, timezone: deviceTimeZone }, {
       onSuccess: (result) => setMessages((old) => [...old, { from: "bot", text: result.text }]),
       onError: () => setMessages((old) => [...old, { from: "bot", text: "پاسخ آماده نشد. اطلاعاتت را بررسی کن و دوباره تلاش کن." }]),
     });

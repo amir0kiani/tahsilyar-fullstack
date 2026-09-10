@@ -1,92 +1,105 @@
-import { eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
-import { ENV } from './_core/env';
+import {
+  academicGoals,
+  conversationMessages,
+  conversations,
+  InsertUser,
+  studentProfiles,
+  studyPlans,
+  studySessions,
+  users,
+} from "../drizzle/schema";
+import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
-    try {
-      _db = drizzle(process.env.DATABASE_URL);
-    } catch (error) {
-      console.warn("[Database] Failed to connect:", error);
-      _db = null;
-    }
+    try { _db = drizzle(process.env.DATABASE_URL); }
+    catch (error) { console.warn("[Database] Failed to connect:", error); _db = null; }
   }
   return _db;
 }
 
 export async function upsertUser(user: InsertUser): Promise<void> {
-  if (!user.openId) {
-    throw new Error("User openId is required for upsert");
-  }
-
+  if (!user.openId) throw new Error("User openId is required for upsert");
   const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot upsert user: database not available");
-    return;
+  if (!db) { console.warn("[Database] Cannot upsert user: database not available"); return; }
+  const values: InsertUser = { openId: user.openId };
+  const updateSet: Record<string, unknown> = {};
+  const textFields = ["name", "email", "loginMethod"] as const;
+  for (const field of textFields) {
+    if (user[field] !== undefined) { values[field] = user[field] ?? null; updateSet[field] = user[field] ?? null; }
   }
-
-  try {
-    const values: InsertUser = {
-      openId: user.openId,
-    };
-    const updateSet: Record<string, unknown> = {};
-
-    const textFields = ["name", "email", "loginMethod"] as const;
-    type TextField = (typeof textFields)[number];
-
-    const assignNullable = (field: TextField) => {
-      const value = user[field];
-      if (value === undefined) return;
-      const normalized = value ?? null;
-      values[field] = normalized;
-      updateSet[field] = normalized;
-    };
-
-    textFields.forEach(assignNullable);
-
-    if (user.lastSignedIn !== undefined) {
-      values.lastSignedIn = user.lastSignedIn;
-      updateSet.lastSignedIn = user.lastSignedIn;
-    }
-    if (user.role !== undefined) {
-      values.role = user.role;
-      updateSet.role = user.role;
-    } else if (user.openId === ENV.ownerOpenId) {
-      values.role = 'admin';
-      updateSet.role = 'admin';
-    }
-
-    if (!values.lastSignedIn) {
-      values.lastSignedIn = new Date();
-    }
-
-    if (Object.keys(updateSet).length === 0) {
-      updateSet.lastSignedIn = new Date();
-    }
-
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
-      set: updateSet,
-    });
-  } catch (error) {
-    console.error("[Database] Failed to upsert user:", error);
-    throw error;
-  }
+  values.lastSignedIn = user.lastSignedIn ?? new Date();
+  updateSet.lastSignedIn = values.lastSignedIn;
+  if (user.role !== undefined) { values.role = user.role; updateSet.role = user.role; }
+  else if (user.openId === ENV.ownerOpenId) { values.role = "admin"; updateSet.role = "admin"; }
+  await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
 }
 
 export async function getUserByOpenId(openId: string) {
   const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get user: database not available");
-    return undefined;
-  }
-
+  if (!db) return undefined;
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
-
-  return result.length > 0 ? result[0] : undefined;
+  return result[0];
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function upsertStudentProfile(input: { userId: number; name?: string; email?: string; answers: Record<string, string> }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  await db.insert(studentProfiles).values(input).onDuplicateKeyUpdate({ set: { name: input.name, email: input.email, answers: input.answers, updatedAt: new Date() } });
+  const rows = await db.select().from(studentProfiles).where(eq(studentProfiles.userId, input.userId)).limit(1);
+  return rows[0];
+}
+
+export async function getStudentProfile(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(studentProfiles).where(eq(studentProfiles.userId, userId)).limit(1);
+  return rows[0];
+}
+
+export async function createStudyPlan(input: { userId: number; title: string; summary: string; focusTip: string; inputSnapshot: Record<string, unknown>; sessions: Array<{ subject: string; topic: string; day: string; start: string; end: string; duration: string; reason: string }> }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  const planResult = await db.insert(studyPlans).values({ userId: input.userId, title: input.title, summary: input.summary, focusTip: input.focusTip, inputSnapshot: input.inputSnapshot });
+  const planId = Number(planResult[0].insertId);
+  if (input.sessions.length) await db.insert(studySessions).values(input.sessions.map((session) => ({ ...session, planId, userId: input.userId })));
+  return { planId, ...input, createdAt: new Date() };
+}
+
+export async function getLatestStudyPlan(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const plans = await db.select().from(studyPlans).where(eq(studyPlans.userId, userId)).orderBy(desc(studyPlans.createdAt)).limit(1);
+  const plan = plans[0];
+  if (!plan) return undefined;
+  const sessions = await db.select().from(studySessions).where(and(eq(studySessions.planId, plan.id), eq(studySessions.userId, userId)));
+  return { ...plan, sessions };
+}
+
+export async function getOrCreateConversation(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  const rows = await db.select().from(conversations).where(eq(conversations.userId, userId)).orderBy(desc(conversations.updatedAt)).limit(1);
+  if (rows[0]) return rows[0];
+  const result = await db.insert(conversations).values({ userId });
+  const created = await db.select().from(conversations).where(eq(conversations.id, Number(result[0].insertId))).limit(1);
+  return created[0];
+}
+
+export async function getRecentConversationMessages(userId: number, conversationId: number, limit = 12) {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.select().from(conversationMessages).where(and(eq(conversationMessages.userId, userId), eq(conversationMessages.conversationId, conversationId))).orderBy(desc(conversationMessages.createdAt)).limit(limit);
+  return rows.reverse();
+}
+
+export async function addConversationMessage(input: { conversationId: number; userId: number; role: "user" | "assistant"; content: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  await db.insert(conversationMessages).values(input);
+  await db.update(conversations).set({ updatedAt: new Date() }).where(and(eq(conversations.id, input.conversationId), eq(conversations.userId, input.userId)));
+}

@@ -3,7 +3,9 @@ import { invokeLLM } from "./_core/llm";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
+import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, getDb, upsertStudentProfile } from "./db";
 
 const chatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -76,39 +78,58 @@ export const appRouter = router({
       return { success: true } as const;
     }),
   }),
+  profile: router({
+    me: protectedProcedure.query(({ ctx }) => getStudentProfile(ctx.user.id)),
+  }),
   study: router({
-    chat: publicProcedure
+    latestPlan: protectedProcedure.query(({ ctx }) => getLatestStudyPlan(ctx.user.id)),
+    chatHistory: protectedProcedure.query(async ({ ctx }) => {
+      const conversation = await getOrCreateConversation(ctx.user.id);
+      if (!conversation) return [];
+      return getRecentConversationMessages(ctx.user.id, conversation.id, 40);
+    }),
+    chat: protectedProcedure
       .input(z.object({
         message: z.string().min(1).max(1400),
-        history: z.array(chatMessageSchema).max(12).default([]),
-        profile: z.string().min(1).max(500),
+        history: z.array(chatMessageSchema).max(12).optional(),
+        profile: z.string().max(500).optional(),
         deviceDate: z.string().max(100).optional(),
         timezone: z.string().max(100).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        const profile = await getStudentProfile(ctx.user.id);
+        if (!profile) throw new TRPCError({ code: "PRECONDITION_FAILED", message: "اطلاعات تحصیلی کاربر هنوز ثبت نشده است." });
+        const conversation = await getOrCreateConversation(ctx.user.id);
+        const storedHistory = conversation ? await getRecentConversationMessages(ctx.user.id, conversation.id) : [];
+        if (conversation) await addConversationMessage({ conversationId: conversation.id, userId: ctx.user.id, role: "user", content: input.message });
+        const history = storedHistory.map((message) => ({ role: message.role, content: message.content }));
+        const profileContext = Object.entries(profile.answers as Record<string, string>).map(([key, value]) => `${key}: ${value}`).join("؛ ");
         const response = await invokeLLM({
           model: "gemini-3-flash-preview",
           messages: [
             {
               role: "system",
-              content: `تو «همراه تحصیل‌یار» هستی؛ یک مشاور آموزشی فارسی‌زبان، دقیق، مهربان و واقع‌گرا. فقط از اطلاعات واقعی داخل پروفایل استفاده کن و هیچ نام، درس، هدف، زمان، سابقه یا عددی را حدس نزن. اگر اطلاعات برای پاسخ کافی نیست، به‌جای ساختن پاسخ یا برنامه، دقیقاً بگو چه اطلاعاتی لازم است. پاسخ‌ها را فارسی و کاربردی بده. تاریخ دستگاه: ${cleanContext(input.deviceDate, 100)}. منطقه زمانی دستگاه: ${cleanContext(input.timezone, 100)}. پروفایل واقعی کاربر: ${cleanContext(input.profile, 500)}.`,
+              content: `تو «همراه تحصیل‌یار» هستی؛ یک مشاور آموزشی فارسی‌زبان، دقیق، مهربان و واقع‌گرا. فقط از اطلاعات ذخیره‌شدهٔ کاربر استفاده کن و هیچ نام، درس، هدف، زمان، سابقه یا عددی را حدس نزن. اگر اطلاعات برای پاسخ کافی نیست، دقیقاً بگو چه اطلاعاتی لازم است. پاسخ‌ها را فارسی و کاربردی بده. تاریخ دستگاه: ${cleanContext(input.deviceDate, 100)}. منطقه زمانی دستگاه: ${cleanContext(input.timezone, 100)}. پروفایل ذخیره‌شدهٔ کاربر: ${cleanContext(profileContext, 1200)}.`,
             },
-            ...input.history.map((message) => ({ role: message.role, content: message.content })),
+            ...history,
             { role: "user", content: input.message },
           ],
           maxTokens: 1000,
         });
         const text = extractText(response.choices[0]?.message.content).trim();
-        return { text: text || "برای پاسخ دقیق، اطلاعات بیشتری از خودت ثبت کن.", model: response.model };
+        const assistantText = text || "برای پاسخ دقیق، اطلاعات بیشتری از خودت ثبت کن.";
+        if (conversation) await addConversationMessage({ conversationId: conversation.id, userId: ctx.user.id, role: "assistant", content: assistantText });
+        return { text: assistantText, model: response.model };
       }),
-    generatePlan: publicProcedure
+    generatePlan: protectedProcedure
       .input(z.object({
         answers: completeAnswersSchema,
         deviceDate: z.string().max(100).optional(),
         timezone: z.string().max(100).optional(),
         profile: z.string().max(500).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        await upsertStudentProfile({ userId: ctx.user.id, name: ctx.user.name ?? undefined, email: ctx.user.email ?? undefined, answers: input.answers });
         const answers = Object.entries(input.answers).map(([step, answer]) => `${step}: ${answer}`).join("\n");
         const track = Object.values(input.answers).find((answer) => /انسانی|ریاضی|تجربی/.test(answer)) ?? "تجربی";
         const curriculum = curriculumFor(track);
@@ -132,7 +153,12 @@ export const appRouter = router({
         });
         const raw = extractText(response.choices[0]?.message.content);
         try {
-          return JSON.parse(raw);
+          const plan = JSON.parse(raw);
+          const db = await getDb();
+          if (db && plan?.title && Array.isArray(plan.sessions)) {
+            await createStudyPlan({ userId: ctx.user.id, title: plan.title, summary: plan.summary ?? "", focusTip: plan.focusTip ?? "", inputSnapshot: input.answers, sessions: plan.sessions });
+          }
+          return plan;
         } catch {
           return { title: "", summary: "اطلاعات برای ساخت برنامه کافی نیست.", sessions: [], focusTip: "" };
         }

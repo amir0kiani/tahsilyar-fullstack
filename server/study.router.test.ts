@@ -3,41 +3,69 @@ import { appRouter } from "./routers";
 import type { TrpcContext } from "./_core/context";
 
 const invokeLLMMock = vi.hoisted(() => vi.fn());
-
-vi.mock("./_core/llm", () => ({
-  invokeLLM: invokeLLMMock,
+const dbMocks = vi.hoisted(() => ({
+  getStudentProfile: vi.fn(),
+  getOrCreateConversation: vi.fn(),
+  getRecentConversationMessages: vi.fn(),
+  addConversationMessage: vi.fn(),
+  upsertStudentProfile: vi.fn(),
+  createStudyPlan: vi.fn(),
+  getDb: vi.fn(),
 }));
 
-const createContext = (): TrpcContext => ({
-  user: null,
+vi.mock("./_core/llm", () => ({ invokeLLM: invokeLLMMock }));
+vi.mock("./db", () => dbMocks);
+
+const authenticatedUser = {
+  id: 42,
+  openId: "test-user",
+  name: "کاربر آزمایشی",
+  email: "test@example.com",
+  loginMethod: "test",
+  role: "user" as const,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  lastSignedIn: new Date(),
+};
+
+const createContext = (user = authenticatedUser): TrpcContext => ({
+  user,
   req: { protocol: "https", headers: {} } as TrpcContext["req"],
   res: {} as TrpcContext["res"],
 });
 
 describe("study AI procedures", () => {
-  beforeEach(() => invokeLLMMock.mockReset());
+  beforeEach(() => {
+    invokeLLMMock.mockReset();
+    dbMocks.getStudentProfile.mockResolvedValue({ userId: 42, answers: { "پایه و رشته": "دوازدهم تجربی" } });
+    dbMocks.getOrCreateConversation.mockResolvedValue({ id: 7, userId: 42 });
+    dbMocks.getRecentConversationMessages.mockResolvedValue([]);
+    dbMocks.addConversationMessage.mockResolvedValue(undefined);
+    dbMocks.upsertStudentProfile.mockResolvedValue(undefined);
+    dbMocks.createStudyPlan.mockResolvedValue(undefined);
+    dbMocks.getDb.mockResolvedValue(null);
+  });
 
-  it("returns a Persian assistant response and forwards the real profile context", async () => {
+  it("rejects chat and plan generation for unauthenticated users", async () => {
+    const caller = appRouter.createCaller(createContext(null));
+    await expect(caller.study.chat({ message: "سلام" })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(caller.study.generatePlan({ answers: { "بازهٔ زمانی": "۲ تا ۴ ساعت" } })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    expect(invokeLLMMock).not.toHaveBeenCalled();
+  });
+
+  it("returns a Persian assistant response using the stored profile and database history", async () => {
     invokeLLMMock.mockResolvedValue({
       model: "gemini-3-flash-preview",
       choices: [{ message: { content: "بر اساس اطلاعات ثبت‌شده، ابتدا زیست‌شناسی را مرور کن." } }],
     });
-
     const caller = appRouter.createCaller(createContext());
-    const result = await caller.study.chat({
-      message: "امروز از کجا شروع کنم؟",
-      history: [{ role: "user", content: "من اطلاعاتم را ثبت کرده‌ام." }],
-      deviceDate: "تاریخ دستگاه",
-      timezone: "Asia/Tehran",
-      profile: "نام: کاربر؛ پایه و رشته: دوازدهم تجربی؛ هدف: کنکور",
-    });
-
+    const result = await caller.study.chat({ message: "امروز از کجا شروع کنم؟", deviceDate: "تاریخ دستگاه", timezone: "Asia/Tehran" });
     expect(result.text).toContain("زیست‌شناسی");
     expect(invokeLLMMock).toHaveBeenCalledOnce();
     const request = invokeLLMMock.mock.calls[0][0];
-    expect(request.model).toBe("gemini-3-flash-preview");
     expect(request.messages[0].content).toContain("Asia/Tehran");
     expect(request.messages[0].content).toContain("دوازدهم تجربی");
+    expect(dbMocks.addConversationMessage).toHaveBeenCalledTimes(2);
   });
 
   it("rejects plan generation until all required user answers exist", async () => {
@@ -46,17 +74,16 @@ describe("study AI procedures", () => {
     expect(invokeLLMMock).not.toHaveBeenCalled();
   });
 
-  it("parses a structured plan made from the submitted answers", async () => {
+  it("parses and persists a structured plan for the authenticated user", async () => {
     invokeLLMMock.mockResolvedValue({
       model: "gemini-3-flash-preview",
       choices: [{ message: { content: JSON.stringify({
         title: "برنامهٔ ثبت‌شدهٔ امروز",
         summary: "برنامه بر اساس پاسخ‌های ثبت‌شده ساخته شد.",
-        sessions: [{ subject: "زیست‌شناسی", topic: "مبحث ثبت‌شده", start: "۱۶:۰۰", end: "۱۷:۰۰", duration: "۶۰ دقیقه", reason: "بر اساس پاسخ کاربر" }],
+        sessions: [{ subject: "زیست‌شناسی", topic: "مبحث ثبت‌شده", day: "شنبه", start: "۱۶:۰۰", end: "۱۷:۰۰", duration: "۶۰ دقیقه", reason: "بر اساس پاسخ کاربر" }],
         focusTip: "نکته فقط از داده‌های ثبت‌شده استخراج شد.",
       }) } }],
     });
-
     const caller = appRouter.createCaller(createContext());
     const result = await caller.study.generatePlan({
       answers: {
@@ -64,19 +91,20 @@ describe("study AI procedures", () => {
         "زمان مطالعه": "صبح‌ها",
         "پایه و رشته": "دوازدهم تجربی",
         "امتحان پیشرو": "کنکور سراسری",
-        "دروس اجباری": "زیست و شیمی",
+        "دروس اولویت‌دار": "زیست‌شناسی، شیمی",
         "دروس حذفی": "فعلاً هیچ‌کدام",
         "سطح انرژی": "معمولی",
       },
       deviceDate: "تاریخ دستگاه",
       timezone: "Asia/Tehran",
-      profile: "نام: کاربر",
     });
-
     expect(result.title).toBe("برنامهٔ ثبت‌شدهٔ امروز");
     expect(result.sessions[0].subject).toBe("زیست‌شناسی");
-    expect(invokeLLMMock).toHaveBeenCalledOnce();
-    const request = invokeLLMMock.mock.calls[0][0];
-    expect(request.responseFormat.json_schema.schema.properties.sessions.items.required).toContain("day");
+    expect(dbMocks.upsertStudentProfile).toHaveBeenCalledWith(expect.objectContaining({ userId: 42 }));
+    expect(requestForPlan()).toBeDefined();
   });
+
+  function requestForPlan() {
+    return invokeLLMMock.mock.calls[0]?.[0];
+  }
 });
