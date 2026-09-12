@@ -80,6 +80,11 @@ export const appRouter = router({
   }),
   profile: router({
     me: protectedProcedure.query(async ({ ctx }) => (await getStudentProfile(ctx.user.id)) ?? null),
+    save: protectedProcedure.input(z.object({
+      name: z.string().trim().min(2).max(255),
+      email: z.string().email().optional(),
+      answers: z.record(z.string(), z.string()).default({}),
+    })).mutation(async ({ ctx, input }) => upsertStudentProfile({ userId: ctx.user.id, name: input.name, email: input.email ?? ctx.user.email ?? undefined, answers: input.answers })),
   }),
   study: router({
     latestPlan: protectedProcedure.query(async ({ ctx }) => (await getLatestStudyPlan(ctx.user.id)) ?? null),
