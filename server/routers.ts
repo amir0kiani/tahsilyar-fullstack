@@ -134,8 +134,12 @@ export const appRouter = router({
         profile: z.string().max(500).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        const existingProfile = await getStudentProfile(ctx.user.id);
-        await upsertStudentProfile({ userId: ctx.user.id, name: existingProfile?.name ?? ctx.user.name ?? undefined, email: existingProfile?.email ?? ctx.user.email ?? undefined, answers: input.answers });
+        try {
+          const existingProfile = await getStudentProfile(ctx.user.id);
+          await upsertStudentProfile({ userId: ctx.user.id, name: existingProfile?.name ?? ctx.user.name ?? undefined, email: existingProfile?.email ?? ctx.user.email ?? undefined, answers: input.answers });
+        } catch (error) {
+          console.error("[Study] Could not persist profile before planning; continuing with request:", error);
+        }
         const answers = Object.entries(input.answers).map(([step, answer]) => `${step}: ${answer}`).join("\n");
         const track = Object.values(input.answers).find((answer) => /انسانی|ریاضی|تجربی/.test(answer)) ?? "تجربی";
         const curriculum = curriculumFor(track);
@@ -158,16 +162,23 @@ export const appRouter = router({
           maxTokens: 2200,
         });
         const raw = extractText(response.choices[0]?.message.content);
+        const normalizedRaw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+        let plan: { title: string; summary: string; sessions: Array<{ subject: string; topic: string; day: string; start: string; end: string; duration: string; reason: string }>; focusTip: string };
         try {
-          const plan = JSON.parse(raw);
-          const db = await getDb();
-          if (db && plan?.title && Array.isArray(plan.sessions)) {
-            await createStudyPlan({ userId: ctx.user.id, title: plan.title, summary: plan.summary ?? "", focusTip: plan.focusTip ?? "", inputSnapshot: input.answers, sessions: plan.sessions });
-          }
-          return plan;
+          const parsed = JSON.parse(normalizedRaw);
+          if (!parsed?.title || !Array.isArray(parsed.sessions)) throw new Error("AI returned an invalid study plan shape");
+          plan = parsed;
         } catch {
-          return { title: "", summary: "اطلاعات برای ساخت برنامه کافی نیست.", sessions: [], focusTip: "" };
+          console.error("[Study] AI returned invalid plan JSON:", raw.slice(0, 500));
+          return { title: "", summary: "پاسخ برنامه‌ریز قابل پردازش نبود؛ دوباره تلاش کن.", sessions: [], focusTip: "" };
         }
+        try {
+          const db = await getDb();
+          if (db) await createStudyPlan({ userId: ctx.user.id, title: plan.title, summary: plan.summary ?? "", focusTip: plan.focusTip ?? "", inputSnapshot: input.answers, sessions: plan.sessions });
+        } catch (error) {
+          console.error("[Study] Plan generated but persistence failed:", error);
+        }
+        return plan;
       }),
   }),
 });

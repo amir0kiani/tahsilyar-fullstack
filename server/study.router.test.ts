@@ -75,14 +75,16 @@ describe("study AI procedures", () => {
   });
 
   it("parses and persists a structured plan for the authenticated user", async () => {
+    dbMocks.getDb.mockResolvedValue({});
+    dbMocks.createStudyPlan.mockRejectedValue(new Error("temporary database failure"));
     invokeLLMMock.mockResolvedValue({
       model: "gemini-3-flash-preview",
-      choices: [{ message: { content: JSON.stringify({
+      choices: [{ message: { content: `\`\`\`json\n${JSON.stringify({
         title: "برنامهٔ ثبت‌شدهٔ امروز",
         summary: "برنامه بر اساس پاسخ‌های ثبت‌شده ساخته شد.",
         sessions: [{ subject: "زیست‌شناسی", topic: "مبحث ثبت‌شده", day: "شنبه", start: "۱۶:۰۰", end: "۱۷:۰۰", duration: "۶۰ دقیقه", reason: "بر اساس پاسخ کاربر" }],
         focusTip: "نکته فقط از داده‌های ثبت‌شده استخراج شد.",
-      }) } }],
+      })}\n\`\`\`` } }],
     });
     const caller = appRouter.createCaller(createContext());
     const result = await caller.study.generatePlan({
