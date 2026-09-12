@@ -79,10 +79,10 @@ export const appRouter = router({
     }),
   }),
   profile: router({
-    me: protectedProcedure.query(({ ctx }) => getStudentProfile(ctx.user.id)),
+    me: protectedProcedure.query(async ({ ctx }) => (await getStudentProfile(ctx.user.id)) ?? null),
   }),
   study: router({
-    latestPlan: protectedProcedure.query(({ ctx }) => getLatestStudyPlan(ctx.user.id)),
+    latestPlan: protectedProcedure.query(async ({ ctx }) => (await getLatestStudyPlan(ctx.user.id)) ?? null),
     chatHistory: protectedProcedure.query(async ({ ctx }) => {
       const conversation = await getOrCreateConversation(ctx.user.id);
       if (!conversation) return [];
