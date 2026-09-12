@@ -134,7 +134,8 @@ export const appRouter = router({
         profile: z.string().max(500).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        await upsertStudentProfile({ userId: ctx.user.id, name: ctx.user.name ?? undefined, email: ctx.user.email ?? undefined, answers: input.answers });
+        const existingProfile = await getStudentProfile(ctx.user.id);
+        await upsertStudentProfile({ userId: ctx.user.id, name: existingProfile?.name ?? ctx.user.name ?? undefined, email: existingProfile?.email ?? ctx.user.email ?? undefined, answers: input.answers });
         const answers = Object.entries(input.answers).map(([step, answer]) => `${step}: ${answer}`).join("\n");
         const track = Object.values(input.answers).find((answer) => /انسانی|ریاضی|تجربی/.test(answer)) ?? "تجربی";
         const curriculum = curriculumFor(track);
@@ -143,11 +144,11 @@ export const appRouter = router({
           messages: [
             {
               role: "system",
-              content: `تو برنامه‌ریز درسی تحصیل‌یار هستی. فقط از پاسخ‌های واقعی دانش‌آموز استفاده کن و هیچ داده‌ای را از خودت اضافه نکن. خروجی باید فقط JSON مطابق schema باشد. برای هر جلسه، روز هفته را در فیلد day با یکی از شنبه تا جمعه تعیین کن تا برنامه در تقویم هفتگی نمایش داده شود. اگر پاسخ‌ها برای ساخت برنامه کافی نیستند، sessions را خالی برگردان و در summary بگو کدام اطلاعات باید تکمیل شود. برنامه را واقع‌بینانه، متعادل و فارسی بساز و بین جلسه‌ها استراحت کوتاه بگذار. فهرست معتبر کل دروس رشتهٔ انتخاب‌شده این است: ${curriculum.join("، ")}. فقط از همین فهرست برای subject استفاده کن. مقدار «دروس اولویت‌دار» فقط اولویت است، نه فهرست محدودکننده؛ بنابراین از همهٔ دروس معتبر برنامه‌ریزی کن و دروس اولویت‌دار را با تکرار یا سهم بیشتر در برنامه لحاظ کن. هیچ درس خارج از این فهرست نساز.`,
+              content: `تو برنامه‌ریز درسی تحصیل‌یار هستی. فقط از پاسخ‌های واقعی دانش‌آموز استفاده کن و هیچ داده‌ای را از خودت اضافه نکن. خروجی باید فقط JSON مطابق schema باشد. برای هر جلسه، روز هفته را در فیلد day با یکی از شنبه تا جمعه تعیین کن تا برنامه در تقویم هفتگی نمایش داده شود. اگر پاسخ‌ها برای ساخت برنامه کافی نیستند، sessions را خالی برگردان و در summary بگو کدام اطلاعات باید تکمیل شود. برنامه باید کل زمان مطالعهٔ روز را پوشش دهد، نه فقط بازه‌ای که دانش‌آموز در آن تمرکز بیشتری دارد. بازهٔ ترجیحی (صبح‌ها، بعدازظهرها یا شب‌ها) را برای دروس مهم‌تر و اولویت‌دار قرار بده و بقیهٔ روز را نیز با سایر دروس برنامه‌ریزی کن. فهرست معتبر کل دروس رشتهٔ انتخاب‌شده این است: ${curriculum.join("، ")}. فقط از همین فهرست برای subject استفاده کن. مقدار «دروس اولویت‌دار» فقط اولویت است، نه فهرست محدودکننده؛ بنابراین از همهٔ دروس معتبر برنامه‌ریزی کن و دروس اولویت‌دار را در بازهٔ تمرکز با سهم بیشتر قرار بده. هیچ درس خارج از این فهرست نساز.`,
             },
             {
               role: "user",
-              content: `پاسخ‌های واقعی دانش‌آموز:\n${answers}\nکل دروس مجاز رشته: ${curriculum.join("، ")}\nتاریخ محلی دستگاه: ${cleanContext(input.deviceDate, 100)}\nمنطقه زمانی: ${cleanContext(input.timezone, 100)}\nپروفایل حساب: ${cleanContext(input.profile, 500)}\nفقط بر اساس همین داده‌ها برنامه بساز و دروس اولویت‌دار را فقط به‌عنوان اولویت استفاده کن، نه حذف سایر دروس.`,
+              content: `پاسخ‌های واقعی دانش‌آموز:\n${answers}\nکل دروس مجاز رشته: ${curriculum.join("، ")}\nتاریخ محلی دستگاه: ${cleanContext(input.deviceDate, 100)}\nمنطقه زمانی: ${cleanContext(input.timezone, 100)}\nپروفایل حساب: ${cleanContext(input.profile, 500)}\nکل ساعات مشخص‌شده را در طول روز توزیع کن؛ زمان تمرکز انتخاب‌شده را به دروس مهم‌تر اختصاص بده و سایر ساعات را با بقیهٔ دروس پر کن. فقط بر اساس همین داده‌ها برنامه بساز و دروس اولویت‌دار را فقط به‌عنوان اولویت استفاده کن، نه حذف سایر دروس.`,
             },
           ],
           responseFormat: {
