@@ -25,18 +25,17 @@ const getTimeGreeting = (hour = new Date().getHours()) => hour < 12 ? "صبح ب
 type PlannerStep = { title: string; eyebrow: string; question: string; options: string[] };
 
 const plannerSteps: PlannerStep[] = [
-  { title: "بازهٔ زمانی", eyebrow: "قدم اول", question: "در روزهای مطالعه چقدر زمان برای درس خواندن داری؟", options: ["۲ تا ۴ ساعت", "۴ تا ۶ ساعت", "۶ تا ۸ ساعت", "بیشتر از ۸ ساعت"] },
-  { title: "زمان مطالعه", eyebrow: "قدم دوم", question: "چه ساعتی بیشترین تمرکز را داری؟", options: ["صبح‌ها", "بعدازظهرها", "شب‌ها"] },
-  { title: "پایه و رشته", eyebrow: "قدم سوم", question: "مسیر تحصیلی‌ات را انتخاب کن", options: ["دهم تجربی", "یازدهم تجربی", "دوازدهم تجربی", "دهم ریاضی", "یازدهم ریاضی", "دوازدهم ریاضی", "دهم انسانی", "یازدهم انسانی", "دوازدهم انسانی"] },
-  { title: "امتحان پیشرو", eyebrow: "قدم چهارم", question: "برای کدام هدف برنامه‌ریزی کنیم؟", options: ["کنکور", "امتحان نهایی", "هر دو"] },
-  { title: "دروس اولویت‌دار", eyebrow: "قدم پنجم", question: "کدام درس‌ها برایت اولویت بیشتری دارند؟", options: [] },
-  { title: "دروس حذفی", eyebrow: "قدم ششم", question: "برای امروز چه درسی را کنار بگذاریم؟", options: ["فعلاً هیچ‌کدام", "درس‌های مرورشده", "یک درس کم‌اهمیت"] },
-  { title: "سطح انرژی", eyebrow: "قدم هفتم", question: "امروز حال و انرژی‌ات چطور است؟", options: ["پرانرژی‌ام", "معمولی", "کمی خسته‌ام"] },
+  { title: "نام", eyebrow: "گام اول", question: "نام و نام خانوادگی‌ات چیست؟", options: [] },
+  { title: "پایه و رشته", eyebrow: "گام دوم", question: "در چه پایه و رشته‌ای تحصیل می‌کنی؟", options: [] },
+  { title: "میزان ساعت مطالعه", eyebrow: "گام سوم", question: "روزانه چند ساعت واقعاً می‌توانی مطالعه کنی؟", options: [] },
+  { title: "دروس امروز", eyebrow: "گام چهارم", question: "امروز ترجیح می‌دهی کدام درس‌ها را بخوانی و کدام درس‌ها را نمی‌خواهی بخوانی؟", options: [] },
+  { title: "امتحان نزدیک", eyebrow: "گام پنجم", question: "آیا در چند روز آینده امتحانی داری؟ اگر بله، نام درس و تاریخ یا تعداد روز باقی‌مانده را بنویس.", options: [] },
+  { title: "هدف آزمون", eyebrow: "گام ششم", question: "هدفت کنکور است، امتحانات نهایی یا هر دو؟", options: [] },
+  { title: "هدف قبولی", eyebrow: "گام هفتم", question: "هدف کلی‌ات چیست؟ مثلاً رتبه، دانشگاه یا قبولی در رشته‌ای مثل پزشکی را دقیق بنویس.", options: [] },
 ];
 
 const navItems: { id: Screen; label: string; icon: IconName }[] = [
   { id: "home", label: "خانه", icon: "home" },
-  { id: "planning", label: "برنامه‌ریزی", icon: "event_note" },
   { id: "companion", label: "همراه", icon: "auto_awesome" },
   { id: "progress", label: "پیشرفت", icon: "insights" },
   { id: "schedule", label: "برنامه درسی", icon: "calendar_month" },
@@ -139,7 +138,7 @@ function Signup({ onSignup, onLogin }: { onSignup: (profile: Pick<UserProfile, "
 
 function AppShell() {
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [screen, setScreen] = useState<Screen>("planning");
+  const [screen, setScreen] = useState<Screen>("companion");
   const [plannerStep, setPlannerStep] = useState(0);
   const [plannerAnswers, setPlannerAnswers] = useState<Record<number, string>>({});
   const [toast, setToast] = useState("");
@@ -182,9 +181,7 @@ function AppShell() {
   }, [auth.isAuthenticated, auth.user, profileQuery.data, profileQuery.isLoading]);
   const showToast = (text: string) => { setToast(text); window.setTimeout(() => setToast(""), 2400); };
   const navigate = (next: Screen) => { setScreen(next); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const currentPlanner = useMemo(() => plannerStep === 4
-    ? { ...plannerSteps[plannerStep], options: subjectOptionsForTrack(plannerAnswers[2] || "دوازدهم تجربی") }
-    : plannerSteps[plannerStep], [plannerStep, plannerAnswers]);
+  const currentPlanner = plannerSteps[plannerStep];
 
   if (!user) return <Signup onSignup={(profile) => { localStorage.setItem("tahsilyar-registration-draft", JSON.stringify(profile)); startLogin(); }} onLogin={startLogin} />;
 
@@ -196,7 +193,7 @@ function AppShell() {
     planMutation.mutate({ answers, deviceDate: deviceDateLabel, timezone: deviceTimeZone }, {
       onSuccess: (plan) => {
         const nextPlan = plan as GeneratedPlan;
-        setUser((current) => current ? { ...current, answers } : current);
+        setUser((current) => current ? { ...current, name: answers["نام"] || current.name, answers } : current);
         setGeneratedPlan(nextPlan.sessions?.length ? nextPlan : null);
         setCompleted([]);
         setPlannerStep(0);
@@ -234,22 +231,13 @@ function AppShell() {
   const userName = user.name || "کاربر";
   const userGrade = user.answers["پایه و رشته"] || "ثبت نشده";
   return <div className="app-frame" dir="rtl"><aside className="sidebar"><div className="sidebar-logo"><LogoMark /></div><div className="sidebar-greeting"><span>فضای شخصی تو</span><strong>{userName}</strong></div><nav className="main-nav"><p className="nav-label">منوی اصلی</p>{navItems.map((item) => <button key={item.id} className={`nav-item ${screen === item.id ? "active" : ""}`} onClick={() => navigate(item.id)}><Icon name={item.icon} size={21} filled={screen === item.id} /><span>{item.label}</span>{item.id === "companion" && <i className="nav-dot" />}</button>)}</nav><div className="sidebar-bottom"><div className="mini-support"><div className="support-icon"><Icon name="favorite" size={18} filled /></div><div><strong>اطلاعاتت را کامل کن</strong><span>تا پاسخ دقیق بگیری</span></div><Icon name="arrow_back" size={16} /></div><button className="profile-mini" onClick={() => navigate("profile")}><span className="avatar">{getInitial(user.name)}</span><span><strong>{userName}</strong><small>{userGrade}</small></span><Icon name="more_horiz" size={20} /></button></div></aside>
-    <main className="main-area"><header className="topbar"><div className="topbar-mobile-logo"><LogoMark compact /></div><div className="breadcrumbs"><span>تحصیل‌یار</span><Icon name="chevron_left" size={17} /><strong>{navItems.find((item) => item.id === screen)?.label}</strong></div><div className="topbar-actions"><button className="icon-button" aria-label="تغییر حالت شب" onClick={toggleTheme}><Icon name={theme === "dark" ? "dark_mode" : "light_mode"} size={21} filled /></button><button className="icon-button notification-button" onClick={() => showToast("هنوز یادآوری ثبت نشده است.")}><Icon name="notifications" size={21} filled /></button><button className="user-chip" onClick={() => navigate("profile")}><span className="avatar">{getInitial(user.name)}</span><span>{userName}</span><Icon name="expand_more" size={18} /></button></div></header><div className="page-content">
+    <main className="main-area"><header className="topbar"><div className="topbar-mobile-logo"><LogoMark compact /></div><div className="breadcrumbs"><span>تحصیل‌یار</span><Icon name="chevron_left" size={17} /><strong>{navItems.find((item) => item.id === screen)?.label}</strong></div><div className="topbar-actions"><button className="icon-button" aria-label="تغییر حالت شب" onClick={toggleTheme}><Icon name={theme === "dark" ? "dark_mode" : "light_mode"} size={21} filled /></button><button className="icon-button notification-button" onClick={() => showToast("هنوز یادآوری ثبت نشده است.")}><Icon name="notifications" size={21} filled /></button></div></header><div className="page-content">
       {screen === "home" && <HomeScreen navigate={navigate} userName={userName} plan={generatedPlan} completed={completed} onComplete={toggleSession} showToast={showToast} deviceDate={deviceDateLabel} />}
-      {screen === "planning" && <PlanningScreen step={plannerStep} current={currentPlanner} answers={plannerAnswers} onAnswer={(answer) => setPlannerAnswers((old) => {
-        if (plannerStep === 2) return { ...old, [plannerStep]: answer, 4: "" };
-        if (plannerStep === 4) {
-          const selected = selectedSubjects(old[plannerStep] || "");
-          const next = selected.includes(answer) ? selected.filter((item) => item !== answer) : [...selected, answer];
-          return { ...old, [plannerStep]: next.join("، ") };
-        }
-        return { ...old, [plannerStep]: answer };
-      })} onNext={handlePlannerNext} onBack={() => plannerStep > 0 && setPlannerStep((step) => step - 1)} isGenerating={planMutation.isPending} />}
-      {screen === "companion" && <CompanionScreen messages={messages} input={chatInput} setInput={setChatInput} onSend={sendMessage} isSending={chatMutation.isPending} hasProfile={answeredProfile} />}
+      {screen === "companion" && <CompanionScreen step={plannerStep} current={currentPlanner} answers={plannerAnswers} onAnswer={(answer) => { if (answer) setPlannerAnswers((old) => ({ ...old, [plannerStep]: answer })); else if (plannerStep > 0) setPlannerStep((step) => step - 1); }} onNext={handlePlannerNext} isGenerating={planMutation.isPending} />}
       {screen === "progress" && <ProgressScreen plan={generatedPlan} completed={completed} />}
       {screen === "schedule" && <ScheduleScreen plan={generatedPlan} completed={completed} onToggle={toggleSession} showToast={showToast} deviceDate={deviceDateLabel} onAddCalendar={addCurrentPlanToCalendar} />}
       {screen === "profile" && <ProfileScreen user={user} completed={completed} onUpdateUser={(updated) => setUser(updated)} onLogout={() => { void auth.logout(); setUser(null); setGeneratedPlan(null); setPlannerAnswers({}); setCompleted([]); setMessages([]); }} showToast={showToast} />}
-    </div><nav className="bottom-nav">{navItems.slice(0, 5).map((item) => <button key={item.id} className={screen === item.id ? "active" : ""} onClick={() => navigate(item.id)}><Icon name={item.icon} size={22} filled={screen === item.id} /><span>{item.label}</span></button>)}</nav></main>{toast && <div className="toast"><Icon name="check_circle" size={19} filled />{toast}</div>}</div>;
+    </div><nav className="bottom-nav">{navItems.map((item) => <button key={item.id} className={screen === item.id ? "active" : ""} onClick={() => navigate(item.id)}><Icon name={item.icon} size={22} filled={screen === item.id} /><span>{item.label}</span></button>)}</nav></main>{toast && <div className="toast"><Icon name="check_circle" size={19} filled />{toast}</div>}</div>;
 }
 
 function EmptyState({ icon = "event_note", title, description, action, onAction }: { icon?: IconName; title: string; description: string; action?: string; onAction?: () => void }) {
@@ -268,10 +256,10 @@ function PlanningScreen({ step, current, answers, onAnswer, onNext, onBack, isGe
   return <div className="screen planner-screen"><div className="planner-header"><div><p className="eyebrow">ساخت برنامهٔ شخصی</p><h1>برنامه‌ریزی با <em>تو</em> شروع می‌شود.</h1><p className="section-subtitle">تا زمانی که پاسخ دقیق ندهی، هیچ برنامه‌ای از طرف تحصیل‌یار ساخته نمی‌شود.</p></div><div className="planner-badge"><Icon name="auto_awesome" size={18} filled /><span>جمع‌آوری اطلاعات</span></div></div><div className="wizard-progress">{plannerSteps.map((item, index) => <div key={item.title} className={`wizard-dot ${index === step ? "current" : ""} ${index < step ? "done" : ""}`}><span>{index < step ? <Icon name="done" size={14} /> : index + 1}</span><small>{item.title}</small></div>)}</div><div className="planner-card"><div className="planner-card-side"><div className="planner-side-icon"><Icon name="psychology" size={38} /></div><p>پاسخ‌های واقعی تو تنها منبع ساخت برنامه هستند.</p><div className="planner-side-tip"><Icon name="favorite" size={17} filled /><span>{multiSelect ? "دروس انتخابی اولویت می‌گیرند؛ سایر دروس رشته هم در برنامه بررسی می‌شوند." : "اگر اطلاعاتی نداری، گزینه‌ای را حدس نزن."}</span></div></div><div className="planner-question"><span className="step-label">{current.eyebrow} <b>۰{step + 1}</b></span><h2>{current.question}</h2><div className="option-list">{current.options.map((option) => { const selected = isSelected(option); return <button key={option} className={`option-item ${selected ? "selected" : ""}`} onClick={() => onAnswer(option)}><span className="option-radio">{selected && <i />}</span><span>{option}</span><Icon name={selected ? "check_circle" : "chevron_left"} size={20} filled={selected} /></button>; })}</div><div className="wizard-actions"><button className="back-button" onClick={onBack} disabled={step === 0}><Icon name="arrow_forward" size={18} />قبلی</button><button className="primary-button" onClick={onNext} disabled={isGenerating}>{isGenerating ? "در حال بررسی اطلاعات..." : step === plannerSteps.length - 1 ? "ساخت برنامهٔ من" : "ادامه"}<Icon name="arrow_back" size={18} /></button></div></div></div></div>;
 }
 
-function CompanionScreen({ messages, input, setInput, onSend, isSending, hasProfile }: { messages: ChatMessage[]; input: string; setInput: (value: string) => void; onSend: () => void; isSending: boolean; hasProfile: boolean }) {
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, [messages, isSending]);
-  return <div className="screen companion-screen"><div className="companion-heading"><div><p className="eyebrow">همراه هوشمند تو</p><h1>پاسخ‌ها بر اساس <em>تو</em>.</h1><p className="section-subtitle">بدون اطلاعات کامل، همراه هوشمند برنامه یا تحلیل حدسی ارائه نمی‌کند.</p></div><div className="online-status"><i />آمادهٔ دریافت اطلاعات</div></div><div className="companion-layout"><div className="chat-card"><div className="chat-top"><div className="bot-avatar"><Icon name="auto_awesome" size={21} filled /></div><div><strong>همراه تحصیل‌یار</strong><span>پاسخ‌گوی آموزشی بر اساس پروفایل تو</span></div><button className="icon-button"><Icon name="more_horiz" size={20} /></button></div><div className="chat-body">{!hasProfile && <div className="empty-chat-state"><Icon name="lock" size={25} /><strong>اطلاعات تحصیلی هنوز کامل نیست</strong><span>ابتدا هفت پاسخ برنامه‌ریزی را از خودت ثبت کن؛ تا آن زمان پیامی از طرف سیستم ساخته نمی‌شود.</span></div>}{hasProfile && !messages.length && <div className="empty-chat-state"><Icon name="auto_awesome" size={25} /><strong>هنوز گفت‌وگویی شروع نشده است</strong><span>سؤال خودت را بنویس تا فقط بر اساس اطلاعات ثبت‌شده پاسخ بگیری.</span></div>}{messages.map((message, index) => <div className={`message-line ${message.from}`} key={`${message.text}-${index}`}><div className="message-bubble">{message.text}</div><span>{message.from === "bot" ? "همین حالا" : "ارسال شد"}</span></div>)}{isSending && <div className="message-line bot"><div className="message-bubble typing-bubble">در حال بررسی اطلاعات ثبت‌شده...</div></div>}<div ref={chatEndRef} /></div><div className="chat-input"><input disabled={!hasProfile || isSending} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => event.key === "Enter" && onSend()} placeholder={hasProfile ? "سؤال خودت را بنویس..." : "ابتدا اطلاعات تحصیلی را کامل کن"} /><button onClick={onSend} disabled={!hasProfile || isSending}><Icon name="send" size={19} /></button></div></div><div className="dna-card"><div className="dna-card-head"><div><p className="eyebrow">پروفایل یادگیری</p><h2>Academic DNA</h2></div></div><div className="empty-dna-state"><Icon name="insights" size={27} /><span>{hasProfile ? "تحلیل Academic DNA پس از ثبت داده‌های کافی و سابقهٔ مطالعه نمایش داده می‌شود." : "برای تحلیل، ابتدا اطلاعات و سابقهٔ واقعی مطالعه لازم است."}</span></div></div></div></div>;
+function CompanionScreen({ step, current, answers, onAnswer, onNext, isGenerating }: { step: number; current: PlannerStep; answers: Record<number, string>; onAnswer: (value: string) => void; onNext: () => void; isGenerating: boolean }) {
+  const [draft, setDraft] = useState(answers[step] || "");
+  useEffect(() => { setDraft(answers[step] || ""); }, [step, answers]);
+  return <div className="screen companion-screen"><div className="companion-heading"><div><p className="eyebrow">همراه هوشمند تحصیل‌یار</p><h1>برای تو، <em>واقعی</em> برنامه می‌سازم.</h1><p className="section-subtitle">من سؤال‌ها را یکی‌یکی می‌پرسم؛ پاسخ صادقانه‌ات به ساخت برنامهٔ دقیق‌تر کمک می‌کند.</p></div><div className="online-status"><i />گفت‌وگوی برنامه‌ریزی</div></div><div className="companion-layout"><div className="chat-card planner-chat-card"><div className="chat-top"><div className="bot-avatar"><Icon name="auto_awesome" size={21} filled /></div><div><strong>مشاور تحصیل‌یار</strong><span>پرسش {step + 1} از {plannerSteps.length}</span></div></div><div className="planner-chat-question"><span className="step-label">{current.eyebrow}</span><h2>{current.question}</h2><textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="پاسخت را آزاد و با جزئیات بنویس..." autoFocus /><div className="wizard-actions"><button className="back-button" disabled={step === 0 || isGenerating} onClick={() => onAnswer("")}><Icon name="arrow_forward" size={18} />قبلی</button><button className="primary-button" disabled={!draft.trim() || isGenerating} onClick={() => { onAnswer(draft.trim()); setTimeout(onNext, 0); }}>{isGenerating ? "در حال ساخت برنامه..." : step === plannerSteps.length - 1 ? "ساخت برنامهٔ من" : "ادامه"}<Icon name="arrow_back" size={18} /></button></div></div></div><div className="dna-card"><div className="dna-card-head"><div><p className="eyebrow">رویکرد مشاور</p><h2>فقط تأیید نمی‌کنم</h2></div></div><div className="empty-dna-state"><Icon name="psychology" size={27} /><span>اگر هدف، زمان یا انتخاب درسی‌ات با واقعیت زمان مطالعه هماهنگ نباشد، در برنامه به تو توضیح می‌دهم و پیشنهاد متعادل‌تری می‌دهم.</span></div></div></div></div>;
 }
 
 function ProgressScreen({ plan, completed }: { plan: GeneratedPlan | null; completed: number[] }) {
