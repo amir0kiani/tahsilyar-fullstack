@@ -274,3 +274,7 @@ em { color: var(--turquoise-dark); font-style: normal; }
 .profile-answer-list strong { color: var(--deep); font-size: 11px; }
 .profile-recorded-count { color: var(--turquoise-dark); background: var(--aqua); border-radius: 10px; padding: 9px 11px; margin-top: 15px; font-size: 10px; }
 @media (max-width: 720px) { .empty-state { padding: 23px 17px; } .profile-answer-list > div { align-items: flex-start; flex-direction: column; gap: 3px; } }
+
+/* AI responses remain fully readable and scroll to the newest message. */
+.message-bubble { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; max-height: none; }
+.chat-body { max-height: 520px; overflow-y: auto; scroll-behavior: smooth; }

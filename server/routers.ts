@@ -5,7 +5,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
-import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, getDb, upsertStudentProfile } from "./db";
+import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, getDb, setStudySessionCompleted, upsertStudentProfile } from "./db";
 
 const chatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -88,6 +88,7 @@ export const appRouter = router({
   }),
   study: router({
     latestPlan: protectedProcedure.query(async ({ ctx }) => (await getLatestStudyPlan(ctx.user.id)) ?? null),
+    setSessionCompleted: protectedProcedure.input(z.object({ sessionId: z.number().int().positive(), completed: z.boolean() })).mutation(({ ctx, input }) => setStudySessionCompleted({ userId: ctx.user.id, ...input })),
     chatHistory: protectedProcedure.query(async ({ ctx }) => {
       const conversation = await getOrCreateConversation(ctx.user.id);
       if (!conversation) return [];
@@ -119,7 +120,7 @@ export const appRouter = router({
             ...history,
             { role: "user", content: input.message },
           ],
-          maxTokens: 1000,
+          maxTokens: 2200,
         });
         const text = extractText(response.choices[0]?.message.content).trim();
         const assistantText = text || "برای پاسخ دقیق، اطلاعات بیشتری از خودت ثبت کن.";
@@ -174,7 +175,10 @@ export const appRouter = router({
         }
         try {
           const db = await getDb();
-          if (db) await createStudyPlan({ userId: ctx.user.id, title: plan.title, summary: plan.summary ?? "", focusTip: plan.focusTip ?? "", inputSnapshot: input.answers, sessions: plan.sessions });
+          if (db) {
+            await createStudyPlan({ userId: ctx.user.id, title: plan.title, summary: plan.summary ?? "", focusTip: plan.focusTip ?? "", inputSnapshot: input.answers, sessions: plan.sessions });
+            return (await getLatestStudyPlan(ctx.user.id)) ?? plan;
+          }
         } catch (error) {
           console.error("[Study] Plan generated but persistence failed:", error);
         }

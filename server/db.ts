@@ -80,6 +80,14 @@ export async function getLatestStudyPlan(userId: number) {
   return { ...plan, sessions };
 }
 
+export async function setStudySessionCompleted(input: { userId: number; sessionId: number; completed: boolean }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  await db.update(studySessions).set({ completed: input.completed ? 1 : 0 }).where(and(eq(studySessions.id, input.sessionId), eq(studySessions.userId, input.userId)));
+  const rows = await db.select().from(studySessions).where(and(eq(studySessions.id, input.sessionId), eq(studySessions.userId, input.userId))).limit(1);
+  return rows[0] ?? null;
+}
+
 export async function getOrCreateConversation(userId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database is not configured");
