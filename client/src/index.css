@@ -336,3 +336,8 @@ em { color: var(--turquoise-dark); font-style: normal; }
 @media (max-width: 720px) { .new-plan-fields { grid-template-columns: 1fr; } .companion-toolbar { justify-content: stretch; width: 100%; } .companion-toolbar button { flex: 1; justify-content: center; } }
 
 .lesson-code { display: inline-block; margin-right: 6px; color: var(--turquoise-dark); background: #e8f8f4; border-radius: 5px; padding: 2px 5px; font-size: 8px; direction: ltr; }
+
+.next-lesson-banner { margin: 18px 0 24px; padding: 14px 17px; border: 1px solid #ccebe4; background: #f2fbf8; border-radius: 16px; display: flex; align-items: center; gap: 12px; }
+.next-lesson-banner > div { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.next-lesson-banner strong { color: var(--deep); font-size: 15px; }
+.next-lesson-banner small { color: #88a39e; font-size: 9px; }
