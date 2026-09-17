@@ -98,6 +98,17 @@ export async function getOrCreateConversation(userId: number) {
   return created[0];
 }
 
+export async function clearConversation(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  const rows = await db.select().from(conversations).where(eq(conversations.userId, userId)).limit(20);
+  for (const conversation of rows) {
+    await db.delete(conversationMessages).where(and(eq(conversationMessages.conversationId, conversation.id), eq(conversationMessages.userId, userId)));
+    await db.delete(conversations).where(and(eq(conversations.id, conversation.id), eq(conversations.userId, userId)));
+  }
+  return { success: true } as const;
+}
+
 export async function getRecentConversationMessages(userId: number, conversationId: number, limit = 12) {
   const db = await getDb();
   if (!db) return [];
