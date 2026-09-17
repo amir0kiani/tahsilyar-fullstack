@@ -101,7 +101,7 @@ describe("study AI procedures", () => {
       timezone: "Asia/Tehran",
     });
     expect(result.title).toBe("برنامهٔ ثبت‌شدهٔ امروز");
-    expect(result.sessions[0].subject).toBe("زیست‌شناسی");
+    expect(result.sessions[0].subject).toBe("BIO-01|زیست‌شناسی");
     expect(dbMocks.upsertStudentProfile).toHaveBeenCalledWith(expect.objectContaining({ userId: 42 }));
     expect(requestForPlan()).toBeDefined();
   });
