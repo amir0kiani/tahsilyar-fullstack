@@ -75,6 +75,11 @@ const lessonCodes: Record<string, string> = {
   "ریاضی": "MATH-02", "هندسه": "GEO-02", "حسابان": "CAL-01", "آمار و احتمال": "STAT-01", "گسسته": "DISC-01",
   "فیزیک": "PHY-01", "شیمی": "CHEM-01", "زیست‌شناسی": "BIO-01", "زمین‌شناسی": "GEO-03",
 };
+const canonicalDay = (raw: string) => {
+  const value = raw.trim().replace("‌", "");
+  const days = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
+  return days.find((day) => value.includes(day.replace("‌", ""))) ?? days.find((day) => value.includes(day)) ?? days[0];
+};
 const canonicalLesson = (raw: string, curriculum: string[]) => {
   const value = raw.trim();
   const subject = curriculum.find((item) => value.includes(item) || item.includes(value)) ?? curriculum[0] ?? value;
@@ -82,7 +87,7 @@ const canonicalLesson = (raw: string, curriculum: string[]) => {
 };
 const normalizePlanSessions = (sessions: Array<{ subject: string; topic: string; day: string; start: string; end: string; duration: string; reason: string }>, curriculum: string[]) => sessions.map((session) => {
   const lesson = canonicalLesson(session.subject, curriculum);
-  return { ...session, subject: `${lesson.code}|${lesson.name}`, reason: `${session.reason} · کد درس: ${lesson.code}` };
+  return { ...session, day: canonicalDay(session.day), subject: `${lesson.code}|${lesson.name}`, reason: `${session.reason} · کد درس: ${lesson.code}` };
 });
 
 export const appRouter = router({
@@ -147,7 +152,7 @@ export const appRouter = router({
             ...history,
             { role: "user", content: input.message },
           ],
-          maxTokens: 2200,
+          maxTokens: 5000,
         });
         const text = extractText(response.choices[0]?.message.content).trim();
         const assistantText = text || "برای پاسخ دقیق، اطلاعات بیشتری از خودت ثبت کن.";
@@ -204,7 +209,7 @@ export const appRouter = router({
           messages: [
             {
               role: "system",
-              content: `تو مشاور و برنامه‌ریز تحصیلی تحصیل‌یار هستی، نه یک تأییدکنندهٔ صرف. فقط از پاسخ‌های واقعی دانش‌آموز استفاده کن و هیچ داده‌ای را حدس نزن. خروجی باید فقط JSON مطابق schema باشد. برای هر جلسه روز هفته را در فیلد day تعیین کن. اگر پاسخ‌ها کافی نیستند sessions را خالی برگردان و در summary سؤال لازم را توضیح بده. برنامه باید کل ساعات مطالعهٔ روز را پوشش دهد و بازهٔ تمرکز ترجیحی را فقط برای درس‌های مهم‌تر استفاده کند. هدف کلی را جدی بگیر: برنامهٔ دانش‌آموزی که رتبهٔ ۱۰۰۰۰ می‌خواهد باید با برنامهٔ دانش‌آموزی که هدفش قبولی پزشکی است متفاوت باشد؛ برای هدف‌های رقابتی‌تر سهم درس‌های کلیدی، تست زمان‌دار و مرور را متناسب افزایش بده. اگر هدف، زمان مطالعه یا درس‌های انتخابی با هم ناسازگارند، در summary و focusTip محترمانه مخالفت کن، محدودیت را توضیح بده و اولویت واقع‌بینانه پیشنهاد کن؛ صرفاً خواستهٔ غیرواقعی را تأیید نکن. فهرست معتبر کل دروس رشتهٔ انتخاب‌شده: ${curriculum.join("، ")}. فقط از این فهرست برای subject استفاده کن و دروس اولویت‌دار را با سهم بیشتر، نه به‌عنوان فهرست محدودکننده، به کار ببر. در بازهٔ امروز یا فردا فقط جلسه‌های همان روز را بساز؛ در بازهٔ هفتگی، دروس را در چند روز متعادل توزیع کن. در بازهٔ امروز یا فردا فقط جلسه‌های همان روز را بساز؛ در بازهٔ هفتگی، دروس را در چند روز متعادل توزیع کن.`,
+              content: `تو مشاور و برنامه‌ریز تحصیلی تحصیل‌یار هستی، نه یک تأییدکنندهٔ صرف. فقط از پاسخ‌های واقعی دانش‌آموز استفاده کن و هیچ داده‌ای را حدس نزن. خروجی باید فقط JSON مطابق schema باشد. برای هر جلسه روز هفته را در فیلد day تعیین کن. اگر پاسخ‌ها کافی نیستند sessions را خالی برگردان و در summary سؤال لازم را توضیح بده. برنامه باید کل ساعات مطالعهٔ روز را پوشش دهد و بازهٔ تمرکز ترجیحی را فقط برای درس‌های مهم‌تر استفاده کند. هدف کلی را جدی بگیر: برنامهٔ دانش‌آموزی که رتبهٔ ۱۰۰۰۰ می‌خواهد باید با برنامهٔ دانش‌آموزی که هدفش قبولی پزشکی است متفاوت باشد؛ برای هدف‌های رقابتی‌تر سهم درس‌های کلیدی، تست زمان‌دار و مرور را متناسب افزایش بده. اگر هدف، زمان مطالعه یا درس‌های انتخابی با هم ناسازگارند، در summary و focusTip محترمانه مخالفت کن، محدودیت را توضیح بده و اولویت واقع‌بینانه پیشنهاد کن؛ صرفاً خواستهٔ غیرواقعی را تأیید نکن. فهرست معتبر کل دروس رشتهٔ انتخاب‌شده: ${curriculum.join("، ")}. فقط از این فهرست برای subject استفاده کن و دروس اولویت‌دار را با سهم بیشتر، نه به‌عنوان فهرست محدودکننده، به کار ببر. در بازهٔ امروز یا فردا فقط جلسه‌های همان روز را بساز؛ در بازهٔ هفتگی دقیقاً برای هر هفت روز حداقل یک جلسه بساز و روزها را با نام‌های دقیق شنبه، یکشنبه، دوشنبه، سه‌شنبه، چهارشنبه، پنجشنبه، جمعه ثبت کن. summary حداکثر ۲۵۰ کلمه باشد و خروجی را کامل و معتبر JSON نگه دار.`,
             },
             {
               role: "user",
