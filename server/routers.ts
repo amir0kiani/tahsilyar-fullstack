@@ -5,7 +5,8 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
-import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, getDb, setStudySessionCompleted, upsertStudentProfile, clearConversation } from "./db";
+import { addConversationMessage, createStudyPlan, createStudyAssessment, getStudyAssessments, getLatestStudyPlan, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, getDb, setStudySessionCompleted, upsertStudentProfile, clearConversation } from "./db";
+import { buildPerformanceContext } from "./academic-performance";
 
 const chatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -110,6 +111,27 @@ export const appRouter = router({
   }),
   study: router({
     latestPlan: protectedProcedure.query(async ({ ctx }) => (await getLatestStudyPlan(ctx.user.id)) ?? null),
+    performance: protectedProcedure.query(async ({ ctx }) => {
+      const assessments = await getStudyAssessments(ctx.user.id);
+      return {
+        assessments: assessments.map((assessment) => ({
+          ...assessment,
+          scorePercent: Math.round((assessment.correctAnswers / assessment.totalQuestions) * 100),
+        })),
+      };
+    }),
+    recordAssessment: protectedProcedure
+      .input(z.object({
+        subject: z.string().trim().min(1).max(255),
+        topic: z.string().trim().min(1).max(500),
+        assessmentType: z.enum(["practice", "mock", "school_exam"]).default("practice"),
+        correctAnswers: z.number().int().min(0).max(10000),
+        totalQuestions: z.number().int().min(1).max(10000),
+      }).refine((input) => input.correctAnswers <= input.totalQuestions, {
+        message: "Correct answers cannot exceed total questions",
+        path: ["correctAnswers"],
+      }))
+      .mutation(async ({ ctx, input }) => createStudyAssessment({ userId: ctx.user.id, ...input })),
     setSessionCompleted: protectedProcedure.input(z.object({ sessionId: z.number().int().positive(), completed: z.boolean() })).mutation(({ ctx, input }) => setStudySessionCompleted({ userId: ctx.user.id, ...input })),
     chatHistory: protectedProcedure.query(async ({ ctx }) => {
       const conversation = await getOrCreateConversation(ctx.user.id);
@@ -130,6 +152,7 @@ export const appRouter = router({
       .mutation(async ({ input, ctx }) => {
         const profile = await getStudentProfile(ctx.user.id);
         const profileAnswers = (profile?.answers as Record<string, string> | undefined) ?? input.answers ?? {};
+        const performanceContext = buildPerformanceContext(await getStudyAssessments(ctx.user.id));
         if (!profile && Object.keys(profileAnswers).length >= 7) {
           try {
             await upsertStudentProfile({ userId: ctx.user.id, name: ctx.user.name ?? undefined, email: ctx.user.email ?? undefined, answers: profileAnswers });
@@ -147,7 +170,7 @@ export const appRouter = router({
           messages: [
             {
               role: "system",
-              content: `تو «همراه تحصیل‌یار» هستی؛ یک مشاور آموزشی فارسی‌زبان، دقیق، مهربان و واقع‌گرا. فقط از اطلاعات ذخیره‌شدهٔ کاربر استفاده کن و هیچ نام، درس، هدف، زمان، سابقه یا عددی را حدس نزن. اگر اطلاعات برای پاسخ کافی نیست، دقیقاً بگو چه اطلاعاتی لازم است. پاسخ‌ها را فارسی و کاربردی بده. بازهٔ برنامه: ${input.planRange === "week" ? "هفتگی" : input.planRange === "tomorrow" ? "فردا" : "امروز"}. بازهٔ برنامه: ${input.planRange === "week" ? "هفتگی" : input.planRange === "tomorrow" ? "فردا" : "امروز"}. تاریخ دستگاه: ${cleanContext(input.deviceDate, 100)}. منطقه زمانی دستگاه: ${cleanContext(input.timezone, 100)}. پروفایل ذخیره‌شدهٔ کاربر: ${cleanContext(profileContext, 1200)}.`,
+              content: `تو «همراه تحصیل‌یار» هستی؛ یک مشاور آموزشی فارسی‌زبان، دقیق، مهربان و واقع‌گرا. فقط از اطلاعات ذخیره‌شدهٔ کاربر استفاده کن و هیچ نام، درس، هدف، زمان، سابقه یا عددی را حدس نزن. اگر اطلاعات برای پاسخ کافی نیست، دقیقاً بگو چه اطلاعاتی لازم است. پاسخ‌ها را فارسی و کاربردی بده. بازهٔ برنامه: ${input.planRange === "week" ? "هفتگی" : input.planRange === "tomorrow" ? "فردا" : "امروز"}. بازهٔ برنامه: ${input.planRange === "week" ? "هفتگی" : input.planRange === "tomorrow" ? "فردا" : "امروز"}. تاریخ دستگاه: ${cleanContext(input.deviceDate, 100)}. منطقه زمانی دستگاه: ${cleanContext(input.timezone, 100)}. پروفایل ذخیره‌شدهٔ کاربر: ${cleanContext(profileContext, 1200)}. داده‌های ارزیابی واقعی: ${performanceContext}.`,
             },
             ...history,
             { role: "user", content: input.message },
@@ -162,11 +185,12 @@ export const appRouter = router({
           const planResponse = await invokeLLM({
             model: "gemini-3-flash-preview",
             messages: [
-              { role: "system", content: "تو برنامه‌ریز تحصیلی تحصیل‌یار هستی. بر اساس پروفایل ذخیره‌شده و درخواست جدید کاربر، برنامهٔ اصلاح‌شده تولید کن. همهٔ دروس رشته را در نظر بگیر، اما دروس اولویت‌دار کاربر سهم بیشتری داشته باشند. فقط JSON مطابق schema برگردان." },
+              { role: "system", content: "تو برنامه‌ریز تحصیلی تحصیل‌یار هستی. بر اساس پروفایل ذخیره‌شده، نتایج آزمون‌های واقعی و درخواست جدید کاربر، برنامهٔ اصلاح‌شده تولید کن. همهٔ دروس رشته را در نظر بگیر، اما دروس اولویت‌دار سهم بیشتری داشته باشند. برای درسی با حداقل دو ارزیابی و میانگین زیر ۶۰٪، جلسهٔ رفع اشکال مفهومی و تمرین مرحله‌ای در نظر بگیر؛ برای ۶۰ تا ۷۹٪، تحلیل خطا و تمرین هدفمند؛ و برای ۸۰٪ به بالا، مرور فاصله‌دار و تست ترکیبی. با یک ارزیابی دربارهٔ روند یا تسلط قطعی نتیجه‌گیری نکن. فقط JSON مطابق schema برگردان." },
               { role: "user", content: `پروفایل ذخیره‌شده: ${cleanContext(profileContext, 1800)}
 درخواست تغییر برنامه: ${input.message}
 بازهٔ برنامه: ${input.planRange}
-فهرست دروس رشته: ${curriculumFor(profileContext).join("، ")}` },
+فهرست دروس رشته: ${curriculumFor(profileContext).join("، ")}
+نتایج ارزیابی‌های واقعی: ${performanceContext}` },
             ],
             responseFormat: { type: "json_schema", json_schema: { name: "updated_study_plan", strict: true, schema: planSchema } },
             maxTokens: 2200,
@@ -204,18 +228,19 @@ export const appRouter = router({
         const answers = Object.entries(input.answers).map(([step, answer]) => `${step}: ${answer}`).join("\n");
         const track = Object.values(input.answers).find((answer) => /انسانی|ریاضی|تجربی/.test(answer)) ?? "تجربی";
         const curriculum = curriculumFor(track);
+        const performanceContext = buildPerformanceContext(await getStudyAssessments(ctx.user.id));
         const response = await invokeLLM({
           model: "gemini-3-flash-preview",
           messages: [
             {
               role: "system",
-              content: `تو مشاور و برنامه‌ریز تحصیلی تحصیل‌یار هستی، نه یک تأییدکنندهٔ صرف. فقط از پاسخ‌های واقعی دانش‌آموز استفاده کن و هیچ داده‌ای را حدس نزن. خروجی باید فقط JSON مطابق schema باشد. برای هر جلسه روز هفته را در فیلد day تعیین کن. اگر پاسخ‌ها کافی نیستند sessions را خالی برگردان و در summary سؤال لازم را توضیح بده. برنامه باید کل ساعات مطالعهٔ روز را پوشش دهد و بازهٔ تمرکز ترجیحی را فقط برای درس‌های مهم‌تر استفاده کند. هدف کلی را جدی بگیر: برنامهٔ دانش‌آموزی که رتبهٔ ۱۰۰۰۰ می‌خواهد باید با برنامهٔ دانش‌آموزی که هدفش قبولی پزشکی است متفاوت باشد؛ برای هدف‌های رقابتی‌تر سهم درس‌های کلیدی، تست زمان‌دار و مرور را متناسب افزایش بده. اگر هدف، زمان مطالعه یا درس‌های انتخابی با هم ناسازگارند، در summary و focusTip محترمانه مخالفت کن، محدودیت را توضیح بده و اولویت واقع‌بینانه پیشنهاد کن؛ صرفاً خواستهٔ غیرواقعی را تأیید نکن. فهرست معتبر کل دروس رشتهٔ انتخاب‌شده: ${curriculum.join("، ")}. فقط از این فهرست برای subject استفاده کن و دروس اولویت‌دار را با سهم بیشتر، نه به‌عنوان فهرست محدودکننده، به کار ببر. در بازهٔ امروز یا فردا فقط جلسه‌های همان روز را بساز؛ در بازهٔ هفتگی دقیقاً برای هر هفت روز حداقل یک جلسه بساز و روزها را با نام‌های دقیق شنبه، یکشنبه، دوشنبه، سه‌شنبه، چهارشنبه، پنجشنبه، جمعه ثبت کن. summary حداکثر ۲۵۰ کلمه باشد و خروجی را کامل و معتبر JSON نگه دار.`,
+              content: `تو مشاور و برنامه‌ریز تحصیلی تحصیل‌یار هستی، نه یک تأییدکنندهٔ صرف. فقط از پاسخ‌های واقعی دانش‌آموز استفاده کن و هیچ داده‌ای را حدس نزن. خروجی باید فقط JSON مطابق schema باشد. برای هر جلسه روز هفته را در فیلد day تعیین کن. اگر پاسخ‌ها کافی نیستند sessions را خالی برگردان و در summary سؤال لازم را توضیح بده. برنامه باید کل ساعات مطالعهٔ روز را پوشش دهد و بازهٔ تمرکز ترجیحی را فقط برای درس‌های مهم‌تر استفاده کند. هدف کلی را جدی بگیر: برنامهٔ دانش‌آموزی که رتبهٔ ۱۰۰۰۰ می‌خواهد باید با برنامهٔ دانش‌آموزی که هدفش قبولی پزشکی است متفاوت باشد؛ برای هدف‌های رقابتی‌تر سهم درس‌های کلیدی، تست زمان‌دار و مرور را متناسب افزایش بده. اگر هدف، زمان مطالعه یا درس‌های انتخابی با هم ناسازگارند، در summary و focusTip محترمانه مخالفت کن، محدودیت را توضیح بده و اولویت واقع‌بینانه پیشنهاد کن؛ صرفاً خواستهٔ غیرواقعی را تأیید نکن. نتایج ارزیابی واقعی دانش‌آموز: ${performanceContext}. اگر داده‌ای وجود ندارد، سطح درس‌ها را حدس نزن. برای درس با حداقل دو ارزیابی و میانگین زیر ۶۰٪، جلسهٔ رفع اشکال و تمرین مرحله‌ای؛ برای ۶۰ تا ۷۹٪، تحلیل خطا و تست هدفمند؛ و برای ۸۰٪ به بالا، مرور و تست ترکیبی پیشنهاد کن. روند صعودی یا نزولی را فقط با حداقل ۳ ارزیابی همان درس اعلام کن. فهرست معتبر کل دروس رشتهٔ انتخاب‌شده: ${curriculum.join("، ")}. فقط از این فهرست برای subject استفاده کن و دروس اولویت‌دار را با سهم بیشتر، نه به‌عنوان فهرست محدودکننده، به کار ببر. در بازهٔ امروز یا فردا فقط جلسه‌های همان روز را بساز؛ در بازهٔ هفتگی دقیقاً برای هر هفت روز حداقل یک جلسه بساز و روزها را با نام‌های دقیق شنبه، یکشنبه، دوشنبه، سه‌شنبه، چهارشنبه، پنجشنبه، جمعه ثبت کن. summary حداکثر ۲۵۰ کلمه باشد و خروجی را کامل و معتبر JSON نگه دار.`,
             },
             {
               role: "user",
               content: `پاسخ‌های واقعی دانش‌آموز:\n${answers}\nکل دروس مجاز رشته: ${curriculum.join("، ")}\nبازهٔ برنامه: ${input.planRange === "week" ? "هفتگی" : input.planRange === "tomorrow" ? "فردا" : "امروز"}
 بازهٔ برنامه: ${input.planRange === "week" ? "هفتگی" : input.planRange === "tomorrow" ? "فردا" : "امروز"}
-تاریخ محلی دستگاه: ${cleanContext(input.deviceDate, 100)}\nمنطقه زمانی: ${cleanContext(input.timezone, 100)}\nپروفایل حساب: ${cleanContext(input.profile, 500)}\nامتحان نزدیک و هدف آزمون را در اولویت‌بندی لحاظ کن. هدف قبولی را با میزان رقابت آن مقایسه کن؛ بین هدف رتبهٔ ۱۰۰۰۰ و قبولی پزشکی تفاوت واقعی در توزیع زمان و سختی برنامه ایجاد کن. اگر خواستهٔ دانش‌آموز با ساعات مطالعه یا مهلت امتحان شدنی نیست، در summary شفاف و محترمانه مخالفت کن و راه جایگزین بده.`,
+تاریخ محلی دستگاه: ${cleanContext(input.deviceDate, 100)}\nمنطقه زمانی: ${cleanContext(input.timezone, 100)}\nپروفایل حساب: ${cleanContext(input.profile, 500)}\nامتحان نزدیک و هدف آزمون را در اولویت‌بندی لحاظ کن. نتایج ارزیابی‌های واقعی را نیز لحاظ کن؛ هیچ نمره یا سابقه‌ای را نساز. هدف قبولی را با میزان رقابت آن مقایسه کن؛ بین هدف رتبهٔ ۱۰۰۰۰ و قبولی پزشکی تفاوت واقعی در توزیع زمان و سختی برنامه ایجاد کن. اگر خواستهٔ دانش‌آموز با ساعات مطالعه یا مهلت امتحان شدنی نیست، در summary شفاف و محترمانه مخالفت کن و راه جایگزین بده.`,
             },
           ],
           responseFormat: {
