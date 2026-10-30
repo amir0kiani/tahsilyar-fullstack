@@ -1,4 +1,4 @@
-export type CurriculumBook = { track: string; grade: string; subject: string; chapters: string[] };
+export type CurriculumBook = { track: string; grade: string; subject: string; chapters: string[]; questionCount?: number; verifiedQuestionCount?: number; targetQuestionCount?: number; bookCode?: string };
 
 const wholeBook = ["کل کتاب"];
 const add = (track: string, grade: string, subject: string, chapters: string[] = wholeBook): CurriculumBook =>
