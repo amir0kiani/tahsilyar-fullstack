@@ -138,6 +138,12 @@ export const examQuestions = mysqlTable("exam_questions", {
   correctIndex: int("correctIndex").notNull(),
   explanation: text("explanation").notNull(),
   sourceStatus: varchar("sourceStatus", { length: 32 }).default("sample-authored").notNull(),
+  sourceTitle: varchar("sourceTitle", { length: 255 }),
+  sourceUrl: text("sourceUrl"),
+  sourceYear: varchar("sourceYear", { length: 16 }),
+  sourceQuestionNumber: varchar("sourceQuestionNumber", { length: 64 }),
+  verifiedAt: timestamp("verifiedAt"),
+  reviewerNote: text("reviewerNote"),
   isActive: int("isActive").default(1).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => ({
