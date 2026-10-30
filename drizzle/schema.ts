@@ -110,3 +110,38 @@ export const examAttempts = mysqlTable("exam_attempts", {
 }));
 
 export type ExamAttempt = typeof examAttempts.$inferSelect;
+
+
+export const curriculumChapters = mysqlTable("curriculum_chapters", {
+  id: int("id").autoincrement().primaryKey(),
+  track: varchar("track", { length: 64 }).notNull(),
+  grade: varchar("grade", { length: 32 }).notNull(),
+  subject: varchar("subject", { length: 128 }).notNull(),
+  chapter: varchar("chapter", { length: 128 }).notNull(),
+  isActive: int("isActive").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  subjectChapterIdx: index("curriculum_subject_chapter_idx").on(table.subject, table.chapter),
+  trackGradeIdx: index("curriculum_track_grade_idx").on(table.track, table.grade),
+}));
+
+export const examQuestions = mysqlTable("exam_questions", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  grade: varchar("grade", { length: 32 }).notNull(),
+  track: varchar("track", { length: 64 }).notNull(),
+  subject: varchar("subject", { length: 128 }).notNull(),
+  chapter: varchar("chapter", { length: 128 }).notNull(),
+  topic: varchar("topic", { length: 128 }).notNull(),
+  difficulty: varchar("difficulty", { length: 32 }).notNull(),
+  prompt: text("prompt").notNull(),
+  options: json("options").$type<string[]>().notNull(),
+  correctIndex: int("correctIndex").notNull(),
+  explanation: text("explanation").notNull(),
+  sourceStatus: varchar("sourceStatus", { length: 32 }).default("sample-authored").notNull(),
+  isActive: int("isActive").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  subjectChapterIdx: index("exam_questions_subject_chapter_idx").on(table.subject, table.chapter),
+  gradeTrackIdx: index("exam_questions_grade_track_idx").on(table.grade, table.track),
+  difficultyIdx: index("exam_questions_difficulty_idx").on(table.difficulty),
+}));
