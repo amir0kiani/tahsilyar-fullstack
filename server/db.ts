@@ -245,30 +245,65 @@ export async function getAssessmentQuestions(filters: AssessmentFilters = {}) {
   }
 }
 
+function questionMatchesBookTrack(questionTrack: string, bookTrack: string) {
+  if (bookTrack === "عمومی") return questionTrack === "عمومی";
+  if (bookTrack === "تجربی") return questionTrack === "تجربی" || questionTrack === "ریاضی و تجربی";
+  if (bookTrack === "ریاضی") return questionTrack === "ریاضی" || questionTrack === "ریاضی و تجربی";
+  return questionTrack === bookTrack;
+}
+
+function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: string; subject: string; chapter: string; sourceStatus?: string }>) {
+  const catalog = curriculumCatalog.map((book) => {
+    const bookQuestions = questionRows.filter((question) =>
+      question.grade === book.grade &&
+      question.subject === book.subject &&
+      questionMatchesBookTrack(question.track, book.track)
+    );
+    const chapters = Array.from(new Set([...book.chapters, ...bookQuestions.map((question) => question.chapter)]));
+    return {
+      ...book,
+      chapters,
+      questionCount: bookQuestions.length,
+      verifiedQuestionCount: bookQuestions.filter((question) => question.sourceStatus !== "sample-authored").length,
+      targetQuestionCount: 5,
+    };
+  });
+
+  // Preserve legacy sample subjects that do not yet have a one-to-one official-book mapping.
+  const knownKeys = new Set(catalog.map((book) => [book.track, book.grade, book.subject].join("::")));
+  const extras = new Map<string, { track: string; grade: string; subject: string; chapters: string[]; questionCount: number; verifiedQuestionCount: number; targetQuestionCount: number }>();
+  for (const question of questionRows) {
+    const key = [question.track, question.grade, question.subject].join("::");
+    if (knownKeys.has(key) || question.grade === "دهم تا دوازدهم") continue;
+    const current = extras.get(key) ?? { track: question.track, grade: question.grade, subject: question.subject, chapters: [], questionCount: 0, verifiedQuestionCount: 0, targetQuestionCount: 5 };
+    if (!current.chapters.includes(question.chapter)) current.chapters.push(question.chapter);
+    current.questionCount += 1;
+    if (question.sourceStatus !== "sample-authored") current.verifiedQuestionCount += 1;
+    extras.set(key, current);
+  }
+  return [...catalog, ...Array.from(extras.values())].sort((a, b) =>
+    a.grade.localeCompare(b.grade, "fa") || a.track.localeCompare(b.track, "fa") || a.subject.localeCompare(b.subject, "fa")
+  );
+}
+
 export async function getAssessmentCatalog() {
   const db = await getDb();
-  if (!db) return curriculumCatalog;
+  if (!db) {
+    return buildGradeSpecificCatalog(allStarterQuestions.map((question) => ({
+      track: question.track, grade: question.grade, subject: question.subject, chapter: question.chapter, sourceStatus: question.sourceStatus,
+    })));
+  }
   try {
     await ensureAssessmentBankSeeded(db);
-    const [chapterRows, questionRows] = await Promise.all([
-      db.select().from(curriculumChapterRows).where(eq(curriculumChapterRows.isActive, 1)),
-      db.select({ track: examQuestionRows.track, grade: examQuestionRows.grade, subject: examQuestionRows.subject, chapter: examQuestionRows.chapter })
-        .from(examQuestionRows).where(eq(examQuestionRows.isActive, 1)),
-    ]);
-    const grouped = new Map<string, { track: string; grade: string; subject: string; chapters: string[] }>();
-    for (const row of [...chapterRows, ...questionRows]) {
-      // Ignore legacy aggregate catalog rows; grade-specific entries are seeded above.
-      if (row.grade === "دهم تا دوازدهم") continue;
-      const key = [row.track, row.grade, row.subject].join("::");
-      const current = grouped.get(key) ?? { track: row.track, grade: row.grade, subject: row.subject, chapters: [] };
-      if (!current.chapters.includes(row.chapter)) current.chapters.push(row.chapter);
-      grouped.set(key, current);
-    }
-    return Array.from(grouped.values()).sort((a, b) =>
-      a.grade.localeCompare(b.grade, "fa") || a.track.localeCompare(b.track, "fa") || a.subject.localeCompare(b.subject, "fa")
-    );
+    const questionRows = await db.select({
+      track: examQuestionRows.track, grade: examQuestionRows.grade, subject: examQuestionRows.subject,
+      chapter: examQuestionRows.chapter, sourceStatus: examQuestionRows.sourceStatus,
+    }).from(examQuestionRows).where(eq(examQuestionRows.isActive, 1));
+    return buildGradeSpecificCatalog(questionRows);
   } catch (error) {
     console.warn("[Assessment] Curriculum unavailable; using bundled grade-specific catalog:", error);
-    return curriculumCatalog;
+    return buildGradeSpecificCatalog(allStarterQuestions.map((question) => ({
+      track: question.track, grade: question.grade, subject: question.subject, chapter: question.chapter, sourceStatus: question.sourceStatus,
+    })));
   }
 }
