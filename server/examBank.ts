@@ -1,4 +1,4 @@
-export type ExamQuestion = { id:string; grade:string; track:string; subject:string; chapter:string; topic:string; difficulty:string; prompt:string; options:string[]; correctIndex:number; explanation:string; sourceStatus?: "sample-authored" | "reviewed" | "official-exam" | "curriculum-verified" | "pending-review"; sourceTitle?: string; sourceUrl?: string; sourceYear?: string; sourceQuestionNumber?: string; verifiedAt?: string; reviewerNote?: string };
+export type ExamQuestion = { id:string; grade:string; track:string; subject:string; chapter:string; topic:string; difficulty:string; prompt:string; options:string[]; correctIndex:number; explanation:string; sourceStatus?: "sample-authored" | "reviewed" | "official-exam" | "curriculum-verified" | "pending-review"; sourceTitle?: string; sourceUrl?: string; sourceYear?: string; sourceQuestionNumber?: string; verifiedAt?: Date; reviewerNote?: string };
 export const curriculumCatalog = [
 {track:"تجربی",grade:"دهم تا دوازدهم",subject:"زیست‌شناسی",chapters:["سلول","ژنتیک","فیزیولوژی"]},
 {track:"تجربی",grade:"دهم تا دوازدهم",subject:"شیمی",chapters:["ساختار اتم","استوکیومتری","محلول‌ها"]},
