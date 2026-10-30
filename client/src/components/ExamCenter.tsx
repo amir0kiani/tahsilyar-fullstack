@@ -32,6 +32,21 @@ export default function ExamCenter() {
  const subjects=useMemo(()=>Array.from(new Set(visibleCatalog.map(item=>item.subject))).sort((a,b)=>a.localeCompare(b,"fa")),[visibleCatalog]);
  const chaptersForSubject=(name:string)=>Array.from(new Set(["کل کتاب",...visibleCatalog.filter(item=>item.subject===name).flatMap(item=>item.chapters)])).sort((a,b)=>a==="کل کتاب"?-1:b==="کل کتاب"?1:a.localeCompare(b,"fa"));
  const chapters=useMemo(()=>chaptersForSubject(subject),[visibleCatalog,subject]);
+ const bookCoverage=useMemo(()=>{
+  const booksByGrade=new Map<string,{questionCount:number;verifiedQuestionCount:number}>();
+  for(const book of visibleCatalog.filter(item=>item.subject===subject)){
+   const current=booksByGrade.get(book.grade)??{questionCount:0,verifiedQuestionCount:0};
+   current.questionCount=Math.max(current.questionCount,book.questionCount??0);
+   current.verifiedQuestionCount=Math.max(current.verifiedQuestionCount,book.verifiedQuestionCount??0);
+   booksByGrade.set(book.grade,current);
+  }
+  const values=Array.from(booksByGrade.values());
+  return values.length?{
+   questionCount:values.reduce((sum,item)=>sum+item.questionCount,0),
+   verifiedQuestionCount:values.reduce((sum,item)=>sum+item.verifiedQuestionCount,0),
+   targetQuestionCount:values.length*5,
+  }:null;
+ },[visibleCatalog,subject]);
  const start=()=>{setAnswers({});setResult(null);};
  useEffect(()=>{
   if(subjects.length&&!subjects.includes(subject)){
@@ -62,6 +77,7 @@ export default function ExamCenter() {
    <label>رشته<select value={track} onChange={e=>{setTrack(e.target.value);start();}}>{tracks.map(t=><option key={t}>{t}</option>)}</select></label>
    <label>دشواری<select value={difficulty} onChange={e=>{setDifficulty(e.target.value);start();}}>{difficulties.map(d=><option key={d}>{d}</option>)}</select></label>
   </div>
+  {bookCoverage&&<p className="exam-book-coverage">پوشش این درس در پایه‌های انتخاب‌شده: {bookCoverage.questionCount} سؤال ثبت‌شده، {bookCoverage.verifiedQuestionCount} سؤال مستند از هدف اولیهٔ {bookCoverage.targetQuestionCount} سؤال</p>}
   {questions.isLoading?<p className="learning-empty">در حال بارگذاری سؤال‌ها…</p>:!questions.data?.length?<p className="learning-empty">برای این ترکیب هنوز سؤال مستند ثبت نشده است. می‌توانی فیلترها یا مبحث را تغییر بدهی؛ وضعیت منبع هر سؤال جداگانه مشخص شده است.</p>:!result?<div className="exam-question-list">
    <p className="eyebrow">{questions.data.length} سؤال در این آزمون</p>
    {questions.data.map((q:Question,index:number)=><article className="exam-question" key={q.id}><span className="eyebrow">سؤال {index+1} · {q.grade} · {q.difficulty} · {sourceLabel(q.sourceStatus)}</span><h3>{q.prompt}</h3>{q.sourceTitle&&<p className="exam-source-note">{q.sourceTitle}{q.sourceYear?` · ${q.sourceYear}`:""}{q.sourceQuestionNumber?` · سؤال ${q.sourceQuestionNumber}`:""}{q.sourceUrl&&<> · <a href={q.sourceUrl} target="_blank" rel="noreferrer">مشاهدهٔ منبع</a></>}</p>}<div className="exam-options">{q.options.map((option,i)=><button type="button" key={option} className={answers[q.id]===i?"selected":""} aria-pressed={answers[q.id]===i} onClick={()=>setAnswers(old=>({...old,[q.id]:i}))}><span>{["الف","ب","ج","د"][i]}</span>{option}</button>)}</div></article>)}
