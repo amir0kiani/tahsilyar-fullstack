@@ -6,7 +6,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
-import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, getDb, setStudySessionCompleted, upsertStudentProfile, clearConversation } from "./db";
+import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, getDb, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery } from "./db";
 
 const chatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
