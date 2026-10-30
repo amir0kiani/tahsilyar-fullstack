@@ -98,6 +98,19 @@ export const appRouter = router({
       examQuestions.filter(q => (!input.subject || q.subject === input.subject) && (!input.chapter || q.chapter === input.chapter))
         .slice(0, input.limit).map(({ correctIndex, explanation, ...question }) => question)
     ),
+    submit: protectedProcedure.input(z.object({ subject:z.string(), chapter:z.string(), answers:z.array(z.object({ questionId:z.string(), selectedIndex:z.number().int().min(0).max(3) })).min(1).max(20) })).mutation(async ({ctx,input})=>{
+      const ids=new Set(input.answers.map(a=>a.questionId));
+      const qs=examQuestions.filter(q=>ids.has(q.id)&&q.subject===input.subject&&q.chapter===input.chapter);
+      if(ids.size!==input.answers.length||qs.length!==input.answers.length) throw new TRPCError({code:"BAD_REQUEST",message:"سؤال نامعتبر است."});
+      const selected=new Map(input.answers.map(a=>[a.questionId,a.selectedIndex]));
+      const responses=qs.map(q=>({questionId:q.id,selectedIndex:selected.get(q.id)!,correctIndex:q.correctIndex,isCorrect:selected.get(q.id)===q.correctIndex,subject:q.subject,chapter:q.chapter,topic:q.topic,difficulty:q.difficulty}));
+      const correctCount=responses.filter(r=>r.isCorrect).length, scorePercent=Math.round(correctCount/qs.length*100);
+      const topicAnalysis=qs.map(q=>({topic:q.topic,total:1,correct:selected.get(q.id)===q.correctIndex?1:0,accuracy:selected.get(q.id)===q.correctIndex?100:0}));
+      const saved=await saveExamAttempt({userId:ctx.user.id,grade:"عمومی",track:"عمومی",subject:input.subject,chapter:input.chapter,questionCount:qs.length,correctCount,scorePercent,responses,topicAnalysis});
+      return {attemptId:saved?.id,questionCount:qs.length,correctCount,scorePercent,responses:responses.map(r=>({...r,prompt:qs.find(q=>q.id===r.questionId)!.prompt,options:qs.find(q=>q.id===r.questionId)!.options,explanation:qs.find(q=>q.id===r.questionId)!.explanation})),topicAnalysis};
+    }),
+    history: protectedProcedure.query(({ctx})=>getExamHistory(ctx.user.id,50)),
+    academicDNA: protectedProcedure.query(async ({ctx})=>({mastery:await getAcademicMastery(ctx.user.id),history:await getExamHistory(ctx.user.id,50)})),
   }),
   system: systemRouter,
   auth: router({
