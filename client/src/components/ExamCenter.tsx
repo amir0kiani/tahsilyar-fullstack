@@ -16,7 +16,8 @@ export default function ExamCenter() {
  const [answers,setAnswers]=useState<Record<string,number>>({});
  const [result,setResult]=useState<Result|null>(null);
  const catalog=trpc.exams.catalog.useQuery();
- const questions=trpc.exams.questions.useQuery({subject,chapter,grade:grade==="همه پایه‌ها"?undefined:grade,track:track==="همه رشته‌ها"?undefined:track,difficulty:difficulty==="همه سطوح"?undefined:difficulty,limit:20});
+ const selectedDifficulty = difficulty === "همه سطوح" ? undefined : difficulty as "آسان" | "متوسط" | "سخت";
+ const questions=trpc.exams.questions.useQuery({subject,chapter,grade:grade==="همه پایه‌ها"?undefined:grade,track:track==="همه رشته‌ها"?undefined:track,difficulty:selectedDifficulty,limit:20});
  const dna=trpc.exams.academicDNA.useQuery();
  const submit=trpc.exams.submit.useMutation({onSuccess:(value)=>{setResult(value as Result);void dna.refetch();}});
  const subjects=useMemo(()=>catalog.data?.map(item=>item.subject) ?? [],[catalog.data]);
