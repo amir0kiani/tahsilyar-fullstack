@@ -76,4 +76,20 @@ describe("curriculum and assessment question bank", () => {
     expect(curriculumCatalog.every((book) => ["دهم", "یازدهم", "دوازدهم"].includes(book.grade))).toBe(true);
     expect(curriculumCatalog.every((book) => ["عمومی", "تجربی", "ریاضی", "انسانی"].includes(book.track))).toBe(true);
   });
+  it("reaches the five-question target for each grade-specific biology textbook", () => {
+    for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.track === "تجربی" && question.grade === grade && question.subject === "زیست‌شناسی"
+      );
+      expect(questions).toHaveLength(5);
+      expect(questions.every((question) => question.sourceStatus === "official-exam-adapted")).toBe(true);
+    }
+  });
+
+  it("links the new biology batch to the official Sanjesh exam publication", () => {
+    const biologyBatch = verifiedQuestions.filter((question) => question.id.startsWith("verified-bio"));
+    expect(biologyBatch.length).toBeGreaterThanOrEqual(15);
+    expect(biologyBatch.filter((question) => question.sourceUrl?.includes("sanjesh.org")).length).toBeGreaterThanOrEqual(10);
+  });
+
 });

@@ -1,11 +1,12 @@
 import type { ExamQuestion } from "./examBank";
+import { verifiedBiologyBatch2 } from "./verifiedQuestionBankBiologyBatch2";
 
 // Original practice items reconstructed around the skills tested in official 1405 exams.
 // The stems/options may be changed; these are NOT verbatim official exam questions.
 // Each record keeps its exam reference and the official-key option used for cross-checking.
 const verifiedAt = new Date("2026-10-30T00:00:00.000Z");
 
-export const verifiedQuestions: ExamQuestion[] = [
+const initialVerifiedQuestions: ExamQuestion[] = [
   {
     id: "verified-chem1-gas-1405-076",
     grade: "دهم", track: "تجربی", subject: "شیمی", chapter: "ردّ پای گازها در زندگی",
@@ -510,3 +511,5 @@ export const verifiedQuestions: ExamQuestion[] = [
     reviewerNote: "بازنویسی مستقل از سؤال رفتار نمایشی فیل و نقش پاداش؛ پرسش جدید بر مفهوم یادگیری تمرکز دارد."
   },
 ];
+
+export const verifiedQuestions: ExamQuestion[] = [...initialVerifiedQuestions, ...verifiedBiologyBatch2];
