@@ -4,7 +4,7 @@ import { trpc } from "@/lib/trpc";
 type Question = { id:string; grade:string; track:string; subject:string; chapter:string; topic:string; difficulty:string; prompt:string; options:string[] };
 type Result = { scorePercent:number; correctCount:number; questionCount:number; topicAnalysis:Array<{topic:string;total:number;correct:number;accuracy:number}>; responses:Array<{questionId:string;selectedIndex:number;correctIndex:number;isCorrect:boolean;prompt:string;options:string[];explanation:string;topic:string}> };
 
-const subjects = ["زیست‌شناسی","ریاضی","فیزیک","جامعه‌شناسی","زبان انگلیسی"];
+const subjects = ["زیست‌شناسی","شیمی","عربی","ریاضی","فیزیک","جامعه‌شناسی","زبان انگلیسی"];
 export default function ExamCenter() {
  const [subject,setSubject]=useState(subjects[0]);
  const [chapter,setChapter]=useState("سلول");
