@@ -23,7 +23,7 @@ describe("curriculum and assessment question bank", () => {
   });
 
   it("records traceable provenance for every question adapted from a published official exam", () => {
-    expect(verifiedQuestions.length).toBeGreaterThanOrEqual(18);
+    expect(verifiedQuestions.length).toBeGreaterThanOrEqual(29);
     for (const question of verifiedQuestions) {
       expect(question.sourceStatus).toBe("official-exam-adapted");
       expect(question.sourceTitle).toBeTruthy();
@@ -46,6 +46,30 @@ describe("curriculum and assessment question bank", () => {
       expect(curriculumCatalog.some((book) => book.grade === grade && book.track === "انسانی")).toBe(true);
     }
     expect(curriculumCatalog.every((book) => book.chapters.length > 0)).toBe(true);
+  });
+
+
+  it("has the first humanities book batch mapped to its official grade-12 book chapters", () => {
+    const humanitiesMath3 = verifiedQuestions.filter((question) =>
+      question.track === "انسانی" && question.grade === "دوازدهم" && question.subject === "ریاضی و آمار"
+    );
+    expect(humanitiesMath3).toHaveLength(5);
+    expect(new Set(humanitiesMath3.map((question) => question.chapter))).toEqual(
+      new Set(["آمار و احتمال", "الگوهای خطی", "الگوهای غیرخطی"])
+    );
+    expect(curriculumCatalog.find((book) =>
+      book.track === "انسانی" && book.grade === "دوازدهم" && book.subject === "ریاضی و آمار"
+    )?.bookCode).toBe("112212");
+  });
+
+  it("keeps biology source references mapped to each biology textbook grade", () => {
+    expect(verifiedQuestions.some((question) => question.subject === "زیست‌شناسی" && question.grade === "دهم")).toBe(true);
+    expect(verifiedQuestions.some((question) => question.subject === "زیست‌شناسی" && question.grade === "یازدهم")).toBe(true);
+    expect(verifiedQuestions.some((question) => question.subject === "زیست‌شناسی" && question.grade === "دوازدهم")).toBe(true);
+  });
+
+  it("uses the five-question target for every grade-specific book", () => {
+    expect(curriculumCatalog.every((book) => book.targetQuestionCount === 5)).toBe(true);
   });
 
   it("keeps every curriculum catalogue entry grade- and track-specific", () => {
