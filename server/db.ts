@@ -2,6 +2,7 @@ import { and, desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   academicGoals,
+  examAttempts,
   conversationMessages,
   conversations,
   InsertUser,
@@ -125,4 +126,43 @@ export async function addConversationMessage(input: { conversationId: number; us
   if (!db) throw new Error("Database is not configured");
   await db.insert(conversationMessages).values(input);
   await db.update(conversations).set({ updatedAt: new Date() }).where(and(eq(conversations.id, input.conversationId), eq(conversations.userId, input.userId)));
+}
+
+
+export async function saveExamAttempt(input: {
+  userId: number; grade: string; track: string; subject: string; chapter: string;
+  questionCount: number; correctCount: number; scorePercent: number;
+  responses: Array<{ questionId: string; selectedIndex: number; correctIndex: number; isCorrect: boolean; subject: string; chapter: string; topic: string; difficulty: string }>;
+  topicAnalysis: Array<{ topic: string; total: number; correct: number; accuracy: number }>;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  const result = await db.insert(examAttempts).values(input);
+  const rows = await db.select().from(examAttempts).where(and(eq(examAttempts.id, Number(result[0].insertId)), eq(examAttempts.userId, input.userId))).limit(1);
+  return rows[0] ?? null;
+}
+
+export async function getExamHistory(userId: number, limit = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(examAttempts).where(eq(examAttempts.userId, userId)).orderBy(desc(examAttempts.completedAt)).limit(limit);
+}
+
+export async function getAcademicMastery(userId: number) {
+  const attempts = await getExamHistory(userId, 100);
+  const byTopic = new Map<string, { subject: string; chapter: string; topic: string; attempts: number; questions: number; correct: number; latestAt: Date }>();
+  for (const attempt of attempts) {
+    const analysis = (attempt.topicAnalysis ?? []) as Array<{ topic: string; total: number; correct: number; accuracy: number }>;
+    for (const item of analysis) {
+      const key = [attempt.subject, attempt.chapter, item.topic].join("::");
+      const existing = byTopic.get(key);
+      if (existing) { existing.attempts += 1; existing.questions += item.total; existing.correct += item.correct; }
+      else byTopic.set(key, { subject: attempt.subject, chapter: attempt.chapter, topic: item.topic, attempts: 1, questions: item.total, correct: item.correct, latestAt: attempt.completedAt });
+    }
+  }
+  return Array.from(byTopic.values()).map((item) => ({
+    ...item,
+    accuracy: item.questions ? Math.round((item.correct / item.questions) * 100) : 0,
+    status: item.questions < 3 ? "دادهٔ ناکافی" : item.correct / item.questions >= 0.8 ? "نسبتاً مسلط" : item.correct / item.questions >= 0.5 ? "نیازمند مرور" : "اولویت تمرین",
+  })).sort((a, b) => a.accuracy - b.accuracy);
 }
