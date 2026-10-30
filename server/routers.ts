@@ -95,12 +95,12 @@ export const appRouter = router({
   exams: router({
     catalog: protectedProcedure.query(() => curriculumCatalog),
     questions: protectedProcedure.input(z.object({ subject: z.string().optional(), chapter: z.string().optional(), grade: z.string().optional(), track: z.string().optional(), difficulty: z.enum(["آسان","متوسط","سخت"]).optional(), limit: z.number().int().min(1).max(20).default(10) })).query(({ input }) =>
-      examQuestions.filter(q => (!input.subject || q.subject === input.subject) && (!input.chapter || q.chapter === input.chapter) && (!input.grade || q.grade === input.grade) && (!input.track || q.track === input.track) && (!input.difficulty || q.difficulty === input.difficulty))
+      examQuestions.filter(q => (!input.subject || q.subject === input.subject) && (!input.chapter || q.chapter === input.chapter) && (!input.grade || q.grade === input.grade) && (!input.track || q.track === input.track || (q.subject === "فیزیک" && ["ریاضی","تجربی","ریاضی و تجربی"].includes(input.track)) || (q.subject === "ریاضی" && input.track === "ریاضی و تجربی")) && (!input.difficulty || q.difficulty === input.difficulty))
         .slice(0, input.limit).map(({ correctIndex, explanation, ...question }) => question)
     ),
     submit: protectedProcedure.input(z.object({ subject:z.string(), chapter:z.string(), grade:z.string().optional(), track:z.string().optional(), answers:z.array(z.object({ questionId:z.string(), selectedIndex:z.number().int().min(0).max(3) })).min(1).max(20) })).mutation(async ({ctx,input})=>{
       const ids=new Set(input.answers.map(a=>a.questionId));
-      const qs=examQuestions.filter(q=>ids.has(q.id)&&q.subject===input.subject&&q.chapter===input.chapter&&(!input.grade||q.grade===input.grade)&&(!input.track||q.track===input.track));
+      const qs=examQuestions.filter(q=>ids.has(q.id)&&q.subject===input.subject&&q.chapter===input.chapter&&(!input.grade||q.grade===input.grade)&&(!input.track||q.track===input.track||(q.subject==="فیزیک"&&["ریاضی","تجربی","ریاضی و تجربی"].includes(input.track))||(q.subject==="ریاضی"&&input.track==="ریاضی و تجربی")));
       if(ids.size!==input.answers.length||qs.length!==input.answers.length) throw new TRPCError({code:"BAD_REQUEST",message:"سؤال نامعتبر است."});
       const selected=new Map(input.answers.map(a=>[a.questionId,a.selectedIndex]));
       const responses=qs.map(q=>({questionId:q.id,selectedIndex:selected.get(q.id)!,correctIndex:q.correctIndex,isCorrect:selected.get(q.id)===q.correctIndex,subject:q.subject,chapter:q.chapter,topic:q.topic,difficulty:q.difficulty}));
