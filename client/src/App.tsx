@@ -99,9 +99,9 @@ const buildCalendarIcs = (items: CalendarItem[], title: string, baseDate = new D
       `SUMMARY:${escapeIcs(`${item.subject} · مطالعه`)}`,
       `DESCRIPTION:${escapeIcs([item.topic, item.duration, item.reason].filter(Boolean).join(" · "))}`,
       "END:VEVENT",
-    ].join("\\r\\n");
+    ].join("\r\n");
   });
-  return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//TahsilYar//Study Plan//FA", "CALSCALE:GREGORIAN", `X-WR-CALNAME:${escapeIcs(title)}`, ...events, "END:VCALENDAR", ""].join("\\r\\n");
+  return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//TahsilYar//Study Plan//FA", "CALSCALE:GREGORIAN", `X-WR-CALNAME:${escapeIcs(title)}`, ...events, "END:VCALENDAR", ""].join("\r\n");
 };
 const addSessionsToDeviceCalendar = async (items: CalendarItem[], title: string) => {
   if (!items.length) throw new Error("No sessions to export");
