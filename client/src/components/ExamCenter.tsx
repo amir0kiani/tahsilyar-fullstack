@@ -19,7 +19,7 @@ export default function ExamCenter() {
  return <section className="exam-center" aria-label="آزمون و تحلیل DNA تحصیلی">
   <div className="academic-hub-heading"><div><p className="eyebrow">سنجش و بازخورد</p><h2>آزمون هوشمند</h2><p>پاسخ‌ها پس از ثبت بررسی می‌شوند؛ کلید و توضیح قبل از پایان آزمون نمایش داده نمی‌شود.</p></div></div>
   <div className="exam-controls">
-   <label>درس<select value={subject} onChange={e=>{setSubject(e.target.value);setChapter("");start();}}>{subjects.map(s=><option key={s}>{s}</option>)}</select></label>
+   <label>درس<select value={subject} onChange={e=>{const next=e.target.value;setSubject(next);setChapter(String(catalog.data?.find(item=>item.subject===next)?.chapters[0] ?? ""));start();}}>{subjects.map(s=><option key={s}>{s}</option>)}</select></label>
    <label>مبحث<select value={chapter} onChange={e=>{setChapter(e.target.value);start();}}>{chapters.map((ch:string)=><option key={ch} value={ch}>{ch}</option>)}{!chapters.length&&<option value="سلول">سلول</option>}</select></label>
   </div>
   {questions.isLoading?<p className="learning-empty">در حال بارگذاری سؤال‌ها…</p>:!questions.data?.length?<p className="learning-empty">برای این درس و مبحث هنوز سؤال نمونه ثبت نشده است. بانک فعلی نسخهٔ آغازین است و هنوز جامع نیست.</p>:!result?<div className="exam-question-list">
