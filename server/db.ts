@@ -6,6 +6,7 @@ import {
   conversations,
   InsertUser,
   studentProfiles,
+  studyAssessments,
   studyPlans,
   studySessions,
   users,
@@ -89,6 +90,33 @@ export async function setStudySessionCompleted(input: { userId: number; sessionI
   if (!db) throw new Error("Database is not configured");
   await db.update(studySessions).set({ completed: input.completed ? 1 : 0 }).where(and(eq(studySessions.id, input.sessionId), eq(studySessions.userId, input.userId)));
   const rows = await db.select().from(studySessions).where(and(eq(studySessions.id, input.sessionId), eq(studySessions.userId, input.userId))).limit(1);
+  return rows[0] ?? null;
+}
+
+export async function getStudyAssessments(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(studyAssessments)
+    .where(eq(studyAssessments.userId, userId))
+    .orderBy(desc(studyAssessments.assessedAt))
+    .limit(100);
+}
+
+export async function createStudyAssessment(input: {
+  userId: number;
+  subject: string;
+  topic: string;
+  assessmentType: "practice" | "mock" | "school_exam";
+  correctAnswers: number;
+  totalQuestions: number;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  const result = await db.insert(studyAssessments).values(input);
+  const id = Number(result[0].insertId);
+  const rows = await db.select().from(studyAssessments)
+    .where(and(eq(studyAssessments.id, id), eq(studyAssessments.userId, input.userId)))
+    .limit(1);
   return rows[0] ?? null;
 }
 

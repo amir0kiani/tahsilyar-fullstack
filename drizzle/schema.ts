@@ -60,6 +60,21 @@ export const studySessions = mysqlTable("study_sessions", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, (table) => ({ userIdIdx: index("study_sessions_user_id_idx").on(table.userId), planIdIdx: index("study_sessions_plan_id_idx").on(table.planId) }));
 
+export const studyAssessments = mysqlTable("study_assessments", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  topic: text("topic").notNull(),
+  assessmentType: mysqlEnum("assessmentType", ["practice", "mock", "school_exam"]).default("practice").notNull(),
+  correctAnswers: int("correctAnswers").notNull(),
+  totalQuestions: int("totalQuestions").notNull(),
+  assessedAt: timestamp("assessedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userAssessedIdx: index("study_assessments_user_assessed_idx").on(table.userId, table.assessedAt),
+  userSubjectIdx: index("study_assessments_user_subject_idx").on(table.userId, table.subject),
+}));
+
 export const conversations = mysqlTable("conversations", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
@@ -83,6 +98,7 @@ export type StudentProfile = typeof studentProfiles.$inferSelect;
 export type AcademicGoal = typeof academicGoals.$inferSelect;
 export type StudyPlan = typeof studyPlans.$inferSelect;
 export type StudySession = typeof studySessions.$inferSelect;
+export type StudyAssessment = typeof studyAssessments.$inferSelect;
 export type Conversation = typeof conversations.$inferSelect;
 export type ConversationMessage = typeof conversationMessages.$inferSelect;
 
