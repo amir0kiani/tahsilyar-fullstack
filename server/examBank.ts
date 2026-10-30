@@ -2,7 +2,7 @@ export type ExamQuestion = { id:string; grade:string; track:string; subject:stri
 export const curriculumCatalog = [
 {track:"تجربی",grade:"دهم تا دوازدهم",subject:"زیست‌شناسی",chapters:["سلول","ژنتیک","فیزیولوژی"]},
 {track:"تجربی",grade:"دهم تا دوازدهم",subject:"شیمی",chapters:["ساختار اتم","استوکیومتری","محلول‌ها"]},
-{track:"ریاضی",grade:"دهم تا دوازدهم",subject:"ریاضی",chapters:["تابع","معادله","احتمال"]},
+{track:"ریاضی",grade:"دهم تا دوازدهم",subject:"ریاضی",chapters:["معادله","تابع","احتمال"]},
 {track:"ریاضی",grade:"دهم تا دوازدهم",subject:"فیزیک",chapters:["حرکت‌شناسی","دینامیک","انرژی"]},
 {track:"انسانی",grade:"دهم تا دوازدهم",subject:"جامعه‌شناسی",chapters:["کنش اجتماعی","فرهنگ"]},
 {track:"انسانی",grade:"دهم تا دوازدهم",subject:"فلسفه و منطق",chapters:["مفهوم و مصداق","استدلال"]},
