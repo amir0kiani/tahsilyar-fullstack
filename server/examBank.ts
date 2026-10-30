@@ -11,4 +11,9 @@ export const curriculumCatalog = [
 {track:"عمومی",grade:"دهم تا دوازدهم",subject:"زبان انگلیسی",chapters:["واژگان","دستور زبان"]},
 {track:"عمومی",grade:"دهم تا دوازدهم",subject:"دین و زندگی",chapters:["پیام آیات","مفهوم درس"]}
 ] as const;
-export const examQuestions:ExamQuestion[]=[];
+export const examQuestions:ExamQuestion[]=[
+{id:"bio-cell-01",grade:"دهم",track:"تجربی",subject:"زیست‌شناسی",chapter:"سلول",topic:"غشای سلولی",difficulty:"آسان",prompt:"انتشار ساده در غشا معمولاً در چه جهتی رخ می‌دهد؟",options:["خلاف شیب غلظت","در جهت شیب غلظت","فقط با ATP","فقط با وزیکول"],correctIndex:1,explanation:"انتشار ساده فرایندی غیرفعال و در جهت شیب غلظت است."},
+{id:"math-eq-10",grade:"دهم",track:"ریاضی",subject:"ریاضی",chapter:"معادله",topic:"معادله خطی",difficulty:"آسان",prompt:"اگر ۳x−۵=۱۰ باشد، x چند است؟",options:["۳","۴","۵","۶"],correctIndex:2,explanation:"با افزودن ۵ به دو طرف، ۳x=۱۵ و x=۵."},
+{id:"hum-soc-10",grade:"دهم",track:"انسانی",subject:"جامعه‌شناسی",chapter:"کنش اجتماعی",topic:"کنش",difficulty:"آسان",prompt:"چه چیزی کنش را اجتماعی می‌کند؟",options:["انجام در تنهایی","معناداری با توجه به دیگران","نتیجه اقتصادی","تکرار طبیعی"],correctIndex:1,explanation:"کنش اجتماعی با توجه به رفتار یا انتظار دیگران معنا پیدا می‌کند."},
+{id:"gen-en-10",grade:"دهم",track:"عمومی",subject:"زبان انگلیسی",chapter:"واژگان",topic:"Vocabulary",difficulty:"آسان",prompt:"Choose the closest meaning of “rapid”.",options:["slow","quick","weak","late"],correctIndex:1,explanation:"Rapid means fast or quick."}
+];
