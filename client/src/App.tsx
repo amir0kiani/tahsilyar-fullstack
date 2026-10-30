@@ -1,5 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import AcademicLearningHub from "@/components/AcademicLearningHub";
+import ExamCenter from "@/components/ExamCenter";
 import { startLogin } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useEffect, useMemo, useRef, useState } from "react";
