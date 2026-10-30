@@ -94,8 +94,8 @@ const normalizePlanSessions = (sessions: Array<{ subject: string; topic: string;
 export const appRouter = router({
   exams: router({
     catalog: protectedProcedure.query(() => curriculumCatalog),
-    questions: protectedProcedure.input(z.object({ subject: z.string().optional(), chapter: z.string().optional(), limit: z.number().int().min(1).max(20).default(10) })).query(({ input }) =>
-      examQuestions.filter(q => (!input.subject || q.subject === input.subject) && (!input.chapter || q.chapter === input.chapter))
+    questions: protectedProcedure.input(z.object({ subject: z.string().optional(), chapter: z.string().optional(), grade: z.string().optional(), track: z.string().optional(), difficulty: z.enum(["آسان","متوسط","سخت"]).optional(), limit: z.number().int().min(1).max(20).default(10) })).query(({ input }) =>
+      examQuestions.filter(q => (!input.subject || q.subject === input.subject) && (!input.chapter || q.chapter === input.chapter) && (!input.grade || q.grade === input.grade) && (!input.track || q.track === input.track) && (!input.difficulty || q.difficulty === input.difficulty))
         .slice(0, input.limit).map(({ correctIndex, explanation, ...question }) => question)
     ),
     submit: protectedProcedure.input(z.object({ subject:z.string(), chapter:z.string(), answers:z.array(z.object({ questionId:z.string(), selectedIndex:z.number().int().min(0).max(3) })).min(1).max(20) })).mutation(async ({ctx,input})=>{
