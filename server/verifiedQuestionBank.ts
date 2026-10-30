@@ -333,4 +333,88 @@ export const verifiedQuestions: ExamQuestion[] = [
     verifiedAt,
     reviewerNote: "تمرین تازه بر اساس مهارت سؤال مرجع در حسابان ۱، فصل مثلثات؛ مقادیر تغییر کرده‌اند."
   }
+
+  // Humanities grade 12 — Math & Statistics 3. The reference is the National
+  // Assessment Organization's 1404 first-session booklet; all five are original
+  // practice rewrites, not verbatim copies.
+  {
+    id: "verified-human-math3-probability-1404-016",
+    grade: "دوازدهم", track: "انسانی", subject: "ریاضی و آمار", chapter: "آمار و احتمال",
+    topic: "احتمال اجتماع دو پیشامد", difficulty: "متوسط",
+    prompt: "همهٔ عددهای دورقمی را که با رقم‌های ۱، ۳، ۵ و ۷ (با امکان تکرار رقم) ساخته می‌شوند روی کارت می‌نویسیم. یک کارت را تصادفی برمی‌داریم. احتمال اینکه عدد انتخابی بر ۵ یا ۷ بخش‌پذیر باشد چقدر است؟",
+    options: ["۱/۴", "۵/۱۶", "۳/۸", "۷/۱۶"],
+    correctIndex: 1,
+    explanation: "۱۶ عدد هم‌احتمال داریم. مضرب‌های ۵: ۱۵، ۳۵، ۵۵، ۷۵. مضرب‌های ۷ در این مجموعه: ۳۵ و ۷۷. اشتراک فقط ۳۵ است؛ پس تعداد اعضای اجتماع ۴+۲−۱=۵ و احتمال ۵/۱۶ است.",
+    sourceStatus: "official-exam-adapted",
+    sourceTitle: "آزمون سراسری ۱۴۰۴ نوبت اول – گروه علوم انسانی، دفترچه ۱ ریاضی",
+    sourceUrl: "https://blog.taraz.org/wp-content/uploads/2025/05/321A.pdf",
+    sourceYear: "۱۴۰۴",
+    sourceQuestionNumber: "۱۶",
+    verifiedAt,
+    reviewerNote: "بازطراحی مستقل از سؤال احتمال دفترچه؛ ارقام و شرط بخش‌پذیری تغییر کرده و پاسخ از شمارش مستقیم محاسبه شده است."
+  },
+  {
+    id: "verified-human-math3-statistics-1404-013",
+    grade: "دوازدهم", track: "انسانی", subject: "ریاضی و آمار", chapter: "آمار و احتمال",
+    topic: "انحراف معیار و واریانس", difficulty: "متوسط",
+    prompt: "داده‌های ۲، ۴، ۶، ۸ و ۱۰ را در نظر بگیرید. انحراف معیار جامعهٔ این داده‌ها کدام است؟",
+    options: ["۲", "۲√۲", "۴", "۴√۲"],
+    correctIndex: 1,
+    explanation: "میانگین ۶ است. مجموع مجذور انحراف‌ها برابر ۱۶+۴+۰+۴+۱۶=۴۰ است. واریانس جامعه ۴۰÷۵=۸ و انحراف معیار √۸=۲√۲ می‌شود.",
+    sourceStatus: "official-exam-adapted",
+    sourceTitle: "آزمون سراسری ۱۴۰۴ نوبت اول – گروه علوم انسانی، دفترچه ۱ ریاضی",
+    sourceUrl: "https://blog.taraz.org/wp-content/uploads/2025/05/321A.pdf",
+    sourceYear: "۱۴۰۴",
+    sourceQuestionNumber: "۱۳",
+    verifiedAt,
+    reviewerNote: "تمرین مستقل از مبحث انحراف معیار و واریانس سؤال مرجع؛ داده‌ها و گزینه‌ها کاملاً تغییر کرده‌اند."
+  },
+  {
+    id: "verified-human-math3-linear-1404-018",
+    grade: "دوازدهم", track: "انسانی", subject: "ریاضی و آمار", chapter: "الگوهای خطی",
+    topic: "جمله میانی دنباله حسابی", difficulty: "آسان",
+    prompt: "در یک دنبالهٔ حسابی، مجموع جملهٔ هشتم و جملهٔ چهاردهم برابر ۹۶ است. جملهٔ یازدهم چند است؟",
+    options: ["۴۲", "۴۶", "۴۸", "۵۲"],
+    correctIndex: 2,
+    explanation: "در دنبالهٔ حسابی، جمله‌هایی که فاصلهٔ اندیس آن‌ها از یک جملهٔ میانی برابر است، مجموعی برابر دو برابر آن جملهٔ میانی دارند. یازدهم بین هشتم و چهاردهم قرار دارد؛ پس جملهٔ یازدهم ۹۶÷۲=۴۸ است.",
+    sourceStatus: "official-exam-adapted",
+    sourceTitle: "آزمون سراسری ۱۴۰۴ نوبت اول – گروه علوم انسانی، دفترچه ۱ ریاضی",
+    sourceUrl: "https://blog.taraz.org/wp-content/uploads/2025/05/321A.pdf",
+    sourceYear: "۱۴۰۴",
+    sourceQuestionNumber: "۱۸",
+    verifiedAt,
+    reviewerNote: "بازطراحی سؤال دنبالهٔ خطی دفترچه با اندیس‌ها و مقدار عددی جدید؛ پاسخ از خاصیت تقارن دنباله حسابی به دست آمده است."
+  },
+  {
+    id: "verified-human-math3-linear-1404-018b",
+    grade: "دوازدهم", track: "انسانی", subject: "ریاضی و آمار", chapter: "الگوهای خطی",
+    topic: "یافتن جمله عمومی دنباله حسابی", difficulty: "متوسط",
+    prompt: "در یک دنبالهٔ حسابی، جملهٔ پنجم ۲۳ و جملهٔ نهم ۳۹ است. جملهٔ پانزدهم کدام است؟",
+    options: ["۵۷", "۵۹", "۶۳", "۶۷"],
+    correctIndex: 2,
+    explanation: "اختلاف مشترک d=(۳۹−۲۳)÷۴=۴ است. از جملهٔ پنجم تا پانزدهم ۱۰ گام داریم؛ پس a₁₅=۲۳+۱۰×۴=۶۳.",
+    sourceStatus: "official-exam-adapted",
+    sourceTitle: "آزمون سراسری ۱۴۰۴ نوبت اول – گروه علوم انسانی، دفترچه ۱ ریاضی",
+    sourceUrl: "https://blog.taraz.org/wp-content/uploads/2025/05/321A.pdf",
+    sourceYear: "۱۴۰۴",
+    sourceQuestionNumber: "۱۸",
+    verifiedAt,
+    reviewerNote: "سؤال تمرینی مستقل در همان مهارت دنباله حسابی؛ اعداد برای جلوگیری از بازتولید عین دفترچه عوض شده‌اند."
+  },
+  {
+    id: "verified-human-math3-nonlinear-1404-019",
+    grade: "دوازدهم", track: "انسانی", subject: "ریاضی و آمار", chapter: "الگوهای غیرخطی",
+    topic: "دنباله هندسی بازگشتی", difficulty: "متوسط",
+    prompt: "دنباله‌ای هندسی با نسبت مشترک ۳ داریم و جملهٔ دوم آن ۴ است. جملهٔ ششم دنباله کدام است؟",
+    options: ["۱۰۸", "۲۴۳", "۳۲۴", "۷۲۹"],
+    correctIndex: 2,
+    explanation: "از جملهٔ دوم تا ششم چهار بار در نسبت ۳ ضرب می‌کنیم: a₆=۴×۳⁴=۴×۸۱=۳۲۴.",
+    sourceStatus: "official-exam-adapted",
+    sourceTitle: "آزمون سراسری ۱۴۰۴ نوبت اول – گروه علوم انسانی، دفترچه ۱ ریاضی",
+    sourceUrl: "https://blog.taraz.org/wp-content/uploads/2025/05/321A.pdf",
+    sourceYear: "۱۴۰۴",
+    sourceQuestionNumber: "۱۹",
+    verifiedAt,
+    reviewerNote: "تمرین مستقل از مبحث دنباله هندسی بازگشتی که در سؤال مرجع آمده؛ نسبت و داده‌ها برای تمرین تازه تغییر یافته‌اند."
+  },
 ];
