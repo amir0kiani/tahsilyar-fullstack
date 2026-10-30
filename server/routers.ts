@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { examQuestions } from "./examBank";
+import { curriculumCatalog, examQuestions } from "./examBank";
 import { invokeLLM } from "./_core/llm";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
@@ -92,6 +92,7 @@ const normalizePlanSessions = (sessions: Array<{ subject: string; topic: string;
 });
 
 export const appRouter = router({
+  exams: router({ catalog: protectedProcedure.query(() => curriculumCatalog) }),
   system: systemRouter,
   auth: router({
     me: publicProcedure.query((opts) => opts.ctx.user),
