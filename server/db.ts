@@ -3,6 +3,8 @@ import { drizzle } from "drizzle-orm/mysql2";
 import {
   academicGoals,
   examAttempts,
+  curriculumChapters as curriculumChapterRows,
+  examQuestions as examQuestionRows,
   conversationMessages,
   conversations,
   InsertUser,
@@ -12,6 +14,7 @@ import {
   users,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
+import { curriculumCatalog, examQuestions as starterQuestions } from "./examBank";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -165,4 +168,92 @@ export async function getAcademicMastery(userId: number) {
     accuracy: item.questions ? Math.round((item.correct / item.questions) * 100) : 0,
     status: item.questions < 3 ? "دادهٔ ناکافی" : item.correct / item.questions >= 0.8 ? "نسبتاً مسلط" : item.correct / item.questions >= 0.5 ? "نیازمند مرور" : "اولویت تمرین",
   })).sort((a, b) => a.accuracy - b.accuracy);
+}
+
+
+type AssessmentFilters = {
+  subject?: string; chapter?: string; grade?: string; track?: string;
+  difficulty?: string; ids?: string[]; limit?: number;
+};
+let assessmentSeedPromise: Promise<void> | null = null;
+
+async function ensureAssessmentBankSeeded(db: NonNullable<Awaited<ReturnType<typeof getDb>>>) {
+  if (!assessmentSeedPromise) {
+    assessmentSeedPromise = (async () => {
+      const [existingQuestionRows, existingChapterRows] = await Promise.all([
+        db.select({ id: examQuestionRows.id }).from(examQuestionRows),
+        db.select({ id: curriculumChapterRows.id, track: curriculumChapterRows.track, grade: curriculumChapterRows.grade, subject: curriculumChapterRows.subject, chapter: curriculumChapterRows.chapter }).from(curriculumChapterRows),
+      ]);
+      const existingIds = new Set(existingQuestionRows.map((row) => row.id));
+      const missingQuestions = starterQuestions.filter((question) => !existingIds.has(question.id));
+      if (missingQuestions.length) {
+        await db.insert(examQuestionRows).values(missingQuestions.map((question) => ({
+          ...question, sourceStatus: question.sourceStatus ?? "sample-authored", isActive: 1,
+        })));
+      }
+      const chapterKeys = new Set(existingChapterRows.map((row) => [row.track, row.grade, row.subject, row.chapter].join("::")));
+      const missingChapters = curriculumCatalog.flatMap((item) => item.chapters
+        .filter((chapter) => !chapterKeys.has([item.track, item.grade, item.subject, chapter].join("::")))
+        .map((chapter) => ({ track: item.track, grade: item.grade, subject: item.subject, chapter, isActive: 1 })));
+      if (missingChapters.length) await db.insert(curriculumChapterRows).values(missingChapters);
+    })();
+  }
+  try { await assessmentSeedPromise; }
+  catch (error) { assessmentSeedPromise = null; throw error; }
+}
+
+function filterStarterQuestions(filters: AssessmentFilters) {
+  return starterQuestions.filter((q) =>
+    (!filters.subject || q.subject === filters.subject) &&
+    (!filters.chapter || q.chapter === filters.chapter) &&
+    (!filters.grade || q.grade === filters.grade) &&
+    (!filters.track || q.track === filters.track ||
+      (q.subject === "فیزیک" && ["ریاضی", "تجربی", "ریاضی و تجربی"].includes(filters.track)) ||
+      (q.subject === "ریاضی" && filters.track === "ریاضی و تجربی")) &&
+    (!filters.difficulty || q.difficulty === filters.difficulty) &&
+    (!filters.ids || filters.ids.includes(q.id))
+  ).slice(0, filters.limit ?? 20);
+}
+
+export async function getAssessmentQuestions(filters: AssessmentFilters = {}) {
+  const db = await getDb();
+  if (!db) return filterStarterQuestions(filters);
+  try {
+    await ensureAssessmentBankSeeded(db);
+    const rows = await db.select().from(examQuestionRows).where(eq(examQuestionRows.isActive, 1));
+    return rows.filter((q) =>
+      (!filters.subject || q.subject === filters.subject) &&
+      (!filters.chapter || q.chapter === filters.chapter) &&
+      (!filters.grade || q.grade === filters.grade) &&
+      (!filters.track || q.track === filters.track ||
+        (q.subject === "فیزیک" && ["ریاضی", "تجربی", "ریاضی و تجربی"].includes(filters.track)) ||
+        (q.subject === "ریاضی" && filters.track === "ریاضی و تجربی")) &&
+      (!filters.difficulty || q.difficulty === filters.difficulty) &&
+      (!filters.ids || filters.ids.includes(q.id))
+    ).slice(0, filters.limit ?? 20);
+  } catch (error) {
+    console.warn("[Assessment] Persistent bank unavailable; using bundled starter data:", error);
+    return filterStarterQuestions(filters);
+  }
+}
+
+export async function getAssessmentCatalog() {
+  const db = await getDb();
+  if (!db) return curriculumCatalog;
+  try {
+    await ensureAssessmentBankSeeded(db);
+    const rows = await db.select().from(curriculumChapterRows).where(eq(curriculumChapterRows.isActive, 1));
+    if (!rows.length) return curriculumCatalog;
+    const grouped = new Map<string, { track: string; grade: string; subject: string; chapters: string[] }>();
+    for (const row of rows) {
+      const key = [row.track, row.grade, row.subject].join("::");
+      const current = grouped.get(key) ?? { track: row.track, grade: row.grade, subject: row.subject, chapters: [] };
+      if (!current.chapters.includes(row.chapter)) current.chapters.push(row.chapter);
+      grouped.set(key, current);
+    }
+    return Array.from(grouped.values()).sort((a, b) => a.subject.localeCompare(b.subject, "fa"));
+  } catch (error) {
+    console.warn("[Assessment] Persistent curriculum unavailable; using bundled catalog:", error);
+    return curriculumCatalog;
+  }
 }
