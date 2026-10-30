@@ -88,3 +88,25 @@ export type ConversationMessage = typeof conversationMessages.$inferSelect;
 
 // All feature rows are scoped by userId and are queried only through authenticated procedures.
 // Foreign-key constraints are intentionally managed by the application migration for TiDB compatibility.
+
+
+export const examAttempts = mysqlTable("exam_attempts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  grade: varchar("grade", { length: 32 }).notNull(),
+  track: varchar("track", { length: 32 }).notNull(),
+  subject: varchar("subject", { length: 128 }).notNull(),
+  chapter: varchar("chapter", { length: 128 }).notNull(),
+  questionCount: int("questionCount").notNull(),
+  correctCount: int("correctCount").notNull(),
+  scorePercent: int("scorePercent").notNull(),
+  responses: json("responses").notNull(),
+  topicAnalysis: json("topicAnalysis").notNull(),
+  completedAt: timestamp("completedAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("exam_attempts_user_id_idx").on(table.userId),
+  userSubjectIdx: index("exam_attempts_user_subject_idx").on(table.userId, table.subject),
+  userChapterIdx: index("exam_attempts_user_chapter_idx").on(table.userId, table.chapter),
+}));
+
+export type ExamAttempt = typeof examAttempts.$inferSelect;
