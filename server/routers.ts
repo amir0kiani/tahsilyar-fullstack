@@ -92,7 +92,13 @@ const normalizePlanSessions = (sessions: Array<{ subject: string; topic: string;
 });
 
 export const appRouter = router({
-  exams: router({ catalog: protectedProcedure.query(() => curriculumCatalog) }),
+  exams: router({
+    catalog: protectedProcedure.query(() => curriculumCatalog),
+    questions: protectedProcedure.input(z.object({ subject: z.string().optional(), chapter: z.string().optional(), limit: z.number().int().min(1).max(20).default(10) })).query(({ input }) =>
+      examQuestions.filter(q => (!input.subject || q.subject === input.subject) && (!input.chapter || q.chapter === input.chapter))
+        .slice(0, input.limit).map(({ correctIndex, explanation, ...question }) => question)
+    ),
+  }),
   system: systemRouter,
   auth: router({
     me: publicProcedure.query((opts) => opts.ctx.user),
