@@ -108,4 +108,20 @@ describe("curriculum and assessment question bank", () => {
     expect(chemistryBatch.filter((question) => question.sourceUrl?.includes("sanjesh.org")).length).toBeGreaterThanOrEqual(8);
   });
 
+  it("reaches the five-question target for Grade 12 physics in both experimental and math tracks", () => {
+    for (const track of ["تجربی", "ریاضی"]) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.track === track && question.grade === "دوازدهم" && question.subject === "فیزیک"
+      );
+      expect(questions).toHaveLength(5);
+      expect(questions.every((question) => question.sourceStatus === "official-exam-adapted")).toBe(true);
+    }
+  });
+
+  it("links the new Grade 12 physics items to the official Sanjesh publication", () => {
+    const physicsBatch = verifiedQuestions.filter((question) => question.id.startsWith("verified-physics3-"));
+    expect(physicsBatch.length).toBeGreaterThanOrEqual(10);
+    expect(physicsBatch.filter((question) => question.sourceUrl?.includes("sanjesh.org")).length).toBeGreaterThanOrEqual(5);
+  });
+
 });
