@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { examQuestions } from "./examBank";
 import { invokeLLM } from "./_core/llm";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
