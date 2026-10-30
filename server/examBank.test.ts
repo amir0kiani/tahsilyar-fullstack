@@ -15,7 +15,8 @@ describe("curriculum and assessment question bank",()=>{
  it("covers multiple tracks and has expanded beyond the initial starter set",()=>{
   expect(new Set(examQuestions.map(q=>q.track)).size).toBeGreaterThan(2);
   expect(curriculumCatalog.length).toBeGreaterThan(5);
-  expect(examQuestions.length).toBeGreaterThanOrEqual(25);
+  expect(examQuestions.length).toBeGreaterThanOrEqual(50);
+  expect(new Set(examQuestions.map(q=>q.difficulty))).toEqual(new Set(["آسان","متوسط","سخت"]));
  });
  it("has at least one question for every catalog chapter",()=>{
   for(const item of curriculumCatalog){
