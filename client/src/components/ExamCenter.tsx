@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { trpc } from "@/lib/trpc";
 
-type Question = { id:string; grade:string; track:string; subject:string; chapter:string; topic:string; difficulty:string; prompt:string; options:string[]; sourceStatus?:string; sourceTitle?:string; sourceUrl?:string; sourceYear?:string; sourceQuestionNumber?:string };
+type Question = { id:string; grade:string; track:string; subject:string; chapter:string; topic:string; difficulty:string; prompt:string; options:string[]; sourceStatus?:string; sourceTitle?:string|null; sourceUrl?:string|null; sourceYear?:string|null; sourceQuestionNumber?:string|null };
 type Result = { scorePercent:number; correctCount:number; questionCount:number; topicAnalysis:Array<{topic:string;total:number;correct:number;accuracy:number}>; responses:Array<{questionId:string;selectedIndex:number;correctIndex:number;isCorrect:boolean;prompt:string;options:string[];explanation:string;topic:string}> };
 const grades=["همه پایه‌ها","دهم","یازدهم","دوازدهم"];
 const tracks=["همه رشته‌ها","تجربی","ریاضی","ریاضی و تجربی","انسانی","عمومی"];
