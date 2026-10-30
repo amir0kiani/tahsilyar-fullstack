@@ -1,5 +1,6 @@
 import type { ExamQuestion } from "./examBank";
 import { verifiedBiologyBatch2 } from "./verifiedQuestionBankBiologyBatch2";
+import { verifiedChemistryBatch1 } from "./verifiedQuestionBankChemistryBatch1";
 
 // Original practice items reconstructed around the skills tested in official 1405 exams.
 // The stems/options may be changed; these are NOT verbatim official exam questions.
@@ -512,4 +513,4 @@ const initialVerifiedQuestions: ExamQuestion[] = [
   },
 ];
 
-export const verifiedQuestions: ExamQuestion[] = [...initialVerifiedQuestions, ...verifiedBiologyBatch2];
+export const verifiedQuestions: ExamQuestion[] = [...initialVerifiedQuestions, ...verifiedBiologyBatch2, ...verifiedChemistryBatch1];

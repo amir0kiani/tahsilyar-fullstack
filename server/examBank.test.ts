@@ -92,4 +92,20 @@ describe("curriculum and assessment question bank", () => {
     expect(biologyBatch.filter((question) => question.sourceUrl?.includes("sanjesh.org")).length).toBeGreaterThanOrEqual(10);
   });
 
+  it("reaches the five-question target for Grade 10 and Grade 11 chemistry textbooks", () => {
+    for (const grade of ["دهم", "یازدهم"]) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.track === "تجربی" && question.grade === grade && question.subject === "شیمی"
+      );
+      expect(questions).toHaveLength(5);
+      expect(questions.every((question) => question.sourceStatus === "official-exam-adapted")).toBe(true);
+    }
+  });
+
+  it("links the new chemistry batch to the official Sanjesh exam publication", () => {
+    const chemistryBatch = verifiedQuestions.filter((question) => question.id.startsWith("verified-chem"));
+    expect(chemistryBatch.length).toBeGreaterThanOrEqual(12);
+    expect(chemistryBatch.filter((question) => question.sourceUrl?.includes("sanjesh.org")).length).toBeGreaterThanOrEqual(8);
+  });
+
 });
