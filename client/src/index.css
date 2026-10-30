@@ -341,3 +341,34 @@ em { color: var(--turquoise-dark); font-style: normal; }
 .next-lesson-banner > div { flex: 1; display: flex; flex-direction: column; gap: 4px; }
 .next-lesson-banner strong { color: var(--deep); font-size: 15px; }
 .next-lesson-banner small { color: #88a39e; font-size: 9px; }
+
+
+/* Phase 2: evidence-based Academic DNA and searchable learning bank */
+.academic-hub { margin: 24px 0; }
+.academic-hub-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; margin: 22px 0 14px; }
+.academic-hub-heading h2 { margin: 4px 0 7px; color:var(--deep); font-size:clamp(20px,2vw,26px); }
+.academic-hub-heading p:not(.eyebrow) { max-width:760px; margin:0; color:var(--muted,#829995); font-size:12px; line-height:1.9; }
+.academic-hub-badge { flex-shrink:0; border:1px solid #ccebe4; background:#f2fbf8; color:var(--turquoise-dark); padding:8px 12px; border-radius:999px; font-size:11px; }
+.academic-dna-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.academic-dna-item { min-width:0; padding:16px; border:1px solid var(--border,#e2eeeb); background:var(--card,#fff); border-radius:16px; display:flex; flex-direction:column; align-items:flex-start; gap:7px; }
+.academic-dna-item > span { color:var(--muted,#829995); font-size:11px; }
+.academic-dna-item > strong { color:var(--deep); font-size:15px; line-height:1.8; overflow-wrap:anywhere; }
+.academic-dna-item > small { color:var(--muted,#829995); font-size:10px; line-height:1.8; }
+.academic-dna-progress { grid-column:1 / -1; }
+.academic-mini-track { width:100%; height:7px; overflow:hidden; background:#e8f2ef; border-radius:999px; margin:2px 0; }
+.academic-mini-track i { display:block; height:100%; background:var(--turquoise,#38b7a3); border-radius:999px; transition:width .25s ease; }
+.learning-bank-heading { margin-top:30px; }
+.learning-bank-controls { display:grid; grid-template-columns:minmax(0,2fr) minmax(160px,1fr); gap:10px; margin:14px 0; }
+.learning-bank-controls input,.learning-bank-controls select { width:100%; min-height:44px; border:1px solid var(--border,#e2eeeb); border-radius:12px; background:var(--card,#fff); color:var(--deep); padding:10px 13px; font:inherit; font-size:12px; outline:none; }
+.learning-bank-controls input:focus,.learning-bank-controls select:focus { border-color:var(--turquoise,#38b7a3); box-shadow:0 0 0 3px #38b7a31a; }
+.learning-guide-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.learning-guide-card { min-width:0; padding:18px; background:var(--card,#fff); border:1px solid var(--border,#e2eeeb); border-radius:16px; }
+.learning-guide-meta { display:flex; justify-content:space-between; gap:8px; align-items:center; color:var(--turquoise-dark); font-size:10px; }
+.learning-guide-meta span:last-child { color:var(--muted,#829995); }
+.learning-guide-card h3 { margin:12px 0; color:var(--deep); font-size:16px; }
+.learning-guide-card ol { margin:0; padding-right:19px; color:var(--text,#526d68); font-size:12px; line-height:2; }
+.learning-guide-card li { padding-right:2px; margin:3px 0; }
+.learning-guide-warning { margin:14px 0 0; padding:10px 12px; background:#fff8ec; border-radius:10px; color:#8b6937; font-size:11px; line-height:1.9; }
+.learning-empty { padding:20px; border:1px dashed var(--border,#e2eeeb); border-radius:14px; text-align:center; color:var(--muted,#829995); font-size:12px; }
+@media (min-width:900px) { .academic-dna-grid { grid-template-columns:repeat(4,minmax(0,1fr)); } .academic-dna-progress { grid-column:span 2; } }
+@media (max-width:620px) { .academic-hub-heading { flex-direction:column; } .academic-dna-grid,.learning-guide-grid { grid-template-columns:1fr; } .academic-dna-progress { grid-column:auto; } .learning-bank-controls { grid-template-columns:1fr; } .learning-guide-card { padding:15px; } }
