@@ -14,7 +14,11 @@ import {
   users,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
-import { curriculumCatalog, examQuestions as starterQuestions } from "./examBank";
+import { examQuestions as starterQuestions } from "./examBank";
+import { curriculumCatalog } from "./curriculumCatalog";
+import { verifiedQuestions } from "./verifiedQuestionBank";
+
+const allStarterQuestions = [...starterQuestions, ...verifiedQuestions];
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -177,6 +181,23 @@ type AssessmentFilters = {
 };
 let assessmentSeedPromise: Promise<void> | null = null;
 
+function matchesAssessmentTrack(questionTrack: string, selectedTrack?: string) {
+  if (!selectedTrack) return true;
+  if (questionTrack === selectedTrack || questionTrack === "عمومی") return true;
+  if (questionTrack === "ریاضی و تجربی" && ["ریاضی", "تجربی"].includes(selectedTrack)) return true;
+  if (selectedTrack === "ریاضی و تجربی" && ["ریاضی", "تجربی"].includes(questionTrack)) return true;
+  return false;
+}
+
+function matchesAssessmentQuestion(question: typeof allStarterQuestions[number], filters: AssessmentFilters) {
+  return (!filters.subject || question.subject === filters.subject) &&
+    (!filters.chapter || filters.chapter === "کل کتاب" || question.chapter === filters.chapter) &&
+    (!filters.grade || question.grade === filters.grade) &&
+    matchesAssessmentTrack(question.track, filters.track) &&
+    (!filters.difficulty || question.difficulty === filters.difficulty) &&
+    (!filters.ids || filters.ids.includes(question.id));
+}
+
 async function ensureAssessmentBankSeeded(db: NonNullable<Awaited<ReturnType<typeof getDb>>>) {
   if (!assessmentSeedPromise) {
     assessmentSeedPromise = (async () => {
@@ -185,9 +206,10 @@ async function ensureAssessmentBankSeeded(db: NonNullable<Awaited<ReturnType<typ
         db.select({ id: curriculumChapterRows.id, track: curriculumChapterRows.track, grade: curriculumChapterRows.grade, subject: curriculumChapterRows.subject, chapter: curriculumChapterRows.chapter }).from(curriculumChapterRows),
       ]);
       const existingIds = new Set(existingQuestionRows.map((row) => row.id));
-      const missingQuestions = starterQuestions.filter((question) => !existingIds.has(question.id));
-      if (missingQuestions.length) {
-        await db.insert(examQuestionRows).values(missingQuestions.map((question) => ({
+      const missingQuestions = allStarterQuestions.filter((question) => !existingIds.has(question.id));
+      for (let offset = 0; offset < missingQuestions.length; offset += 100) {
+        const chunk = missingQuestions.slice(offset, offset + 100);
+        await db.insert(examQuestionRows).values(chunk.map((question) => ({
           ...question, sourceStatus: question.sourceStatus ?? "sample-authored", isActive: 1,
         })));
       }
@@ -195,45 +217,31 @@ async function ensureAssessmentBankSeeded(db: NonNullable<Awaited<ReturnType<typ
       const missingChapters = curriculumCatalog.flatMap((item) => item.chapters
         .filter((chapter) => !chapterKeys.has([item.track, item.grade, item.subject, chapter].join("::")))
         .map((chapter) => ({ track: item.track, grade: item.grade, subject: item.subject, chapter, isActive: 1 })));
-      if (missingChapters.length) await db.insert(curriculumChapterRows).values(missingChapters);
+      for (let offset = 0; offset < missingChapters.length; offset += 100) {
+        await db.insert(curriculumChapterRows).values(missingChapters.slice(offset, offset + 100));
+      }
     })();
   }
   try { await assessmentSeedPromise; }
   catch (error) { assessmentSeedPromise = null; throw error; }
 }
 
-function filterStarterQuestions(filters: AssessmentFilters) {
-  return starterQuestions.filter((q) =>
-    (!filters.subject || q.subject === filters.subject) &&
-    (!filters.chapter || q.chapter === filters.chapter) &&
-    (!filters.grade || q.grade === filters.grade) &&
-    (!filters.track || q.track === filters.track ||
-      (q.subject === "فیزیک" && ["ریاضی", "تجربی", "ریاضی و تجربی"].includes(filters.track)) ||
-      (q.subject === "ریاضی" && filters.track === "ریاضی و تجربی")) &&
-    (!filters.difficulty || q.difficulty === filters.difficulty) &&
-    (!filters.ids || filters.ids.includes(q.id))
-  ).slice(0, filters.limit ?? 20);
+function filterBundledQuestions(filters: AssessmentFilters) {
+  return allStarterQuestions.filter((question) => matchesAssessmentQuestion(question, filters))
+    .slice(0, filters.limit ?? 20);
 }
 
 export async function getAssessmentQuestions(filters: AssessmentFilters = {}) {
   const db = await getDb();
-  if (!db) return filterStarterQuestions(filters);
+  if (!db) return filterBundledQuestions(filters);
   try {
     await ensureAssessmentBankSeeded(db);
     const rows = await db.select().from(examQuestionRows).where(eq(examQuestionRows.isActive, 1));
-    return rows.filter((q) =>
-      (!filters.subject || q.subject === filters.subject) &&
-      (!filters.chapter || q.chapter === filters.chapter) &&
-      (!filters.grade || q.grade === filters.grade) &&
-      (!filters.track || q.track === filters.track ||
-        (q.subject === "فیزیک" && ["ریاضی", "تجربی", "ریاضی و تجربی"].includes(filters.track)) ||
-        (q.subject === "ریاضی" && filters.track === "ریاضی و تجربی")) &&
-      (!filters.difficulty || q.difficulty === filters.difficulty) &&
-      (!filters.ids || filters.ids.includes(q.id))
-    ).slice(0, filters.limit ?? 20);
+    return rows.filter((question) => matchesAssessmentQuestion(question as typeof allStarterQuestions[number], filters))
+      .slice(0, filters.limit ?? 20);
   } catch (error) {
-    console.warn("[Assessment] Persistent bank unavailable; using bundled starter data:", error);
-    return filterStarterQuestions(filters);
+    console.warn("[Assessment] Persistent bank unavailable; using bundled question data:", error);
+    return filterBundledQuestions(filters);
   }
 }
 
@@ -242,18 +250,25 @@ export async function getAssessmentCatalog() {
   if (!db) return curriculumCatalog;
   try {
     await ensureAssessmentBankSeeded(db);
-    const rows = await db.select().from(curriculumChapterRows).where(eq(curriculumChapterRows.isActive, 1));
-    if (!rows.length) return curriculumCatalog;
+    const [chapterRows, questionRows] = await Promise.all([
+      db.select().from(curriculumChapterRows).where(eq(curriculumChapterRows.isActive, 1)),
+      db.select({ track: examQuestionRows.track, grade: examQuestionRows.grade, subject: examQuestionRows.subject, chapter: examQuestionRows.chapter })
+        .from(examQuestionRows).where(eq(examQuestionRows.isActive, 1)),
+    ]);
     const grouped = new Map<string, { track: string; grade: string; subject: string; chapters: string[] }>();
-    for (const row of rows) {
+    for (const row of [...chapterRows, ...questionRows]) {
+      // Ignore legacy aggregate catalog rows; grade-specific entries are seeded above.
+      if (row.grade === "دهم تا دوازدهم") continue;
       const key = [row.track, row.grade, row.subject].join("::");
       const current = grouped.get(key) ?? { track: row.track, grade: row.grade, subject: row.subject, chapters: [] };
       if (!current.chapters.includes(row.chapter)) current.chapters.push(row.chapter);
       grouped.set(key, current);
     }
-    return Array.from(grouped.values()).sort((a, b) => a.subject.localeCompare(b.subject, "fa"));
+    return Array.from(grouped.values()).sort((a, b) =>
+      a.grade.localeCompare(b.grade, "fa") || a.track.localeCompare(b.track, "fa") || a.subject.localeCompare(b.subject, "fa")
+    );
   } catch (error) {
-    console.warn("[Assessment] Persistent curriculum unavailable; using bundled catalog:", error);
+    console.warn("[Assessment] Curriculum unavailable; using bundled grade-specific catalog:", error);
     return curriculumCatalog;
   }
 }
