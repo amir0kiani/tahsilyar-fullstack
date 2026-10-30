@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import "./index.css";
 
-type Screen = "home" | "planning" | "companion" | "progress" | "schedule" | "profile";
+type Screen = "home" | "companion" | "progress" | "schedule" | "profile";
 type IconName =
   | "home" | "event_note" | "auto_awesome" | "insights" | "person" | "arrow_back" | "arrow_forward"
   | "check_circle" | "lock" | "mail" | "person_outline" | "menu_book" | "timer" | "trending_up"
@@ -18,7 +18,7 @@ type ChatMessage = { from: "bot" | "user"; text: string };
 type PlanSession = { id?: number; subject: string; topic: string; start: string; end: string; duration: string; reason: string; day?: string; completed?: number };
 type GeneratedPlan = { title: string; summary: string; sessions: PlanSession[]; focusTip: string };
 type PlanRange = "today" | "tomorrow" | "week";
-type CalendarItem = { subject: string; topic: string; start: string; end: string; duration?: string; reason?: string };
+type CalendarItem = { subject: string; topic: string; start: string; end: string; day?: string; duration?: string; reason?: string };
 type UserProfile = { name: string; email: string; answers: Record<string, string> };
 
 const getTimeGreeting = (hour = new Date().getHours()) => hour < 12 ? "صبح بخیر" : hour < 17 ? "ظهر بخیر" : hour < 21 ? "عصر بخیر" : "شب بخیر";
@@ -75,19 +75,33 @@ const localDateTime = (baseDate: Date, time: string) => {
   return date;
 };
 const icsTimestamp = (date: Date) => date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+const dateForWeekday = (day: string | undefined, baseDate: Date) => {
+  if (!day) return new Date(baseDate);
+  const days = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
+  const targetIndex = days.indexOf(day);
+  if (targetIndex < 0) return new Date(baseDate);
+  const todayIndex = (baseDate.getDay() + 1) % 7;
+  const offset = (targetIndex - todayIndex + 7) % 7;
+  const date = new Date(baseDate);
+  date.setDate(date.getDate() + offset);
+  return date;
+};
 const buildCalendarIcs = (items: CalendarItem[], title: string, baseDate = new Date()) => {
   const stamp = icsTimestamp(new Date());
-  const events = items.map((item, index) => [
-    "BEGIN:VEVENT",
-    `UID:tahsilyar-${Date.now()}-${index}@tahsilyar.app`,
-    `DTSTAMP:${stamp}`,
-    `DTSTART:${icsTimestamp(localDateTime(baseDate, item.start))}`,
-    `DTEND:${icsTimestamp(localDateTime(baseDate, item.end))}`,
-    `SUMMARY:${escapeIcs(`${item.subject} · مطالعه`)}`,
-    `DESCRIPTION:${escapeIcs([item.topic, item.duration, item.reason].filter(Boolean).join(" · "))}`,
-    "END:VEVENT",
-  ].join("\r\n"));
-  return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//TahsilYar//Study Plan//FA", "CALSCALE:GREGORIAN", `X-WR-CALNAME:${escapeIcs(title)}`, ...events, "END:VCALENDAR", ""].join("\r\n");
+  const events = items.map((item, index) => {
+    const sessionDate = dateForWeekday(item.day, baseDate);
+    return [
+      "BEGIN:VEVENT",
+      `UID:tahsilyar-${Date.now()}-${index}@tahsilyar.app`,
+      `DTSTAMP:${stamp}`,
+      `DTSTART:${icsTimestamp(localDateTime(sessionDate, item.start))}`,
+      `DTEND:${icsTimestamp(localDateTime(sessionDate, item.end))}`,
+      `SUMMARY:${escapeIcs(`${item.subject} · مطالعه`)}`,
+      `DESCRIPTION:${escapeIcs([item.topic, item.duration, item.reason].filter(Boolean).join(" · "))}`,
+      "END:VEVENT",
+    ].join("\\r\\n");
+  });
+  return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//TahsilYar//Study Plan//FA", "CALSCALE:GREGORIAN", `X-WR-CALNAME:${escapeIcs(title)}`, ...events, "END:VCALENDAR", ""].join("\\r\\n");
 };
 const addSessionsToDeviceCalendar = async (items: CalendarItem[], title: string) => {
   if (!items.length) throw new Error("No sessions to export");
@@ -121,16 +135,14 @@ function LogoMark({ compact = false }: { compact?: boolean }) {
 function Signup({ onSignup, onLogin }: { onSignup: (profile: Pick<UserProfile, "name" | "email">) => void; onLogin: () => void }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const canSubmit = name.trim().length > 1 && email.includes("@") && password.length >= 6;
+  const canSubmit = name.trim().length > 1 && email.includes("@");
   return <main className="auth-page" dir="rtl">
     <div className="auth-decoration auth-decoration-one" /><div className="auth-decoration auth-decoration-two" />
     <div className="auth-panel auth-brand-panel"><div className="auth-brand-top"><LogoMark /></div><div className="auth-illustration"><div className="illustration-glow" /><LogoMark compact /><div className="floating-pill pill-one"><Icon name="auto_awesome" size={15} />یادگیری هوشمند</div><div className="floating-pill pill-two"><Icon name="favorite" size={15} filled />با آرامش پیش برو</div></div><div className="auth-brand-copy"><p className="eyebrow">همراه مسیر موفقیت تو</p><h1>هر روز، یک قدم<br /><em>نزدیک‌تر به رؤیاهایت.</em></h1><p>تحصیل‌یار اطلاعاتت را از خودت می‌گیرد و فقط بر اساس مسیر واقعی تو برنامه می‌سازد.</p></div><div className="auth-quote"><span>“</span><p>موفقیت، جمع قدم‌های کوچک و پیوسته است.</p></div></div>
-    <div className="auth-panel auth-form-panel"><div className="mobile-logo"><LogoMark /></div><div className="auth-form-wrap"><div className="form-heading"><p className="eyebrow">شروع یک مسیر تازه</p><h2>حساب کاربری بساز</h2><p>برای شروع، اطلاعات پایه‌ات را وارد کن. هیچ اطلاعات تحصیلی از قبل ثبت نشده است.</p></div><form className="signup-form" onSubmit={(event) => { event.preventDefault(); if (canSubmit) onSignup({ name: name.trim(), email: email.trim() }); }}>
+    <div className="auth-panel auth-form-panel"><div className="mobile-logo"><LogoMark /></div><div className="auth-form-wrap"><div className="form-heading"><p className="eyebrow">شروع یک مسیر تازه</p><h2>حساب کاربری بساز</h2><p>برای ورود و ساخت حساب، از سرویس ورود امن استفاده می‌شود. نام و ایمیل واردشده برای تکمیل پروفایل نگه داشته می‌شوند.</p></div><form className="signup-form" onSubmit={(event) => { event.preventDefault(); if (canSubmit) onSignup({ name: name.trim(), email: email.trim() }); }}>
       <label>نام و نام خانوادگی<span>*</span><div className="input-shell"><Icon name="person_outline" size={21} /><input value={name} onChange={(event) => setName(event.target.value)} placeholder="نام و نام خانوادگی" /></div></label>
       <label>ایمیل<span>*</span><div className="input-shell"><Icon name="mail" size={21} /><input type="email" dir="ltr" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="email@example.com" /></div></label>
-      <label>رمز عبور<span>*</span><div className="input-shell"><Icon name="lock" size={21} /><input type="password" dir="ltr" minLength={6} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="حداقل ۶ کاراکتر" /></div><small>رمز عبورت باید حداقل ۶ کاراکتر داشته باشد.</small></label>
-      <button className="primary-button signup-button" type="submit" disabled={!canSubmit}>ساخت حساب و شروع <Icon name="arrow_back" size={19} /></button>
+      <button className="primary-button signup-button" type="submit" disabled={!canSubmit}>ادامه با حساب کاربری <Icon name="arrow_back" size={19} /></button>
     </form><button className="back-button" type="button" onClick={onLogin}>ورود با حساب کاربری</button><div className="secure-note"><Icon name="lock" size={15} /> اطلاعاتت نزد تحصیل‌یار امن می‌ماند.</div></div></div>
   </main>;
 }
@@ -246,7 +258,7 @@ function AppShell() {
     if (session.id) sessionStatusMutation.mutate({ sessionId: session.id, completed: nextCompleted }, { onError: () => { setCompleted((old) => nextCompleted ? old.filter((item) => item !== key) : [...old, key]); showToast("وضعیت جلسه ذخیره نشد؛ دوباره تلاش کن."); } });
   };
 
-  const calendarItems: CalendarItem[] = generatedPlan?.sessions?.map(({ subject, topic, start, end, duration, reason }) => ({ subject, topic, start, end, duration, reason })) ?? [];
+  const calendarItems: CalendarItem[] = generatedPlan?.sessions?.map(({ subject, topic, start, end, day, duration, reason }) => ({ subject, topic, start, end, day, duration, reason })) ?? [];
   const addCurrentPlanToCalendar = async () => {
     try { showToast("در حال آماده‌سازی فایل تقویم..."); showToast(await addSessionsToDeviceCalendar(calendarItems, generatedPlan?.title || "برنامهٔ ثبت‌شدهٔ تحصیل‌یار")); }
     catch { showToast("برای افزودن به تقویم، ابتدا یک برنامهٔ واقعی بساز."); }
@@ -268,7 +280,7 @@ function EmptyState({ icon = "event_note", title, description, action, onAction 
 }
 
 function startMinutes(start: string) { const normalized = start.replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))); const [hours, minutes] = normalized.split(":").map(Number); return Number.isFinite(hours) ? hours * 60 + (minutes || 0) : 0; }
-function canStartSession(session: PlanSession) { const now = new Date(); const todayIndex = (now.getDay() + 1) % 7; const dayIndex = weekOrder.indexOf(session.day ?? ""); if (dayIndex < 0) return true; const offset = (dayIndex - todayIndex + 7) % 7; if (offset > 3) return true; if (offset > 0) return false; return now.getHours() * 60 + now.getMinutes() >= startMinutes(session.start); }
+function canStartSession(session: PlanSession) { const now = new Date(); const todayIndex = (now.getDay() + 1) % 7; const dayIndex = weekOrder.indexOf(session.day ?? ""); if (dayIndex < 0) return true; const offset = (dayIndex - todayIndex + 7) % 7; if (offset > 0) return false; return now.getHours() * 60 + now.getMinutes() >= startMinutes(session.start); }
 function lessonName(subject: string) { return subject.includes("|") ? subject.split("|").slice(1).join("|") : subject; }
 function lessonCode(subject: string) { return subject.includes("|") ? subject.split("|")[0] : ""; }
 const weekOrder = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
@@ -278,7 +290,7 @@ function HomeScreen({ navigate, userName, plan, completed, onComplete, showToast
   const sessions = orderedUpcomingSessions(plan?.sessions ?? []).map((session, index) => ({ ...session, id: session.id ?? index, time: `${session.start} — ${session.end}`, color: index % 3 === 0 ? "mint" : index % 3 === 1 ? "blue" : "lavender", status: index === 0 ? "next" : "pending" })) ?? [];
   const progress = sessions.length ? Math.round((completed.length / sessions.length) * 100) : 0;
   const nextSession = sessions.find((session) => !completed.includes(session.id)) ?? sessions[0];
-  return <div className="screen home-screen"><section className="welcome-row"><div><p className="eyebrow">{deviceDate}</p><h1>{getTimeGreeting()} <em>{userName}</em></h1><p className="section-subtitle">این صفحه فقط با داده‌های ثبت‌شدهٔ خودت پر می‌شود.</p></div></section><section className="hero-card"><div className="hero-content"><p className="hero-kicker">وضعیت برنامهٔ تو</p><h2>{plan ? plan.title : "هنوز برنامه‌ای ساخته نشده"}</h2><p>{plan?.summary || "اطلاعات تحصیلی‌ات را کامل کن تا برنامه‌ای واقعی و متناسب با خودت ساخته شود."}</p><button className="light-button" onClick={() => navigate("planning")}>{plan ? "ویرایش اطلاعات" : "شروع جمع‌آوری اطلاعات"} <Icon name="arrow_back" size={18} /></button></div><div className="hero-orbit" aria-hidden="true"><div className="orbit orbit-one" /><div className="orbit orbit-two" /></div></section>{nextSession && <div className="next-lesson-banner"><span className="soft-icon mint"><Icon name="play_arrow" size={18} /></span><div><p className="eyebrow">درس بعدی برای مطالعه</p><strong>{lessonName(nextSession.subject)}</strong><small>{nextSession.day} · {nextSession.start} · {nextSession.duration}</small></div><span className="lesson-code">{lessonCode(nextSession.subject)}</span></div>}<div className="section-heading"><div><p className="eyebrow">وضعیت امروز</p><h2>برنامهٔ امروز</h2></div><button className="text-button" onClick={() => navigate("schedule")}>مشاهده تقویم <Icon name="arrow_back" size={16} /></button></div><section className="dashboard-grid"><div className="today-card card"><div className="card-head"><span className="soft-icon mint"><Icon name="timer" size={20} /></span><span className="status-tag">دادهٔ ثبت‌شده</span></div>{sessions.length ? <><div className="today-stat"><strong>{completed.length}</strong><span>از {sessions.length} جلسه انجام شده</span></div><div className="progress-track"><span style={{ width: `${progress}%` }} /></div><div className="card-foot"><span>{progress}% تکمیل بر اساس جلسات ثبت‌شده</span><Icon name="trending_up" size={17} /></div></> : <div className="card-empty-copy"><strong>هنوز جلسه‌ای وجود ندارد</strong><span>بعد از ساخت برنامه، پیشرفت واقعی اینجا نمایش داده می‌شود.</span></div>}</div><div className="exam-card card"><div className="card-head"><span className="soft-icon blue"><Icon name="target" size={20} /></span><span className="muted-label">آزمون پیشرو</span></div><div className="card-empty-copy"><strong>{plan?.sessions?.length ? "تاریخ آزمون ثبت نشده" : "هنوز ثبت نشده"}</strong><span>برای نمایش شمارش معکوس، تاریخ دقیق آزمون را وارد کن.</span></div></div></section><div className="section-heading compact-heading"><div><p className="eyebrow">بر اساس داده‌های تو</p><h2>جلسه‌های بعدی</h2></div><button className="text-button" onClick={() => navigate("schedule")}>تقویم <Icon name="arrow_back" size={16} /></button></div>{sessions.length ? <section className="session-list">{sessions.map((session) => <article className={`session-row ${session.id === 0 ? "highlighted" : ""}`} key={`${session.subject}-${session.id}`}><div className={`subject-dot ${session.color}`}><Icon name="menu_book" size={18} /></div><div className="session-info"><strong>{lessonName(session.subject)} <small className="lesson-code">{lessonCode(session.subject)}</small></strong><span>{session.topic}</span></div><div className="session-time"><strong>{session.time}</strong><span>{session.duration}</span></div><button className={`session-action ${session.status === "next" ? "primary-small" : "ghost-small"}`} onClick={() => !canStartSession(session) ? showToast("این جلسه تا زمان شروع قفل است.") : session.status === "next" ? onComplete(session, session.id) : showToast("این جلسه هنوز نوبتش نرسیده است.")}>{!canStartSession(session) ? <><Icon name="lock" size={16} />قفل</> : session.status === "next" ? <><Icon name={completed.includes(session.id) ? "check_circle" : "play_arrow"} size={17} filled={completed.includes(session.id)} />{completed.includes(session.id) ? "انجام شد" : "شروع جلسه"}</> : "در انتظار"}</button></article>)}</section> : <EmptyState icon="menu_book" title="جلسه‌ای برای نمایش وجود ندارد" description="تا وقتی اطلاعات دقیق و برنامهٔ واقعی ثبت نشود، این بخش خالی می‌ماند." action="تکمیل برنامه‌ریزی" onAction={() => navigate("planning")} />}</div>;
+  return <div className="screen home-screen"><section className="welcome-row"><div><p className="eyebrow">{deviceDate}</p><h1>{getTimeGreeting()} <em>{userName}</em></h1><p className="section-subtitle">این صفحه فقط با داده‌های ثبت‌شدهٔ خودت پر می‌شود.</p></div></section><section className="hero-card"><div className="hero-content"><p className="hero-kicker">وضعیت برنامهٔ تو</p><h2>{plan ? plan.title : "هنوز برنامه‌ای ساخته نشده"}</h2><p>{plan?.summary || "اطلاعات تحصیلی‌ات را کامل کن تا برنامه‌ای واقعی و متناسب با خودت ساخته شود."}</p><button className="light-button" onClick={() => navigate("companion") }>{plan ? "ویرایش اطلاعات" : "شروع جمع‌آوری اطلاعات"} <Icon name="arrow_back" size={18} /></button></div><div className="hero-orbit" aria-hidden="true"><div className="orbit orbit-one" /><div className="orbit orbit-two" /></div></section>{nextSession && <div className="next-lesson-banner"><span className="soft-icon mint"><Icon name="play_arrow" size={18} /></span><div><p className="eyebrow">درس بعدی برای مطالعه</p><strong>{lessonName(nextSession.subject)}</strong><small>{nextSession.day} · {nextSession.start} · {nextSession.duration}</small></div><span className="lesson-code">{lessonCode(nextSession.subject)}</span></div>}<div className="section-heading"><div><p className="eyebrow">وضعیت امروز</p><h2>برنامهٔ امروز</h2></div><button className="text-button" onClick={() => navigate("schedule")}>مشاهده تقویم <Icon name="arrow_back" size={16} /></button></div><section className="dashboard-grid"><div className="today-card card"><div className="card-head"><span className="soft-icon mint"><Icon name="timer" size={20} /></span><span className="status-tag">دادهٔ ثبت‌شده</span></div>{sessions.length ? <><div className="today-stat"><strong>{completed.length}</strong><span>از {sessions.length} جلسه انجام شده</span></div><div className="progress-track"><span style={{ width: `${progress}%` }} /></div><div className="card-foot"><span>{progress}% تکمیل بر اساس جلسات ثبت‌شده</span><Icon name="trending_up" size={17} /></div></> : <div className="card-empty-copy"><strong>هنوز جلسه‌ای وجود ندارد</strong><span>بعد از ساخت برنامه، پیشرفت واقعی اینجا نمایش داده می‌شود.</span></div>}</div><div className="exam-card card"><div className="card-head"><span className="soft-icon blue"><Icon name="target" size={20} /></span><span className="muted-label">آزمون پیشرو</span></div><div className="card-empty-copy"><strong>{plan?.sessions?.length ? "تاریخ آزمون ثبت نشده" : "هنوز ثبت نشده"}</strong><span>برای نمایش شمارش معکوس، تاریخ دقیق آزمون را وارد کن.</span></div></div></section><div className="section-heading compact-heading"><div><p className="eyebrow">بر اساس داده‌های تو</p><h2>جلسه‌های بعدی</h2></div><button className="text-button" onClick={() => navigate("schedule")}>تقویم <Icon name="arrow_back" size={16} /></button></div>{sessions.length ? <section className="session-list">{sessions.map((session) => <article className={`session-row ${session.id === 0 ? "highlighted" : ""}`} key={`${session.subject}-${session.id}`}><div className={`subject-dot ${session.color}`}><Icon name="menu_book" size={18} /></div><div className="session-info"><strong>{lessonName(session.subject)} <small className="lesson-code">{lessonCode(session.subject)}</small></strong><span>{session.topic}</span></div><div className="session-time"><strong>{session.time}</strong><span>{session.duration}</span></div><button className={`session-action ${session.status === "next" ? "primary-small" : "ghost-small"}`} onClick={() => !canStartSession(session) ? showToast("این جلسه تا زمان شروع قفل است.") : session.status === "next" ? onComplete(session, session.id) : showToast("این جلسه هنوز نوبتش نرسیده است.")}>{!canStartSession(session) ? <><Icon name="lock" size={16} />قفل</> : session.status === "next" ? <><Icon name={completed.includes(session.id) ? "check_circle" : "play_arrow"} size={17} filled={completed.includes(session.id)} />{completed.includes(session.id) ? "انجام شد" : "شروع جلسه"}</> : "در انتظار"}</button></article>)}</section> : <EmptyState icon="menu_book" title="جلسه‌ای برای نمایش وجود ندارد" description="تا وقتی اطلاعات دقیق و برنامهٔ واقعی ثبت نشود، این بخش خالی می‌ماند." action="تکمیل برنامه‌ریزی" onAction={() => navigate("planning")} />}</div>;
 }
 
 function PlanningScreen({ step, current, answers, onAnswer, onNext, onBack, isGenerating }: { step: number; current: PlannerStep; answers: Record<number, string>; onAnswer: (answer: string) => void; onNext: () => void; onBack: () => void; isGenerating: boolean }) {
