@@ -64,10 +64,14 @@ export async function getStudentProfile(userId: number) {
 export async function createStudyPlan(input: { userId: number; title: string; summary: string; focusTip: string; inputSnapshot: Record<string, unknown>; sessions: Array<{ subject: string; topic: string; day: string; start: string; end: string; duration: string; reason: string }> }) {
   const db = await getDb();
   if (!db) throw new Error("Database is not configured");
-  const planResult = await db.insert(studyPlans).values({ userId: input.userId, title: input.title, summary: input.summary, focusTip: input.focusTip, inputSnapshot: input.inputSnapshot });
-  const planId = Number(planResult[0].insertId);
-  if (input.sessions.length) await db.insert(studySessions).values(input.sessions.map((session) => ({ ...session, planId, userId: input.userId })));
-  return { planId, ...input, createdAt: new Date() };
+  return db.transaction(async (tx) => {
+    const planResult = await tx.insert(studyPlans).values({ userId: input.userId, title: input.title, summary: input.summary, focusTip: input.focusTip, inputSnapshot: input.inputSnapshot });
+    const planId = Number(planResult[0].insertId);
+    if (input.sessions.length) {
+      await tx.insert(studySessions).values(input.sessions.map((session) => ({ ...session, planId, userId: input.userId })));
+    }
+    return { planId, ...input, createdAt: new Date() };
+  });
 }
 
 export async function getLatestStudyPlan(userId: number) {

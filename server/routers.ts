@@ -235,7 +235,7 @@ export const appRouter = router({
           if (input.planRange === "week") {
             const weekDays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
             const existingDays = new Set(plan.sessions.map((session) => session.day));
-            const priority = (input.answers["دروس اولویت‌دار"] ?? "").split(/[،,]/).map((item) => item.trim()).filter(Boolean);
+            const priority = (input.answers["دروس اولویت‌دار"] ?? input.answers["دروس امروز"] ?? "").split(/[،,]/).map((item) => item.trim()).filter(Boolean);
             const subjects = [...priority, ...curriculum.filter((subject) => !priority.includes(subject))];
             weekDays.forEach((day, index) => {
               if (!existingDays.has(day)) {
