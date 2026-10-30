@@ -34,8 +34,7 @@ export default function AcademicLearningHub({ answers, sessions, completed }: Pr
     const text = [guide.title, guide.category, ...guide.steps, guide.warning].join(" ").toLocaleLowerCase("fa");
     const matchesQuery = !query.trim() || text.includes(query.trim().toLocaleLowerCase("fa"));
     const matchesCategory = category === "همه" || guide.category === category;
-    const matchesTrack = !track || guide.match[0] === "*" || guide.match.some((item) => track.includes(item)) || guide.match.some((item) => priorities.includes(item));
-    return matchesQuery && matchesCategory && matchesTrack;
+    return matchesQuery && matchesCategory;
   });
 
   return <section className="academic-hub" aria-label="DNA تحصیلی و بانک آموزشی">
