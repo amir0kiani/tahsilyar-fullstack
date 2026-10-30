@@ -332,7 +332,7 @@ export const verifiedQuestions: ExamQuestion[] = [
     sourceQuestionNumber: "۱۱",
     verifiedAt,
     reviewerNote: "تمرین تازه بر اساس مهارت سؤال مرجع در حسابان ۱، فصل مثلثات؛ مقادیر تغییر کرده‌اند."
-  }
+  },
 
   // Humanities grade 12 — Math & Statistics 3. The reference is the National
   // Assessment Organization's 1404 first-session booklet; all five are original
