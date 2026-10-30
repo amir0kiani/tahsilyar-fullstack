@@ -11,6 +11,9 @@ const dbMocks = vi.hoisted(() => ({
   upsertStudentProfile: vi.fn(),
   createStudyPlan: vi.fn(),
   getDb: vi.fn(),
+  getAcademicMastery: vi.fn(),
+  getExamHistory: vi.fn(),
+  saveExamAttempt: vi.fn(),
 }));
 
 vi.mock("./_core/llm", () => ({ invokeLLM: invokeLLMMock }));
@@ -44,6 +47,9 @@ describe("study AI procedures", () => {
     dbMocks.upsertStudentProfile.mockResolvedValue(undefined);
     dbMocks.createStudyPlan.mockResolvedValue(undefined);
     dbMocks.getDb.mockResolvedValue(null);
+    dbMocks.getAcademicMastery.mockResolvedValue([]);
+    dbMocks.getExamHistory.mockResolvedValue([]);
+    dbMocks.saveExamAttempt.mockResolvedValue({ id: 1 });
   });
 
   it("rejects chat and plan generation for unauthenticated users", async () => {
