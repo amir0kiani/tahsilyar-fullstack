@@ -437,7 +437,7 @@ export const verifiedQuestions: ExamQuestion[] = [
   },
   {
     id: "verified-bio1-systems-1405-043",
-    grade: "دهم", track: "تجربی", subject: "زیست‌شناسی", chapter: "دنیای زنده",
+    grade: "دهم", track: "تجربی", subject: "زیست‌شناسی", chapter: "زیست‌شناسی، دیروز، امروز و فردا",
     topic: "زیست‌شناسی سامانه‌ای", difficulty: "متوسط",
     prompt: "چرا برای شناخت یک سامانهٔ زنده، بررسی جداگانهٔ اجزای آن همیشه کافی نیست؟",
     options: [
@@ -458,7 +458,7 @@ export const verifiedQuestions: ExamQuestion[] = [
   },
   {
     id: "verified-bio1-adipose-1405-034",
-    grade: "دهم", track: "تجربی", subject: "زیست‌شناسی", chapter: "دنیای زنده",
+    grade: "دهم", track: "تجربی", subject: "زیست‌شناسی", chapter: "زیست‌شناسی، دیروز، امروز و فردا",
     topic: "بافت پیوندی و یاخته چربی", difficulty: "آسان",
     prompt: "کدام ویژگی با یاختهٔ چربی در بافت زیرپوستی سازگارتر است؟",
     options: [
