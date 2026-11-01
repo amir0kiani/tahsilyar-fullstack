@@ -19,7 +19,7 @@ export default function ExamCenter() {
  const selectedDifficulty = difficulty === "همه سطوح" ? undefined : difficulty as "آسان" | "متوسط" | "سخت";
  const lessonSelected = grade !== "همه پایه‌ها" && track !== "همه رشته‌ها" && chapter !== "کل کتاب";
  const progress=trpc.exams.lessonProgress.useQuery({grade,track,subject,chapter},{enabled:lessonSelected});
- const questions=trpc.exams.questions.useQuery({subject,chapter,grade:grade==="همه پایه‌ها"?"":grade,track:track==="همه رشته‌ها"?"":track,difficulty:selectedDifficulty,limit:20},{enabled:lessonSelected && progress.data===true});
+ const questions=trpc.exams.questions.useQuery({subject,chapter,grade:grade==="همه پایه‌ها"?"":grade,track:track==="همه رشته‌ها"?"":track,difficulty:selectedDifficulty,limit:5},{enabled:lessonSelected && progress.data===true});
  const dna=trpc.exams.academicDNA.useQuery();
  const markLessonStudied=trpc.exams.markLessonStudied.useMutation({onSuccess:()=>{void progress.refetch();void questions.refetch();}});
  const submit=trpc.exams.submit.useMutation({onSuccess:(value)=>{setResult(value as Result);void dna.refetch();}});

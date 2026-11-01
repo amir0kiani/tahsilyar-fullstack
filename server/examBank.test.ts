@@ -148,7 +148,7 @@ describe("curriculum and assessment question bank", () => {
           question.grade === "دوازدهم" && question.track === book.track &&
           question.subject === book.subject && question.chapter === chapter
         );
-        expect(matching.length, `${book.subject} / ${chapter}`).toBeGreaterThanOrEqual(5);
+        expect(matching, `${book.subject} / ${chapter}`).toHaveLength(5);
       }
     }
 
