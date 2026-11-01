@@ -16,7 +16,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["تمرکز انحصاری بر زندگی شاهان", "بهره‌گیری و نقد اسناد و مدارک معتبر", "شرح فتوحات بدون تحلیل", "اتکا به نوشته‌های مصنوع و غیرمستند"],
     correctIndex: 1,
     explanation: "تاریخ‌نگاری جدید از روش تحقیق علمی استفاده می‌کند و اسناد و مدارک معتبر را گزینش و نقد می‌کند.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("تاریخ", "خرداد ۱۴۰۴"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("تاریخ", "خرداد ۱۴۰۴"),
     sourceYear: "۱۴۰۴", sourceQuestionNumber: "۲", verifiedAt,
     reviewerNote: "بازنویسی به قالب چهارگزینه‌ای از پرسش تشریحی اصول تاریخ‌نگاری جدید؛ پاسخ با کلید فایل ارسالی تطبیق داده شد (PDF تاریخ، صفحه ۲)."
   },
@@ -28,7 +28,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["هر دو فقط به شرح جنگ‌ها می‌پردازند.", "تاریخ‌نگاری سنتی بر زندگی شاهان و فتوحات تأکید داشت؛ تاریخ‌نگاری جدید ابعاد گوناگون زندگی انسان را بررسی می‌کند.", "تاریخ‌نگاری جدید فقط به اقتصاد می‌پردازد.", "تاریخ‌نگاری سنتی بر اسناد علمی و نقد منابع استوار بود."],
     correctIndex: 1,
     explanation: "در تاریخ‌نگاری سنتی زندگی شاهان و شرح فتوحات برجسته بود؛ تاریخ‌نگاری جدید جنبه‌های سیاسی، نظامی، اقتصادی، فرهنگی و اجتماعی را نیز بررسی می‌کند.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("تاریخ", "شهریور ۱۴۰۲"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("تاریخ", "شهریور ۱۴۰۲"),
     sourceYear: "۱۴۰۲", sourceQuestionNumber: "۴", verifiedAt,
     reviewerNote: "بازنویسی پرسش مقایسه‌ای؛ پاسخ مطابق کلید فایل ارسالی (PDF تاریخ، صفحه ۳)."
   },
@@ -40,7 +40,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["اطلاعات حافظه افرادی که در رویدادها حضور داشته یا شاهد نزدیک آن بوده‌اند", "فقط کتیبه‌های باستانی", "تنها گزارش‌های رسمی دربار", "صرفاً داده‌های آماری اقتصادی"],
     correctIndex: 0,
     explanation: "تاریخ شفاهی روشی پژوهشی برای گردآوری و نگهداری اطلاعات تاریخی از حافظه افراد حاضر یا شاهد نزدیک رویدادهاست.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("تاریخ", "تیر و مرداد ۱۴۰۵"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("تاریخ", "تیر و مرداد ۱۴۰۵"),
     sourceYear: "۱۴۰۵", sourceQuestionNumber: "۷", verifiedAt,
     reviewerNote: "بازنویسی تعریف تاریخ شفاهی؛ پاسخ مطابق متن پاسخنامهٔ فایل ارسالی (PDF تاریخ، صفحه ۴)."
   },
@@ -52,7 +52,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["میرزا فتحعلی آخوندزاده", "خاوری شیرازی", "محمدحسن‌خان اعتمادالسلطنه", "زین‌العابدین مراغه‌ای"],
     correctIndex: 0,
     explanation: "در پاسخنامهٔ امتحان نهایی خرداد ۱۴۰۴، میرزا فتحعلی آخوندزاده به‌عنوان منتقد تاریخ‌نویسی سنتی معرفی شده است.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("تاریخ", "خرداد ۱۴۰۴"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("تاریخ", "خرداد ۱۴۰۴"),
     sourceYear: "۱۴۰۴", sourceQuestionNumber: "۱۰", verifiedAt,
     reviewerNote: "تبدیل پرسش کوتاه‌پاسخ به چهارگزینه‌ای؛ پاسخ با کلید فایل ارسالی تطبیق داده شد (PDF تاریخ، صفحه ۴)."
   },
@@ -64,7 +64,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["جنگ‌های ایران و روس", "انقلاب مشروطه", "تأسیس دارالفنون", "انتشار نخستین روزنامه"],
     correctIndex: 1,
     explanation: "بر اساس پاسخنامهٔ امتحان نهایی دی ۱۴۰۳، انقلاب مشروطه در تغییر بینش مورخان و توجه به نقش مردم اثرگذار بود.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("تاریخ", "دی ۱۴۰۳"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("تاریخ", "دی ۱۴۰۳"),
     sourceYear: "۱۴۰۳", sourceQuestionNumber: "۱۱", verifiedAt,
     reviewerNote: "بازنویسی سؤال چهارگزینه‌ای؛ پاسخ مطابق کلید فایل ارسالی (PDF تاریخ، صفحه ۴)."
   },
@@ -78,7 +78,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["زیرا وجود از ذاتیات گنجشک است.", "زیرا حیوان بودن بخشی از ماهیت گنجشک است، اما وجود جزء تعریف آن نیست.", "زیرا گنجشک موجود نیست.", "زیرا حیوان و وجود دو واژه هم‌معنا هستند."],
     correctIndex: 1,
     explanation: "حیوان از اجزای ذاتی و تعریف‌کنندهٔ ماهیت گنجشک است؛ اما وجود در تعریف و چیستی آن قرار ندارد و حمل آن نیازمند دلیل است.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("فلسفه", "تیر و مرداد ۱۴۰۵"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("فلسفه", "تیر و مرداد ۱۴۰۵"),
     sourceYear: "۱۴۰۵", sourceQuestionNumber: "۳", verifiedAt,
     reviewerNote: "بازنویسی پرسش دو بخشی به قالب چهارگزینه‌ای؛ پاسخ بر اساس پاسخنامه (PDF فلسفه، صفحه ۲)."
   },
@@ -90,7 +90,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["ماهیت اشیا", "وجود اشیا", "علت غایی اشیا", "ذاتیات همه اشیا"],
     correctIndex: 1,
     explanation: "طبق پاسخنامهٔ امتحان نهایی شهریور ۱۴۰۴، کاربرد «این» و «آن» نشان‌دهندهٔ پی‌بردن کودک به وجود اشیاست، نه ماهیت آن‌ها.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("فلسفه", "شهریور ۱۴۰۴"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("فلسفه", "شهریور ۱۴۰۴"),
     sourceYear: "۱۴۰۴", sourceQuestionNumber: "۶", verifiedAt,
     reviewerNote: "بازنویسی پرسش درست/نادرست به چهارگزینه‌ای؛ پاسخ مطابق فایل ارسالی (PDF فلسفه، صفحه ۳)."
   },
@@ -102,7 +102,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["در خارج هر موجود دو شیء جداگانه به نام وجود و ماهیت دارد.", "از هر واقعیت واحد می‌توان دو مفهوم متفاوتِ چیستی و هستی به دست آورد.", "وجود و ماهیت در همه موارد یک مفهوم‌اند.", "ماهیت فقط به موجودات زنده اختصاص دارد."],
     correctIndex: 1,
     explanation: "وجود و ماهیت دو مفهوم متفاوت از یک موجودند؛ این مغایرت به معنای وجود دو امر جداگانه در عالم خارج نیست.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("فلسفه", "دی ۱۴۰۳"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("فلسفه", "دی ۱۴۰۳"),
     sourceYear: "۱۴۰۳", sourceQuestionNumber: "۹", verifiedAt,
     reviewerNote: "بازنویسی سؤال تشریحی؛ پاسخ با پاسخنامهٔ فایل ارسالی تطبیق داده شد (PDF فلسفه، صفحه ۳)."
   },
@@ -114,7 +114,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["این دو رابطه هیچ تفاوتی ندارند.", "رابطهٔ علیت با رابطهٔ وجودبخشی میان علت و معلول تفاوت دارد.", "هر معلولی علت ندارد.", "وجودبخشی فقط دربارهٔ اشیای بی‌جان مطرح است."],
     correctIndex: 1,
     explanation: "در گزاره‌های پاسخنامهٔ دی ۱۴۰۴، یکسان‌دانستن رابطهٔ علیت و رابطهٔ وجودبخشی نادرست شمرده شده است.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("فلسفه", "دی ۱۴۰۴"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("فلسفه", "دی ۱۴۰۴"),
     sourceYear: "۱۴۰۴", sourceQuestionNumber: "۵-ب", verifiedAt,
     reviewerNote: "تبدیل یکی از گزاره‌های درست/نادرست به چهارگزینه‌ای؛ مطابق کلید فایل ارسالی (PDF فلسفه، صفحه ۳)."
   },
@@ -126,7 +126,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["فارابی و افلاطون", "ابن‌سینا و توماس آکویناس", "ابن‌رشد و ارسطو", "سهروردی و دکارت"],
     correctIndex: 1,
     explanation: "پاسخنامهٔ شهریور ۱۴۰۱، ابن‌سینا و توماس آکویناس را نام می‌برد.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("فلسفه", "شهریور ۱۴۰۱"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("فلسفه", "شهریور ۱۴۰۱"),
     sourceYear: "۱۴۰۱", sourceQuestionNumber: "۱۹", verifiedAt,
     reviewerNote: "بازنویسی سؤال نام‌بری به چهارگزینه‌ای؛ پاسخ مطابق فایل ارسالی (PDF فلسفه، صفحه ۴)."
   },
@@ -140,7 +140,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["همسویی با هویت فرهنگی جامعه و تلاش برای حل مسائل بومی", "بی‌توجهی به مسائل جامعهٔ خود", "محدودکردن دانش به ترجمهٔ نظریه‌های دیگران", "کنارگذاشتن گفت‌وگو با دانش جهانی"],
     correctIndex: 0,
     explanation: "علوم انسانی و اجتماعی بومی باید با هویت فرهنگی جامعه همسو و در حل مسائل آن کارآمد باشد و در عین حال بتواند با زبان و منطق جهان‌شمول مشارکت علمی کند.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("جامعه‌شناسی", "دی ۱۴۰۴"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("جامعه‌شناسی", "دی ۱۴۰۴"),
     sourceYear: "۱۴۰۴", sourceQuestionNumber: "۱", verifiedAt,
     reviewerNote: "بازنویسی سؤال تشریحی؛ پاسخ بر اساس پاسخنامهٔ فایل ارسالی (PDF جامعه‌شناسی، صفحه ۲)."
   },
@@ -152,7 +152,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["با تأمل در دانش عمومی شکل می‌گیرد.", "می‌تواند آسیب‌های دانش عمومی را شناسایی کند.", "دانش عمومی را غنی‌تر می‌کند.", "دربارهٔ آن کمتر می‌اندیشیم و بیشتر در زندگی روزمره از آن استفاده می‌کنیم."],
     correctIndex: 3,
     explanation: "عبارت گزینهٔ چهارم ویژگی دانش عمومی است، نه دانش علمی؛ دانش علمی با تأمل و اندیشه در دانش عمومی به دست می‌آید.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("جامعه‌شناسی", "شهریور ۱۴۰۳"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("جامعه‌شناسی", "شهریور ۱۴۰۳"),
     sourceYear: "۱۴۰۳", sourceQuestionNumber: "۳", verifiedAt,
     reviewerNote: "بازنویسی سؤال گزینه‌ای امتحان نهایی؛ پاسخ مطابق فایل ارسالی (PDF جامعه‌شناسی، صفحه ۲)."
   },
@@ -164,7 +164,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["قطع همیشگی ارتباط میان دو نوع دانش", "رهاکردن بخشی از ذخیرهٔ دانشی به نفع بخش دیگر یا طرح ایده‌های جدید", "نادیده‌گرفتن همهٔ مسائل اجتماعی", "جایگزین‌کردن دانش عمومی با عادت‌های فردی"],
     correctIndex: 1,
     explanation: "طبق پاسخنامه، تعارض گاهی با ترجیح بخشی از ذخیرهٔ دانشی و گاهی با طرح ایده‌های جدید حل می‌شود.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("جامعه‌شناسی", "دی ۱۴۰۲"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("جامعه‌شناسی", "دی ۱۴۰۲"),
     sourceYear: "۱۴۰۲", sourceQuestionNumber: "۶", verifiedAt,
     reviewerNote: "بازنویسی سؤال تشریحی؛ پاسخ مطابق پاسخنامهٔ فایل ارسالی (PDF جامعه‌شناسی، صفحه ۳)."
   },
@@ -176,7 +176,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["روابط همسایگی: کلان؛ ریخت‌شناسی شهری: خرد", "روابط همسایگی: خرد؛ ریخت‌شناسی شهری: کلان", "کنش اجتماعی: کلان؛ ساختار اجتماعی: خرد", "همهٔ موارد فقط در جامعه‌شناسی کلان بررسی می‌شوند."],
     correctIndex: 1,
     explanation: "در پاسخنامهٔ امتحان نهایی دی ۱۴۰۴، روابط همسایگی و کنش اجتماعی در سطح خرد و ریخت‌شناسی شهری و ساختار اجتماعی در سطح کلان دسته‌بندی شده‌اند.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("جامعه‌شناسی", "دی ۱۴۰۴"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("جامعه‌شناسی", "دی ۱۴۰۴"),
     sourceYear: "۱۴۰۴", sourceQuestionNumber: "۲۴", verifiedAt,
     reviewerNote: "بازنویسی سؤال دسته‌بندی؛ پاسخ مطابق فایل ارسالی (PDF جامعه‌شناسی، صفحه ۶)."
   },
@@ -188,7 +188,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     options: ["به دلیل عادت", "به دلیل نداشتن ذخیرهٔ دانشی", "به دلیل نبود جهان اجتماعی", "به دلیل علمی‌بودن همهٔ کنش‌ها"],
     correctIndex: 0,
     explanation: "پاسخنامهٔ شهریور ۱۴۰۲، عادت را علت پنهان‌ماندن دانش ضمنی در کنش‌های روزمره معرفی می‌کند.",
-    sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("جامعه‌شناسی", "شهریور ۱۴۰۲"),
+    sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("جامعه‌شناسی", "شهریور ۱۴۰۲"),
     sourceYear: "۱۴۰۲", sourceQuestionNumber: "۷", verifiedAt,
     reviewerNote: "تبدیل سؤال کوتاه‌پاسخ به چهارگزینه‌ای؛ پاسخ مطابق فایل ارسالی (PDF جامعه‌شناسی، صفحه ۳)."
   },
@@ -203,7 +203,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
       options: ["AH خاصیت اسیدی بیشتری دارد و BH اسید قوی‌تری است.", "BH هم خاصیت اسیدی بیشتری دارد و هم اسید قوی‌تری است.", "AH هم خاصیت اسیدی بیشتری دارد و هم اسید قوی‌تری است.", "هیچ مقایسه‌ای ممکن نیست."],
       correctIndex: 0,
       explanation: "pH کمتر به معنی غلظت بیشتر یون هیدرونیوم و خاصیت اسیدی بیشتر محلول است؛ ثابت یونش بزرگ‌تر نشان‌دهندهٔ قوی‌تر بودن اسید است.",
-      sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
+      sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
       sourceYear: "۱۴۰۵", sourceQuestionNumber: "۲", verifiedAt,
       reviewerNote: "بازنویسی مفهومی سؤال مقایسهٔ دو اسید؛ پاسخ مطابق پاسخنامهٔ فایل ارسالی (PDF شیمی، صفحه ۳)."
     },
@@ -215,7 +215,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
       options: ["زیرا Li₂O در آب یون‌های بیشتری ایجاد می‌کند.", "زیرا Li₂O مولکولی و نارساناست.", "زیرا Ba(OH)₂ هیچ یونی تولید نمی‌کند.", "زیرا رسانایی فقط به جرم مولی وابسته است."],
       correctIndex: 0,
       explanation: "با درنظرگرفتن تفکیک کامل، هر واحد Li₂O در آب دو یون Li⁺ و دو یون OH⁻ ایجاد می‌کند؛ در مجموع چهار یون، در حالی که Ba(OH)₂ سه یون ایجاد می‌کند.",
-      sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
+      sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
       sourceYear: "۱۴۰۵", sourceQuestionNumber: "۳", verifiedAt,
       reviewerNote: "بازنویسی سؤال مقایسهٔ رسانایی؛ پاسخ مطابق پاسخنامهٔ فایل ارسالی (PDF شیمی، صفحه ۳)."
     },
@@ -227,7 +227,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
       options: ["نمک‌های فسفات", "ترکیب‌های گوگرددار", "ترکیب‌های کلردار", "افزایش مقدار روغن"],
       correctIndex: 0,
       explanation: "نمک‌های فسفات با یون‌های کلسیم و منیزیم آب سخت واکنش می‌دهند و از تشکیل رسوب و لکه جلوگیری می‌کنند.",
-      sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
+      sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
       sourceYear: "۱۴۰۵", sourceQuestionNumber: "۴", verifiedAt,
       reviewerNote: "بازنویسی سؤال چندبخشی پاک‌کننده‌ها؛ پاسخ مطابق پاسخنامهٔ فایل ارسالی (PDF شیمی، صفحه ۴)."
     },
@@ -239,7 +239,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
       options: ["۱۰ درصد", "۲۰ درصد", "۴۰ درصد", "۸۰ درصد"],
       correctIndex: 1,
       explanation: "درصد یونش برابر نسبت شمار ذرات یونیده‌شده به شمار اولیه، ضرب‌در ۱۰۰ است: (۱÷۵)×۱۰۰=۲۰ درصد.",
-      sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
+      sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
       sourceYear: "۱۴۰۵", sourceQuestionNumber: "۵", verifiedAt,
       reviewerNote: "تبدیل سؤال شکل‌محور به متن و عدد؛ محاسبه با پاسخنامهٔ فایل ارسالی تطبیق داده شد (PDF شیمی، صفحه ۴)."
     },
@@ -251,7 +251,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
       options: ["۰٫۳۲ گرم", "۰٫۶۴ گرم", "۱٫۲۸ گرم", "۳٫۲۰ گرم"],
       correctIndex: 2,
       explanation: "مول اسید برابر ۰٫۰۱۶×۲=۰٫۰۳۲ است. نسبت واکنش HX و NaOH برابر ۱:۱ است؛ پس ۰٫۰۳۲ مول NaOH لازم است. جرم آن ۰٫۰۳۲×۴۰=۱٫۲۸ گرم می‌شود.",
-      sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
+      sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
       sourceYear: "۱۴۰۵", sourceQuestionNumber: "۱", verifiedAt,
       reviewerNote: "این سؤال به‌عنوان تمرین محاسباتی بازنویسی شده است؛ اعداد و صورت مستقل‌اند. پاسخ عددی باید بازبینی شود: دادهٔ غلظت در صورت سؤال بازطراحی‌شده ۰٫۰۱۶ M است، بنابراین پاسخ درست ۱٫۲۸ g (گزینه ۳) است."
     }
