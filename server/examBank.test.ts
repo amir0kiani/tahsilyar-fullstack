@@ -27,8 +27,13 @@ describe("curriculum and assessment question bank", () => {
     for (const question of verifiedQuestions) {
       expect(question.sourceStatus).toBe("official-exam-adapted");
       expect(question.sourceTitle).toBeTruthy();
-      expect(question.sourceUrl).toMatch(/^https:\/\//);
-      expect(question.sourceYear).toBeTruthy();
+      const uploadedSource = question.sourceTitle?.includes("(فایل ارسالی کاربر)") ?? false;
+      if (uploadedSource) {
+        expect(question.sourceQuestionNumber).toBeTruthy();
+      } else {
+        expect(question.sourceUrl).toMatch(/^https:\/\//);
+        expect(question.sourceYear).toBeTruthy();
+      }
       expect(question.verifiedAt).toBeInstanceOf(Date);
       expect(question.reviewerNote).toBeTruthy();
     }
