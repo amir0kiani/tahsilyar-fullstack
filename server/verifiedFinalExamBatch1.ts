@@ -10,7 +10,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   // History – grade 12 humanities
   {
     id: "final-history12-modern-historiography-1404-khordad-02",
-    grade: "دوازدهم", track: "انسانی", subject: "تاریخ", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "تاریخ", chapter: "تاریخ‌نگاری و گونه‌های منابع دوره معاصر",
     topic: "اصول تاریخ‌نگاری جدید", difficulty: "آسان",
     prompt: "کدام گزینه از اصول تاریخ‌نگاری جدید به شمار می‌رود؟",
     options: ["تمرکز انحصاری بر زندگی شاهان", "بهره‌گیری و نقد اسناد و مدارک معتبر", "شرح فتوحات بدون تحلیل", "اتکا به نوشته‌های مصنوع و غیرمستند"],
@@ -22,7 +22,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   },
   {
     id: "final-history12-traditional-modern-1402-shahrivar-04",
-    grade: "دوازدهم", track: "انسانی", subject: "تاریخ", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "تاریخ", chapter: "تاریخ‌نگاری و گونه‌های منابع دوره معاصر",
     topic: "تفاوت بینش تاریخ‌نگاری سنتی و جدید", difficulty: "آسان",
     prompt: "کدام عبارت تفاوت اصلی تاریخ‌نگاری سنتی و معاصر را درست بیان می‌کند؟",
     options: ["هر دو فقط به شرح جنگ‌ها می‌پردازند.", "تاریخ‌نگاری سنتی بر زندگی شاهان و فتوحات تأکید داشت؛ تاریخ‌نگاری جدید ابعاد گوناگون زندگی انسان را بررسی می‌کند.", "تاریخ‌نگاری جدید فقط به اقتصاد می‌پردازد.", "تاریخ‌نگاری سنتی بر اسناد علمی و نقد منابع استوار بود."],
@@ -34,7 +34,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   },
   {
     id: "final-history12-oral-history-1405-tir-07",
-    grade: "دوازدهم", track: "انسانی", subject: "تاریخ", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "تاریخ", chapter: "تاریخ‌نگاری و گونه‌های منابع دوره معاصر",
     topic: "تاریخ شفاهی", difficulty: "آسان",
     prompt: "تاریخ شفاهی بیشتر بر گردآوری کدام نوع اطلاعات تکیه دارد؟",
     options: ["اطلاعات حافظه افرادی که در رویدادها حضور داشته یا شاهد نزدیک آن بوده‌اند", "فقط کتیبه‌های باستانی", "تنها گزارش‌های رسمی دربار", "صرفاً داده‌های آماری اقتصادی"],
@@ -46,7 +46,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   },
   {
     id: "final-history12-mirza-fathali-1404-khordad-10",
-    grade: "دوازدهم", track: "انسانی", subject: "تاریخ", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "تاریخ", chapter: "تاریخ‌نگاری و گونه‌های منابع دوره معاصر",
     topic: "نقد تاریخ‌نگاری سنتی در دوره قاجار", difficulty: "متوسط",
     prompt: "کدام متفکر دوره قاجار تاریخ‌نویسی سنتی را به شیوه‌ای علمی نقد کرد؟",
     options: ["میرزا فتحعلی آخوندزاده", "خاوری شیرازی", "محمدحسن‌خان اعتمادالسلطنه", "زین‌العابدین مراغه‌ای"],
@@ -58,7 +58,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   },
   {
     id: "final-history12-mashrouteh-1403-dey-11",
-    grade: "دوازدهم", track: "انسانی", subject: "تاریخ", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "تاریخ", chapter: "تاریخ‌نگاری و گونه‌های منابع دوره معاصر",
     topic: "تأثیر انقلاب مشروطه بر تاریخ‌نگاری", difficulty: "آسان",
     prompt: "کدام رویداد بر توجه مورخان ایرانی به نقش مردم در رویدادهای تاریخی تأثیر عمیقی گذاشت؟",
     options: ["جنگ‌های ایران و روس", "انقلاب مشروطه", "تأسیس دارالفنون", "انتشار نخستین روزنامه"],
@@ -72,7 +72,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   // Philosophy – grade 12 humanities
   {
     id: "final-philosophy12-existence-essence-1405-tir-03",
-    grade: "دوازدهم", track: "انسانی", subject: "فلسفه", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "فلسفه", chapter: "هستی و چیستی",
     topic: "تفاوت وجود و ماهیت", difficulty: "متوسط",
     prompt: "چرا حمل «وجود» بر «گنجشک» نیازمند دلیل است، اما حمل «حیوان» بر آن نیازمند دلیل نیست؟",
     options: ["زیرا وجود از ذاتیات گنجشک است.", "زیرا حیوان بودن بخشی از ماهیت گنجشک است، اما وجود جزء تعریف آن نیست.", "زیرا گنجشک موجود نیست.", "زیرا حیوان و وجود دو واژه هم‌معنا هستند."],
@@ -84,7 +84,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   },
   {
     id: "final-philosophy12-child-essence-1404-shahrivar-06",
-    grade: "دوازدهم", track: "انسانی", subject: "فلسفه", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "فلسفه", chapter: "هستی و چیستی",
     topic: "شناخت وجود و ماهیت", difficulty: "آسان",
     prompt: "در متن کتاب، استفاده کودک از واژه‌های «این» و «آن» نشانهٔ آگاهی او از کدام مفهوم دانسته شده است؟",
     options: ["ماهیت اشیا", "وجود اشیا", "علت غایی اشیا", "ذاتیات همه اشیا"],
@@ -96,7 +96,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   },
   {
     id: "final-philosophy12-existence-essence-meaning-1403-dey-09",
-    grade: "دوازدهم", track: "انسانی", subject: "فلسفه", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "فلسفه", chapter: "هستی و چیستی",
     topic: "مغایرت وجود و ماهیت", difficulty: "متوسط",
     prompt: "مغایرت وجود و ماهیت به چه معناست؟",
     options: ["در خارج هر موجود دو شیء جداگانه به نام وجود و ماهیت دارد.", "از هر واقعیت واحد می‌توان دو مفهوم متفاوتِ چیستی و هستی به دست آورد.", "وجود و ماهیت در همه موارد یک مفهوم‌اند.", "ماهیت فقط به موجودات زنده اختصاص دارد."],
@@ -108,7 +108,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   },
   {
     id: "final-philosophy12-scientific-knowledge-1404-dey-05",
-    grade: "دوازدهم", track: "انسانی", subject: "فلسفه", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "فلسفه", chapter: "هستی و چیستی",
     topic: "رابطه علیت و وجودبخشی", difficulty: "متوسط",
     prompt: "کدام گزاره دربارهٔ رابطهٔ علیت و وجودبخشی نادرست است؟",
     options: ["این دو رابطه هیچ تفاوتی ندارند.", "رابطهٔ علیت با رابطهٔ وجودبخشی میان علت و معلول تفاوت دارد.", "هر معلولی علت ندارد.", "وجودبخشی فقط دربارهٔ اشیای بی‌جان مطرح است."],
@@ -120,7 +120,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   },
   {
     id: "final-philosophy12-aquinas-avicenna-1401-shahrivar-19",
-    grade: "دوازدهم", track: "انسانی", subject: "فلسفه", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "فلسفه", chapter: "هستی و چیستی",
     topic: "فیلسوفان نظریه مغایرت وجود و ماهیت", difficulty: "آسان",
     prompt: "کدام گزینه یک فیلسوف مسلمان و یک فیلسوف غربیِ مرتبط با استفاده از نظریهٔ مغایرت وجود و ماهیت در خداشناسی را درست نام می‌برد؟",
     options: ["فارابی و افلاطون", "ابن‌سینا و توماس آکویناس", "ابن‌رشد و ارسطو", "سهروردی و دکارت"],
@@ -134,7 +134,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   // Sociology – grade 12 humanities
   {
     id: "final-sociology12-indigenous-humanities-1404-dey-01",
-    grade: "دوازدهم", track: "انسانی", subject: "جامعه‌شناسی", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "جامعه‌شناسی", chapter: "ذخیره دانشی",
     topic: "ویژگی علوم انسانی و اجتماعی بومی", difficulty: "آسان",
     prompt: "کدام گزینه با ایدهٔ علوم انسانی و اجتماعی بومی ایرانی ـ اسلامی سازگارتر است؟",
     options: ["همسویی با هویت فرهنگی جامعه و تلاش برای حل مسائل بومی", "بی‌توجهی به مسائل جامعهٔ خود", "محدودکردن دانش به ترجمهٔ نظریه‌های دیگران", "کنارگذاشتن گفت‌وگو با دانش جهانی"],
@@ -146,7 +146,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   },
   {
     id: "final-sociology12-scientific-knowledge-1403-shahrivar-03",
-    grade: "دوازدهم", track: "انسانی", subject: "جامعه‌شناسی", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "جامعه‌شناسی", chapter: "ذخیره دانشی",
     topic: "ویژگی دانش علمی", difficulty: "آسان",
     prompt: "کدام عبارت دربارهٔ دانش علمی نادرست است؟",
     options: ["با تأمل در دانش عمومی شکل می‌گیرد.", "می‌تواند آسیب‌های دانش عمومی را شناسایی کند.", "دانش عمومی را غنی‌تر می‌کند.", "دربارهٔ آن کمتر می‌اندیشیم و بیشتر در زندگی روزمره از آن استفاده می‌کنیم."],
@@ -158,7 +158,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   },
   {
     id: "final-sociology12-knowledge-conflict-1402-dey-06",
-    grade: "دوازدهم", track: "انسانی", subject: "جامعه‌شناسی", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "جامعه‌شناسی", chapter: "ذخیره دانشی",
     topic: "تعارض دانش عمومی و علمی", difficulty: "متوسط",
     prompt: "کدام مورد یکی از راه‌های حل تعارض میان دانش عمومی و دانش علمی در یک جهان اجتماعی است؟",
     options: ["قطع همیشگی ارتباط میان دو نوع دانش", "رهاکردن بخشی از ذخیرهٔ دانشی به نفع بخش دیگر یا طرح ایده‌های جدید", "نادیده‌گرفتن همهٔ مسائل اجتماعی", "جایگزین‌کردن دانش عمومی با عادت‌های فردی"],
@@ -170,7 +170,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   },
   {
     id: "final-sociology12-social-science-branches-1404-dey-24",
-    grade: "دوازدهم", track: "انسانی", subject: "جامعه‌شناسی", chapter: "درس دوم",
+    grade: "دوازدهم", track: "انسانی", subject: "جامعه‌شناسی", chapter: "علوم اجتماعی",
     topic: "جامعه‌شناسی خرد و کلان", difficulty: "متوسط",
     prompt: "کدام دسته‌بندی دربارهٔ پدیده‌های اجتماعی درست است؟",
     options: ["روابط همسایگی: کلان؛ ریخت‌شناسی شهری: خرد", "روابط همسایگی: خرد؛ ریخت‌شناسی شهری: کلان", "کنش اجتماعی: کلان؛ ساختار اجتماعی: خرد", "همهٔ موارد فقط در جامعه‌شناسی کلان بررسی می‌شوند."],
@@ -182,7 +182,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   },
   {
     id: "final-sociology12-everyday-knowledge-1402-shahrivar-07",
-    grade: "دوازدهم", track: "انسانی", subject: "جامعه‌شناسی", chapter: "درس اول",
+    grade: "دوازدهم", track: "انسانی", subject: "جامعه‌شناسی", chapter: "ذخیره دانشی",
     topic: "دانش عمومی و عادت", difficulty: "آسان",
     prompt: "چرا آگاهی و دانش به‌کاررفته در کنش‌های روزمره‌ای مانند راه‌رفتن و حرف‌زدن معمولاً از نظر ما پنهان می‌ماند؟",
     options: ["به دلیل عادت", "به دلیل نداشتن ذخیرهٔ دانشی", "به دلیل نبود جهان اجتماعی", "به دلیل علمی‌بودن همهٔ کنش‌ها"],
@@ -197,7 +197,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
   ...(["تجربی", "ریاضی"] as const).flatMap((track) => [
     {
       id: `final-chemistry12-acid-strength-${track}-1405-tir-02`,
-      grade: "دوازدهم", track, subject: "شیمی", chapter: "اسیدها و بازها",
+      grade: "دوازدهم", track, subject: "شیمی", chapter: "مولکول‌ها در خدمت تندرستی",
       topic: "مقایسه pH و قدرت اسیدی", difficulty: "متوسط",
       prompt: "در دمای یکسان، دو محلول اسیدی AH و BH با غلظت مولی برابر بررسی شده‌اند. اگر pH محلول AH کمتر و ثابت یونش اسید BH بزرگ‌تر باشد، کدام نتیجه درست است؟",
       options: ["AH خاصیت اسیدی بیشتری دارد و BH اسید قوی‌تری است.", "BH هم خاصیت اسیدی بیشتری دارد و هم اسید قوی‌تری است.", "AH هم خاصیت اسیدی بیشتری دارد و هم اسید قوی‌تری است.", "هیچ مقایسه‌ای ممکن نیست."],
@@ -209,7 +209,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     },
     {
       id: `final-chemistry12-lithium-oxide-${track}-1405-tir-03`,
-      grade: "دوازدهم", track, subject: "شیمی", chapter: "اسیدها و بازها",
+      grade: "دوازدهم", track, subject: "شیمی", chapter: "مولکول‌ها در خدمت تندرستی",
       topic: "خاصیت بازی اکسید فلزی و رسانایی", difficulty: "متوسط",
       prompt: "با افزودن Li₂O به آب، محلولی بازی تشکیل می‌شود. در شرایط یکسان، چرا رسانایی محلول ۰٫۰۰۱ مولار Li₂O از محلول ۰٫۰۰۱ مولار Ba(OH)₂ بیشتر گزارش شده است؟",
       options: ["زیرا Li₂O در آب یون‌های بیشتری ایجاد می‌کند.", "زیرا Li₂O مولکولی و نارساناست.", "زیرا Ba(OH)₂ هیچ یونی تولید نمی‌کند.", "زیرا رسانایی فقط به جرم مولی وابسته است."],
@@ -221,7 +221,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     },
     {
       id: `final-chemistry12-detergent-${track}-1405-tir-04`,
-      grade: "دوازدهم", track, subject: "شیمی", chapter: "پاک‌کننده‌ها",
+      grade: "دوازدهم", track, subject: "شیمی", chapter: "مولکول‌ها در خدمت تندرستی",
       topic: "ساختار پاک‌کننده و آب سخت", difficulty: "متوسط",
       prompt: "برای کاهش تشکیل رسوب و لکهٔ سفید ناشی از یون‌های کلسیم و منیزیم در آب سخت، افزودن کدام ماده به پاک‌کننده مناسب‌تر است؟",
       options: ["نمک‌های فسفات", "ترکیب‌های گوگرددار", "ترکیب‌های کلردار", "افزایش مقدار روغن"],
@@ -233,7 +233,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     },
     {
       id: `final-chemistry12-ionization-${track}-1405-tir-05`,
-      grade: "دوازدهم", track, subject: "شیمی", chapter: "اسیدها و بازها",
+      grade: "دوازدهم", track, subject: "شیمی", chapter: "مولکول‌ها در خدمت تندرستی",
       topic: "درصد یونش اسید ضعیف", difficulty: "آسان",
       prompt: "در شکل ذره‌ای یک اسید ضعیف، از ۵ ذرهٔ اولیهٔ اسید، ۱ ذره یونیده شده است. درصد یونش اسید چقدر است؟",
       options: ["۱۰ درصد", "۲۰ درصد", "۴۰ درصد", "۸۰ درصد"],
@@ -245,7 +245,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     },
     {
       id: `final-chemistry12-neutralization-${track}-1404-khordad-01`,
-      grade: "دوازدهم", track, subject: "شیمی", chapter: "اسیدها و بازها",
+      grade: "دوازدهم", track, subject: "شیمی", chapter: "مولکول‌ها در خدمت تندرستی",
       topic: "خنثی‌سازی اسید ضعیف و باز قوی", difficulty: "دشوار",
       prompt: "در محلولی از اسید ضعیف تک‌پروتونی HX، غلظت اولیهٔ اسید ۰٫۰۱۶ مولار است. برای خنثی‌کردن کامل ۲ لیتر از آن، با فرض واکنش ۱:۱، چند گرم NaOH لازم است؟ جرم مولی NaOH برابر ۴۰ گرم بر مول است.",
       options: ["۰٫۳۲ گرم", "۰٫۶۴ گرم", "۱٫۲۸ گرم", "۳٫۲۰ گرم"],

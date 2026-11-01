@@ -265,17 +265,17 @@ function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: s
       chapters,
       questionCount: bookQuestions.length,
       verifiedQuestionCount: bookQuestions.filter((question) => question.sourceStatus !== "sample-authored").length,
-      targetQuestionCount: 5,
+      targetQuestionsPerLesson: 5,
     };
   });
 
   // Preserve legacy sample subjects that do not yet have a one-to-one official-book mapping.
   const knownKeys = new Set(catalog.map((book) => [book.track, book.grade, book.subject].join("::")));
-  const extras = new Map<string, { track: string; grade: string; subject: string; chapters: string[]; questionCount: number; verifiedQuestionCount: number; targetQuestionCount: number }>();
+  const extras = new Map<string, { track: string; grade: string; subject: string; chapters: string[]; questionCount: number; verifiedQuestionCount: number; targetQuestionsPerLesson: number }>();
   for (const question of questionRows) {
     const key = [question.track, question.grade, question.subject].join("::");
     if (knownKeys.has(key) || question.grade === "دهم تا دوازدهم") continue;
-    const current = extras.get(key) ?? { track: question.track, grade: question.grade, subject: question.subject, chapters: [], questionCount: 0, verifiedQuestionCount: 0, targetQuestionCount: 5 };
+    const current = extras.get(key) ?? { track: question.track, grade: question.grade, subject: question.subject, chapters: [], questionCount: 0, verifiedQuestionCount: 0, targetQuestionsPerLesson: 5 };
     if (!current.chapters.includes(question.chapter)) current.chapters.push(question.chapter);
     current.questionCount += 1;
     if (question.sourceStatus !== "sample-authored") current.verifiedQuestionCount += 1;

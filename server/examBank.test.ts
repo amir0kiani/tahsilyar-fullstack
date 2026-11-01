@@ -73,8 +73,8 @@ describe("curriculum and assessment question bank", () => {
     expect(verifiedQuestions.some((question) => question.subject === "زیست‌شناسی" && question.grade === "دوازدهم")).toBe(true);
   });
 
-  it("uses the five-question target for every grade-specific book", () => {
-    expect(curriculumCatalog.every((book) => book.targetQuestionCount === 5)).toBe(true);
+  it("sets a five-question target for every lesson, not for the whole book", () => {
+    expect(curriculumCatalog.every((book) => book.targetQuestionsPerLesson === 5)).toBe(true);
   });
 
   it("keeps every curriculum catalogue entry grade- and track-specific", () => {
@@ -127,6 +127,45 @@ describe("curriculum and assessment question bank", () => {
     const physicsBatch = verifiedQuestions.filter((question) => question.id.startsWith("verified-physics3-"));
     expect(physicsBatch.length).toBeGreaterThanOrEqual(10);
     expect(physicsBatch.filter((question) => question.sourceUrl?.includes("sanjesh.org")).length).toBeGreaterThanOrEqual(5);
+  });
+
+
+  it("provides at least five lesson-linked questions for each uploaded Grade 12 book", () => {
+    const covers = [
+      { subject: "تاریخ", track: "انسانی", chapters: 12 },
+      { subject: "جغرافیا", track: "انسانی", chapters: 6 },
+      { subject: "جامعه‌شناسی", track: "انسانی", chapters: 10 },
+      { subject: "فلسفه", track: "انسانی", chapters: 12 },
+    ];
+    for (const book of covers) {
+      const catalogBook = curriculumCatalog.find((item) =>
+        item.grade === "دوازدهم" && item.track === book.track && item.subject === book.subject
+      );
+      expect(catalogBook).toBeTruthy();
+      expect(catalogBook?.chapters).toHaveLength(book.chapters);
+      for (const chapter of catalogBook?.chapters ?? []) {
+        const matching = verifiedQuestions.filter((question) =>
+          question.grade === "دوازدهم" && question.track === book.track &&
+          question.subject === book.subject && question.chapter === chapter
+        );
+        expect(matching.length, `${book.subject} / ${chapter}`).toBeGreaterThanOrEqual(5);
+      }
+    }
+
+    for (const track of ["تجربی", "ریاضی"]) {
+      const chemistry = curriculumCatalog.find((item) =>
+        item.grade === "دوازدهم" && item.track === track && item.subject === "شیمی"
+      );
+      expect(chemistry?.chapters).toHaveLength(4);
+      for (const chapter of chemistry?.chapters ?? []) {
+        const matching = verifiedQuestions.filter((question) =>
+          question.grade === "دوازدهم" && question.subject === "شیمی" &&
+          question.chapter === chapter &&
+          (question.track === track || question.track === "ریاضی و تجربی")
+        );
+        expect(matching.length, `شیمی ${track} / ${chapter}`).toBeGreaterThanOrEqual(5);
+      }
+    }
   });
 
 });
