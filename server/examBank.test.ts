@@ -168,4 +168,35 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+
+  it("covers every lesson in the five uploaded Grade 12 books with five adapted questions", () => {
+    const uploadedBooks = [
+      { subject: "تاریخ", chapters: curriculumCatalog.find((book) => book.grade === "دوازدهم" && book.track === "انسانی" && book.subject === "تاریخ")?.chapters ?? [] },
+      { subject: "جغرافیا", chapters: curriculumCatalog.find((book) => book.grade === "دوازدهم" && book.track === "انسانی" && book.subject === "جغرافیا")?.chapters ?? [] },
+      { subject: "جامعه‌شناسی", chapters: curriculumCatalog.find((book) => book.grade === "دوازدهم" && book.track === "انسانی" && book.subject === "جامعه‌شناسی")?.chapters ?? [] },
+      { subject: "فلسفه", chapters: curriculumCatalog.find((book) => book.grade === "دوازدهم" && book.track === "انسانی" && book.subject === "فلسفه")?.chapters ?? [] },
+      { subject: "شیمی", chapters: curriculumCatalog.find((book) => book.grade === "دوازدهم" && book.track === "تجربی" && book.subject === "شیمی")?.chapters ?? [] },
+    ];
+
+    for (const book of uploadedBooks) {
+      expect(book.chapters.length, book.subject).toBeGreaterThan(0);
+      for (const chapter of book.chapters) {
+        const matching = verifiedQuestions.filter((question) =>
+          question.grade === "دوازدهم" &&
+          question.subject === book.subject &&
+          question.chapter === chapter &&
+          (book.subject !== "شیمی" || ["تجربی", "ریاضی", "ریاضی و تجربی"].includes(question.track))
+        );
+        expect(matching.length, `${book.subject} / ${chapter}`).toBeGreaterThanOrEqual(5);
+        expect(matching.every((question) => question.sourceStatus === "official-exam-adapted")).toBe(true);
+      }
+    }
+  });
+
+  it("does not use whole-book placeholders for the three specialized tracks", () => {
+    expect(curriculumCatalog.filter((book) => book.track !== "عمومی").every((book) =>
+      book.chapters.length > 0 && !book.chapters.includes("کل کتاب")
+    )).toBe(true);
+  });
+
 });
