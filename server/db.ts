@@ -11,6 +11,7 @@ import {
   studentProfiles,
   studyPlans,
   studySessions,
+  studentLessonProgress,
   users,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
@@ -229,6 +230,45 @@ async function ensureAssessmentBankSeeded(db: NonNullable<Awaited<ReturnType<typ
 function filterBundledQuestions(filters: AssessmentFilters) {
   return allStarterQuestions.filter((question) => matchesAssessmentQuestion(question, filters))
     .slice(0, filters.limit ?? 20);
+}
+
+export type StudentLessonProgressInput = { userId: number; grade: string; track: string; subject: string; chapter: string };
+
+export async function getStudentLessonProgress(input: StudentLessonProgressInput) {
+  const db = await getDb();
+  if (!db) return false;
+  const rows = await db.select({ isCompleted: studentLessonProgress.isCompleted })
+    .from(studentLessonProgress)
+    .where(and(
+      eq(studentLessonProgress.userId, input.userId),
+      eq(studentLessonProgress.grade, input.grade),
+      eq(studentLessonProgress.track, input.track),
+      eq(studentLessonProgress.subject, input.subject),
+      eq(studentLessonProgress.chapter, input.chapter),
+    )).limit(1);
+  return rows[0]?.isCompleted === 1;
+}
+
+export async function setStudentLessonProgress(input: StudentLessonProgressInput & { completed: boolean }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  const now = new Date();
+  await db.insert(studentLessonProgress).values({
+    userId: input.userId,
+    grade: input.grade,
+    track: input.track,
+    subject: input.subject,
+    chapter: input.chapter,
+    isCompleted: input.completed ? 1 : 0,
+    completedAt: input.completed ? now : null,
+  }).onDuplicateKeyUpdate({
+    set: {
+      isCompleted: input.completed ? 1 : 0,
+      completedAt: input.completed ? now : null,
+      updatedAt: now,
+    },
+  });
+  return { completed: input.completed };
 }
 
 export async function getAssessmentQuestions(filters: AssessmentFilters = {}) {

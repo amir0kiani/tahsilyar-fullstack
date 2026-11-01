@@ -1,4 +1,4 @@
-import { int, index, json, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, index, json, mysqlEnum, mysqlTable, text, timestamp, varchar, uniqueIndex } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
@@ -150,4 +150,20 @@ export const examQuestions = mysqlTable("exam_questions", {
   subjectChapterIdx: index("exam_questions_subject_chapter_idx").on(table.subject, table.chapter),
   gradeTrackIdx: index("exam_questions_grade_track_idx").on(table.grade, table.track),
   difficultyIdx: index("exam_questions_difficulty_idx").on(table.difficulty),
+}));
+
+
+export const studentLessonProgress = mysqlTable("student_lesson_progress", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  grade: varchar("grade", { length: 32 }).notNull(),
+  track: varchar("track", { length: 32 }).notNull(),
+  subject: varchar("subject", { length: 128 }).notNull(),
+  chapter: varchar("chapter", { length: 255 }).notNull(),
+  isCompleted: int("isCompleted").default(0).notNull(),
+  completedAt: timestamp("completedAt"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userLessonUnique: uniqueIndex("student_lesson_progress_user_lesson_unique").on(table.userId, table.grade, table.track, table.subject, table.chapter),
+  userIdx: index("student_lesson_progress_user_idx").on(table.userId),
 }));
