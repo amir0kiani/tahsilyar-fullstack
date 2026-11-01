@@ -73,8 +73,8 @@ describe("curriculum and assessment question bank", () => {
     expect(verifiedQuestions.some((question) => question.subject === "زیست‌شناسی" && question.grade === "دوازدهم")).toBe(true);
   });
 
-  it("uses the five-question target for every grade-specific book", () => {
-    expect(curriculumCatalog.every((book) => book.targetQuestionCount === 5)).toBe(true);
+  it("sets a five-question target for every lesson, not for the whole book", () => {
+    expect(curriculumCatalog.every((book) => book.targetQuestionsPerLesson === 5)).toBe(true);
   });
 
   it("keeps every curriculum catalogue entry grade- and track-specific", () => {
