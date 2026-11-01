@@ -249,7 +249,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
       topic: "خنثی‌سازی اسید ضعیف و باز قوی", difficulty: "دشوار",
       prompt: "در محلولی از اسید ضعیف تک‌پروتونی HX، غلظت اولیهٔ اسید ۰٫۰۱۶ مولار است. برای خنثی‌کردن کامل ۲ لیتر از آن، با فرض واکنش ۱:۱، چند گرم NaOH لازم است؟ جرم مولی NaOH برابر ۴۰ گرم بر مول است.",
       options: ["۰٫۳۲ گرم", "۰٫۶۴ گرم", "۱٫۲۸ گرم", "۳٫۲۰ گرم"],
-      correctIndex: 1,
+      correctIndex: 2,
       explanation: "مول اسید برابر ۰٫۰۱۶×۲=۰٫۰۳۲ است. نسبت واکنش HX و NaOH برابر ۱:۱ است؛ پس ۰٫۰۳۲ مول NaOH لازم است. جرم آن ۰٫۰۳۲×۴۰=۱٫۲۸ گرم می‌شود.",
       sourceStatus: "official-exam-adapted", sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
       sourceYear: "۱۴۰۵", sourceQuestionNumber: "۱", verifiedAt,
