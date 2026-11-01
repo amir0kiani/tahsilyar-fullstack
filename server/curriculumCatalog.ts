@@ -1,8 +1,8 @@
 export type CurriculumBook = { track: string; grade: string; subject: string; chapters: string[]; questionCount?: number; verifiedQuestionCount?: number; targetQuestionsPerLesson?: number; bookCode?: string };
 
 const wholeBook = ["کل کتاب"];
-const add = (track: string, grade: string, subject: string, chapters: string[] = wholeBook, targetQuestionCount = 5, bookCode?: string): CurriculumBook =>
-  ({ track, grade, subject, chapters, targetQuestionCount, ...(bookCode ? { bookCode } : {}) });
+const add = (track: string, grade: string, subject: string, chapters: string[] = wholeBook, targetQuestionsPerLesson = 5, bookCode?: string): CurriculumBook =>
+  ({ track, grade, subject, chapters, targetQuestionsPerLesson, ...(bookCode ? { bookCode } : {}) });
 
 export const curriculumCatalog: CurriculumBook[] = [
   // Common textbooks — listed separately by grade so the student sees the correct book edition.
