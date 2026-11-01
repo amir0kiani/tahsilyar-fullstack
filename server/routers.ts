@@ -6,7 +6,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
-import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, getDb, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery, getAssessmentCatalog, getAssessmentQuestions } from "./db";
+import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, getDb, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery, getAssessmentCatalog, getAssessmentQuestions, getStudentLessonProgress, setStudentLessonProgress } from "./db";
 
 const chatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -94,10 +94,25 @@ const normalizePlanSessions = (sessions: Array<{ subject: string; topic: string;
 export const appRouter = router({
   exams: router({
     catalog: protectedProcedure.query(() => getAssessmentCatalog()),
-    questions: protectedProcedure.input(z.object({ subject: z.string().optional(), chapter: z.string().optional(), grade: z.string().optional(), track: z.string().optional(), difficulty: z.enum(["آسان","متوسط","سخت"]).optional(), limit: z.number().int().min(1).max(20).default(10) })).query(async ({ input }) =>
-      (await getAssessmentQuestions(input)).map(({ correctIndex, explanation, ...question }) => question)
-    ),
-    submit: protectedProcedure.input(z.object({ subject:z.string(), chapter:z.string(), grade:z.string().optional(), track:z.string().optional(), answers:z.array(z.object({ questionId:z.string(), selectedIndex:z.number().int().min(0).max(3) })).min(1).max(20) })).mutation(async ({ctx,input})=>{
+    lessonProgress: protectedProcedure.input(z.object({
+      grade: z.string().min(1), track: z.string().min(1), subject: z.string().min(1), chapter: z.string().min(1),
+    })).query(({ ctx, input }) => getStudentLessonProgress({ userId: ctx.user.id, ...input })),
+    markLessonStudied: protectedProcedure.input(z.object({
+      grade: z.string().min(1), track: z.string().min(1), subject: z.string().min(1), chapter: z.string().min(1),
+    })).mutation(({ ctx, input }) => setStudentLessonProgress({ userId: ctx.user.id, ...input, completed: true })),
+    questions: protectedProcedure.input(z.object({
+      subject: z.string().min(1), chapter: z.string().min(1), grade: z.string().min(1), track: z.string().min(1),
+      difficulty: z.enum(["آسان","متوسط","سخت"]).optional(), limit: z.number().int().min(1).max(20).default(10),
+    })).query(async ({ ctx, input }) => {
+      if (input.chapter === "کل کتاب" || !(await getStudentLessonProgress({ userId: ctx.user.id, grade: input.grade, track: input.track, subject: input.subject, chapter: input.chapter }))) return [];
+      return (await getAssessmentQuestions(input)).map(({ correctIndex, explanation, ...question }) => question);
+    }),
+    submit: protectedProcedure.input(z.object({
+      subject:z.string().min(1), chapter:z.string().min(1), grade:z.string().min(1), track:z.string().min(1),
+      answers:z.array(z.object({ questionId:z.string(), selectedIndex:z.number().int().min(0).max(3) })).min(1).max(20),
+    })).mutation(async ({ctx,input})=>{
+      const isCompleted = await getStudentLessonProgress({ userId: ctx.user.id, grade: input.grade, track: input.track, subject: input.subject, chapter: input.chapter });
+      if (!isCompleted) throw new TRPCError({ code:"PRECONDITION_FAILED", message:"برای شرکت در آزمون، ابتدا مطالعهٔ این درس را تکمیل و تأیید کن." });
       const ids=new Set(input.answers.map(a=>a.questionId));
       const qs=await getAssessmentQuestions({subject:input.subject,chapter:input.chapter,grade:input.grade,track:input.track,ids:Array.from(ids),limit:20});
       if(ids.size!==input.answers.length||qs.length!==input.answers.length) throw new TRPCError({code:"BAD_REQUEST",message:"سؤال نامعتبر است."});
@@ -105,7 +120,7 @@ export const appRouter = router({
       const responses=qs.map(q=>({questionId:q.id,selectedIndex:selected.get(q.id)!,correctIndex:q.correctIndex,isCorrect:selected.get(q.id)===q.correctIndex,subject:q.subject,chapter:q.chapter,topic:q.topic,difficulty:q.difficulty}));
       const correctCount=responses.filter(r=>r.isCorrect).length, scorePercent=Math.round(correctCount/qs.length*100);
       const topicAnalysis=qs.map(q=>({topic:q.topic,total:1,correct:selected.get(q.id)===q.correctIndex?1:0,accuracy:selected.get(q.id)===q.correctIndex?100:0}));
-      const saved=await saveExamAttempt({userId:ctx.user.id,grade:input.grade??"همه پایه‌ها",track:input.track??"همه رشته‌ها",subject:input.subject,chapter:input.chapter,questionCount:qs.length,correctCount,scorePercent,responses,topicAnalysis});
+      const saved=await saveExamAttempt({userId:ctx.user.id,grade:input.grade,track:input.track,subject:input.subject,chapter:input.chapter,questionCount:qs.length,correctCount,scorePercent,responses,topicAnalysis});
       return {attemptId:saved?.id,questionCount:qs.length,correctCount,scorePercent,responses:responses.map(r=>({...r,prompt:qs.find(q=>q.id===r.questionId)!.prompt,options:qs.find(q=>q.id===r.questionId)!.options,explanation:qs.find(q=>q.id===r.questionId)!.explanation})),topicAnalysis};
     }),
     history: protectedProcedure.query(({ctx})=>getExamHistory(ctx.user.id,50)),
