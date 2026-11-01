@@ -17,8 +17,11 @@ export default function ExamCenter() {
  const [result,setResult]=useState<Result|null>(null);
  const catalog=trpc.exams.catalog.useQuery();
  const selectedDifficulty = difficulty === "همه سطوح" ? undefined : difficulty as "آسان" | "متوسط" | "سخت";
- const questions=trpc.exams.questions.useQuery({subject,chapter,grade:grade==="همه پایه‌ها"?undefined:grade,track:track==="همه رشته‌ها"?undefined:track,difficulty:selectedDifficulty,limit:20});
+ const lessonSelected = grade !== "همه پایه‌ها" && track !== "همه رشته‌ها" && chapter !== "کل کتاب";
+ const progress=trpc.exams.lessonProgress.useQuery({grade,track,subject,chapter},{enabled:lessonSelected});
+ const questions=trpc.exams.questions.useQuery({subject,chapter,grade:grade==="همه پایه‌ها"?"":grade,track:track==="همه رشته‌ها"?"":track,difficulty:selectedDifficulty,limit:20},{enabled:lessonSelected && progress.data===true});
  const dna=trpc.exams.academicDNA.useQuery();
+ const markLessonStudied=trpc.exams.markLessonStudied.useMutation({onSuccess:()=>{void progress.refetch();void questions.refetch();}});
  const submit=trpc.exams.submit.useMutation({onSuccess:(value)=>{setResult(value as Result);void dna.refetch();}});
  const visibleCatalog=useMemo(()=> (catalog.data ?? []).filter(item=>{
   const gradeMatches=grade==="همه پایه‌ها"||item.grade===grade;
@@ -66,7 +69,7 @@ export default function ExamCenter() {
   return "نمونهٔ تألیفی";
  };
  return <section className="exam-center" aria-label="آزمون و تحلیل DNA تحصیلی">
-  <div className="academic-hub-heading"><div><p className="eyebrow">سنجش و بازخورد</p><h2>آزمون و بانک سؤال</h2><p>برای هر درس یا فصل، آزمون جداگانه در نظر گرفته شده است. پاسخ صحیح و تحلیل پس از ثبت آزمون نمایش داده می‌شود.</p></div></div>
+  <div className="academic-hub-heading"><div><p className="eyebrow">سنجش و بازخورد</p><h2>آزمون و بانک سؤال</h2><p>هر درس پس از ثبت تکمیل مطالعه، آزمون مستقل خود را باز می‌کند. پاسخ صحیح و تحلیل پس از ثبت آزمون نمایش داده می‌شود.</p></div></div>
   <div className="exam-controls">
    <label>درس<select value={subject} onChange={e=>updateSubject(e.target.value)}>{subjects.map(s=><option key={s} value={s}>{s}</option>)}</select></label>
    <label>درس / فصل<select value={chapter} onChange={e=>{setChapter(e.target.value);start();}}>{chapters.map((ch:string)=><option key={ch} value={ch}>{ch}</option>)}</select></label>
@@ -75,7 +78,7 @@ export default function ExamCenter() {
    <label>دشواری<select value={difficulty} onChange={e=>{setDifficulty(e.target.value);start();}}>{difficulties.map(d=><option key={d}>{d}</option>)}</select></label>
   </div>
   {bookCoverage&&<p className="exam-book-coverage">پوشش کتاب‌های انتخاب‌شده: {bookCoverage.questionCount} سؤال ثبت‌شده، {bookCoverage.verifiedQuestionCount} سؤال مستند؛ هدف اولیهٔ {bookCoverage.targetQuestionCount} سؤال برای {bookCoverage.lessonCount} درس/فصل</p>}
-  {questions.isLoading?<p className="learning-empty">در حال بارگذاری سؤال‌ها…</p>:!questions.data?.length?<p className="learning-empty">برای این ترکیب هنوز سؤال مستند ثبت نشده است. می‌توانی فیلترها یا درس/فصل را تغییر بدهی؛ وضعیت منبع هر سؤال جداگانه مشخص شده است.</p>:!result?<div className="exam-question-list">
+  {!lessonSelected?<p className="learning-empty">برای ارزیابی یک درس، پایه و رشته را مشخص کن و سپس یکی از درس‌های همان کتاب را انتخاب کن.</p>:progress.isLoading?<p className="learning-empty">در حال بررسی وضعیت مطالعهٔ این درس…</p>:!progress.data?<div className="lesson-quiz-gate"><p>آزمون این درس هنوز قفل است. ابتدا درس را مطالعه کن و وقتی برای ارزیابی آماده شدی، مطالعه را تأیید کن.</p><button className="primary-button" disabled={markLessonStudied.isPending} onClick={()=>markLessonStudied.mutate({grade,track,subject,chapter})}>{markLessonStudied.isPending?"در حال ثبت…":"مطالعهٔ این درس را تکمیل کردم"}</button></div>:questions.isLoading?<p className="learning-empty">در حال بارگذاری سؤال‌ها…</p>:!questions.data?.length?<p className="learning-empty">برای این درس هنوز سؤال مستند ثبت نشده است. می‌توانی درس دیگری را انتخاب کنی؛ وضعیت منبع هر سؤال جداگانه مشخص شده است.</p>:!result?<div className="exam-question-list">
    <p className="eyebrow">{questions.data.length} سؤال در این آزمون</p>
    {questions.data.map((q:Question,index:number)=><article className="exam-question" key={q.id}><span className="eyebrow">سؤال {index+1} · {q.grade} · {q.difficulty} · {sourceLabel(q.sourceStatus)}</span><h3>{q.prompt}</h3>{q.sourceTitle&&<p className="exam-source-note">{q.sourceTitle}{q.sourceYear?` · ${q.sourceYear}`:""}{q.sourceQuestionNumber?` · سؤال ${q.sourceQuestionNumber}`:""}{q.sourceUrl&&<> · <a href={q.sourceUrl} target="_blank" rel="noreferrer">مشاهدهٔ منبع</a></>}</p>}<div className="exam-options">{q.options.map((option,i)=><button type="button" key={option} className={answers[q.id]===i?"selected":""} aria-pressed={answers[q.id]===i} onClick={()=>setAnswers(old=>({...old,[q.id]:i}))}><span>{["الف","ب","ج","د"][i]}</span>{option}</button>)}</div></article>)}
    <button className="primary-button" disabled={submit.isPending||Object.keys(answers).length!==questions.data.length} onClick={()=>submit.mutate({subject,chapter,grade:grade==="همه پایه‌ها"?undefined:grade,track:track==="همه رشته‌ها"?undefined:track,answers:questions.data.map((q:Question)=>({questionId:q.id,selectedIndex:answers[q.id]}))})}>{submit.isPending?"در حال بررسی…":"ثبت پاسخ‌ها و مشاهدهٔ تحلیل"}</button>
