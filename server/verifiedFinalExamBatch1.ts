@@ -79,7 +79,7 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
     correctIndex: 1,
     explanation: "حیوان از اجزای ذاتی و تعریف‌کنندهٔ ماهیت گنجشک است؛ اما وجود در تعریف و چیستی آن قرار ندارد و حمل آن نیازمند دلیل است.",
     sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("فلسفه", "تیر و مرداد ۱۴۰۵"),
-    sourceYear: "۱۴۰۵", sourceQuestionNumber: "۳", verifiedAt,
+    sourceQuestionNumber: "۳ (شماره در فایل گردآوری‌شده)", verifiedAt,
     reviewerNote: "بازنویسی پرسش دو بخشی به قالب چهارگزینه‌ای؛ پاسخ بر اساس پاسخنامه (PDF فلسفه، صفحه ۲)."
   },
   {
@@ -203,8 +203,8 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
       options: ["AH خاصیت اسیدی بیشتری دارد و BH اسید قوی‌تری است.", "BH هم خاصیت اسیدی بیشتری دارد و هم اسید قوی‌تری است.", "AH هم خاصیت اسیدی بیشتری دارد و هم اسید قوی‌تری است.", "هیچ مقایسه‌ای ممکن نیست."],
       correctIndex: 0,
       explanation: "pH کمتر به معنی غلظت بیشتر یون هیدرونیوم و خاصیت اسیدی بیشتر محلول است؛ ثابت یونش بزرگ‌تر نشان‌دهندهٔ قوی‌تر بودن اسید است.",
-      sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
-      sourceYear: "۱۴۰۵", sourceQuestionNumber: "۲", verifiedAt,
+      sourceStatus: "official-exam-adapted" as const, sourceTitle: "مجموعه سؤالات و پاسخنامه امتحان نهایی شیمی دوازدهم (فایل ارسالی کاربر)",
+      sourceQuestionNumber: "۲ (شماره در فایل گردآوری‌شده)", verifiedAt,
       reviewerNote: "بازنویسی مفهومی سؤال مقایسهٔ دو اسید؛ پاسخ مطابق پاسخنامهٔ فایل ارسالی (PDF شیمی، صفحه ۳)."
     },
     {
@@ -215,8 +215,8 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
       options: ["زیرا Li₂O در آب یون‌های بیشتری ایجاد می‌کند.", "زیرا Li₂O مولکولی و نارساناست.", "زیرا Ba(OH)₂ هیچ یونی تولید نمی‌کند.", "زیرا رسانایی فقط به جرم مولی وابسته است."],
       correctIndex: 0,
       explanation: "با درنظرگرفتن تفکیک کامل، هر واحد Li₂O در آب دو یون Li⁺ و دو یون OH⁻ ایجاد می‌کند؛ در مجموع چهار یون، در حالی که Ba(OH)₂ سه یون ایجاد می‌کند.",
-      sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
-      sourceYear: "۱۴۰۵", sourceQuestionNumber: "۳", verifiedAt,
+      sourceStatus: "official-exam-adapted" as const, sourceTitle: "مجموعه سؤالات و پاسخنامه امتحان نهایی شیمی دوازدهم (فایل ارسالی کاربر)",
+      sourceQuestionNumber: "۳ (شماره در فایل گردآوری‌شده)", verifiedAt,
       reviewerNote: "بازنویسی سؤال مقایسهٔ رسانایی؛ پاسخ مطابق پاسخنامهٔ فایل ارسالی (PDF شیمی، صفحه ۳)."
     },
     {
@@ -227,8 +227,8 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
       options: ["نمک‌های فسفات", "ترکیب‌های گوگرددار", "ترکیب‌های کلردار", "افزایش مقدار روغن"],
       correctIndex: 0,
       explanation: "نمک‌های فسفات با یون‌های کلسیم و منیزیم آب سخت واکنش می‌دهند و از تشکیل رسوب و لکه جلوگیری می‌کنند.",
-      sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
-      sourceYear: "۱۴۰۵", sourceQuestionNumber: "۴", verifiedAt,
+      sourceStatus: "official-exam-adapted" as const, sourceTitle: "مجموعه سؤالات و پاسخنامه امتحان نهایی شیمی دوازدهم (فایل ارسالی کاربر)",
+      sourceQuestionNumber: "۴ (شماره در فایل گردآوری‌شده)", verifiedAt,
       reviewerNote: "بازنویسی سؤال چندبخشی پاک‌کننده‌ها؛ پاسخ مطابق پاسخنامهٔ فایل ارسالی (PDF شیمی، صفحه ۴)."
     },
     {
@@ -239,8 +239,8 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
       options: ["۱۰ درصد", "۲۰ درصد", "۴۰ درصد", "۸۰ درصد"],
       correctIndex: 1,
       explanation: "درصد یونش برابر نسبت شمار ذرات یونیده‌شده به شمار اولیه، ضرب‌در ۱۰۰ است: (۱÷۵)×۱۰۰=۲۰ درصد.",
-      sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
-      sourceYear: "۱۴۰۵", sourceQuestionNumber: "۵", verifiedAt,
+      sourceStatus: "official-exam-adapted" as const, sourceTitle: "مجموعه سؤالات و پاسخنامه امتحان نهایی شیمی دوازدهم (فایل ارسالی کاربر)",
+      sourceQuestionNumber: "۵ (شماره در فایل گردآوری‌شده)", verifiedAt,
       reviewerNote: "تبدیل سؤال شکل‌محور به متن و عدد؛ محاسبه با پاسخنامهٔ فایل ارسالی تطبیق داده شد (PDF شیمی، صفحه ۴)."
     },
     {
@@ -251,9 +251,9 @@ export const verifiedFinalExamBatch1: ExamQuestion[] = [
       options: ["۰٫۳۲ گرم", "۰٫۶۴ گرم", "۱٫۲۸ گرم", "۳٫۲۰ گرم"],
       correctIndex: 2,
       explanation: "مول اسید برابر ۰٫۰۱۶×۲=۰٫۰۳۲ است. نسبت واکنش HX و NaOH برابر ۱:۱ است؛ پس ۰٫۰۳۲ مول NaOH لازم است. جرم آن ۰٫۰۳۲×۴۰=۱٫۲۸ گرم می‌شود.",
-      sourceStatus: "official-exam-adapted" as const, sourceTitle: finalExamSource("شیمی", "تیر و مرداد ۱۴۰۵"),
-      sourceYear: "۱۴۰۵", sourceQuestionNumber: "۱", verifiedAt,
-      reviewerNote: "این سؤال به‌عنوان تمرین محاسباتی بازنویسی شده است؛ اعداد و صورت مستقل‌اند. پاسخ عددی باید بازبینی شود: دادهٔ غلظت در صورت سؤال بازطراحی‌شده ۰٫۰۱۶ M است، بنابراین پاسخ درست ۱٫۲۸ g (گزینه ۳) است."
+      sourceStatus: "official-exam-adapted" as const, sourceTitle: "مجموعه سؤالات و پاسخنامه امتحان نهایی شیمی دوازدهم (فایل ارسالی کاربر)",
+      sourceQuestionNumber: "۱ (شماره در فایل گردآوری‌شده)", verifiedAt,
+      reviewerNote: "تمرین محاسباتی با داده‌های بازطراحی‌شده از سؤال آغازین فایل؛ تاریخ آزمون در صفحهٔ منبع مشخص نیست. محاسبهٔ مستقل: ۰٫۰۱۶×۲×۴۰=۱٫۲۸ گرم (گزینه ۳)."
     }
   ])
 ];
