@@ -334,7 +334,7 @@ function ScheduleScreen({ plan, completed, onToggle, showToast, deviceDate, onAd
   const today = new Date();
   const todayIndex = (today.getDay() + 1) % 7;
   const weekNames = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
-  const weekDays = weekNames.map((day, index) => { const date = new Date(today); date.setDate(today.getDate() + index - todayIndex); return { day, number: new Intl.DateTimeFormat("fa-IR-u-ca-persian", { day: "numeric" }).format(date) }; });
+  const weekDays = Array.from({ length: 7 }, (_, offset) => { const date = new Date(today); date.setDate(today.getDate() + offset); const day = weekNames[(todayIndex + offset) % 7]; return { day, number: new Intl.DateTimeFormat("fa-IR-u-ca-persian", { day: "numeric" }).format(date) }; });
   const [selectedDay, setSelectedDay] = useState(weekNames[todayIndex]);
   const allSessions = plan?.sessions ?? [];
   const sessions = allSessions.filter((session) => !session.day || session.day === selectedDay);
