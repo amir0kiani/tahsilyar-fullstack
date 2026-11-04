@@ -6,7 +6,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
-import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, getDb, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery, getAssessmentCatalog, getAssessmentQuestions, getStudentLessonProgress, setStudentLessonProgress } from "./db";
+import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery, getAssessmentCatalog, getAssessmentQuestions, getStudentLessonProgress, setStudentLessonProgress } from "./db";
 
 const chatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -86,10 +86,67 @@ const canonicalLesson = (raw: string, curriculum: string[]) => {
   const subject = curriculum.find((item) => value.includes(item) || item.includes(value)) ?? curriculum[0] ?? value;
   return { code: lessonCodes[subject] ?? "GEN-00", name: subject };
 };
-const normalizePlanSessions = (sessions: Array<{ subject: string; topic: string; day: string; start: string; end: string; duration: string; reason: string }>, curriculum: string[]) => sessions.map((session) => {
+type PlanSessionInput = { subject: string; topic: string; day: string; start: string; end: string; duration: string; reason: string };
+type PlanRange = "today" | "tomorrow" | "week";
+const weekDayNames = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
+
+const normalizePlanSessions = (sessions: PlanSessionInput[], curriculum: string[]) => sessions.map((session) => {
   const lesson = canonicalLesson(session.subject, curriculum);
-  return { ...session, day: canonicalDay(session.day), subject: `${lesson.code}|${lesson.name}`, reason: `${session.reason} · کد درس: ${lesson.code}` };
+  const reason = session.reason.includes(`کد درس: ${lesson.code}`) ? session.reason : `${session.reason} · کد درس: ${lesson.code}`;
+  return { ...session, day: canonicalDay(session.day), subject: `${lesson.code}|${lesson.name}`, reason };
 });
+
+const detectPlanRange = (message: string): PlanRange | undefined => {
+  const normalized = message.normalize("NFKC").replace(/[\u200c\u200f]/g, " ");
+  if (/(هفتگی|هفته|هفت\s*روز|۷\s*روز|7\s*روز)/.test(normalized)) return "week";
+  if (/(فردا|روز\s*بعد)/.test(normalized)) return "tomorrow";
+  if (/امروز/.test(normalized)) return "today";
+  return undefined;
+};
+
+const isPlanUpdateRequest = (message: string) => {
+  const normalized = message.normalize("NFKC").replace(/[\u200c\u200f]/g, " ");
+  return /برنامه.{0,35}(بساز|بچین|تنظیم|طراحی|اصلاح|تغییر|به.?روزرسانی|سبک|سنگین|جدید|مرتب|بازچین|بیشتر|کمتر)/.test(normalized) ||
+    /(?:جلسه|مطالعه|درس).{0,24}(اضافه|حذف|جابه.?جا|جابجا|منتقل|کمتر|بیشتر|سبک|سنگین)/.test(normalized) ||
+    /(?:اضافه|حذف|جابه.?جا|جابجا|منتقل).{0,24}(?:جلسه|درس|برنامه)/.test(normalized);
+};
+
+const ensureWeeklyCoverage = (sessions: PlanSessionInput[], preferredSubjects: string[], curriculum: string[]) => {
+  const result = [...sessions];
+  const existingDays = new Set(result.map((session) => canonicalDay(session.day)));
+  const subjects = [...preferredSubjects, ...curriculum.filter((subject) => !preferredSubjects.includes(subject))];
+  weekDayNames.forEach((day, index) => {
+    if (existingDays.has(day)) return;
+    const lesson = canonicalLesson(subjects[index % Math.max(subjects.length, 1)] ?? curriculum[0] ?? "مطالعه", curriculum);
+    result.push({
+      subject: `${lesson.code}|${lesson.name}`,
+      topic: "مطالعه و مرور برنامه‌ریزی‌شده",
+      day,
+      start: "۱۶:۰۰",
+      end: "۱۷:۰۰",
+      duration: "۶۰ دقیقه",
+      reason: "برای حفظ تداوم برنامهٔ هفتگی",
+    });
+  });
+  return result;
+};
+
+const formatPlanForChat = (plan: { title: string; summary: string; focusTip: string; sessions: PlanSessionInput[] }) => {
+  const groups = new Map<string, PlanSessionInput[]>();
+  for (const session of plan.sessions) {
+    const day = canonicalDay(session.day);
+    groups.set(day, [...(groups.get(day) ?? []), session]);
+  }
+  const orderedDays = [...weekDayNames.filter((day) => groups.has(day)), ...[...groups.keys()].filter((day) => !weekDayNames.includes(day))];
+  const schedule = orderedDays.map((day) => {
+    const items = (groups.get(day) ?? []).map((session) => {
+      const subject = session.subject.includes("|") ? session.subject.split("|").slice(1).join("|") : session.subject;
+      return `• ${session.start} تا ${session.end} | ${subject} | ${session.topic} | ${session.duration}`;
+    });
+    return `${day}\n${items.join("\n")}`;
+  }).join("\n\n");
+  return [plan.title, plan.summary, schedule ? `جزئیات برنامه:\n\n${schedule}` : "", plan.focusTip ? `نکتهٔ مهم: ${plan.focusTip}` : ""].filter(Boolean).join("\n\n");
+};
 
 export const appRouter = router({
   exams: router({
@@ -160,7 +217,7 @@ export const appRouter = router({
         answers: z.record(z.string(), z.string()).optional(),
         deviceDate: z.string().max(100).optional(),
         timezone: z.string().max(100).optional(),
-        planRange: z.enum(["today", "tomorrow", "week"]).default("today"),
+        planRange: z.enum(["today", "tomorrow", "week"]).default("week"),
       }))
       .mutation(async ({ input, ctx }) => {
         const profile = await getStudentProfile(ctx.user.id);
@@ -172,53 +229,99 @@ export const appRouter = router({
             console.warn("[Study] Could not persist profile from chat:", error);
           }
         }
+
         const conversation = await getOrCreateConversation(ctx.user.id);
         const storedHistory = conversation ? await getRecentConversationMessages(ctx.user.id, conversation.id) : [];
         if (conversation) await addConversationMessage({ conversationId: conversation.id, userId: ctx.user.id, role: "user", content: input.message });
         const history = storedHistory.map((message) => ({ role: message.role, content: message.content }));
         const profileContext = Object.entries(profileAnswers).map(([key, value]) => `${key}: ${value}`).join("؛ ");
-        const response = await invokeLLM({
-          model: "gemini-3-flash-preview",
-          messages: [
-            {
-              role: "system",
-              content: `تو «همراه تحصیل‌یار» هستی؛ یک مشاور آموزشی فارسی‌زبان، دقیق، مهربان و واقع‌گرا. فقط از اطلاعات ذخیره‌شدهٔ کاربر استفاده کن و هیچ نام، درس، هدف، زمان، سابقه یا عددی را حدس نزن. اگر اطلاعات برای پاسخ کافی نیست، دقیقاً بگو چه اطلاعاتی لازم است. پاسخ‌ها را فارسی و کاربردی بده. بازهٔ برنامه: ${input.planRange === "week" ? "هفتگی" : input.planRange === "tomorrow" ? "فردا" : "امروز"}. بازهٔ برنامه: ${input.planRange === "week" ? "هفتگی" : input.planRange === "tomorrow" ? "فردا" : "امروز"}. تاریخ دستگاه: ${cleanContext(input.deviceDate, 100)}. منطقه زمانی دستگاه: ${cleanContext(input.timezone, 100)}. پروفایل ذخیره‌شدهٔ کاربر: ${cleanContext(profileContext, 1200)}.`,
-            },
-            ...history,
-            { role: "user", content: input.message },
-          ],
-          maxTokens: 5000,
-        });
-        const text = extractText(response.choices[0]?.message.content).trim();
-        const assistantText = text || "برای پاسخ دقیق، اطلاعات بیشتری از خودت ثبت کن.";
-        let updatedPlan: unknown = undefined;
-        const wantsPlanUpdate = /برنامه|جلسه|درس|زمان مطالعه|تغییر|جابه.?جا|اضافه|حذف/.test(input.message);
-        if (wantsPlanUpdate) {
-          const planResponse = await invokeLLM({
+        const planRange = detectPlanRange(input.message) ?? input.planRange;
+        let assistantText = "";
+        let responseModel = "gemini-3-flash-preview";
+        let updatedPlan: Awaited<ReturnType<typeof getLatestStudyPlan>> = undefined;
+
+        if (isPlanUpdateRequest(input.message) && Object.keys(profileAnswers).length >= 7) {
+          try {
+            const curriculum = curriculumFor(profileContext);
+            const mastery = await getAcademicMastery(ctx.user.id);
+            const lowMastery = mastery.filter((item) => item.questions >= 3 && item.accuracy < 80).slice(0, 8);
+            const assessmentContext = lowMastery.length
+              ? lowMastery.map((item) => `${item.subject} / ${item.chapter} / ${item.topic}: ${item.accuracy}% accuracy across ${item.questions} questions (${item.status})`).join("\\n")
+              : "دادهٔ آزمون کافی برای تعیین ضعف پایدار وجود ندارد؛ ضعف یا قوت مشخصی را حدس نزن.";
+            const currentPlan = await getLatestStudyPlan(ctx.user.id);
+            const currentPlanContext = currentPlan ? JSON.stringify({
+              title: currentPlan.title,
+              summary: currentPlan.summary,
+              focusTip: currentPlan.focusTip,
+              sessions: currentPlan.sessions.map(({ subject, topic, day, start, end, duration, reason, completed }) => ({ subject, topic, day, start, end, duration, reason, completed })),
+            }).slice(0, 12000) : "برنامهٔ قبلی ثبت‌شده‌ای وجود ندارد.";
+            const curriculumText = curriculum.join("، ");
+            const planResponse = await invokeLLM({
+              model: "gemini-3-flash-preview",
+              messages: [
+                {
+                  role: "system",
+                  content: `تو برنامه‌ریز تحصیلی تحصیل‌یار هستی. برنامه را دقیقاً از اطلاعات واقعی دانش‌آموز بساز یا برنامهٔ فعلی را طبق درخواست او اصلاح کن. برای اصلاح، ساختار و جلسه‌های نامرتبط را حفظ کن و فقط تغییر لازم را انجام بده. همهٔ دروس مجاز رشته را در نظر بگیر، اما اولویت‌های دانش‌آموز و ضعف‌های معتبر آزمونی را لحاظ کن. خروجی فقط JSON مطابق schema باشد. بازهٔ مورد درخواست: ${planRange === "week" ? "هفت روز کامل" : planRange === "tomorrow" ? "فردا" : "امروز"}. در بازهٔ هفتگی، برای هر هفت روز دقیقاً از نام‌های شنبه، یکشنبه، دوشنبه، سه‌شنبه، چهارشنبه، پنجشنبه، جمعه استفاده کن و برای هیچ روزی جلسه را خالی نگذار. برنامه باید واقع‌بینانه باشد و مجموع زمان مطالعه از ظرفیت اعلام‌شده فراتر نرود. برای هدف غیرواقع‌بینانه محترمانه محدودیت را در summary توضیح بده. از دادهٔ آزمون با کمتر از سه سؤال برای نتیجه‌گیری دربارهٔ ضعف استفاده نکن. تاریخ محلی دستگاه: ${cleanContext(input.deviceDate, 100)}. منطقهٔ زمانی: ${cleanContext(input.timezone, 100)}. دروس مجاز: ${curriculumText}. نتایج معتبر آزمون: ${assessmentContext}.`,
+                },
+                {
+                  role: "user",
+                  content: `پروفایل واقعی دانش‌آموز:\n${cleanContext(profileContext, 2400)}\n\nدرخواست او:\n${input.message}\n\nبازهٔ نهایی برنامه: ${planRange}\n\nبرنامهٔ فعلی برای حفظ و اصلاح:\n${currentPlanContext}\n\nبرنامهٔ جدید باید از نظر درس، روز، ساعت، مبحث و مدت قابل اجرا باشد. از ساختن اطلاعات شخصی یا امتحانِ اعلام‌نشده خودداری کن.`,
+                },
+              ],
+              responseFormat: { type: "json_schema", json_schema: { name: "updated_study_plan", strict: true, schema: planSchema } },
+              maxTokens: 5000,
+            });
+            const raw = extractText(planResponse.choices[0]?.message.content);
+            const normalizedRaw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+            const parsed = JSON.parse(normalizedRaw);
+            if (!parsed?.title || !Array.isArray(parsed.sessions) || !parsed.sessions.length) {
+              throw new Error("AI returned an invalid or empty study plan");
+            }
+            let sessions = normalizePlanSessions(parsed.sessions, curriculum);
+            if (planRange === "week") {
+              const preferred = (profileAnswers["دروس اولویت‌دار"] ?? profileAnswers["دروس امروز"] ?? "").split(/[،,]/).map((item) => item.trim()).filter(Boolean);
+              sessions = ensureWeeklyCoverage(sessions, preferred, curriculum);
+            }
+            await createStudyPlan({
+              userId: ctx.user.id,
+              title: parsed.title,
+              summary: parsed.summary ?? "",
+              focusTip: parsed.focusTip ?? "",
+              inputSnapshot: profileAnswers,
+              sessions,
+            });
+            const savedPlan = await getLatestStudyPlan(ctx.user.id);
+            if (!savedPlan) throw new Error("The generated plan was not readable after persistence");
+            updatedPlan = savedPlan;
+            assistantText = formatPlanForChat(savedPlan);
+            responseModel = planResponse.model;
+          } catch (error) {
+            console.error("[Study] Could not generate and persist the chat plan:", error);
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "برنامه تولید یا ذخیره نشد؛ تغییری در برنامهٔ قبلی اعمال نشده است. دوباره تلاش کن.",
+            });
+          }
+        } else {
+          const response = await invokeLLM({
             model: "gemini-3-flash-preview",
             messages: [
-              { role: "system", content: "تو برنامه‌ریز تحصیلی تحصیل‌یار هستی. بر اساس پروفایل ذخیره‌شده و درخواست جدید کاربر، برنامهٔ اصلاح‌شده تولید کن. همهٔ دروس رشته را در نظر بگیر، اما دروس اولویت‌دار کاربر سهم بیشتری داشته باشند. فقط JSON مطابق schema برگردان." },
-              { role: "user", content: `پروفایل ذخیره‌شده: ${cleanContext(profileContext, 1800)}
-درخواست تغییر برنامه: ${input.message}
-بازهٔ برنامه: ${input.planRange}
-فهرست دروس رشته: ${curriculumFor(profileContext).join("، ")}` },
+              {
+                role: "system",
+                content: `تو «همراه تحصیل‌یار» هستی؛ یک مشاور آموزشی فارسی‌زبان، دقیق، مهربان و واقع‌گرا. فقط از اطلاعات ذخیره‌شدهٔ کاربر استفاده کن و هیچ نام، درس، هدف، زمان، سابقه یا عددی را حدس نزن. اگر اطلاعات برای پاسخ کافی نیست، دقیقاً بگو چه اطلاعاتی لازم است. پاسخ‌ها را فارسی و کاربردی بده. بازهٔ موردنظر کاربر: ${planRange === "week" ? "هفتگی" : planRange === "tomorrow" ? "فردا" : "امروز"}. تاریخ دستگاه: ${cleanContext(input.deviceDate, 100)}. منطقهٔ زمانی دستگاه: ${cleanContext(input.timezone, 100)}. پروفایل ذخیره‌شدهٔ کاربر: ${cleanContext(profileContext, 1200)}.`,
+              },
+              ...history,
+              { role: "user", content: input.message },
             ],
-            responseFormat: { type: "json_schema", json_schema: { name: "updated_study_plan", strict: true, schema: planSchema } },
-            maxTokens: 2200,
+            maxTokens: 5000,
           });
-          try {
-            const parsed = JSON.parse(extractText(planResponse.choices[0]?.message.content).replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim());
-            if (parsed?.title && Array.isArray(parsed.sessions)) {
-              const db = await getDb();
-              if (db) {
-                await createStudyPlan({ userId: ctx.user.id, title: parsed.title, summary: parsed.summary ?? "", focusTip: parsed.focusTip ?? "", inputSnapshot: profileAnswers, sessions: parsed.sessions });
-                updatedPlan = (await getLatestStudyPlan(ctx.user.id)) ?? parsed;
-              } else updatedPlan = parsed;
-            }
-          } catch (error) { console.warn("[Study] Chat plan update was not valid JSON:", error); }
+          const text = extractText(response.choices[0]?.message.content).trim();
+          assistantText = text || "برای پاسخ دقیق، اطلاعات بیشتری از خودت ثبت کن.";
+          responseModel = response.model;
         }
+
         if (conversation) await addConversationMessage({ conversationId: conversation.id, userId: ctx.user.id, role: "assistant", content: assistantText });
-        return { text: assistantText, model: response.model, plan: updatedPlan };
+        return { text: assistantText, model: responseModel, plan: updatedPlan };
       }),
     generatePlan: protectedProcedure
       .input(z.object({
@@ -226,7 +329,7 @@ export const appRouter = router({
         deviceDate: z.string().max(100).optional(),
         timezone: z.string().max(100).optional(),
         profile: z.string().max(500).optional(),
-        planRange: z.enum(["today", "tomorrow", "week"]).default("today"),
+        planRange: z.enum(["today", "tomorrow", "week"]).default("week"),
       }))
       .mutation(async ({ input, ctx }) => {
         try {
@@ -273,16 +376,8 @@ export const appRouter = router({
           plan = parsed;
           plan.sessions = normalizePlanSessions(plan.sessions, curriculum);
           if (input.planRange === "week") {
-            const weekDays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
-            const existingDays = new Set(plan.sessions.map((session) => session.day));
             const priority = (input.answers["دروس اولویت‌دار"] ?? input.answers["دروس امروز"] ?? "").split(/[،,]/).map((item) => item.trim()).filter(Boolean);
-            const subjects = [...priority, ...curriculum.filter((subject) => !priority.includes(subject))];
-            weekDays.forEach((day, index) => {
-              if (!existingDays.has(day)) {
-                const lesson = canonicalLesson(subjects[index % subjects.length] ?? curriculum[0] ?? "مطالعه", curriculum);
-                plan.sessions.push({ subject: `${lesson.code}|${lesson.name}`, topic: "مطالعه و مرور برنامه‌ریزی‌شده", day, start: "۱۶:۰۰", end: "۱۷:۰۰", duration: "۶۰ دقیقه", reason: `پوشش اجباری روز هفتگی · کد درس: ${lesson.code}` });
-              }
-            });
+            plan.sessions = ensureWeeklyCoverage(plan.sessions, priority, curriculum);
             if (!plan.title.includes("هفت")) plan.title = `برنامهٔ هفتگی · ${plan.title}`;
           }
         } catch {
@@ -290,15 +385,14 @@ export const appRouter = router({
           return { title: "", summary: "پاسخ برنامه‌ریز قابل پردازش نبود؛ دوباره تلاش کن.", sessions: [], focusTip: "" };
         }
         try {
-          const db = await getDb();
-          if (db) {
-            await createStudyPlan({ userId: ctx.user.id, title: plan.title, summary: plan.summary ?? "", focusTip: plan.focusTip ?? "", inputSnapshot: input.answers, sessions: plan.sessions });
-            return (await getLatestStudyPlan(ctx.user.id)) ?? plan;
-          }
+          await createStudyPlan({ userId: ctx.user.id, title: plan.title, summary: plan.summary ?? "", focusTip: plan.focusTip ?? "", inputSnapshot: input.answers, sessions: plan.sessions });
+          const savedPlan = await getLatestStudyPlan(ctx.user.id);
+          if (!savedPlan) throw new Error("The generated plan was not readable after persistence");
+          return savedPlan;
         } catch (error) {
-          console.error("[Study] Plan generated but persistence failed:", error);
+          console.error("[Study] Plan generation or persistence failed:", error);
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "برنامه تولید شد، اما ذخیره‌سازی آن کامل نشد؛ برنامهٔ قبلی دست‌نخورده باقی ماند." });
         }
-        return plan;
       }),
   }),
 });
