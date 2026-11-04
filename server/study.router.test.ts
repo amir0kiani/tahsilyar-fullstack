@@ -11,6 +11,7 @@ const dbMocks = vi.hoisted(() => ({
   upsertStudentProfile: vi.fn(),
   createStudyPlan: vi.fn(),
   getLatestStudyPlan: vi.fn(),
+  getStudyPlanById: vi.fn(),
   getAcademicMastery: vi.fn(),
   getExamHistory: vi.fn(),
   saveExamAttempt: vi.fn(),
@@ -69,6 +70,21 @@ describe("study AI procedures", () => {
       if (!latest) return null;
       return {
         id: 99,
+        title: latest.title,
+        summary: latest.summary,
+        focusTip: latest.focusTip,
+        inputSnapshot: latest.inputSnapshot,
+        sessions: latest.sessions.map((session: any, index: number) => ({ ...session, id: index + 1, completed: 0 })),
+        createdAt: new Date(),
+      };
+    });
+    dbMocks.getStudyPlanById.mockReset();
+    dbMocks.getStudyPlanById.mockImplementation(async (_userId: number, _planId: number) => {
+      const calls = dbMocks.createStudyPlan.mock.calls;
+      const latest = calls[calls.length - 1]?.[0];
+      if (!latest) return null;
+      return {
+        id: _planId,
         title: latest.title,
         summary: latest.summary,
         focusTip: latest.focusTip,
@@ -165,5 +181,58 @@ describe("study AI procedures", () => {
     }
     expect(dbMocks.createStudyPlan).toHaveBeenCalledOnce();
     expect(dbMocks.addConversationMessage).toHaveBeenCalledTimes(2);
+  });
+
+  it("detects natural-language requests to move a subject between weekdays and persists the changed plan", async () => {
+    dbMocks.getStudentProfile.mockResolvedValue({ userId: 42, answers: completeAnswers });
+    invokeLLMMock.mockResolvedValue({
+      model: "gemini-3-flash-preview",
+      choices: [{ message: { content: JSON.stringify({
+        title: "برنامهٔ اصلاح‌شده",
+        summary: "جلسهٔ زیست از شنبه به دوشنبه منتقل شد.",
+        sessions: [{ subject: "زیست‌شناسی", topic: "مرور فصل دوم", day: "دوشنبه", start: "۱۶:۰۰", end: "۱۷:۰۰", duration: "۶۰ دقیقه", reason: "طبق درخواست دانش‌آموز" }],
+        focusTip: "جلسهٔ منتقل‌شده را در زمان جدید انجام بده.",
+      }) } }],
+    });
+    const caller = appRouter.createCaller(createContext());
+    const result = await caller.study.chat({
+      message: "جلسهٔ زیست را از شنبه بردار و دوشنبه قرار بده",
+      planRange: "week",
+      deviceDate: "۱۴۰۵/۰۸/۱۳",
+      timezone: "Asia/Tehran",
+    });
+    expect(invokeLLMMock).toHaveBeenCalledOnce();
+    expect(result.plan).toBeDefined();
+    expect(result.plan?.title).toBe("برنامهٔ اصلاح‌شده");
+    expect(result.plan?.sessions.some((session) => session.day === "دوشنبه")).toBe(true);
+    expect(dbMocks.createStudyPlan).toHaveBeenCalledOnce();
+    expect(dbMocks.getStudyPlanById).toHaveBeenCalledWith(42, 99);
+    expect(result.text).toContain("دوشنبه");
+  });
+
+  it("treats a short follow-up as a plan change when the recent conversation is about the schedule", async () => {
+    dbMocks.getStudentProfile.mockResolvedValue({ userId: 42, answers: completeAnswers });
+    dbMocks.getRecentConversationMessages.mockResolvedValue([
+      { role: "assistant", content: "برنامهٔ هفتگی فعلی: دوشنبه زیست‌شناسی ساعت ۱۶." },
+    ]);
+    invokeLLMMock.mockResolvedValue({
+      model: "gemini-3-flash-preview",
+      choices: [{ message: { content: JSON.stringify({
+        title: "برنامهٔ هفتگی جدید",
+        summary: "ساعت جلسه تغییر کرد.",
+        sessions: [{ subject: "زیست‌شناسی", topic: "مرور", day: "دوشنبه", start: "۱۸:۰۰", end: "۱۹:۰۰", duration: "۶۰ دقیقه", reason: "طبق درخواست دانش‌آموز" }],
+        focusTip: "در ساعت جدید شروع کن.",
+      }) } }],
+    });
+    const caller = appRouter.createCaller(createContext());
+    const result = await caller.study.chat({
+      message: "ساعتش رو ببر ۱۸",
+      planRange: "week",
+      deviceDate: "۱۴۰۵/۰۸/۱۳",
+      timezone: "Asia/Tehran",
+    });
+    expect(result.plan).toBeDefined();
+    expect(result.plan?.sessions[0].start).toBe("۱۸:۰۰");
+    expect(dbMocks.getStudyPlanById).toHaveBeenCalledWith(42, 99);
   });
 });
