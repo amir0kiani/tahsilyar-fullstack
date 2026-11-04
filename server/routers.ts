@@ -77,9 +77,14 @@ const lessonCodes: Record<string, string> = {
   "فیزیک": "PHY-01", "شیمی": "CHEM-01", "زیست‌شناسی": "BIO-01", "زمین‌شناسی": "GEO-03",
 };
 const canonicalDay = (raw: string) => {
-  const value = raw.trim().replace("‌", "");
   const days = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
-  return days.find((day) => value.includes(day.replace("‌", ""))) ?? days.find((day) => value.includes(day)) ?? days[0];
+  const normalize = (value: string) => value.trim()
+    .replace(/^روز\s*/u, "")
+    .replace(/[\u200c\u200f\s]/g, "");
+  const value = normalize(raw);
+  const matchedDay = days.find((day) => normalize(day) === value);
+  if (!matchedDay) throw new Error(`نام روز نامعتبر در برنامهٔ مطالعه: ${raw}`);
+  return matchedDay;
 };
 const canonicalLesson = (raw: string, curriculum: string[]) => {
   const value = raw.trim();
