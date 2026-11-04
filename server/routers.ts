@@ -79,7 +79,7 @@ const lessonCodes: Record<string, string> = {
 const canonicalDay = (raw: string) => {
   const days = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
   const normalize = (value: string) => value.trim()
-    .replace(/^روز\s*/u, "")
+    .replace(/^روز\s*/, "")
     .replace(/[\u200c\u200f\s]/g, "");
   const value = normalize(raw);
   const matchedDay = days.find((day) => normalize(day) === value);
