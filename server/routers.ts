@@ -106,7 +106,7 @@ const detectPlanRange = (message: string): PlanRange | undefined => {
 
 const isPlanUpdateRequest = (message: string) => {
   const normalized = message.normalize("NFKC").replace(/[\u200c\u200f]/g, " ");
-  return /برنامه.{0,35}(بساز|بچین|تنظیم|طراحی|اصلاح|تغییر|به.?روزرسانی|سبک|سنگین|جدید|مرتب|بازچین|بیشتر|کمتر)/.test(normalized) ||
+  return /برنامه.{0,40}(بساز|بچین|بنویس|بریز|بده|تنظیم|طراحی|اصلاح|تغییر|به.?روزرسانی|سبک|سنگین|جدید|مرتب|بازچین|بیشتر|کمتر|کامل)/.test(normalized) ||
     /(?:جلسه|مطالعه|درس).{0,24}(اضافه|حذف|جابه.?جا|جابجا|منتقل|کمتر|بیشتر|سبک|سنگین)/.test(normalized) ||
     /(?:اضافه|حذف|جابه.?جا|جابجا|منتقل).{0,24}(?:جلسه|درس|برنامه)/.test(normalized);
 };
@@ -221,7 +221,7 @@ export const appRouter = router({
       }))
       .mutation(async ({ input, ctx }) => {
         const profile = await getStudentProfile(ctx.user.id);
-        const profileAnswers = (profile?.answers as Record<string, string> | undefined) ?? input.answers ?? {};
+        const profileAnswers = { ...((profile?.answers as Record<string, string> | undefined) ?? {}), ...(input.answers ?? {}) };
         if (!profile && Object.keys(profileAnswers).length >= 7) {
           try {
             await upsertStudentProfile({ userId: ctx.user.id, name: ctx.user.name ?? undefined, email: ctx.user.email ?? undefined, answers: profileAnswers });
@@ -240,7 +240,10 @@ export const appRouter = router({
         let responseModel = "gemini-3-flash-preview";
         let updatedPlan: Awaited<ReturnType<typeof getLatestStudyPlan>> = undefined;
 
-        if (isPlanUpdateRequest(input.message) && Object.keys(profileAnswers).length >= 7) {
+        const requestsPlanUpdate = isPlanUpdateRequest(input.message);
+        if (requestsPlanUpdate && Object.keys(profileAnswers).length < 7) {
+          assistantText = "برای ساخت یا اصلاح برنامهٔ دقیق، ابتدا باید اطلاعات تحصیلی‌ات را کامل کنی. پایه و رشته، زمان مطالعه، دروس اولویت‌دار، هدف و امتحان پیش‌رو را در بخش برنامه‌ریزی ثبت کن.";
+        } else if (requestsPlanUpdate) {
           try {
             const curriculum = curriculumFor(profileContext);
             const mastery = await getAcademicMastery(ctx.user.id);
