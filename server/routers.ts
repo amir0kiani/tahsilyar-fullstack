@@ -6,7 +6,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
-import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery, getAssessmentCatalog, getAssessmentQuestions, getStudentLessonProgress, setStudentLessonProgress } from "./db";
+import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getStudyPlanById, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery, getAssessmentCatalog, getAssessmentQuestions, getStudentLessonProgress, setStudentLessonProgress } from "./db";
 
 const chatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -109,11 +109,31 @@ const detectPlanRange = (message: string): PlanRange | undefined => {
   return undefined;
 };
 
-const isPlanUpdateRequest = (message: string) => {
-  const normalized = message.normalize("NFKC").replace(/[\u200c\u200f]/g, " ");
-  return /برنامه.{0,40}(بساز|بچین|بنویس|بریز|بده|تنظیم|طراحی|اصلاح|تغییر|به.?روزرسانی|سبک|سنگین|جدید|مرتب|بازچین|بیشتر|کمتر|کامل)/.test(normalized) ||
-    /(?:جلسه|مطالعه|درس).{0,24}(اضافه|حذف|جابه.?جا|جابجا|منتقل|کمتر|بیشتر|سبک|سنگین)/.test(normalized) ||
-    /(?:اضافه|حذف|جابه.?جا|جابجا|منتقل).{0,24}(?:جلسه|درس|برنامه)/.test(normalized);
+const normalizePlanCommand = (value: string) => value
+  .normalize("NFKC")
+  .replace(/[\u200c\u200f]/g, " ")
+  .replace(/[يى]/g, "ی")
+  .replace(/ك/g, "ک")
+  .replace(/\s+/g, " ")
+  .trim();
+
+const hasScheduleReference = (message: string) =>
+  /(برنامه|جلسه|مطالعه|درس|زمان|ساعت|روز|شنبه|یکشنبه|دوشنبه|سه شنبه|چهارشنبه|پنجشنبه|جمعه|زیست|شیمی|فیزیک|ریاضی|هندسه|حسابان|آمار|گسسته|عربی|فارسی|ادبیات|زبان|جامعه شناسی|روان شناسی|فلسفه|منطق|تاریخ|جغرافیا|اقتصاد|دین و زندگی)/.test(message);
+
+const hasScheduleAction = (message: string) =>
+  /(بساز|بچین|بنویس|بریز|تنظیم|طراحی|اصلاح|تغییر|عوض|ویرایش|به روز|سبک|سنگین|مرتب|بازچین|بیشتر|کمتر|اضافه|حذف|جابه جا|جابجا|منتقل|ببر|بیار|بذار|بگذار|قرار بده|تخصیص|کاهش|افزایش|کم کن|زیاد کن|بردار|جایگزین|تعویض|بکن|بهتر)/.test(message);
+
+const isPlanUpdateRequest = (
+  message: string,
+  history: Array<{ role: "user" | "assistant"; content: string }> = [],
+) => {
+  const normalized = normalizePlanCommand(message);
+  if (!hasScheduleAction(normalized)) return false;
+  const recentPlanContext = history.slice(-8).some((entry) => {
+    const prior = normalizePlanCommand(entry.content);
+    return entry.role === "assistant" && /(برنامه|جلسه های مطالعه|جزئیات برنامه|برنامه هفتگی|برنامه درسی)/.test(prior);
+  });
+  return hasScheduleReference(normalized) || recentPlanContext;
 };
 
 const ensureWeeklyCoverage = (sessions: PlanSessionInput[], preferredSubjects: string[], curriculum: string[]) => {
@@ -245,7 +265,7 @@ export const appRouter = router({
         let responseModel = "gemini-3-flash-preview";
         let updatedPlan: Awaited<ReturnType<typeof getLatestStudyPlan>> = undefined;
 
-        const requestsPlanUpdate = isPlanUpdateRequest(input.message);
+        const requestsPlanUpdate = isPlanUpdateRequest(input.message, history);
         if (requestsPlanUpdate && Object.keys(profileAnswers).length < 7) {
           assistantText = "برای ساخت یا اصلاح برنامهٔ دقیق، ابتدا باید اطلاعات تحصیلی‌ات را کامل کنی. پایه و رشته، زمان مطالعه، دروس اولویت‌دار، هدف و امتحان پیش‌رو را در بخش برنامه‌ریزی ثبت کن.";
         } else if (requestsPlanUpdate) {
@@ -290,7 +310,7 @@ export const appRouter = router({
               const preferred = (profileAnswers["دروس اولویت‌دار"] ?? profileAnswers["دروس امروز"] ?? "").split(/[،,]/).map((item) => item.trim()).filter(Boolean);
               sessions = ensureWeeklyCoverage(sessions, preferred, curriculum);
             }
-            await createStudyPlan({
+            const createdPlan = await createStudyPlan({
               userId: ctx.user.id,
               title: parsed.title,
               summary: parsed.summary ?? "",
@@ -298,7 +318,7 @@ export const appRouter = router({
               inputSnapshot: profileAnswers,
               sessions,
             });
-            const savedPlan = await getLatestStudyPlan(ctx.user.id);
+            const savedPlan = await getStudyPlanById(ctx.user.id, createdPlan.planId);
             if (!savedPlan) throw new Error("The generated plan was not readable after persistence");
             updatedPlan = savedPlan;
             assistantText = formatPlanForChat(savedPlan);
@@ -393,8 +413,8 @@ export const appRouter = router({
           return { title: "", summary: "پاسخ برنامه‌ریز قابل پردازش نبود؛ دوباره تلاش کن.", sessions: [], focusTip: "" };
         }
         try {
-          await createStudyPlan({ userId: ctx.user.id, title: plan.title, summary: plan.summary ?? "", focusTip: plan.focusTip ?? "", inputSnapshot: input.answers, sessions: plan.sessions });
-          const savedPlan = await getLatestStudyPlan(ctx.user.id);
+          const createdPlan = await createStudyPlan({ userId: ctx.user.id, title: plan.title, summary: plan.summary ?? "", focusTip: plan.focusTip ?? "", inputSnapshot: input.answers, sessions: plan.sessions });
+          const savedPlan = await getStudyPlanById(ctx.user.id, createdPlan.planId);
           if (!savedPlan) throw new Error("The generated plan was not readable after persistence");
           return savedPlan;
         } catch (error) {
