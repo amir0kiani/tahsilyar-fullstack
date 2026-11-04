@@ -137,7 +137,7 @@ const formatPlanForChat = (plan: { title: string; summary: string; focusTip: str
     const day = canonicalDay(session.day);
     groups.set(day, [...(groups.get(day) ?? []), session]);
   }
-  const orderedDays = [...weekDayNames.filter((day) => groups.has(day)), ...[...groups.keys()].filter((day) => !weekDayNames.includes(day))];
+  const orderedDays = [...weekDayNames.filter((day) => groups.has(day)), ...Array.from(groups.keys()).filter((day) => !weekDayNames.includes(day))];
   const schedule = orderedDays.map((day) => {
     const items = (groups.get(day) ?? []).map((session) => {
       const subject = session.subject.includes("|") ? session.subject.split("|").slice(1).join("|") : session.subject;
