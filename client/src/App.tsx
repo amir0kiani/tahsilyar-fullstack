@@ -154,7 +154,7 @@ function AppShell() {
   const [screen, setScreen] = useState<Screen>("companion");
   const [plannerStep, setPlannerStep] = useState(0);
   const [plannerAnswers, setPlannerAnswers] = useState<Record<number, string>>({});
-  const [planRange, setPlanRange] = useState<PlanRange>("today");
+  const [planRange, setPlanRange] = useState<PlanRange>("week");
   const [newPlanMode, setNewPlanMode] = useState(false);
   const [toast, setToast] = useState("");
   const [completed, setCompleted] = useState<number[]>([]);
@@ -248,7 +248,7 @@ function AppShell() {
     setMessages((old) => [...old, { from: "user", text: value }]);
     setChatInput("");
     chatMutation.mutate({ message: value, profile: currentProfileContext, answers: Object.fromEntries(Object.entries(plannerAnswers).map(([index, answer]) => [plannerSteps[Number(index)]?.title ?? index, answer])), deviceDate: deviceDateLabel, timezone: deviceTimeZone, planRange }, {
-      onSuccess: (result) => { setMessages((old) => [...old, { from: "bot", text: result.text }]); if (result.plan) { setGeneratedPlan(result.plan as GeneratedPlan); setCompleted([]); showToast("برنامه بر اساس گفت‌وگو به‌روزرسانی شد."); } },
+      onSuccess: (result) => { setMessages((old) => [...old, { from: "bot", text: result.text }]); if (result.plan) { const nextPlan = result.plan as GeneratedPlan; setGeneratedPlan(nextPlan); setCompleted(nextPlan.sessions.filter((session) => session.completed === 1).map((session, index) => session.id ?? index)); void latestPlanQuery.refetch(); showToast("همان برنامهٔ ذخیره‌شده در تب برنامهٔ درسی به‌روزرسانی شد."); } },
       onError: () => setMessages((old) => [...old, { from: "bot", text: "پاسخ آماده نشد. اطلاعاتت را بررسی کن و دوباره تلاش کن." }]),
     });
   };
