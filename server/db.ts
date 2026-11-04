@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   academicGoals,
@@ -89,7 +89,7 @@ export async function getLatestStudyPlan(userId: number) {
   const plans = await db.select().from(studyPlans).where(eq(studyPlans.userId, userId)).orderBy(desc(studyPlans.createdAt)).limit(1);
   const plan = plans[0];
   if (!plan) return undefined;
-  const sessions = await db.select().from(studySessions).where(and(eq(studySessions.planId, plan.id), eq(studySessions.userId, userId)));
+  const sessions = await db.select().from(studySessions).where(and(eq(studySessions.planId, plan.id), eq(studySessions.userId, userId))).orderBy(asc(studySessions.id));
   return { ...plan, sessions };
 }
 
