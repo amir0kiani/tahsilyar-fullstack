@@ -185,6 +185,15 @@ describe("study AI procedures", () => {
 
   it("detects natural-language requests to move a subject between weekdays and persists the changed plan", async () => {
     dbMocks.getStudentProfile.mockResolvedValue({ userId: 42, answers: completeAnswers });
+    dbMocks.getLatestStudyPlan.mockResolvedValue({
+      id: 10,
+      title: "برنامهٔ قبلی",
+      summary: "برنامهٔ فعلی",
+      focusTip: "",
+      inputSnapshot: completeAnswers,
+      sessions: [{ id: 100, subject: "BIO-01|زیست‌شناسی", topic: "مرور فصل دوم", day: "شنبه", start: "۱۶:۰۰", end: "۱۷:۰۰", duration: "۶۰ دقیقه", reason: "جلسهٔ قبلی", completed: 0 }],
+      createdAt: new Date(),
+    });
     invokeLLMMock.mockResolvedValue({
       model: "gemini-3-flash-preview",
       choices: [{ message: { content: JSON.stringify({
@@ -208,6 +217,7 @@ describe("study AI procedures", () => {
     expect(dbMocks.createStudyPlan).toHaveBeenCalledOnce();
     expect(dbMocks.getStudyPlanById).toHaveBeenCalledWith(42, 99);
     expect(result.text).toContain("دوشنبه");
+    expect(invokeLLMMock.mock.calls[0][0].messages[1].content).toContain("برنامهٔ قبلی");
   });
 
   it("treats a short follow-up as a plan change when the recent conversation is about the schedule", async () => {
@@ -226,13 +236,14 @@ describe("study AI procedures", () => {
     });
     const caller = appRouter.createCaller(createContext());
     const result = await caller.study.chat({
-      message: "ساعتش رو ببر ۱۸",
+      message: "عوضش کن به ۱۸",
       planRange: "week",
       deviceDate: "۱۴۰۵/۰۸/۱۳",
       timezone: "Asia/Tehran",
     });
     expect(result.plan).toBeDefined();
     expect(result.plan?.sessions[0].start).toBe("۱۸:۰۰");
+    expect(invokeLLMMock.mock.calls[0][0].messages[1].content).toContain("برنامهٔ هفتگی فعلی");
     expect(dbMocks.getStudyPlanById).toHaveBeenCalledWith(42, 99);
   });
 });
