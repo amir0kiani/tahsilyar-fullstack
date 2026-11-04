@@ -156,6 +156,18 @@ const ensureWeeklyCoverage = (sessions: PlanSessionInput[], preferredSubjects: s
   return result;
 };
 
+const planScheduleSignature = (sessions: PlanSessionInput[]) => sessions
+  .map((session) => [
+    session.subject.trim(),
+    session.topic.trim(),
+    canonicalDay(session.day),
+    session.start.trim(),
+    session.end.trim(),
+    session.duration.trim(),
+  ].join("|"))
+  .sort()
+  .join("\\n");
+
 const formatPlanForChat = (plan: { title: string; summary: string; focusTip: string; sessions: PlanSessionInput[] }) => {
   const groups = new Map<string, PlanSessionInput[]>();
   for (const session of plan.sessions) {
@@ -277,6 +289,10 @@ export const appRouter = router({
               ? lowMastery.map((item) => `${item.subject} / ${item.chapter} / ${item.topic}: ${item.accuracy}% accuracy across ${item.questions} questions (${item.status})`).join("\\n")
               : "دادهٔ آزمون کافی برای تعیین ضعف پایدار وجود ندارد؛ ضعف یا قوت مشخصی را حدس نزن.";
             const currentPlan = await getLatestStudyPlan(ctx.user.id);
+            const recentConversationContext = history.slice(-6)
+              .map((message) => `${message.role === "assistant" ? "همراه تحصیل‌یار" : "دانش‌آموز"}: ${cleanContext(message.content, 650)}`)
+              .join("\\n")
+              .slice(-3500);
             const currentPlanContext = currentPlan ? JSON.stringify({
               title: currentPlan.title,
               summary: currentPlan.summary,
@@ -289,11 +305,11 @@ export const appRouter = router({
               messages: [
                 {
                   role: "system",
-                  content: `تو برنامه‌ریز تحصیلی تحصیل‌یار هستی. برنامه را دقیقاً از اطلاعات واقعی دانش‌آموز بساز یا برنامهٔ فعلی را طبق درخواست او اصلاح کن. برای اصلاح، ساختار و جلسه‌های نامرتبط را حفظ کن و فقط تغییر لازم را انجام بده. همهٔ دروس مجاز رشته را در نظر بگیر، اما اولویت‌های دانش‌آموز و ضعف‌های معتبر آزمونی را لحاظ کن. خروجی فقط JSON مطابق schema باشد. بازهٔ مورد درخواست: ${planRange === "week" ? "هفت روز کامل" : planRange === "tomorrow" ? "فردا" : "امروز"}. در بازهٔ هفتگی، برای هر هفت روز دقیقاً از نام‌های شنبه، یکشنبه، دوشنبه، سه‌شنبه، چهارشنبه، پنجشنبه، جمعه استفاده کن و برای هیچ روزی جلسه را خالی نگذار. برنامه باید واقع‌بینانه باشد و مجموع زمان مطالعه از ظرفیت اعلام‌شده فراتر نرود. برای هدف غیرواقع‌بینانه محترمانه محدودیت را در summary توضیح بده. از دادهٔ آزمون با کمتر از سه سؤال برای نتیجه‌گیری دربارهٔ ضعف استفاده نکن. تاریخ محلی دستگاه: ${cleanContext(input.deviceDate, 100)}. منطقهٔ زمانی: ${cleanContext(input.timezone, 100)}. دروس مجاز: ${curriculumText}. نتایج معتبر آزمون: ${assessmentContext}.`,
+                  content: `تو برنامه‌ریز تحصیلی تحصیل‌یار هستی. برنامه را دقیقاً از اطلاعات واقعی دانش‌آموز بساز یا برنامهٔ فعلی را طبق درخواست او اصلاح کن. درخواست جدید دانش‌آموز دستور اصلی است و باید تغییر خواسته‌شده حتماً در آرایهٔ sessions اعمال شود؛ صرفاً نوشتن اینکه «تغییر انجام شد» در summary کافی نیست. اگر دانش‌آموز انتقال یک درس یا جلسه را خواسته، جلسه را از روز/ساعت قبلی حذف و در روز/ساعت مقصد ثبت کن. اگر ساعت، مدت یا تعداد جلسات را تغییر خواسته، مقدار ساختاری همان جلسه را تغییر بده. برای اصلاح، ساختار و جلسه‌های نامرتبط را حفظ کن و فقط تغییر لازم را انجام بده. همهٔ دروس مجاز رشته را در نظر بگیر، اما اولویت‌های دانش‌آموز و ضعف‌های معتبر آزمونی را لحاظ کن. خروجی فقط JSON مطابق schema باشد. بازهٔ مورد درخواست: ${planRange === "week" ? "هفت روز کامل" : planRange === "tomorrow" ? "فردا" : "امروز"}. در بازهٔ هفتگی، برای هر هفت روز دقیقاً از نام‌های شنبه، یکشنبه، دوشنبه، سه‌شنبه، چهارشنبه، پنجشنبه، جمعه استفاده کن و برای هیچ روزی جلسه را خالی نگذار. برنامه باید واقع‌بینانه باشد و مجموع زمان مطالعه از ظرفیت اعلام‌شده فراتر نرود. برای هدف غیرواقع‌بینانه محترمانه محدودیت را در summary توضیح بده. از دادهٔ آزمون با کمتر از سه سؤال برای نتیجه‌گیری دربارهٔ ضعف استفاده نکن. تاریخ محلی دستگاه: ${cleanContext(input.deviceDate, 100)}. منطقهٔ زمانی: ${cleanContext(input.timezone, 100)}. دروس مجاز: ${curriculumText}. نتایج معتبر آزمون: ${assessmentContext}.`,
                 },
                 {
                   role: "user",
-                  content: `پروفایل واقعی دانش‌آموز:\n${cleanContext(profileContext, 2400)}\n\nدرخواست او:\n${input.message}\n\nبازهٔ نهایی برنامه: ${planRange}\n\nبرنامهٔ فعلی برای حفظ و اصلاح:\n${currentPlanContext}\n\nبرنامهٔ جدید باید از نظر درس، روز، ساعت، مبحث و مدت قابل اجرا باشد. از ساختن اطلاعات شخصی یا امتحانِ اعلام‌نشده خودداری کن.`,
+                  content: `پروفایل واقعی دانش‌آموز:\n${cleanContext(profileContext, 2400)}\n\nدرخواست او:\n${input.message}\n\nبازهٔ نهایی برنامه: ${planRange}\n\nبرنامهٔ فعلی برای حفظ و اصلاح:\n${currentPlanContext}\n\nسابقهٔ مرتبط گفت‌وگو:\n${recentConversationContext || "سابقهٔ مرتبطی وجود ندارد."}\n\nبرنامهٔ جدید باید از نظر درس، روز، ساعت، مبحث و مدت قابل اجرا باشد. قبل از خروجی، تک‌تک تغییرات درخواستی را با برنامهٔ فعلی تطبیق بده و در sessions اعمال کن. از ساختن اطلاعات شخصی یا امتحانِ اعلام‌نشده خودداری کن.`,
                 },
               ],
               responseFormat: { type: "json_schema", json_schema: { name: "updated_study_plan", strict: true, schema: planSchema } },
@@ -306,6 +322,15 @@ export const appRouter = router({
               throw new Error("AI returned an invalid or empty study plan");
             }
             let sessions = normalizePlanSessions(parsed.sessions, curriculum);
+            if (currentPlan?.sessions?.length) {
+              const previousSessions = normalizePlanSessions(currentPlan.sessions, curriculum);
+              if (planScheduleSignature(previousSessions) === planScheduleSignature(sessions)) {
+                throw new TRPCError({
+                  code: "PRECONDITION_FAILED",
+                  message: "درخواست تغییر دریافت شد، اما برنامه‌ریز هیچ تغییری در جلسه‌ها اعمال نکرد. لطفاً مشخص کن کدام درس، روز یا ساعت باید عوض شود.",
+                });
+              }
+            }
             if (planRange === "week") {
               const preferred = (profileAnswers["دروس اولویت‌دار"] ?? profileAnswers["دروس امروز"] ?? "").split(/[،,]/).map((item) => item.trim()).filter(Boolean);
               sessions = ensureWeeklyCoverage(sessions, preferred, curriculum);
@@ -324,6 +349,7 @@ export const appRouter = router({
             assistantText = formatPlanForChat(savedPlan);
             responseModel = planResponse.model;
           } catch (error) {
+            if (error instanceof TRPCError) throw error;
             console.error("[Study] Could not generate and persist the chat plan:", error);
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
