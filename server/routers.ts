@@ -322,6 +322,10 @@ export const appRouter = router({
               throw new Error("AI returned an invalid or empty study plan");
             }
             let sessions = normalizePlanSessions(parsed.sessions, curriculum);
+            if (planRange === "week") {
+              const preferred = (profileAnswers["دروس اولویت‌دار"] ?? profileAnswers["دروس امروز"] ?? "").split(/[،,]/).map((item) => item.trim()).filter(Boolean);
+              sessions = ensureWeeklyCoverage(sessions, preferred, curriculum);
+            }
             if (currentPlan?.sessions?.length) {
               const previousSessions = normalizePlanSessions(currentPlan.sessions, curriculum);
               if (planScheduleSignature(previousSessions) === planScheduleSignature(sessions)) {
@@ -330,10 +334,6 @@ export const appRouter = router({
                   message: "درخواست تغییر دریافت شد، اما برنامه‌ریز هیچ تغییری در جلسه‌ها اعمال نکرد. لطفاً مشخص کن کدام درس، روز یا ساعت باید عوض شود.",
                 });
               }
-            }
-            if (planRange === "week") {
-              const preferred = (profileAnswers["دروس اولویت‌دار"] ?? profileAnswers["دروس امروز"] ?? "").split(/[،,]/).map((item) => item.trim()).filter(Boolean);
-              sessions = ensureWeeklyCoverage(sessions, preferred, curriculum);
             }
             const createdPlan = await createStudyPlan({
               userId: ctx.user.id,
