@@ -220,6 +220,35 @@ describe("study AI procedures", () => {
     expect(invokeLLMMock.mock.calls[0][0].messages[1].content).toContain("برنامهٔ قبلی");
   });
 
+  it("does not report success or save a new version when the model leaves every session unchanged", async () => {
+    dbMocks.getStudentProfile.mockResolvedValue({ userId: 42, answers: completeAnswers });
+    dbMocks.getLatestStudyPlan.mockResolvedValue({
+      id: 10,
+      title: "برنامهٔ فعلی",
+      summary: "برنامهٔ فعلی",
+      focusTip: "",
+      inputSnapshot: completeAnswers,
+      sessions: [{ id: 100, subject: "BIO-01|زیست‌شناسی", topic: "مرور فصل دوم", day: "شنبه", start: "۱۶:۰۰", end: "۱۷:۰۰", duration: "۶۰ دقیقه", reason: "جلسهٔ فعلی", completed: 0 }],
+      createdAt: new Date(),
+    });
+    invokeLLMMock.mockResolvedValue({
+      model: "gemini-3-flash-preview",
+      choices: [{ message: { content: JSON.stringify({
+        title: "برنامهٔ بدون تغییر",
+        summary: "برنامه بررسی شد.",
+        sessions: [{ subject: "زیست‌شناسی", topic: "مرور فصل دوم", day: "شنبه", start: "۱۶:۰۰", end: "۱۷:۰۰", duration: "۶۰ دقیقه", reason: "جلسهٔ فعلی" }],
+        focusTip: "",
+      }) } }],
+    });
+    const caller = appRouter.createCaller(createContext());
+    await expect(caller.study.chat({
+      message: "برنامه‌ام را اصلاح کن",
+      planRange: "today",
+    })).rejects.toMatchObject({ code: "PRECONDITION_FAILED" });
+    expect(dbMocks.createStudyPlan).not.toHaveBeenCalled();
+    expect(dbMocks.getStudyPlanById).not.toHaveBeenCalled();
+  });
+
   it("treats a short follow-up as a plan change when the recent conversation is about the schedule", async () => {
     dbMocks.getStudentProfile.mockResolvedValue({ userId: 42, answers: completeAnswers });
     dbMocks.getRecentConversationMessages.mockResolvedValue([
