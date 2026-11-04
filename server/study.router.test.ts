@@ -10,7 +10,7 @@ const dbMocks = vi.hoisted(() => ({
   addConversationMessage: vi.fn(),
   upsertStudentProfile: vi.fn(),
   createStudyPlan: vi.fn(),
-  getDb: vi.fn(),
+  getLatestStudyPlan: vi.fn(),
   getAcademicMastery: vi.fn(),
   getExamHistory: vi.fn(),
   saveExamAttempt: vi.fn(),
@@ -37,18 +37,51 @@ const createContext = (user = authenticatedUser): TrpcContext => ({
   res: {} as TrpcContext["res"],
 });
 
+const completeAnswers = {
+  "نام": "دانش‌آموز آزمایشی",
+  "پایه و رشته": "دوازدهم تجربی",
+  "بازهٔ زمانی": "۲ تا ۴ ساعت",
+  "زمان مطالعه": "صبح‌ها",
+  "دروس اولویت‌دار": "زیست‌شناسی، شیمی",
+  "امتحان پیشرو": "کنکور سراسری",
+  "سطح انرژی": "معمولی",
+};
+
 describe("study AI procedures", () => {
   beforeEach(() => {
     invokeLLMMock.mockReset();
+    dbMocks.getStudentProfile.mockReset();
     dbMocks.getStudentProfile.mockResolvedValue({ userId: 42, answers: { "پایه و رشته": "دوازدهم تجربی" } });
+    dbMocks.getOrCreateConversation.mockReset();
     dbMocks.getOrCreateConversation.mockResolvedValue({ id: 7, userId: 42 });
+    dbMocks.getRecentConversationMessages.mockReset();
     dbMocks.getRecentConversationMessages.mockResolvedValue([]);
+    dbMocks.addConversationMessage.mockReset();
     dbMocks.addConversationMessage.mockResolvedValue(undefined);
+    dbMocks.upsertStudentProfile.mockReset();
     dbMocks.upsertStudentProfile.mockResolvedValue(undefined);
-    dbMocks.createStudyPlan.mockResolvedValue(undefined);
-    dbMocks.getDb.mockResolvedValue(null);
+    dbMocks.createStudyPlan.mockReset();
+    dbMocks.createStudyPlan.mockResolvedValue({ planId: 99 });
+    dbMocks.getLatestStudyPlan.mockReset();
+    dbMocks.getLatestStudyPlan.mockImplementation(async () => {
+      const calls = dbMocks.createStudyPlan.mock.calls;
+      const latest = calls[calls.length - 1]?.[0];
+      if (!latest) return null;
+      return {
+        id: 99,
+        title: latest.title,
+        summary: latest.summary,
+        focusTip: latest.focusTip,
+        inputSnapshot: latest.inputSnapshot,
+        sessions: latest.sessions.map((session: any, index: number) => ({ ...session, id: index + 1, completed: 0 })),
+        createdAt: new Date(),
+      };
+    });
+    dbMocks.getAcademicMastery.mockReset();
     dbMocks.getAcademicMastery.mockResolvedValue([]);
+    dbMocks.getExamHistory.mockReset();
     dbMocks.getExamHistory.mockResolvedValue([]);
+    dbMocks.saveExamAttempt.mockReset();
     dbMocks.saveExamAttempt.mockResolvedValue({ id: 1 });
   });
 
@@ -80,39 +113,57 @@ describe("study AI procedures", () => {
     expect(invokeLLMMock).not.toHaveBeenCalled();
   });
 
-  it("parses and persists a structured plan for the authenticated user", async () => {
-    dbMocks.getDb.mockResolvedValue({});
-    dbMocks.createStudyPlan.mockRejectedValue(new Error("temporary database failure"));
+  it("persists a complete seven-day structured plan for the authenticated user", async () => {
     invokeLLMMock.mockResolvedValue({
       model: "gemini-3-flash-preview",
-      choices: [{ message: { content: `\`\`\`json\n${JSON.stringify({
-        title: "برنامهٔ ثبت‌شدهٔ امروز",
+      choices: [{ message: { content: JSON.stringify({
+        title: "برنامهٔ هفتگی ثبت‌شده",
         summary: "برنامه بر اساس پاسخ‌های ثبت‌شده ساخته شد.",
         sessions: [{ subject: "زیست‌شناسی", topic: "مبحث ثبت‌شده", day: "شنبه", start: "۱۶:۰۰", end: "۱۷:۰۰", duration: "۶۰ دقیقه", reason: "بر اساس پاسخ کاربر" }],
         focusTip: "نکته فقط از داده‌های ثبت‌شده استخراج شد.",
-      })}\n\`\`\`` } }],
+      }) } }],
     });
     const caller = appRouter.createCaller(createContext());
     const result = await caller.study.generatePlan({
-      answers: {
-        "بازهٔ زمانی": "۲ تا ۴ ساعت",
-        "زمان مطالعه": "صبح‌ها",
-        "پایه و رشته": "دوازدهم تجربی",
-        "امتحان پیشرو": "کنکور سراسری",
-        "دروس اولویت‌دار": "زیست‌شناسی، شیمی",
-        "دروس حذفی": "فعلاً هیچ‌کدام",
-        "سطح انرژی": "معمولی",
-      },
+      answers: completeAnswers,
       deviceDate: "تاریخ دستگاه",
       timezone: "Asia/Tehran",
+      planRange: "week",
     });
-    expect(result.title).toBe("برنامهٔ ثبت‌شدهٔ امروز");
+    expect(result.title).toBe("برنامهٔ هفتگی ثبت‌شده");
     expect(result.sessions[0].subject).toBe("BIO-01|زیست‌شناسی");
+    expect(new Set(result.sessions.map((session) => session.day)).size).toBe(7);
+    expect(dbMocks.createStudyPlan).toHaveBeenCalledOnce();
     expect(dbMocks.upsertStudentProfile).toHaveBeenCalledWith(expect.objectContaining({ userId: 42 }));
-    expect(requestForPlan()).toBeDefined();
+    expect(invokeLLMMock.mock.calls[0][0].responseFormat).toBeDefined();
   });
 
-  function requestForPlan() {
-    return invokeLLMMock.mock.calls[0]?.[0];
-  }
+  it("uses the persisted structured plan as the exact content of a weekly chat plan update", async () => {
+    dbMocks.getStudentProfile.mockResolvedValue({ userId: 42, answers: completeAnswers });
+    invokeLLMMock.mockResolvedValue({
+      model: "gemini-3-flash-preview",
+      choices: [{ message: { content: JSON.stringify({
+        title: "برنامهٔ هفتگی اصلاح‌شده",
+        summary: "برنامه با حفظ تعادل مطالعه و مرور اصلاح شد.",
+        sessions: [{ subject: "زیست‌شناسی", topic: "مرور فصل دوم", day: "شنبه", start: "۱۶:۰۰", end: "۱۷:۰۰", duration: "۶۰ دقیقه", reason: "اولویت دانش‌آموز" }],
+        focusTip: "بین دو جلسه استراحت کوتاه داشته باش.",
+      }) } }],
+    });
+    const caller = appRouter.createCaller(createContext());
+    const result = await caller.study.chat({
+      message: "برنامه هفتگی‌ام را سبک‌تر کن و یک جلسه مرور اضافه کن",
+      planRange: "today",
+      deviceDate: "۱۴۰۵/۰۸/۱۳",
+      timezone: "Asia/Tehran",
+    });
+    expect(invokeLLMMock).toHaveBeenCalledOnce();
+    expect(result.plan).toBeDefined();
+    expect(result.plan?.sessions).toHaveLength(7);
+    expect(result.text).toContain("برنامهٔ هفتگی اصلاح‌شده");
+    for (const day of ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"]) {
+      expect(result.text).toContain(day);
+    }
+    expect(dbMocks.createStudyPlan).toHaveBeenCalledOnce();
+    expect(dbMocks.addConversationMessage).toHaveBeenCalledTimes(2);
+  });
 });
