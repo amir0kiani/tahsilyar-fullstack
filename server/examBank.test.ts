@@ -211,6 +211,25 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("reaches five questions in the newly covered Grade 12 math and Grade 11 physics lessons", () => {
+    const targets = [
+      { grade: "دوازدهم", track: "ریاضی", subject: "حسابان", chapter: "مثلثات" },
+      { grade: "دوازدهم", track: "ریاضی", subject: "هندسه", chapter: "ماتریس و کاربردها" },
+      { grade: "دوازدهم", track: "ریاضی", subject: "ریاضیات گسسته", chapter: "آشنایی با نظریه اعداد" },
+      { grade: "یازدهم", track: "تجربی", subject: "فیزیک", chapter: "الکتریسیتهٔ ساکن" },
+    ];
+    for (const target of targets) {
+      const matching = verifiedQuestions.filter((question) =>
+        question.grade === target.grade &&
+        question.track === target.track &&
+        question.subject === target.subject &&
+        question.chapter === target.chapter
+      );
+      expect(matching, `${target.grade} / ${target.subject} / ${target.chapter}`).toHaveLength(5);
+      expect(matching.every((question) => question.sourceStatus === "official-exam-adapted")).toBe(true);
+    }
+  });
+
   it("does not use whole-book placeholders for the three specialized tracks", () => {
     expect(curriculumCatalog.filter((book) => book.track !== "عمومی").every((book) =>
       book.chapters.length > 0 && !book.chapters.includes("کل کتاب")
