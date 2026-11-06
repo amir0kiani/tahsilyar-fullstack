@@ -15,7 +15,7 @@ export const verifiedUploadedGeology11: ExamQuestion[] = [
     options: ["نیروی گرانش متقابل اجزای کهکشان", "نیروی دافعهٔ الکتریکی میان ستاره‌ها", "فشار نور ستاره‌ها", "میدان مغناطیسی زمین"],
     correctIndex: 0,
     explanation: "گرانش متقابل میان ستاره‌ها، گاز، غبار و دیگر اجزای کهکشان، ساختار آن را پایدار نگه می‌دارد.",
-    sourceStatus: "official-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۱", verifiedAt,
+    sourceStatus: "mock-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۱", verifiedAt,
     reviewerNote: "بازنویسی مفهومی پرسش دفترچه دربارهٔ ساختار کهکشان؛ پاسخ با مفهوم گرانش و اجزای کهکشان کنترل شده است."
   },
   {
@@ -26,7 +26,7 @@ export const verifiedUploadedGeology11: ExamQuestion[] = [
     options: ["چون چگالی آن‌ها از مواد سیلیکاتی بیشتر بود", "چون در سطح زمین دمای کمتری داشتند", "چون با آب اقیانوس‌ها واکنش داده بودند", "چون نیروی گرانش فقط بر فلزها اثر می‌کرد"],
     correctIndex: 0,
     explanation: "در زمینِ داغ و تا حد زیادی مذابِ آغازین، مواد چگال‌تر مانند آهن و نیکل به سمت مرکز فرو رفتند و در شکل‌گیری هسته نقش داشتند.",
-    sourceStatus: "official-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۲", verifiedAt,
+    sourceStatus: "mock-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۲", verifiedAt,
     reviewerNote: "تمرین مستقل از مبحث تکوین زمین و تفکیک مواد بر اساس چگالی؛ عبارت‌بندی و گزینه‌ها تازه‌اند."
   },
   {
@@ -37,7 +37,7 @@ export const verifiedUploadedGeology11: ExamQuestion[] = [
     options: ["از تجمع تدریجی ذرات و اجرام کوچک‌تر در قرص چرخان پیرامون خورشید جوان", "از جداشدن مستقیم قطعاتی از زمین", "از انفجارهای پی‌درپی در سطح خورشید", "از به دام افتادن ستاره‌های سرگردان به وسیلهٔ زمین"],
     correctIndex: 0,
     explanation: "در مدل سحابی خورشیدی، مواد موجود در قرص گاز و غبار پیرامون خورشید جوان به‌تدریج به هم پیوستند و اجرام بزرگ‌تر و سپس سیاره‌ها را پدید آوردند.",
-    sourceStatus: "official-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۳", verifiedAt,
+    sourceStatus: "mock-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۳", verifiedAt,
     reviewerNote: "پرسش تألیفی بر پایهٔ مبحث تشکیل منظومهٔ شمسی در محدودهٔ آزمون؛ پاسخ با مدل سحابی تطبیق داده شده است."
   },
   {
@@ -48,7 +48,7 @@ export const verifiedUploadedGeology11: ExamQuestion[] = [
     options: ["خروج گازها از درون زمین بر اثر فعالیت آتشفشانی", "تولید اکسیژن فراوان به‌وسیلهٔ جانوران خشکی‌زی", "تبخیر دائمی سنگ‌های جامد در دمای اتاق", "ورود پیوستهٔ هوای زمین از سیارهٔ زهره"],
     correctIndex: 0,
     explanation: "گاززدایی درونی و فعالیت‌های آتشفشانی از منابع مهم گازهای جوّ آغازین زمین بوده‌اند؛ ترکیب جو در طول زمان تغییر کرده است.",
-    sourceStatus: "official-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۴", verifiedAt,
+    sourceStatus: "mock-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۴", verifiedAt,
     reviewerNote: "تمرین مستقل از مباحث آغازین تکوین زمین؛ گزارهٔ علمی با محتوای کتاب کنترل شده است."
   },
   {
@@ -59,7 +59,7 @@ export const verifiedUploadedGeology11: ExamQuestion[] = [
     options: ["اندازه‌گیری نسبت ایزوتوپ‌های پرتوزا و محصولات واپاشی آن‌ها", "مقایسهٔ رنگ ظاهری سنگ‌ها با یکدیگر", "اندازه‌گیری دمای فعلی سطح سنگ", "محاسبهٔ تعداد بلورهای قابل مشاهده با چشم"],
     correctIndex: 0,
     explanation: "روش‌های سن‌سنجی پرتوزا با اندازه‌گیری نسبت ایزوتوپ مادر به دختر و دانستن نیمه‌عمر، برای برآورد سن نمونه‌های زمین‌شناختی به کار می‌روند.",
-    sourceStatus: "official-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۵", verifiedAt,
+    sourceStatus: "mock-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۵", verifiedAt,
     reviewerNote: "سؤال تألیفی دربارهٔ روش سن‌سنجی در بخش تکوین زمین؛ پاسخ بر مبنای اصول سن‌سنجی پرتوزا بررسی شده است."
   },
   {
@@ -70,7 +70,7 @@ export const verifiedUploadedGeology11: ExamQuestion[] = [
     options: ["امکان استخراج و فرآوری با صرفهٔ اقتصادی", "وجود هر نوع کانی در هر مقدار", "قرارگرفتن مادهٔ معدنی فقط در سطح زمین", "داشتن بلورهای بزرگ و شفاف در همهٔ بخش‌ها"],
     correctIndex: 0,
     explanation: "کانسار تمرکزی از مواد معدنی است که با توجه به مقدار، عیار، فناوری و هزینه‌ها امکان بهره‌برداری اقتصادی از آن وجود داشته باشد.",
-    sourceStatus: "official-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۶", verifiedAt,
+    sourceStatus: "mock-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۶", verifiedAt,
     reviewerNote: "بازنویسی مفهومی پرسش دفترچه دربارهٔ کانسار؛ تمایز تمرکز کانی و ذخیرهٔ اقتصادی حفظ شده است."
   },
   {
@@ -81,7 +81,7 @@ export const verifiedUploadedGeology11: ExamQuestion[] = [
     options: ["ژیپس ـ تولید گچ ساختمانی", "گرانیت ـ تولید پنبهٔ نسوز", "مسکوویت ـ تولید سوخت فسیلی", "شن و ماسه ـ تولید کود نیتروژنی"],
     correctIndex: 0,
     explanation: "ژیپس مادهٔ اولیهٔ مهم تولید گچ ساختمانی است. گرانیت بیشتر در سنگ‌کاری و نمای ساختمان و شن و ماسه در مصالح ساختمانی کاربرد دارند.",
-    sourceStatus: "official-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۷", verifiedAt,
+    sourceStatus: "mock-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۷", verifiedAt,
     reviewerNote: "سؤال مستقل از بخش تطبیق کانی‌ها و کاربردها؛ گزینه‌ها بازطراحی و پاسخ با کاربرد شناخته‌شدهٔ ژیپس کنترل شده است."
   },
   {
@@ -92,7 +92,7 @@ export const verifiedUploadedGeology11: ExamQuestion[] = [
     options: ["جداکردن کانی‌های مفید از مواد باطله و افزایش عیار مادهٔ معدنی", "تبدیل مستقیم همهٔ کانی‌ها به فلز خالص در معدن", "افزایش عمق کانسار پیش از استخراج", "تبدیل سنگ‌های رسوبی به سنگ‌های آذرین"],
     correctIndex: 0,
     explanation: "در کانه‌آرایی، کانی‌های ارزشمند از باطله جدا می‌شوند تا عیار مادهٔ معدنی برای مراحل بعدی فرآوری افزایش یابد؛ ذوب و پالایش مراحل دیگری هستند.",
-    sourceStatus: "official-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۸", verifiedAt,
+    sourceStatus: "mock-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۸", verifiedAt,
     reviewerNote: "بازنویسی مبحث کانه‌آرایی از آزمون؛ مرز مفهومی کانه‌آرایی با ذوب و استخراج رعایت شده است."
   },
   {
@@ -103,7 +103,7 @@ export const verifiedUploadedGeology11: ExamQuestion[] = [
     options: ["از دگرگونی و تجزیهٔ مواد آلی مدفون‌شده طی زمان زمین‌شناختی طولانی پدید می‌آیند", "از سردشدن سریع گدازه در سطح زمین تشکیل می‌شوند", "از تبلور مستقیم آب در اعماق پوسته به وجود می‌آیند", "در چرخه‌ای چندروزه و با مصرف اکسیژن جو ساخته می‌شوند"],
     correctIndex: 0,
     explanation: "سوخت‌های فسیلی از بقایای مواد آلی که در شرایط مناسب دفن شده‌اند و طی میلیون‌ها سال تحت فشار، دما و دگرگونی قرار گرفته‌اند، تشکیل می‌شوند.",
-    sourceStatus: "official-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۹", verifiedAt,
+    sourceStatus: "mock-exam-adapted", sourceTitle, sourceQuestionNumber: "۹۹", verifiedAt,
     reviewerNote: "تمرین مستقل از مبحث ذخایر انرژی؛ پاسخ با روند زمین‌شناختی تشکیل سوخت‌های فسیلی تطبیق داده شده است."
   },
   {
@@ -114,7 +114,7 @@ export const verifiedUploadedGeology11: ExamQuestion[] = [
     options: ["مقایسهٔ هم‌زمان عیار، مقدار ذخیره، هزینهٔ استخراج و فرآوری", "انتخاب همیشگی کانسنگ با عیار بالاتر", "انتخاب کانسنگی که رنگ روشن‌تری دارد", "نادیده‌گرفتن هزینه‌ها و توجه فقط به عمق کانسار"],
     correctIndex: 0,
     explanation: "اقتصادی‌بودن بهره‌برداری فقط به عیار وابسته نیست؛ حجم ذخیره، شرایط زمین‌شناسی، فناوری و هزینه‌های استخراج و فرآوری نیز باید بررسی شوند.",
-    sourceStatus: "official-exam-adapted", sourceTitle, sourceQuestionNumber: "۱۰۰", verifiedAt,
+    sourceStatus: "mock-exam-adapted", sourceTitle, sourceQuestionNumber: "۱۰۰", verifiedAt,
     reviewerNote: "سؤال ترکیبی و مستقل از مباحث کانسار و بهره‌برداری؛ پاسخ بر پایهٔ ارزیابی اقتصادی ذخیره بررسی شده است."
   }
 ];
