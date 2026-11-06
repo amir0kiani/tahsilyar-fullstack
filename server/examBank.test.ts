@@ -22,10 +22,10 @@ describe("curriculum and assessment question bank", () => {
     expect(examQuestions.every((question) => question.sourceStatus === "sample-authored")).toBe(true);
   });
 
-  it("records traceable provenance for every question adapted from a published official exam", () => {
+  it("records traceable provenance for every official- or mock-exam-adapted question", () => {
     expect(verifiedQuestions.length).toBeGreaterThanOrEqual(29);
     for (const question of verifiedQuestions) {
-      expect(question.sourceStatus).toBe("official-exam-adapted");
+      expect(["official-exam-adapted", "mock-exam-adapted"]).toContain(question.sourceStatus);
       expect(question.sourceTitle).toBeTruthy();
       const uploadedSource = question.sourceTitle?.includes("(فایل ارسالی کاربر)") ?? false;
       if (uploadedSource) {
@@ -41,7 +41,7 @@ describe("curriculum and assessment question bank", () => {
 
   it("does not label rewritten practice items as verbatim official exam questions", () => {
     expect(verifiedQuestions.every((question) => question.sourceStatus !== "official-exam")).toBe(true);
-    expect(verifiedQuestions.every((question) => question.sourceStatus === "official-exam-adapted")).toBe(true);
+    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? ""))).toBe(true);
   });
 
   it("lists grade-specific books for all three main tracks", () => {
@@ -207,7 +207,7 @@ describe("curriculum and assessment question bank", () => {
         question.chapter === chapter
       );
       expect(matching, chapter).toHaveLength(5);
-      expect(matching.every((question) => question.sourceStatus === "official-exam-adapted")).toBe(true);
+      expect(matching.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
     }
   });
 
@@ -226,7 +226,7 @@ describe("curriculum and assessment question bank", () => {
         question.chapter === target.chapter
       );
       expect(matching, `${target.grade} / ${target.subject} / ${target.chapter}`).toHaveLength(5);
-      expect(matching.every((question) => question.sourceStatus === "official-exam-adapted")).toBe(true);
+      expect(matching.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
     }
   });
 
