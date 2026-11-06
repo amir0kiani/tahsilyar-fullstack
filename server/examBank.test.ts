@@ -193,6 +193,24 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("reaches five source-adapted questions for each covered Grade 11 geology lesson", () => {
+    const geology = curriculumCatalog.find((book) =>
+      book.grade === "یازدهم" && book.track === "تجربی" && book.subject === "زمین‌شناسی"
+    );
+    expect(geology).toBeTruthy();
+    for (const chapter of ["آفرینش کیهان و تکوین زمین", "منابع معدنی و ذخایر انرژی"]) {
+      expect(geology?.chapters).toContain(chapter);
+      const matching = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "تجربی" &&
+        question.subject === "زمین‌شناسی" &&
+        question.chapter === chapter
+      );
+      expect(matching, chapter).toHaveLength(5);
+      expect(matching.every((question) => question.sourceStatus === "official-exam-adapted")).toBe(true);
+    }
+  });
+
   it("does not use whole-book placeholders for the three specialized tracks", () => {
     expect(curriculumCatalog.filter((book) => book.track !== "عمومی").every((book) =>
       book.chapters.length > 0 && !book.chapters.includes("کل کتاب")
