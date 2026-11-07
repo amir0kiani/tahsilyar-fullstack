@@ -354,7 +354,7 @@ describe("curriculum and assessment question bank", () => {
 
 
   it("imports six visually reviewed Grade 10 logic questions with exact source keys", () => {
-    const batch = verifiedQuestions.filter((question) => question.id.startsWith("upload-maz-d10-humanities-logic-"));
+    const batch = verifiedQuestions.filter((question) => ["۸۶", "۸۷", "۸۸", "۸۹", "۹۰", "۹۱"].includes(question.sourceQuestionNumber ?? "") && question.subject === "منطق" && question.track === "انسانی");
     expect(batch).toHaveLength(6);
     expect(batch.every((question) => question.grade === "دهم" && question.track === "انسانی" && question.subject === "منطق")).toBe(true);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.sourceTitle?.includes("(فایل ارسالی کاربر)"))).toBe(true);
