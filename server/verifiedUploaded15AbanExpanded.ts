@@ -425,7 +425,7 @@ export const verifiedUploaded15AbanExpanded: ExamQuestion[] = [
   }),
   q({
     id: "uploaded-15aban-12h-philosophy-007", grade: "دوازدهم", track: "انسانی", subject: "فلسفه",
-    chapter: "جهان ممکنات", topic: "رابطه علت و معلول", difficulty: "متوسط",
+    chapter: "جهان علّی و معلولی", topic: "رابطه علت و معلول", difficulty: "متوسط",
     prompt: "در یک رابطه علّی، اگر علت تامه تحقق یابد و مانعی وجود نداشته باشد، کدام نتیجه با اصل علیت سازگار است؟",
     options: ["تحقق معلول ضروری می‌شود", "معلول حتماً ناممکن می‌شود", "وجود معلول هیچ ارتباطی با علت ندارد", "علت تامه فقط احتمال معلول را افزایش می‌دهد"],
     correctIndex: 0,
