@@ -236,4 +236,27 @@ describe("curriculum and assessment question bank", () => {
     )).toBe(true);
   });
 
+
+  it("includes independently solved source-based humanities questions for all three grades", () => {
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("upload-human"));
+    expect(batch).toHaveLength(22);
+    for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
+      expect(batch.some((question) => question.grade === grade), grade).toBe(true);
+    }
+    expect(batch.every((question) => question.track === "انسانی")).toBe(true);
+    expect(batch.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+    expect(batch.every((question) => question.explanation.length > 15)).toBe(true);
+  });
+
+
+  it("includes source-based science and mathematics questions across grades and tracks", () => {
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("upload-exp") || question.id.startsWith("upload-math"));
+    expect(batch).toHaveLength(19);
+    for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
+      expect(batch.some((question) => question.grade === grade), grade).toBe(true);
+    }
+    expect(batch.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+    expect(batch.every((question) => question.explanation.length > 15)).toBe(true);
+  });
+
 });
