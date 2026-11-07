@@ -287,7 +287,7 @@ describe("curriculum and assessment question bank", () => {
 
 
   it("imports five visually reviewed Grade 10 humanities sociology questions with source answer keys", () => {
-    const batch = verifiedQuestions.filter((question) => question.id.startsWith("upload-maz-d10-humanities-sociology-"));
+    const batch = verifiedQuestions.filter((question) => ["۴۱", "۴۲", "۴۳", "۴۴", "۴۵"].includes(question.sourceQuestionNumber ?? "") && question.track === "انسانی" && question.subject === "جامعه‌شناسی");
     expect(batch).toHaveLength(5);
     expect(batch.every((question) => question.grade === "دهم" && question.track === "انسانی" && question.subject === "جامعه‌شناسی")).toBe(true);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.sourceTitle?.includes("(فایل ارسالی کاربر)"))).toBe(true);
@@ -444,6 +444,31 @@ describe("curriculum and assessment question bank", () => {
     }
     expect(batch.filter((question) => question.chapter === "مبانی تحلیل متن")).toHaveLength(2);
     expect(batch.filter((question) => question.chapter === "سازه‌ها و عوامل تأثیرگذار در شعر فارسی")).toHaveLength(7);
+  });
+
+
+  it("imports five visually reviewed Grade 10 sociology questions 46-50 with source answer keys", () => {
+    const expectedKeys: Record<string, number> = { "۴۶": 1, "۴۷": 0, "۴۸": 2, "۴۹": 0, "۵۰": 2 };
+    const expectedPages: Record<string, string[]> = {
+      "۴۶": ["۶۱"], "۴۷": ["۶۱", "۶۲"], "۴۸": ["۶۲"], "۴۹": ["۶۲", "۶۳"], "۵۰": ["۶۳"],
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "") &&
+      question.grade === "دهم" && question.track === "انسانی" && question.subject === "جامعه‌شناسی"
+    );
+    expect(batch).toHaveLength(5);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      for (const page of expectedPages[number]) {
+        expect(question.reviewerNote).toContain(page);
+      }
+    }
+    expect(batch.find((question) => question.sourceQuestionNumber === "۴۶")?.chapter).toBe("کنش‌های ما");
+    expect(batch.filter((question) => question.chapter === "جهان اجتماعی")).toHaveLength(2);
+    expect(batch.find((question) => question.sourceQuestionNumber === "۴۸")?.chapter).toBe("پدیده‌های اجتماعی");
+    expect(batch.find((question) => question.sourceQuestionNumber === "۵۰")?.chapter).toBe("جهان‌های اجتماعی");
   });
 
 
