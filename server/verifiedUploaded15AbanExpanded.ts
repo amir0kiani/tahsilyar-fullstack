@@ -138,7 +138,7 @@ export const verifiedUploaded15AbanExpanded: ExamQuestion[] = [
     chapter: "مجموعه، الگو و دنباله", topic: "مجموع دنباله حسابی", difficulty: "متوسط",
     prompt: "مجموع ۱۰ جملهٔ اول دنبالهٔ حسابی ۲، ۵، ۸، ... چند است؟",
     options: ["۱۳۵", "۱۴۰", "۱۵۵", "۱۶۵"],
-    correctIndex: 0,
+    correctIndex: 2,
     explanation: "جمله دهم ۲+۹×۳=۲۹ است. مجموع برابر n(a₁+aₙ)/2 است؛ بنابراین S₁₀=۱۰×(۲+۲۹)/۲=۱۵۵. گزینهٔ درست ۱۵۵ است.",
     sourceTitle: source10R, sourceQuestionNumber: "۱ تا ۵",
     reviewerNote: "محاسبه مجدداً کنترل شد؛ پاسخ عددی ۱۵۵ است."
