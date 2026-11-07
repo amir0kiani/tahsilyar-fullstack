@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
+import { verifiedUploaded15AbanExpanded } from "./verifiedUploaded15AbanExpanded";
 
 const allQuestions = [...examQuestions, ...verifiedQuestions];
 
@@ -227,6 +228,26 @@ describe("curriculum and assessment question bank", () => {
       );
       expect(matching, `${target.grade} / ${target.subject} / ${target.chapter}`).toHaveLength(5);
       expect(matching.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+    }
+  });
+
+  it("adds a broad, source-traceable 15 Aban batch across the three tracks and all uploaded booklets", () => {
+    expect(verifiedUploaded15AbanExpanded).toHaveLength(52);
+    expect(new Set(verifiedUploaded15AbanExpanded.map((question) => question.sourceTitle)).size).toBeGreaterThanOrEqual(13);
+    expect(verifiedUploaded15AbanExpanded.every((question) =>
+      question.sourceStatus === "mock-exam-adapted" &&
+      question.sourceTitle?.includes("(فایل ارسالی کاربر)") &&
+      Boolean(question.sourceQuestionNumber) &&
+      Boolean(question.reviewerNote) &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4 &&
+      question.explanation.length > 10
+    )).toBe(true);
+    for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
+      expect(verifiedUploaded15AbanExpanded.some((question) => question.grade === grade && question.track === "انسانی")).toBe(true);
+      expect(verifiedUploaded15AbanExpanded.some((question) => question.grade === grade && question.track === "تجربی")).toBe(true);
+      expect(verifiedUploaded15AbanExpanded.some((question) => question.grade === grade && question.track === "ریاضی")).toBe(true);
     }
   });
 
