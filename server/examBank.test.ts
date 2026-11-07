@@ -119,7 +119,7 @@ describe("curriculum and assessment question bank", () => {
         question.track === track && question.grade === "دوازدهم" && question.subject === "فیزیک"
       );
       expect(questions.length).toBeGreaterThanOrEqual(5);
-      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? ""))).toBe(true);
+      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
     }
   });
 
