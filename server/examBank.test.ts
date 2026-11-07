@@ -394,4 +394,31 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
+  it("imports ten visually reviewed Grade 10 economics questions 96-105 with source answer keys", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      ["۹۶", "۹۷", "۹۸", "۹۹", "۱۰۰", "۱۰۱", "۱۰۲", "۱۰۳", "۱۰۴", "۱۰۵"].includes(question.sourceQuestionNumber ?? "") &&
+      question.grade === "دهم" && question.track === "انسانی" && question.subject === "اقتصاد"
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.sourceTitle?.includes("(فایل ارسالی کاربر)"))).toBe(true);
+    expect(batch.every((question) => question.options.length === 4 && question.correctIndex >= 0 && question.correctIndex <= 3)).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "۹۶": 0, "۹۷": 2, "۹۸": 2, "۹۹": 0, "۱۰۰": 0,
+      "۱۰۱": 1, "۱۰۲": 2, "۱۰۳": 1, "۱۰۴": 2, "۱۰۵": 1,
+    };
+    const expectedPages: Record<string, string> = {
+      "۹۶": "۹۶", "۹۷": "۹۷", "۹۸": "۹۷", "۹۹": "۹۸", "۱۰۰": "۹۹",
+      "۱۰۱": "۱۰۰", "۱۰۲": "۱۰۱", "۱۰۳": "۱۰۱", "۱۰۴": "۱۰۲", "۱۰۵": "۱۰۳",
+    };
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain(`تصویر صفحهٔ ${expectedPages[number]}`);
+    }
+    expect(batch.filter((question) => question.chapter === "کسب و کار و کارآفرینی")).toHaveLength(2);
+    expect(batch.filter((question) => question.chapter === "انتخاب نوع کسب و کار")).toHaveLength(4);
+    expect(batch.filter((question) => question.chapter === "اصول انتخاب درست")).toHaveLength(4);
+  });
+
+
 });
