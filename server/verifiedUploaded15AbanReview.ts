@@ -109,7 +109,7 @@ export const verifiedUploaded15AbanReview: ExamQuestion[] = [
     explanation: "سرعت ثابت دونده برابر (۴۸−(−۶))/۱۲=۴٫۵ متر بر ثانیه است. از رابطهٔ x=−۶+۴٫۵t و با قرار دادن x=۷۵، زمان t=۱۸ ثانیه به دست می‌آید.",
     sourceStatus: "reviewed", sourceTitle: kanoonTitle, sourceQuestionNumber: "۶۱", verifiedAt,
     reviewerNote: "متن، چهار گزینه و نشانگر پاسخ «گزینهٔ ۱» با تصویر صفحهٔ ۱۹۳ فایل PDF تطبیق داده شد؛ سؤال وابسته به نمودار یا شکل نیست."
-  }
+  },
   {
     id: "upload-maz-d10-humanities-sociology-social-phenomena-41", grade: "دهم", track: "انسانی", subject: "جامعه‌شناسی",
     chapter: "پدیده‌های اجتماعی", topic: "هنجار اجتماعی، کنش اجتماعی و کنش‌های درونی",
