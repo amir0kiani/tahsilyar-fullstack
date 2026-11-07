@@ -472,4 +472,27 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
+  it("imports nine visually reviewed Grade 10 common Arabic questions with exact source answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۵۶": 0, "۵۸": 3, "۵۹": 0, "۶۰": 3, "۶۱": 2, "۶۲": 0, "۶۳": 3, "۶۴": 1, "۶۵": 2,
+    };
+    const expectedPages: Record<string, string> = {
+      "۵۶": "۶۶", "۵۸": "۶۷", "۵۹": "۶۷", "۶۰": "۶۷", "۶۱": "۶۸",
+      "۶۲": "۶۸", "۶۳": "۶۸", "۶۴": "۶۹", "۶۵": "۶۹",
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "") &&
+      question.grade === "دهم" && question.track === "عمومی" && question.subject === "عربی"
+    );
+    expect(batch).toHaveLength(9);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain(expectedPages[number]);
+    }
+    expect(batch.every((question) => question.chapter === "کل کتاب")).toBe(true);
+  });
+
+
 });
