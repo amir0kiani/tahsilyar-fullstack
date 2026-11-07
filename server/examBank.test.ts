@@ -286,4 +286,23 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
+  it("imports five visually reviewed Grade 10 humanities sociology questions with source answer keys", () => {
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("upload-maz-d10-humanities-sociology-"));
+    expect(batch).toHaveLength(5);
+    expect(batch.every((question) => question.grade === "دهم" && question.track === "انسانی" && question.subject === "جامعه‌شناسی")).toBe(true);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.sourceTitle?.includes("(فایل ارسالی کاربر)"))).toBe(true);
+    expect(batch.every((question) => question.options.length === 4 && question.correctIndex >= 0 && question.correctIndex <= 3)).toBe(true);
+    expect(new Set(batch.map((question) => question.sourceQuestionNumber))).toEqual(new Set(["۴۱", "۴۲", "۴۳", "۴۴", "۴۵"]));
+
+    const expectedKeys: Record<string, number> = { "۴۱": 0, "۴۲": 1, "۴۳": 1, "۴۴": 3, "۴۵": 3 };
+    for (const question of batch) {
+      expect(question.correctIndex, question.sourceQuestionNumber).toBe(expectedKeys[question.sourceQuestionNumber ?? ""]);
+      expect(question.reviewerNote).toContain("صفحهٔ ۵");
+    }
+    expect(batch.find((question) => question.sourceQuestionNumber === "۴۲")?.chapter).toBe("کنش‌های ما");
+    expect(batch.find((question) => question.sourceQuestionNumber === "۴۳")?.chapter).toBe("کنش‌های ما");
+    expect(batch.find((question) => question.sourceQuestionNumber === "۴۵")?.chapter).toBe("جهان اجتماعی");
+  });
+
+
 });
