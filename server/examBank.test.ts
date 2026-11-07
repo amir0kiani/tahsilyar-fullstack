@@ -306,4 +306,31 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
+  it("imports eight visually reviewed Grade 10 humanities history questions with source answer keys", () => {
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("upload-maz-d10-humanities-history-"));
+    expect(batch).toHaveLength(8);
+    expect(batch.every((question) => question.grade === "دهم" && question.track === "انسانی" && question.subject === "تاریخ")).toBe(true);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.sourceTitle?.includes("(فایل ارسالی کاربر)"))).toBe(true);
+    expect(batch.every((question) => question.options.length === 4 && question.correctIndex >= 0 && question.correctIndex <= 3)).toBe(true);
+    expect(new Set(batch.map((question) => question.sourceQuestionNumber))).toEqual(new Set(["۶۶", "۶۷", "۶۸", "۶۹", "۷۰", "۷۱", "۷۲", "۷۳"]));
+
+    const expectedKeys: Record<string, number> = {
+      "۶۶": 3, "۶۷": 0, "۶۸": 0, "۶۹": 2, "۷۰": 0, "۷۱": 1, "۷۲": 2, "۷۳": 3,
+    };
+    const expectedPages: Record<string, string> = {
+      "۶۶": "۷۱", "۶۷": "۷۱", "۶۸": "۷۲", "۶۹": "۷۲", "۷۰": "۷۳", "۷۱": "۷۳", "۷۲": "۷۴", "۷۳": "۷۴",
+    };
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain(`تصویر صفحهٔ ${expectedPages[number]}`);
+    }
+    expect(batch.find((question) => question.sourceQuestionNumber === "۶۶")?.chapter).toBe("تاریخ و تاریخ‌نگاری");
+    expect(batch.find((question) => question.sourceQuestionNumber === "۶۸")?.chapter).toBe("تاریخ، زمان و مکان");
+    expect(batch.find((question) => question.sourceQuestionNumber === "۷۰")?.chapter).toBe("باستان‌شناسی؛ در جست‌وجوی میراث فرهنگی");
+    expect(batch.find((question) => question.sourceQuestionNumber === "۷۱")?.chapter).toBe("مطالعه و کاوش در گذشته‌های دور");
+    expect(batch.find((question) => question.sourceQuestionNumber === "۷۲")?.chapter).toBe("پیدایش تمدن؛ بین‌النهرین و مصر");
+  });
+
+
 });
