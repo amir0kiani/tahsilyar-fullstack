@@ -83,13 +83,32 @@ export async function createStudyPlan(input: { userId: number; title: string; su
   });
 }
 
+export async function getStudyPlanById(userId: number, planId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const plans = await db.select().from(studyPlans)
+    .where(and(eq(studyPlans.id, planId), eq(studyPlans.userId, userId)))
+    .limit(1);
+  const plan = plans[0];
+  if (!plan) return undefined;
+  const sessions = await db.select().from(studySessions)
+    .where(and(eq(studySessions.planId, plan.id), eq(studySessions.userId, userId)))
+    .orderBy(asc(studySessions.id));
+  return { ...plan, sessions };
+}
+
 export async function getLatestStudyPlan(userId: number) {
   const db = await getDb();
   if (!db) return undefined;
-  const plans = await db.select().from(studyPlans).where(eq(studyPlans.userId, userId)).orderBy(desc(studyPlans.createdAt)).limit(1);
+  const plans = await db.select().from(studyPlans)
+    .where(eq(studyPlans.userId, userId))
+    .orderBy(desc(studyPlans.createdAt), desc(studyPlans.id))
+    .limit(1);
   const plan = plans[0];
   if (!plan) return undefined;
-  const sessions = await db.select().from(studySessions).where(and(eq(studySessions.planId, plan.id), eq(studySessions.userId, userId))).orderBy(asc(studySessions.id));
+  const sessions = await db.select().from(studySessions)
+    .where(and(eq(studySessions.planId, plan.id), eq(studySessions.userId, userId)))
+    .orderBy(asc(studySessions.id));
   return { ...plan, sessions };
 }
 

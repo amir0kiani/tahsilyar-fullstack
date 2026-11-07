@@ -1,4 +1,6 @@
 import type { ExamQuestion } from "./examBank";
+import { verifiedScienceMathBatch2 } from "./verifiedScienceMathBatch2";
+import { verifiedHumanitiesBatch2 } from "./verifiedHumanitiesBatch2";
 import { verifiedBiologyBatch2 } from "./verifiedQuestionBankBiologyBatch2";
 import { verifiedChemistryBatch1 } from "./verifiedQuestionBankChemistryBatch1";
 import { verifiedPhysicsBatch1 } from "./verifiedQuestionBankPhysicsBatch1";
@@ -8,6 +10,8 @@ import { verifiedUploadedHistory12 } from "./verifiedUploadedHistory12";
 import { verifiedUploadedSociology12 } from "./verifiedUploadedSociology12";
 import { verifiedUploadedPhilosophy12 } from "./verifiedUploadedPhilosophy12";
 import { verifiedUploadedChemistry12 } from "./verifiedUploadedChemistry12";
+import { verifiedUploadedGeology11 } from "./verifiedUploadedGeology11";
+import { verifiedUploadedMathPhysics } from "./verifiedUploadedMathPhysics";
 
 // Original practice items reconstructed around the skills tested in official 1405 exams.
 // The stems/options may be changed; these are NOT verbatim official exam questions.
@@ -520,4 +524,4 @@ const initialVerifiedQuestions: ExamQuestion[] = [
   },
 ];
 
-export const verifiedQuestions: ExamQuestion[] = [...initialVerifiedQuestions, ...verifiedBiologyBatch2, ...verifiedChemistryBatch1, ...verifiedPhysicsBatch1, ...verifiedFinalExamBatch1, ...verifiedUploadedGeography12, ...verifiedUploadedHistory12, ...verifiedUploadedSociology12, ...verifiedUploadedPhilosophy12, ...verifiedUploadedChemistry12];
+export const verifiedQuestions: ExamQuestion[] = [...initialVerifiedQuestions, ...verifiedBiologyBatch2, ...verifiedChemistryBatch1, ...verifiedPhysicsBatch1, ...verifiedFinalExamBatch1, ...verifiedUploadedGeography12, ...verifiedUploadedHistory12, ...verifiedUploadedSociology12, ...verifiedUploadedPhilosophy12, ...verifiedUploadedChemistry12, ...verifiedUploadedGeology11, ...verifiedUploadedMathPhysics, ...verifiedHumanitiesBatch2, ...verifiedScienceMathBatch2];

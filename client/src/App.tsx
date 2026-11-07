@@ -249,7 +249,7 @@ function AppShell() {
     setChatInput("");
     chatMutation.mutate({ message: value, profile: currentProfileContext, answers: Object.fromEntries(Object.entries(plannerAnswers).map(([index, answer]) => [plannerSteps[Number(index)]?.title ?? index, answer])), deviceDate: deviceDateLabel, timezone: deviceTimeZone, planRange }, {
       onSuccess: (result) => { setMessages((old) => [...old, { from: "bot", text: result.text }]); if (result.plan) { const nextPlan = result.plan as GeneratedPlan; setGeneratedPlan(nextPlan); setCompleted(nextPlan.sessions.filter((session) => session.completed === 1).map((session, index) => session.id ?? index)); void latestPlanQuery.refetch(); showToast("همان برنامهٔ ذخیره‌شده در تب برنامهٔ درسی به‌روزرسانی شد."); } },
-      onError: () => setMessages((old) => [...old, { from: "bot", text: "پاسخ آماده نشد. اطلاعاتت را بررسی کن و دوباره تلاش کن." }]),
+      onError: (error) => setMessages((old) => [...old, { from: "bot", text: error.message || "پاسخ آماده نشد. اطلاعاتت را بررسی کن و دوباره تلاش کن." }]),
     });
   };
 
