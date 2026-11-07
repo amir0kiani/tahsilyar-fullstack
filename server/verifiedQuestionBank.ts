@@ -10,6 +10,7 @@ import { verifiedUploadedPhilosophy12 } from "./verifiedUploadedPhilosophy12";
 import { verifiedUploadedChemistry12 } from "./verifiedUploadedChemistry12";
 import { verifiedUploadedGeology11 } from "./verifiedUploadedGeology11";
 import { verifiedUploadedMathPhysics } from "./verifiedUploadedMathPhysics";
+import { verifiedUploaded15AbanExpanded } from "./verifiedUploaded15AbanExpanded";
 
 // Original practice items reconstructed around the skills tested in official 1405 exams.
 // The stems/options may be changed; these are NOT verbatim official exam questions.
@@ -522,4 +523,4 @@ const initialVerifiedQuestions: ExamQuestion[] = [
   },
 ];
 
-export const verifiedQuestions: ExamQuestion[] = [...initialVerifiedQuestions, ...verifiedBiologyBatch2, ...verifiedChemistryBatch1, ...verifiedPhysicsBatch1, ...verifiedFinalExamBatch1, ...verifiedUploadedGeography12, ...verifiedUploadedHistory12, ...verifiedUploadedSociology12, ...verifiedUploadedPhilosophy12, ...verifiedUploadedChemistry12, ...verifiedUploadedGeology11, ...verifiedUploadedMathPhysics];
+export const verifiedQuestions: ExamQuestion[] = [...initialVerifiedQuestions, ...verifiedBiologyBatch2, ...verifiedChemistryBatch1, ...verifiedPhysicsBatch1, ...verifiedFinalExamBatch1, ...verifiedUploadedGeography12, ...verifiedUploadedHistory12, ...verifiedUploadedSociology12, ...verifiedUploadedPhilosophy12, ...verifiedUploadedChemistry12, ...verifiedUploadedGeology11, ...verifiedUploadedMathPhysics, ...verifiedUploaded15AbanExpanded];
