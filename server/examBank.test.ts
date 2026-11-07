@@ -25,7 +25,7 @@ describe("curriculum and assessment question bank", () => {
   it("records traceable provenance for every official- or mock-exam-adapted question", () => {
     expect(verifiedQuestions.length).toBeGreaterThanOrEqual(29);
     for (const question of verifiedQuestions) {
-      expect(["official-exam-adapted", "mock-exam-adapted"]).toContain(question.sourceStatus);
+      expect(["official-exam-adapted", "mock-exam-adapted", "reviewed"]).toContain(question.sourceStatus);
       expect(question.sourceTitle).toBeTruthy();
       const uploadedSource = question.sourceTitle?.includes("(فایل ارسالی کاربر)") ?? false;
       if (uploadedSource) {
@@ -41,7 +41,7 @@ describe("curriculum and assessment question bank", () => {
 
   it("does not label rewritten practice items as verbatim official exam questions", () => {
     expect(verifiedQuestions.every((question) => question.sourceStatus !== "official-exam")).toBe(true);
-    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? ""))).toBe(true);
+    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
   });
 
   it("lists grade-specific books for all three main tracks", () => {
@@ -119,7 +119,7 @@ describe("curriculum and assessment question bank", () => {
         question.track === track && question.grade === "دوازدهم" && question.subject === "فیزیک"
       );
       expect(questions.length).toBeGreaterThanOrEqual(5);
-      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? ""))).toBe(true);
+      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
     }
   });
 
@@ -258,5 +258,32 @@ describe("curriculum and assessment question bank", () => {
     expect(batch.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
     expect(batch.every((question) => question.explanation.length > 15)).toBe(true);
   });
+
+  it("imports only visually reviewed 15 Aban mock-exam questions with source-key answer indices", () => {
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("upload-maz-d10-humanities-math-quadratic-") || question.id === "upload-kanoon-d12e-physics-motion-61");
+    expect(batch).toHaveLength(11);
+    expect(batch.every((question) => question.sourceStatus === "reviewed")).toBe(true);
+    expect(batch.every((question) => question.sourceTitle?.includes("(فایل ارسالی کاربر)"))).toBe(true);
+    expect(batch.every((question) => Boolean(question.sourceQuestionNumber && question.reviewerNote?.includes("صفحه") && question.verifiedAt instanceof Date))).toBe(true);
+    expect(batch.every((question) => question.options.length === 4 && question.correctIndex >= 0 && question.correctIndex <= 3)).toBe(true);
+
+    const humanitiesMath = batch.filter((question) => question.track === "انسانی" && question.subject === "ریاضی و آمار");
+    expect(humanitiesMath).toHaveLength(10);
+    expect(humanitiesMath.every((question) => question.grade === "دهم" && question.chapter === "معادلهٔ درجه دوم")).toBe(true);
+    expect(new Set(humanitiesMath.map((question) => question.sourceQuestionNumber))).toEqual(new Set(["۵", "۷", "۸", "۹", "۱۰", "۱۱", "۱۲", "۱۳", "۱۴", "۱۵"]));
+
+    const expectedKeys: Record<string, number> = {
+      "۵": 2, "۷": 0, "۸": 1, "۹": 2, "۱۰": 3, "۱۱": 3, "۱۲": 2, "۱۳": 0, "۱۴": 1, "۱۵": 1,
+    };
+    for (const question of humanitiesMath) {
+      expect(question.correctIndex, question.sourceQuestionNumber).toBe(expectedKeys[question.sourceQuestionNumber ?? ""]);
+    }
+    const physics = batch.find((question) => question.id === "upload-kanoon-d12e-physics-motion-61");
+    expect(physics?.grade).toBe("دوازدهم");
+    expect(physics?.track).toBe("تجربی");
+    expect(physics?.chapter).toBe("حرکت بر خط راست");
+    expect(physics?.correctIndex).toBe(0);
+  });
+
 
 });
