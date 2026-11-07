@@ -421,4 +421,30 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
+  it("imports nine visually reviewed Grade 10 literature questions with exact source answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۱۶": 1, "۳۱": 1, "۳۲": 2, "۳۳": 0, "۳۴": 3,
+      "۳۵": 2, "۳۸": 2, "۳۹": 3, "۴۰": 0,
+    };
+    const expectedPages: Record<string, string> = {
+      "۱۶": "۴۶", "۳۱": "۵۳", "۳۲": "۵۴", "۳۳": "۵۴", "۳۴": "۵۴",
+      "۳۵": "۵۵", "۳۸": "۵۶", "۳۹": "۵۶", "۴۰": "۵۶",
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "") &&
+      question.grade === "دهم" && question.track === "انسانی" && question.subject === "علوم و فنون ادبی"
+    );
+    expect(batch).toHaveLength(9);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.sourceTitle?.includes("(فایل ارسالی کاربر)"))).toBe(true);
+    expect(batch.every((question) => question.options.length === 4 && question.correctIndex >= 0 && question.correctIndex <= 3)).toBe(true);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain(`تصویر صفحهٔ ${expectedPages[number]}`);
+    }
+    expect(batch.filter((question) => question.chapter === "مبانی تحلیل متن")).toHaveLength(2);
+    expect(batch.filter((question) => question.chapter === "سازه‌ها و عوامل تأثیرگذار در شعر فارسی")).toHaveLength(7);
+  });
+
+
 });
