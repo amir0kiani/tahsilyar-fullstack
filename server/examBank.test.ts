@@ -22,10 +22,10 @@ describe("curriculum and assessment question bank", () => {
     expect(examQuestions.every((question) => question.sourceStatus === "sample-authored")).toBe(true);
   });
 
-  it("records traceable provenance for every question adapted from a published official exam", () => {
+  it("records traceable provenance for every official- or mock-exam-adapted question", () => {
     expect(verifiedQuestions.length).toBeGreaterThanOrEqual(29);
     for (const question of verifiedQuestions) {
-      expect(question.sourceStatus).toBe("official-exam-adapted");
+      expect(["official-exam-adapted", "mock-exam-adapted"]).toContain(question.sourceStatus);
       expect(question.sourceTitle).toBeTruthy();
       const uploadedSource = question.sourceTitle?.includes("(فایل ارسالی کاربر)") ?? false;
       if (uploadedSource) {
@@ -41,7 +41,7 @@ describe("curriculum and assessment question bank", () => {
 
   it("does not label rewritten practice items as verbatim official exam questions", () => {
     expect(verifiedQuestions.every((question) => question.sourceStatus !== "official-exam")).toBe(true);
-    expect(verifiedQuestions.every((question) => question.sourceStatus === "official-exam-adapted")).toBe(true);
+    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? ""))).toBe(true);
   });
 
   it("lists grade-specific books for all three main tracks", () => {
@@ -190,6 +190,43 @@ describe("curriculum and assessment question bank", () => {
         expect(matching.length, `${book.subject} / ${chapter}`).toBeGreaterThanOrEqual(5);
         expect(matching.every((question) => question.sourceStatus === "official-exam-adapted")).toBe(true);
       }
+    }
+  });
+
+  it("reaches five source-adapted questions for each covered Grade 11 geology lesson", () => {
+    const geology = curriculumCatalog.find((book) =>
+      book.grade === "یازدهم" && book.track === "تجربی" && book.subject === "زمین‌شناسی"
+    );
+    expect(geology).toBeTruthy();
+    for (const chapter of ["آفرینش کیهان و تکوین زمین", "منابع معدنی و ذخایر انرژی"]) {
+      expect(geology?.chapters).toContain(chapter);
+      const matching = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "تجربی" &&
+        question.subject === "زمین‌شناسی" &&
+        question.chapter === chapter
+      );
+      expect(matching, chapter).toHaveLength(5);
+      expect(matching.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+    }
+  });
+
+  it("reaches five questions in the newly covered Grade 12 math and Grade 11 physics lessons", () => {
+    const targets = [
+      { grade: "دوازدهم", track: "ریاضی", subject: "حسابان", chapter: "مثلثات" },
+      { grade: "دوازدهم", track: "ریاضی", subject: "هندسه", chapter: "ماتریس و کاربردها" },
+      { grade: "دوازدهم", track: "ریاضی", subject: "ریاضیات گسسته", chapter: "آشنایی با نظریه اعداد" },
+      { grade: "یازدهم", track: "تجربی", subject: "فیزیک", chapter: "الکتریسیتهٔ ساکن" },
+    ];
+    for (const target of targets) {
+      const matching = verifiedQuestions.filter((question) =>
+        question.grade === target.grade &&
+        question.track === target.track &&
+        question.subject === target.subject &&
+        question.chapter === target.chapter
+      );
+      expect(matching, `${target.grade} / ${target.subject} / ${target.chapter}`).toHaveLength(5);
+      expect(matching.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
     }
   });
 
