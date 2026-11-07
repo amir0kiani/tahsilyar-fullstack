@@ -354,7 +354,7 @@ describe("curriculum and assessment question bank", () => {
 
 
   it("imports six visually reviewed Grade 10 logic questions with exact source keys", () => {
-    const batch = verifiedQuestions.filter((question) => question.id.startsWith("upload-maz-d10-humanities-logic-"));
+    const batch = verifiedQuestions.filter((question) => ["۸۶", "۸۷", "۸۸", "۸۹", "۹۰", "۹۱"].includes(question.sourceQuestionNumber ?? "") && question.subject === "منطق" && question.track === "انسانی");
     expect(batch).toHaveLength(6);
     expect(batch.every((question) => question.grade === "دهم" && question.track === "انسانی" && question.subject === "منطق")).toBe(true);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.sourceTitle?.includes("(فایل ارسالی کاربر)"))).toBe(true);
@@ -370,6 +370,27 @@ describe("curriculum and assessment question bank", () => {
     }
     expect(batch.filter((question) => question.chapter === "منطق، ترازوی اندیشه")).toHaveLength(3);
     expect(batch.filter((question) => question.chapter === "لفظ و معنا")).toHaveLength(3);
+  });
+
+
+  it("imports three visually reviewed Grade 10 logic questions 92, 93 and 95 with exact source answer keys", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.id === "upload-maz-d10-humanities-logic-language-fallacy-92" ||
+      question.id === "upload-maz-d10-humanities-logic-universal-particular-93" ||
+      question.id === "upload-maz-d10-humanities-logic-absolute-inclusion-95"
+    );
+    expect(batch).toHaveLength(3);
+    expect(batch.every((question) => question.grade === "دهم" && question.track === "انسانی" && question.subject === "منطق")).toBe(true);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    const expectedKeys: Record<string, number> = { "۹۲": 3, "۹۳": 3, "۹۵": 3 };
+    const expectedPages: Record<string, string> = { "۹۲": "۹۱", "۹۳": "۹۲", "۹۵": "۹۴" };
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain(`تصویر صفحهٔ ${expectedPages[number]}`);
+    }
+    expect(batch.find((question) => question.sourceQuestionNumber === "۹۲")?.chapter).toBe("لفظ و معنا");
+    expect(batch.filter((question) => question.chapter === "مفهوم و مصداق")).toHaveLength(2);
   });
 
 
