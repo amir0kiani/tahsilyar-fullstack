@@ -232,7 +232,7 @@ describe("curriculum and assessment question bank", () => {
   });
 
   it("adds a broad, source-traceable 15 Aban batch across the three tracks and all uploaded booklets", () => {
-    expect(verifiedUploaded15AbanExpanded).toHaveLength(52);
+    expect(verifiedUploaded15AbanExpanded).toHaveLength(57);
     expect(new Set(verifiedUploaded15AbanExpanded.map((question) => question.sourceTitle)).size).toBeGreaterThanOrEqual(13);
     expect(verifiedUploaded15AbanExpanded.every((question) =>
       question.sourceStatus === "mock-exam-adapted" &&
