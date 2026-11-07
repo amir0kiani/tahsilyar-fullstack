@@ -295,9 +295,10 @@ describe("curriculum and assessment question bank", () => {
     expect(new Set(batch.map((question) => question.sourceQuestionNumber))).toEqual(new Set(["۴۱", "۴۲", "۴۳", "۴۴", "۴۵"]));
 
     const expectedKeys: Record<string, number> = { "۴۱": 0, "۴۲": 1, "۴۳": 1, "۴۴": 3, "۴۵": 3 };
+    const expectedPages: Record<string, string> = { "۴۱": "۵۸", "۴۲": "۵۹", "۴۳": "۵۹", "۴۴": "۶۰", "۴۵": "۶۰" };
     for (const question of batch) {
       expect(question.correctIndex, question.sourceQuestionNumber).toBe(expectedKeys[question.sourceQuestionNumber ?? ""]);
-      expect(question.reviewerNote).toContain("صفحهٔ ۵");
+      expect(question.reviewerNote).toContain(`تصویر صفحهٔ ${expectedPages[question.sourceQuestionNumber ?? ""]}`);
     }
     expect(batch.find((question) => question.sourceQuestionNumber === "۴۲")?.chapter).toBe("کنش‌های ما");
     expect(batch.find((question) => question.sourceQuestionNumber === "۴۳")?.chapter).toBe("کنش‌های ما");
