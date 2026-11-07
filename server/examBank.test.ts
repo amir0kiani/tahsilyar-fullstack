@@ -353,4 +353,24 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
+  it("imports six visually reviewed Grade 10 logic questions with exact source keys", () => {
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("upload-maz-d10-humanities-logic-"));
+    expect(batch).toHaveLength(6);
+    expect(batch.every((question) => question.grade === "دهم" && question.track === "انسانی" && question.subject === "منطق")).toBe(true);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.sourceTitle?.includes("(فایل ارسالی کاربر)"))).toBe(true);
+    expect(batch.every((question) => question.options.length === 4 && question.correctIndex >= 0 && question.correctIndex <= 3)).toBe(true);
+    expect(new Set(batch.map((question) => question.sourceQuestionNumber))).toEqual(new Set(["۸۶", "۸۷", "۸۸", "۸۹", "۹۰", "۹۱"]));
+
+    const expectedKeys: Record<string, number> = { "۸۶": 1, "۸۷": 3, "۸۸": 3, "۸۹": 0, "۹۰": 0, "۹۱": 1 };
+    const expectedPages: Record<string, string> = { "۸۶": "۸۶", "۸۷": "۸۷", "۸۸": "۸۸", "۸۹": "۸۹", "۹۰": "۹۰", "۹۱": "۹۰" };
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain(`تصویر صفحهٔ ${expectedPages[number]}`);
+    }
+    expect(batch.filter((question) => question.chapter === "منطق، ترازوی اندیشه")).toHaveLength(3);
+    expect(batch.filter((question) => question.chapter === "لفظ و معنا")).toHaveLength(3);
+  });
+
+
 });
