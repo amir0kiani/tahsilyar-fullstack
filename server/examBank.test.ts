@@ -333,4 +333,24 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
+  it("imports six visually reviewed Grade 10 geography questions through the shared Geography of Iran book", () => {
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("upload-maz-d10-common-geography-"));
+    expect(batch).toHaveLength(6);
+    expect(batch.every((question) => question.grade === "دهم" && question.track === "عمومی" && question.subject === "جغرافیای ایران")).toBe(true);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.sourceTitle?.includes("(فایل ارسالی کاربر)"))).toBe(true);
+    expect(batch.every((question) => question.options.length === 4 && question.correctIndex >= 0 && question.correctIndex <= 3)).toBe(true);
+    expect(new Set(batch.map((question) => question.sourceQuestionNumber))).toEqual(new Set(["۷۶", "۷۷", "۷۹", "۸۲", "۸۳", "۸۵"]));
+
+    const expectedKeys: Record<string, number> = { "۷۶": 3, "۷۷": 2, "۷۹": 2, "۸۲": 0, "۸۳": 2, "۸۵": 3 };
+    const expectedPages: Record<string, string> = { "۷۶": "۷۷", "۷۷": "۷۷", "۷۹": "۷۹", "۸۲": "۸۲", "۸۳": "۸۳", "۸۵": "۸۵" };
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain(`تصویر صفحهٔ ${expectedPages[number]}`);
+    }
+    expect(batch.filter((question) => question.chapter === "جغرافیا، علمی برای زندگی بهتر")).toHaveLength(3);
+    expect(batch.filter((question) => question.chapter === "روش مطالعه و پژوهش در جغرافیا")).toHaveLength(3);
+  });
+
+
 });
