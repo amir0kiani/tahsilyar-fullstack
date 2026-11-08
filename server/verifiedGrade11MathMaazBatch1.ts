@@ -242,4 +242,18 @@ export const verifiedGrade11MathMaazBatch1: ExamQuestion[] = [
     reviewerNote: reviewNote + " شمارهٔ سؤال ۱۹، صفحهٔ ۴ دفترچه؛ پاسخ با مثلث قائم‌الزاویه و نیمساز زاویه حل شد."
   },
 
+
+  {
+    id: "upload-maaz-math11-statistics-truth-table-24",
+    grade: "یازدهم", track: "ریاضی", subject: "آمار و احتمال",
+    chapter: "آشنایی با منطق ریاضی", topic: "جدول ارزش گزاره‌های مرکب",
+    difficulty: "آسان",
+    prompt: "در چند سطر از جدول ارزش گزاره‌ها، ارزش گزارهٔ p ⇒ (q ∨ ¬r) درست است؟",
+    options: ["صفر", "۶", "۷", "۴"],
+    correctIndex: 2,
+    explanation: "گزارهٔ شرطی فقط وقتی نادرست است که p درست و q∨¬r نادرست باشد؛ این حالت فقط با q نادرست و r درست رخ می‌دهد. از ۸ حالت، یک حالت نادرست و ۷ حالت درست است.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۴", verifiedAt,
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۲۴، صفحهٔ ۵ دفترچه؛ جدول ارزش به‌صورت مستقل بررسی شد."
+  },
+
 ];
