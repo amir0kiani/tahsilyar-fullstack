@@ -362,7 +362,7 @@ export const verifiedGrade11MathMaazBatch1: ExamQuestion[] = [
     correctIndex: 3,
     explanation: "در مثلث ABD، زاویهٔ ADB برابر ۱۰۵ درجه است؛ پس زاویهٔ BDC برابر ۷۵ درجه و کمان BC برابر ۱۵۰ درجه می‌شود. از قضیهٔ زاویهٔ بین مماس و قاطع، اختلاف کمان‌های BC و BD برابر ۷۰ درجه است؛ بنابراین کمان BD برابر ۸۰ و کمان CD برابر ۱۳۰ درجه است. محیط دایره ۷۲ است و طول کمان CD برابر (۱۳۰/۳۶۰)×۷۲=۲۶ می‌شود.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۳", verifiedAt,
-    reviewerNote: "شکل و داده‌ها با صفحهٔ ۵ دفترچه بررسی شد؛ از زاویهٔ مماس و قاطع و زاویهٔ محاطی استفاده شد."
+    reviewerNote: "شکل و داده‌ها با صفحهٔ ۵ دفترچه بررسی شد؛ حل مستقل با استفاده از زاویهٔ مماس و قاطع و زاویهٔ محاطی انجام شد."
   },
   {
     id: "upload-maaz-math11-statistics-quantified-set-26",
