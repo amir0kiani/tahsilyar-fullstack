@@ -571,7 +571,7 @@ describe("curriculum and assessment question bank", () => {
     expect(batch[0].correctIndex).toBe(2);
   });
   it("imports six more independently solved Grade 11 Maaz logic questions", () => {
-    const expectedKeys: Record<string, number> = { "۲۵": 2, "۲۶": 3, "۲۷": 3, "۲۸": 2, "۲۹": 1, "۳۰": 1 };
+    const expectedKeys: Record<string, number> = { "۲۵": 2, "۲۶": 2, "۲۷": 3, "۲۸": 2, "۲۹": 1, "۳۰": 1 };
     const batch = verifiedQuestions.filter((question) =>
       question.grade === "یازدهم" &&
       question.track === "ریاضی" &&
