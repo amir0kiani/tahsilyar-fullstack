@@ -632,5 +632,22 @@ describe("curriculum and assessment question bank", () => {
       expect(question.reviewerNote).toContain("پاسخنامه");
     }
   });
+  it("imports five reviewed Grade 11 humanities geography questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = { "۷۱": 0, "۷۲": 3, "۷۳": 0, "۷۴": 1, "۷۵": 2 };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "جغرافیا" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(5);
+    expect(batch.every((question) => question.chapter === "انسان و ناحیه" && question.options.length === 4)).toBe(true);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
 
 });
