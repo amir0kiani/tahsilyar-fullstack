@@ -541,17 +541,21 @@ describe("curriculum and assessment question bank", () => {
   });
 
   it("imports the independently solved Grade 11 Maaz geometry question with the derived tangent-chord answer", () => {
+    const expectedKeys: Record<string, number> = { "۱۶": 3, "۱۷": 1, "۱۸": 0, "۱۹": 1 };
     const batch = verifiedQuestions.filter((question) =>
       question.grade === "یازدهم" &&
       question.track === "ریاضی" &&
       question.subject === "هندسه" &&
       question.sourceTitle?.includes("آزمون ماز ۱۵ آبان ۱۴۰۵") &&
-      question.sourceQuestionNumber === "۱۶"
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
     );
-    expect(batch).toHaveLength(1);
-    expect(batch[0].chapter).toBe("دایره");
-    expect(batch[0].correctIndex).toBe(3);
-    expect(batch[0].reviewerNote).toContain("حل شد");
+    expect(batch).toHaveLength(4);
+    expect(batch.every((question) => question.chapter === "دایره" && question.options.length === 4)).toBe(true);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("حل");
+    }
   });
 
 });
