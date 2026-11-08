@@ -75,7 +75,7 @@ export const verifiedGrade11HumanitiesKankchiArabicBatch: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-arabic-translation-55",
     grade: "یازدهم", track: "انسانی", subject: "عربی",
-    chapter: "ترجمه و تعریب", topic: "تعریب جملهٔ فارسی",
+    chapter: "ترجمه", topic: "تعریب جملهٔ فارسی",
     difficulty: "متوسط",
     prompt: "تعریب مناسب برای جملهٔ «کتابخانهٔ جندی‌شاپور یکی از بزرگ‌ترین کتابخانه‌های ایرانی دیگر در جهان کهن بود» کدام است؟",
     options: [
