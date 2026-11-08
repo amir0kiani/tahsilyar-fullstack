@@ -651,7 +651,7 @@ describe("curriculum and assessment question bank", () => {
   });
   it("imports nine reviewed Grade 11 humanities sociology questions with exact Kankchi answer keys", () => {
     const expectedKeys: Record<string, number> = {
-      "۳۱": 3, "۳۳": 1, "۳۴": 1, "۳۵": 2, "۳۶": 0,
+      "۳۱": 3, "۳۲": 3, "۳۳": 1, "۳۴": 1, "۳۵": 2, "۳۶": 0,
       "۳۷": 3, "۳۸": 1, "۳۹": 1, "۴۰": 2,
     };
     const batch = verifiedQuestions.filter((question) =>
@@ -661,10 +661,10 @@ describe("curriculum and assessment question bank", () => {
       question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
       Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
     );
-    expect(batch).toHaveLength(9);
+    expect(batch).toHaveLength(10);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
     expect(batch.filter((question) => question.chapter === "فرهنگ جهانی")).toHaveLength(4);
-    expect(batch.filter((question) => question.chapter === "نمونه‌های فرهنگ جهانی (۱)")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "نمونه‌های فرهنگ جهانی (۱)")).toHaveLength(6);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
       expect(question.correctIndex, number).toBe(expectedKeys[number]);
