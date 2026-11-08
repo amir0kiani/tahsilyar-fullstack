@@ -693,5 +693,26 @@ describe("curriculum and assessment question bank", () => {
       expect(question.reviewerNote).toContain("پاسخنامه");
     }
   });
+  it("imports ten reviewed Grade 11 humanities Arabic questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۵۱": 2, "۵۲": 1, "۵۳": 3, "۵۴": 3, "۵۵": 0,
+      "۵۶": 2, "۵۷": 3, "۵۸": 1, "۵۹": 2, "۶۰": 1,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "عربی" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "ترجمه")).toHaveLength(5);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
 
 });
