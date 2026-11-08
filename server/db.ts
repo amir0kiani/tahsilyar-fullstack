@@ -311,7 +311,8 @@ function questionMatchesBookTrack(questionTrack: string, bookTrack: string) {
   return questionTrack === bookTrack;
 }
 
-function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: string; subject: string; chapter: string; sourceStatus?: string }>) {
+export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: string; subject: string; chapter: string; sourceStatus?: string }>) {
+  const isVerified = (status?: string) => Boolean(status && status !== "sample-authored" && status !== "pending-review");
   const catalog = curriculumCatalog.map((book) => {
     const bookQuestions = questionRows.filter((question) =>
       question.grade === book.grade &&
@@ -323,7 +324,7 @@ function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: s
       ...book,
       chapters,
       questionCount: bookQuestions.length,
-      verifiedQuestionCount: bookQuestions.filter((question) => question.sourceStatus !== "sample-authored").length,
+      verifiedQuestionCount: bookQuestions.filter((question) => isVerified(question.sourceStatus)).length,
       targetQuestionsPerLesson: 5,
     };
   });
@@ -337,12 +338,40 @@ function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: s
     const current = extras.get(key) ?? { track: question.track, grade: question.grade, subject: question.subject, chapters: [], questionCount: 0, verifiedQuestionCount: 0, targetQuestionsPerLesson: 5 };
     if (!current.chapters.includes(question.chapter)) current.chapters.push(question.chapter);
     current.questionCount += 1;
-    if (question.sourceStatus !== "sample-authored") current.verifiedQuestionCount += 1;
+    if (isVerified(question.sourceStatus)) current.verifiedQuestionCount += 1;
     extras.set(key, current);
   }
-  return [...catalog, ...Array.from(extras.values())].sort((a, b) =>
-    a.grade.localeCompare(b.grade, "fa") || a.track.localeCompare(b.track, "fa") || a.subject.localeCompare(b.subject, "fa")
-  );
+
+  return [...catalog, ...Array.from(extras.values())]
+    .map((book) => {
+      const bookQuestions = questionRows.filter((question) =>
+        question.grade === book.grade &&
+        question.subject === book.subject &&
+        questionMatchesBookTrack(question.track, book.track)
+      );
+      const lessonCoverage = book.chapters
+        .filter((chapter) => chapter !== "کل کتاب")
+        .map((chapter) => {
+          const lessonQuestions = bookQuestions.filter((question) => question.chapter === chapter);
+          const verifiedQuestionCount = lessonQuestions.filter((question) => isVerified(question.sourceStatus)).length;
+          return {
+            chapter,
+            questionCount: lessonQuestions.length,
+            verifiedQuestionCount,
+            targetQuestionsPerLesson: book.targetQuestionsPerLesson,
+            targetMet: verifiedQuestionCount >= book.targetQuestionsPerLesson,
+          };
+        });
+      return {
+        ...book,
+        lessonCoverage,
+        lessonsMeetingTarget: lessonCoverage.filter((lesson) => lesson.targetMet).length,
+        lessonCount: lessonCoverage.length,
+      };
+    })
+    .sort((a, b) =>
+      a.grade.localeCompare(b.grade, "fa") || a.track.localeCompare(b.track, "fa") || a.subject.localeCompare(b.subject, "fa")
+    );
 }
 
 export async function getAssessmentCatalog() {
