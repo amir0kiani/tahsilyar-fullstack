@@ -130,4 +130,78 @@ export const verifiedGrade11MathMaazBatch1: ExamQuestion[] = [
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۰", verifiedAt,
     reviewerNote: reviewNote + " شمارهٔ سؤال ۱۰، صفحهٔ ۲ دفترچه."
   }
+
+  {
+    id: "upload-maaz-math11-calculus-radical-parameter-11",
+    grade: "یازدهم", track: "ریاضی", subject: "حسابان",
+    chapter: "جبر و معادله", topic: "معادلهٔ رادیکالی و مجموع ریشه‌ها",
+    difficulty: "دشوار",
+    prompt: "معادلهٔ √(x²−۲x+۱) = x/۲ + k دو جواب دارد که مجموع آن‌ها برابر ۴ است. مقدار k کدام است؟",
+    options: ["۱", "۲", "۱/۲", "۳/۲"],
+    correctIndex: 0,
+    explanation: "با توجه به √((x−۱)²)=|x−۱)، دو شاخهٔ x≥۱ و x<۱ به‌ترتیب ریشه‌های ۲k+۲ و ۲(۱−k)/۳ را می‌دهند. از شرط مجموع ۴، k=۱ به‌دست می‌آید و دو ریشهٔ ۴ و ۰ هستند.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۱", verifiedAt,
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۱۱، صفحهٔ ۳ دفترچه."
+  },
+  {
+    id: "upload-maaz-math11-calculus-speed-distance-12",
+    grade: "یازدهم", track: "ریاضی", subject: "حسابان",
+    chapter: "جبر و معادله", topic: "حل مسئله با معادلهٔ گویا",
+    difficulty: "متوسط",
+    prompt: "شخصی از شهر A به شهر B می‌رود و پس از ۲ ساعت توقف، از همان مسیر برمی‌گردد. مدت کل سفر ۱۶ ساعت است. اگر سرعت رفت ۲ کیلومتر بر ساعت از سرعت برگشت کمتر و فاصلهٔ دو شهر ۴۸ کیلومتر باشد، سرعت رفت چقدر است؟",
+    options: ["۸", "۶", "۷", "۹"],
+    correctIndex: 1,
+    explanation: "اگر سرعت رفت v باشد، سرعت برگشت v+۲ است. از ۴۸/v + ۴۸/(v+۲) + ۲ = ۱۶، ریشهٔ مثبت v=۶ به‌دست می‌آید.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۲", verifiedAt,
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۱۲، صفحهٔ ۳ دفترچه."
+  },
+  {
+    id: "upload-maaz-math11-calculus-absolute-function-roots-13",
+    grade: "یازدهم", track: "ریاضی", subject: "حسابان",
+    chapter: "تابع", topic: "تعداد جواب‌های معادلهٔ قدرمطلق تابع درجه دوم",
+    difficulty: "دشوار",
+    prompt: "تابع f(x)=x²−۴x+k مفروض است. به‌ازای کدام مقدار k، معادلهٔ |f(x)|=۲ سه جواب متمایز دارد؟",
+    options: ["۱", "۲", "−۲", "−۱"],
+    correctIndex: 1,
+    explanation: "برای k=۲، سهمی f کمینهٔ −۲ را در رأس دارد؛ معادلهٔ f(x)=−۲ یک جواب و f(x)=۲ دو جواب متمایز می‌دهد، پس در مجموع سه جواب داریم.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۳", verifiedAt,
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۱۳، صفحهٔ ۳ دفترچه."
+  },
+  {
+    id: "upload-maaz-math11-calculus-absolute-area-14",
+    grade: "یازدهم", track: "ریاضی", subject: "حسابان",
+    chapter: "تابع", topic: "مساحت ناحیهٔ محدود بین نمودارها",
+    difficulty: "دشوار",
+    prompt: "مساحت ناحیهٔ محدود به نمودار تابع f(x)=|x+۱|+|x−۲| و خط y=x+۴ چقدر است؟",
+    options: ["۹", "۸", "۱۲", "۶"],
+    correctIndex: 0,
+    explanation: "تابع در بازه‌های x≤−۱، −۱≤x≤۲ و x≥۲ به‌ترتیب −۲x+۱، ۳ و ۲x−۱ است. خط در x=−۱ و x=۵ با نمودار برخورد می‌کند؛ انتگرال اختلاف در دو بازهٔ میانی و راست به‌ترتیب ۹/۲ و ۹/۲ است، پس مساحت کل ۹ می‌شود.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۴", verifiedAt,
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۱۴، صفحهٔ ۳ دفترچه."
+  },
+  {
+    id: "upload-maaz-math11-calculus-absolute-inequality-15",
+    grade: "یازدهم", track: "ریاضی", subject: "حسابان",
+    chapter: "جبر و معادله", topic: "نامعادلهٔ قدرمطلق و شمارش جواب‌های صحیح",
+    difficulty: "متوسط",
+    prompt: "مجموعهٔ جواب نامعادلهٔ |۲x+۱|+|x−۲|≤|x+۳| شامل چند عدد صحیح مثبت است؟",
+    options: ["۴", "۲", "۳", "بی‌شمار"],
+    correctIndex: 1,
+    explanation: "برای ۰<x<۲ نامعادله به تساوی تبدیل می‌شود و عدد صحیح مثبت ۱ جواب است. برای x≥۲، شرط به x≤۲ می‌رسد و عدد ۲ نیز جواب است؛ پس دو عدد صحیح مثبت وجود دارد.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۵", verifiedAt,
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۱۵، صفحهٔ ۳ دفترچه."
+  },
+  {
+    id: "upload-maaz-math11-geometry-tangent-chord-16",
+    grade: "یازدهم", track: "ریاضی", subject: "هندسه",
+    chapter: "دایره", topic: "زاویه‌های حاصل از مماس‌ها و وترها",
+    difficulty: "دشوار",
+    prompt: "در شکل، ضلع‌های زاویه‌های B و C بر دایره‌ای به شعاع R مماس‌اند. اگر طول وتر MQ برابر R باشد، اندازهٔ زاویهٔ PQN چند درجه است؟",
+    options: ["۶۵°", "۳۰°", "۳۲/۵°", "۳۵°"],
+    correctIndex: 3,
+    explanation: "زاویهٔ بین دو مماس در B برابر ۷۰° و در C برابر ۶۰° است؛ پس کمان‌های QP و MN به‌ترتیب ۱۱۰° و ۱۲۰° هستند. چون MQ=R، زاویهٔ مرکزی متناظر با کمان MQ برابر ۶۰° است. کمان PN برابر ۷۰° و زاویهٔ محاطی PQN نصف آن، یعنی ۳۵° است.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۶", verifiedAt,
+    reviewerNote: reviewNote + " شکل و داده‌ها با صفحهٔ ۳ دفترچه بررسی شد؛ پاسخ با روابط مماس، وتر و زاویهٔ محاطی حل شد."
+  },
+
 ];
