@@ -38,4 +38,16 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch3: ExamQuestion[] = 
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۹", verifiedAt,
     reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۲ با صفحهٔ ۵ پاسخنامه تطبیق داده شد."
   }
+  {
+    id: "upload-kankchi-human11-literature-simile-types-sequence-22",
+    grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
+    chapter: "تشبیه", topic: "تشخیص و ترتیب انواع تشبیه",
+    difficulty: "دشوار",
+    prompt: "در کدام گزینه، نمونه‌های «تشبیه گسترده، تشبیه بلیغ اضافی و تشبیه بلیغ غیراضافی» به‌ترتیب آمده‌اند؟",
+    options: ["ج، الف، د", "د، ج، ب", "ج، د، الف", "د، الف، ج"],
+    correctIndex: 1,
+    explanation: "در گزینهٔ د، «خورشیدصفت بر در و دیوار فرود آی» تشبیه گسترده است؛ در گزینهٔ ج، «مصر عزت» تشبیه بلیغ اضافی است؛ و در گزینهٔ ب، «شکن طرهٔ هندو تو، دام راهم بود» تشبیه بلیغ غیراضافی است. پس ترتیب درست د، ج، ب و گزینهٔ ۲ است.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۲", verifiedAt,
+    reviewerNote: "صورت سؤال و چهار گزینه با صفحهٔ ۸ دفترچهٔ قلم‌چی تطبیق داده شد؛ کلید گزینهٔ ۲ و تحلیل انواع تشبیه با صفحهٔ ۵ پاسخنامه بررسی شد."
+  },
 ];
