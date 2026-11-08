@@ -649,5 +649,27 @@ describe("curriculum and assessment question bank", () => {
       expect(question.reviewerNote).toContain("پاسخنامه");
     }
   });
+  it("imports nine reviewed Grade 11 humanities sociology questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۳۱": 3, "۳۳": 1, "۳۴": 1, "۳۵": 2, "۳۶": 0,
+      "۳۷": 3, "۳۸": 1, "۳۹": 1, "۴۰": 2,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "جامعه‌شناسی" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(9);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "فرهنگ جهانی")).toHaveLength(4);
+    expect(batch.filter((question) => question.chapter === "نمونه‌های فرهنگ جهانی (۱)")).toHaveLength(5);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
 
 });
