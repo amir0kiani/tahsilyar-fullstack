@@ -558,4 +558,17 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("imports the independently solved Grade 11 Maaz statistics truth-table question", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "ریاضی" &&
+      question.subject === "آمار و احتمال" &&
+      question.sourceTitle?.includes("آزمون ماز ۱۵ آبان ۱۴۰۵") &&
+      question.sourceQuestionNumber === "۲۴"
+    );
+    expect(batch).toHaveLength(1);
+    expect(batch[0].chapter).toBe("آشنایی با منطق ریاضی");
+    expect(batch[0].correctIndex).toBe(2);
+  });
+
 });
