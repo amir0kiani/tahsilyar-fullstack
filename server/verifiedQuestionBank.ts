@@ -8,6 +8,7 @@ import { verifiedGrade11HumanitiesKankchiHistoryBatch } from "./verifiedGrade11H
 import { verifiedGrade11HumanitiesKankchiGeographyBatch } from "./verifiedGrade11HumanitiesKankchiGeographyBatch";
 import { verifiedGrade11HumanitiesKankchiSociologyBatch } from "./verifiedGrade11HumanitiesKankchiSociologyBatch";
 import { verifiedGrade11HumanitiesKankchiPsychologyBatch } from "./verifiedGrade11HumanitiesKankchiPsychologyBatch";
+import { verifiedGrade11HumanitiesKankchiArabicBatch } from "./verifiedGrade11HumanitiesKankchiArabicBatch";
 import { verifiedGrade11MathMaazBatch1 } from "./verifiedGrade11MathMaazBatch1";
 import { verifiedBiologyBatch2 } from "./verifiedQuestionBankBiologyBatch2";
 import { verifiedChemistryBatch1 } from "./verifiedQuestionBankChemistryBatch1";
@@ -532,4 +533,4 @@ const initialVerifiedQuestions: ExamQuestion[] = [
   },
 ];
 
-export const verifiedQuestions: ExamQuestion[] = [...initialVerifiedQuestions, ...verifiedBiologyBatch2, ...verifiedChemistryBatch1, ...verifiedPhysicsBatch1, ...verifiedFinalExamBatch1, ...verifiedUploadedGeography12, ...verifiedUploadedHistory12, ...verifiedUploadedSociology12, ...verifiedUploadedPhilosophy12, ...verifiedUploadedChemistry12, ...verifiedUploadedGeology11, ...verifiedUploadedMathPhysics, ...verifiedHumanitiesBatch2, ...verifiedGrade11HumanitiesKankchiBatch1, ...verifiedGrade11HumanitiesKankchiBatch2, ...verifiedGrade11HumanitiesKankchiHistoryBatch, ...verifiedGrade11HumanitiesKankchiGeographyBatch, ...verifiedGrade11HumanitiesKankchiSociologyBatch, ...verifiedGrade11HumanitiesKankchiPsychologyBatch, ...verifiedGrade11MathMaazBatch1, ...verifiedScienceMathBatch2, ...verifiedUploaded15AbanReview];
+export const verifiedQuestions: ExamQuestion[] = [...initialVerifiedQuestions, ...verifiedBiologyBatch2, ...verifiedChemistryBatch1, ...verifiedPhysicsBatch1, ...verifiedFinalExamBatch1, ...verifiedUploadedGeography12, ...verifiedUploadedHistory12, ...verifiedUploadedSociology12, ...verifiedUploadedPhilosophy12, ...verifiedUploadedChemistry12, ...verifiedUploadedGeology11, ...verifiedUploadedMathPhysics, ...verifiedHumanitiesBatch2, ...verifiedGrade11HumanitiesKankchiBatch1, ...verifiedGrade11HumanitiesKankchiBatch2, ...verifiedGrade11HumanitiesKankchiHistoryBatch, ...verifiedGrade11HumanitiesKankchiGeographyBatch, ...verifiedGrade11HumanitiesKankchiSociologyBatch, ...verifiedGrade11HumanitiesKankchiPsychologyBatch, ...verifiedGrade11HumanitiesKankchiArabicBatch, ...verifiedGrade11MathMaazBatch1, ...verifiedScienceMathBatch2, ...verifiedUploaded15AbanReview];
