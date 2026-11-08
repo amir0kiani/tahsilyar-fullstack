@@ -516,4 +516,27 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("imports ten independently solved Grade 11 mathematics-track questions from Maaz", () => {
+    const expectedKeys: Record<string, number> = {
+      "۱": 0, "۲": 1, "۳": 3, "۴": 3, "۵": 2,
+      "۶": 2, "۷": 3, "۸": 1, "۹": 0, "۱۰": 0,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "") &&
+      question.grade === "یازدهم" &&
+      question.track === "ریاضی" &&
+      question.subject === "حسابان" &&
+      question.sourceTitle?.includes("آزمون ماز ۱۵ آبان ۱۴۰۵")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "جبر و معادله")).toHaveLength(9);
+    expect(batch.filter((question) => question.chapter === "تابع")).toHaveLength(1);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("حل مستقل");
+    }
+  });
+
 });
