@@ -570,5 +570,21 @@ describe("curriculum and assessment question bank", () => {
     expect(batch[0].chapter).toBe("آشنایی با منطق ریاضی");
     expect(batch[0].correctIndex).toBe(2);
   });
+  it("imports four more independently solved Grade 11 Maaz logic questions", () => {
+    const expectedKeys: Record<string, number> = { "۲۵": 2, "۲۸": 2, "۲۹": 1, "۳۰": 1 };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "ریاضی" &&
+      question.subject === "آمار و احتمال" &&
+      question.sourceTitle?.includes("آزمون ماز ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(4);
+    expect(batch.every((question) => question.chapter === "آشنایی با منطق ریاضی" && question.options.length === 4)).toBe(true);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+    }
+  });
 
 });
