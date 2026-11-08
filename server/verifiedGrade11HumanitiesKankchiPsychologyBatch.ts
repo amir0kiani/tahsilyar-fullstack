@@ -156,8 +156,7 @@ export const verifiedGrade11HumanitiesKankchiPsychologyBatch: ExamQuestion[] = [
     explanation: "عوامل محیطی بیرونی‌اند، نه عناصر درونی؛ وراثت و ویژگی‌های زیستی در گروه عوامل درونی قرار می‌گیرند.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۵۰", verifiedAt,
     reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۵ دفترچهٔ قلم‌چی و کلید گزینهٔ ۳ با صفحهٔ ۸ پاسخنامه تطبیق داده شد."
-  }
-
+  },
   {
     id: "upload-kankchi-human11-psychology-methods-match-46",
     grade: "یازدهم", track: "انسانی", subject: "روان‌شناسی",
