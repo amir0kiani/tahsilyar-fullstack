@@ -734,5 +734,26 @@ describe("curriculum and assessment question bank", () => {
       expect(question.reviewerNote).toContain("پاسخنامه");
     }
   });
+  it("imports nine reviewed Grade 11 humanities literature questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۲۱": 3, "۲۳": 0, "۲۴": 3, "۲۵": 1, "۲۶": 1,
+      "۲۷": 2, "۲۸": 1, "۲۹": 3, "۳۰": 1,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "علوم و فنون ادبی" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(9);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.every((question) => question.chapter === "تشبیه و کارگاه تحلیل فصل اول")).toBe(true);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
 
 });
