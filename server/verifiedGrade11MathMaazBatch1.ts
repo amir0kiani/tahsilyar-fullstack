@@ -315,4 +315,83 @@ export const verifiedGrade11MathMaazBatch1: ExamQuestion[] = [
     reviewerNote: reviewNote + " شمارهٔ سؤال ۳۰، صفحهٔ ۶ دفترچه؛ ناسازگاری فرض r نادرست بررسی شد."
   },
 
+
+  {
+    id: "upload-maaz-math11-geometry-semicircle-tangent-20",
+    grade: "یازدهم", track: "ریاضی", subject: "هندسه",
+    chapter: "دایره", topic: "مماس بودن دو نیم‌دایره",
+    difficulty: "دشوار",
+    prompt: "نیم‌دایره‌ای با قطر CD در نقطهٔ E بر نیم‌دایره‌ای با قطر AB مماس است. اگر AE=۱۰ و EB=۱۵ باشد، اندازهٔ AD کدام است؟",
+    options: ["۵", "√۱۵", "√۱۰", "۳"],
+    correctIndex: 0,
+    explanation: "با قرار دادن A=(۰،۰)، E=(۱۰،۰) و B=(۲۵،۰)، مرکز نیم‌دایرهٔ کوچک روی AC و روی خط قائم گذرنده از E قرار می‌گیرد. اگر θ زاویهٔ AC با AB باشد، از شرط قرار گرفتن C روی نیم‌دایرهٔ بزرگ به sinθ=۳/۵ و tanθ=۳/۴ می‌رسیم. در نتیجه فاصلهٔ مرکز نیم‌دایرهٔ کوچک از A برابر ۱۲٫۵ و شعاع آن ۷٫۵ است؛ پس AD=۱۲٫۵−۷٫۵=۵.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۰", verifiedAt,
+    reviewerNote: reviewNote + " شکل و داده‌ها با صفحهٔ ۴ دفترچه بررسی شد؛ پاسخ با مدل مختصاتی و شرط مماس بودن به‌دست آمد."
+  },
+  {
+    id: "upload-maaz-math11-geometry-power-of-point-square-21",
+    grade: "یازدهم", track: "ریاضی", subject: "هندسه",
+    chapter: "دایره", topic: "توان نقطه و مربع درون دایره",
+    difficulty: "دشوار",
+    prompt: "در دایره‌ای به مرکز O، چهارضلعی OBPE مربع است. اگر AB=۹۰، BC=۲۰ و DE=۶۰ باشد، EF کدام است؟",
+    options: ["۳۵", "۲۵", "۳۰", "۴۰"],
+    correctIndex: 2,
+    explanation: "قطر مربع OP برابر شعاع دایره R است؛ پس OB=OE=R/√۲. از توان نقطهٔ B روی وتر AC داریم AB×BC=R²−OB²=R²/۲، بنابراین R²/۲=۹۰×۲۰=۱۸۰۰. برای نقطهٔ E نیز DE×EF=R²−OE²=۱۸۰۰؛ با DE=۶۰، مقدار EF=۳۰ است.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۱", verifiedAt,
+    reviewerNote: reviewNote + " شکل و داده‌ها با صفحهٔ ۵ دفترچه بررسی شد؛ از توان نقطه برای B و E استفاده شد."
+  },
+  {
+    id: "upload-maaz-math11-geometry-internal-tangency-count-22",
+    grade: "یازدهم", track: "ریاضی", subject: "هندسه",
+    chapter: "دایره", topic: "شرط مماس بودن درونی دو دایره",
+    difficulty: "متوسط",
+    prompt: "طول خط‌المرکزین دو دایرهٔ C(O,۶m−۱) و C′(O′,m²−۲) برابر ۶ است. اگر دو دایره مماس درونی باشند، چند مقدار برای m یافت می‌شود؟",
+    options: ["۳", "۲", "۴", "۱"],
+    correctIndex: 1,
+    explanation: "در مماس درونی، قدرمطلق تفاضل شعاع‌ها برابر ۶ است: |(۶m−۱)−(m²−۲)|=۶. حل دو حالت، mهای ۱،۵،۷ و −۱ را می‌دهد؛ با شرط مثبت بودن هر دو شعاع، فقط m=۵ و m=۷ مجازند. پس دو مقدار معتبر وجود دارد.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۲", verifiedAt,
+    reviewerNote: reviewNote + " صورت سؤال با صفحهٔ ۵ دفترچه تطبیق داده شد؛ شرط مثبت بودن شعاع‌ها نیز در شمارش لحاظ شد."
+  },
+  {
+    id: "upload-maaz-math11-geometry-tangent-secant-arc-23",
+    grade: "یازدهم", track: "ریاضی", subject: "هندسه",
+    chapter: "دایره", topic: "زاویهٔ مماس و قاطع و طول کمان",
+    difficulty: "دشوار",
+    prompt: "پاره‌خط AB بر دایره‌ای به شعاع ۳۶/π مماس است. اگر زاویهٔ A برابر ۳۵ درجه و زاویهٔ ABD برابر ۴۰ درجه باشد، طول کمان CD کدام است؟",
+    options: ["۱۳", "۲۴", "۱۶", "۲۶"],
+    correctIndex: 3,
+    explanation: "در مثلث ABD، زاویهٔ ADB برابر ۱۰۵ درجه است؛ پس زاویهٔ BDC برابر ۷۵ درجه و کمان BC برابر ۱۵۰ درجه می‌شود. از قضیهٔ زاویهٔ بین مماس و قاطع، اختلاف کمان‌های BC و BD برابر ۷۰ درجه است؛ بنابراین کمان BD برابر ۸۰ و کمان CD برابر ۱۳۰ درجه است. محیط دایره ۷۲ است و طول کمان CD برابر (۱۳۰/۳۶۰)×۷۲=۲۶ می‌شود.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۳", verifiedAt,
+    reviewerNote: "شکل و داده‌ها با صفحهٔ ۵ دفترچه بررسی شد؛ از زاویهٔ مماس و قاطع و زاویهٔ محاطی استفاده شد."
+  },
+  {
+    id: "upload-maaz-math11-statistics-quantified-set-26",
+    grade: "یازدهم", track: "ریاضی", subject: "آمار و احتمال",
+    chapter: "آشنایی با منطق ریاضی", topic: "گزاره‌های سور‌دار و دامنهٔ متغیر",
+    difficulty: "متوسط",
+    prompt: "اگر A={x∈W | ۳x<۳۹} دامنهٔ متغیر x باشد، ارزش کدام گزاره درست است؟",
+    options: [
+      "برای هر x∈A، ۲x²+۱<۱۹",
+      "برای هر x∈A، x²−x>۰",
+      "وجود دارد x∈A به‌طوری‌که x+۳>۵x",
+      "وجود دارد x∈A به‌طوری‌که ۱/(x+۵)>۱/(۲x)"
+    ],
+    correctIndex: 3,
+    explanation: "A شامل اعداد صحیح نامنفی کوچک‌تر از ۱۳ است. برای x=۶ داریم ۱/۱۱>۱/۱۲؛ پس گزارهٔ وجودی گزینهٔ ۴ درست است. سه گزینهٔ دیگر به‌ترتیب در xهای ۳،۱ و همهٔ xهای نامنفی نقض می‌شوند یا نمونهٔ موردنیاز ندارند.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۶", verifiedAt,
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۶ دفترچه بررسی شد؛ یک نمونهٔ نقض یا شاهد برای هر گزاره ارزیابی شد."
+  },
+  {
+    id: "upload-maaz-math11-statistics-contrapositive-27",
+    grade: "یازدهم", track: "ریاضی", subject: "آمار و احتمال",
+    chapter: "آشنایی با منطق ریاضی", topic: "عکس نقیض و ارزش گزارهٔ شرطی",
+    difficulty: "متوسط",
+    prompt: "اگر r گزاره‌ای دلخواه و عکس نقیض گزارهٔ «نقیض q آنگاه p» نادرست باشد، کدام گزاره همواره درست است؟",
+    options: ["r⇒q", "¬r⇒q", "¬p⇒r", "q⇒r"],
+    correctIndex: 3,
+    explanation: "عکس نقیض گزارهٔ ¬q⇒p برابر ¬p⇒q است. نادرست بودن آن یعنی ¬p درست و q نادرست است؛ بنابراین گزارهٔ q⇒r با مقدم نادرست، برای هر r درست خواهد بود.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۷", verifiedAt,
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۶ دفترچه بررسی شد؛ عکس نقیض و حالت نادرستی گزارهٔ شرطی به‌صورت مستقل ارزیابی شد."
+  },
+
 ];
