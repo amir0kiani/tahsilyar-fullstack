@@ -823,6 +823,21 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("imports independently authored Grade 11 experimental questions for identified chapter gaps", () => {
+    const ids = [
+      "authored-experimental11-biology-neural-control-synapse-01",
+      "authored-experimental11-biology-neural-control-reflex-02",
+      "authored-experimental11-physics-dc-series-parallel-03",
+      "authored-experimental11-chemistry-polymer-04",
+      "authored-experimental11-math-logarithm-domain-05",
+    ];
+    const batch = verifiedQuestions.filter((question) => ids.includes(question.id));
+    expect(batch).toHaveLength(5);
+    expect(batch.every((question) => question.sourceStatus === "reviewed")).toBe(true);
+    expect(batch.every((question) => question.sourceTitle?.includes("تألیفی تحصیل‌یار"))).toBe(true);
+    expect(batch.every((question) => question.options.length === 4)).toBe(true);
+  });
+
   it("imports Grade 11 humanities literature question 18 with the official Kankchi key", () => {
     const question = verifiedQuestions.find((item) =>
       item.id === "upload-kankchi-human11-literature-prosody-pattern-18"
