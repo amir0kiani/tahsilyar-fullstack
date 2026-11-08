@@ -755,5 +755,23 @@ describe("curriculum and assessment question bank", () => {
       expect(question.reviewerNote).toContain("پاسخنامه");
     }
   });
+  it("imports six reviewed Grade 11 humanities literature questions from the prosody and meaning section", () => {
+    const expectedKeys: Record<string, number> = { "۱۱": 1, "۱۲": 3, "۱۳": 1, "۱۴": 1, "۱۵": 3, "۲۰": 0 };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "علوم و فنون ادبی" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(6);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "پایه‌های آوایی")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "قرابت معنایی")).toHaveLength(1);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+    }
+  });
 
 });
