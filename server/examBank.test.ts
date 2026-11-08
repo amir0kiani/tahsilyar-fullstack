@@ -778,8 +778,8 @@ describe("curriculum and assessment question bank", () => {
       expect(question.correctIndex, number).toBe(expectedKeys[number]);
     }
   });
-  it("imports two more reviewed Grade 11 literature questions with Kankchi answer keys", () => {
-    const expectedKeys: Record<string, number> = { "۱۶": 2, "۱۹": 1 };
+  it("imports three additional reviewed Grade 11 literature questions with Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = { "۱۶": 2, "۱۹": 1, "۲۲": 1 };
     const batch = verifiedQuestions.filter((question) =>
       question.grade === "یازدهم" &&
       question.track === "انسانی" &&
@@ -787,7 +787,7 @@ describe("curriculum and assessment question bank", () => {
       question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
       Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
     );
-    expect(batch).toHaveLength(2);
+    expect(batch).toHaveLength(3);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
       expect(question.correctIndex, number).toBe(expectedKeys[number]);
