@@ -24,7 +24,7 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch3: ExamQuestion[] = 
   {
     id: "upload-kankchi-human11-literature-poetic-concepts-19",
     grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "مفاهیم ادبی و قرابت معنایی", topic: "تشخیص مفهوم ابیات",
+    chapter: "کل کتاب", topic: "تشخیص مفهوم ابیات",
     difficulty: "دشوار",
     prompt: "هر یک از مفاهیم «توصیف صحنهٔ نبرد، ابراز بی‌نیازی، درخواست بخشش از خداوند، توصیف طبیعت، توصیه به خوش‌باشی به دلیل گذر روزگار» به‌ترتیب در کدام گزینه آمده‌اند؟",
     options: [
