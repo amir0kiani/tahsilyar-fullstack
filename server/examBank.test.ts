@@ -781,7 +781,7 @@ describe("curriculum and assessment question bank", () => {
     );
     expect(batch).toHaveLength(9);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
-    expect(batch.every((question) => question.chapter === "تشبیه و کارگاه تحلیل فصل اول")).toBe(true);
+    expect(batch.every((question) => question.chapter === "تشبیه")).toBe(true);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
       expect(question.correctIndex, number).toBe(expectedKeys[number]);
@@ -800,7 +800,7 @@ describe("curriculum and assessment question bank", () => {
     expect(batch).toHaveLength(6);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
     expect(batch.filter((question) => question.chapter === "پایه‌های آوایی")).toHaveLength(5);
-    expect(batch.filter((question) => question.chapter === "قرابت معنایی")).toHaveLength(1);
+    expect(batch.filter((question) => question.chapter === "کل کتاب")).toHaveLength(1);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
       expect(question.correctIndex, number).toBe(expectedKeys[number]);
