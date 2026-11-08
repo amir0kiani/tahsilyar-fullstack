@@ -673,7 +673,7 @@ describe("curriculum and assessment question bank", () => {
   });
   it("imports nine reviewed Grade 11 humanities psychology questions with exact Kankchi answer keys", () => {
     const expectedKeys: Record<string, number> = {
-      "۴۱": 3, "۴۲": 2, "۴۳": 0, "۴۴": 2, "۴۵": 1,
+      "۴۱": 3, "۴۲": 2, "۴۳": 0, "۴۴": 2, "۴۵": 1, "۴۶": 3,
       "۴۷": 3, "۴۸": 1, "۴۹": 2, "۵۰": 2,
     };
     const batch = verifiedQuestions.filter((question) =>
@@ -683,9 +683,9 @@ describe("curriculum and assessment question bank", () => {
       question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
       Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
     );
-    expect(batch).toHaveLength(9);
+    expect(batch).toHaveLength(10);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
-    expect(batch.filter((question) => question.chapter === "روان‌شناسی: تعریف و روش مورد مطالعه")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "روان‌شناسی: تعریف و روش مورد مطالعه")).toHaveLength(6);
     expect(batch.filter((question) => question.chapter === "روان‌شناسی رشد")).toHaveLength(4);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
