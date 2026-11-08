@@ -37,7 +37,7 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch3: ExamQuestion[] = 
     explanation: "با تطبیق مضمون هر پنج بیت با مفهوم خواسته‌شده، ترتیب درست مطابق گزینهٔ ۲ است.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۹", verifiedAt,
     reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۲ با صفحهٔ ۵ پاسخنامه تطبیق داده شد."
-  }
+  },
   {
     id: "upload-kankchi-human11-literature-simile-types-sequence-22",
     grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
