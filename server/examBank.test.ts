@@ -581,6 +581,11 @@ describe("curriculum and assessment question bank", () => {
     );
     expect(batch).toHaveLength(6);
     expect(batch.every((question) => question.chapter === "آشنایی با منطق ریاضی" && question.options.length === 4)).toBe(true);
+    const question26 = batch.find((question) => question.sourceQuestionNumber === "۲۶");
+    expect(question26?.prompt).toContain("۳^x<۳۹");
+    expect(question26?.options[2]).toContain("۵^x");
+    expect(question26?.options[3]).toContain("۲^x");
+    expect(question26?.correctIndex).toBe(2);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
       expect(question.correctIndex, number).toBe(expectedKeys[number]);
