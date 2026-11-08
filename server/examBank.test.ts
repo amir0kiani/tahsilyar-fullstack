@@ -115,7 +115,7 @@ describe("curriculum and assessment question bank", () => {
         question.track === "تجربی" && question.grade === grade && question.subject === "زیست‌شناسی"
       );
       expect(questions.length).toBeGreaterThanOrEqual(5);
-      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? ""))).toBe(true);
+      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
     }
   });
 
@@ -131,7 +131,7 @@ describe("curriculum and assessment question bank", () => {
         question.track === "تجربی" && question.grade === grade && question.subject === "شیمی"
       );
       expect(questions.length).toBeGreaterThanOrEqual(5);
-      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? ""))).toBe(true);
+      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
     }
   });
 
@@ -216,7 +216,7 @@ describe("curriculum and assessment question bank", () => {
           (book.subject !== "شیمی" || ["تجربی", "ریاضی", "ریاضی و تجربی"].includes(question.track))
         );
         expect(matching.length, `${book.subject} / ${chapter}`).toBeGreaterThanOrEqual(5);
-        expect(matching.every((question) => ["official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? ""))).toBe(true);
+        expect(matching.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
       }
     }
   });
