@@ -773,5 +773,21 @@ describe("curriculum and assessment question bank", () => {
       expect(question.correctIndex, number).toBe(expectedKeys[number]);
     }
   });
+  it("imports two more reviewed Grade 11 literature questions with Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = { "۱۶": 2, "۱۹": 1 };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "علوم و فنون ادبی" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(2);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.sourceStatus).toBe("reviewed");
+    }
+  });
 
 });
