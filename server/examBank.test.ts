@@ -494,5 +494,26 @@ describe("curriculum and assessment question bank", () => {
     expect(batch.every((question) => question.chapter === "کل کتاب")).toBe(true);
   });
 
+  it("imports ten reviewed Grade 11 humanities mathematics questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۱": 0, "۲": 2, "۳": 1, "۴": 1, "۵": 3,
+      "۶": 2, "۷": 2, "۸": 1, "۹": 2, "۱۰": 1,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "") &&
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "ریاضی و آمار" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.every((question) => question.chapter === "آشنایی با منطق و استدلال ریاضی")).toBe(true);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("قلم‌چی");
+    }
+  });
 
 });
