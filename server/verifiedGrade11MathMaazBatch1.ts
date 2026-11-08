@@ -128,7 +128,7 @@ export const verifiedGrade11MathMaazBatch1: ExamQuestion[] = [
     correctIndex: 0,
     explanation: "دامنه x>۲ است. تابع ۲−۳/√(x+۲)−۱/√(x−۲) اکیداً صعودی است، از منفی بی‌نهایت در نزدیکی ۲ شروع می‌شود و به ۲ میل می‌کند؛ پس دقیقاً یک بار صفر می‌شود.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۰", verifiedAt,
-    reviewerNote: reviewNote + " شمارهٔ سؤال ۱۰، صفحهٔ ۲ دفترچه."
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۱۰، صفحهٔ ۲ دفترچه.",
   },
   {
     id: "upload-maaz-math11-calculus-radical-parameter-11",
