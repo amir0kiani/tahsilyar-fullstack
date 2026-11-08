@@ -82,7 +82,7 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch2: ExamQuestion[] = 
   {
     id: "upload-kankchi-human11-literature-meaning-similarity-20",
     grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "قرابت معنایی", topic: "مفهوم و قرابت معنایی",
+    chapter: "کل کتاب", topic: "مفهوم و قرابت معنایی",
     difficulty: "متوسط",
     prompt: "کدام گزینه با بیت «مرا که گه به درد می‌آید یاد می‌نماید / که دردت مردم جان می‌نماید» قرابت معنایی دارد؟",
     options: [
