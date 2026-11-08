@@ -609,5 +609,28 @@ describe("curriculum and assessment question bank", () => {
       expect(question.reviewerNote).toContain("پاسخنامه");
     }
   });
+  it("imports ten reviewed Grade 11 humanities history questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۶۱": 2, "۶۲": 2, "۶۳": 0, "۶۴": 1, "۶۵": 0,
+      "۶۶": 0, "۶۷": 0, "۶۸": 1, "۶۹": 0, "۷۰": 2,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "تاریخ" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "روش پژوهش در تاریخ؛ بررسی و سنجش اعتبار شواهد و مدارک")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "منابع پژوهش در تاریخ اسلام و ایران دوران اسلامی")).toHaveLength(1);
+    expect(batch.filter((question) => question.chapter === "اسلام در مکه")).toHaveLength(4);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
 
 });
