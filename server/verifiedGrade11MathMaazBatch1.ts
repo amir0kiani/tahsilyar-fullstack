@@ -256,4 +256,64 @@ export const verifiedGrade11MathMaazBatch1: ExamQuestion[] = [
     reviewerNote: reviewNote + " شمارهٔ سؤال ۲۴، صفحهٔ ۵ دفترچه؛ جدول ارزش به‌صورت مستقل بررسی شد."
   },
 
+
+  {
+    id: "upload-maaz-math11-statistics-equivalent-proposition-25",
+    grade: "یازدهم", track: "ریاضی", subject: "آمار و احتمال",
+    chapter: "آشنایی با منطق ریاضی", topic: "هم‌ارزی گزاره‌های مرکب",
+    difficulty: "متوسط",
+    prompt: "گزارهٔ ¬(p ∧ q) ⇒ (q ∧ ¬r) با کدام گزاره هم‌ارز است؟",
+    options: [
+      "p ⇒ (q ⇒ r)",
+      "q ∨ (p ⇒ r)",
+      "q ∧ (r ⇒ p)",
+      "q ∨ (r ⇒ p)"
+    ],
+    correctIndex: 2,
+    explanation: "با هم‌ارزی شرطی، گزاره برابر (p∧q)∨(q∧¬r) می‌شود. با خارج کردن q، عبارت q∧(p∨¬r)=q∧(r⇒p) به‌دست می‌آید.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۵", verifiedAt,
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۲۵، صفحهٔ ۶ دفترچه؛ هم‌ارزی با قوانین گزاره‌ها حل شد."
+  },
+  {
+    id: "upload-maaz-math11-statistics-negation-28",
+    grade: "یازدهم", track: "ریاضی", subject: "آمار و احتمال",
+    chapter: "آشنایی با منطق ریاضی", topic: "نقیض گزاره‌های مرکب",
+    difficulty: "متوسط",
+    prompt: "اگر p گزاره‌ای نادرست، q گزاره‌ای درست و r گزاره‌ای دلخواه باشد، نقیض گزارهٔ (q ⇒ r) ⇒ (r ⇒ p) هم‌ارز کدام است؟",
+    options: ["درست (T)", "نادرست (F)", "r", "¬r"],
+    correctIndex: 2,
+    explanation: "با جای‌گذاری q درست و p نادرست، گزارهٔ داخلی اول r و گزارهٔ داخلی دوم ¬r می‌شود؛ پس گزارهٔ اصلی r⇒¬r، یعنی ¬r است و نقیض آن r خواهد بود.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۸", verifiedAt,
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۲۸، صفحهٔ ۶ دفترچه؛ ارزش گزاره با جای‌گذاری مستقیم محاسبه شد."
+  },
+  {
+    id: "upload-maaz-math11-statistics-quantifier-negation-29",
+    grade: "یازدهم", track: "ریاضی", subject: "آمار و احتمال",
+    chapter: "آشنایی با منطق ریاضی", topic: "نقیض گزاره‌های دارای سور",
+    difficulty: "متوسط",
+    prompt: "نقیض گزارهٔ «برای هر n طبیعی، عدد طبیعی m وجود دارد به‌طوری‌که n≥m» کدام است؟",
+    options: [
+      "عددی طبیعی n وجود دارد که برای هر m طبیعی، n≥m باشد.",
+      "عددی طبیعی n وجود دارد که برای هر m طبیعی، n<m باشد.",
+      "اعداد طبیعی n و m وجود دارند که n≥m باشد.",
+      "اعداد طبیعی n و m وجود دارند که n<m باشد."
+    ],
+    correctIndex: 1,
+    explanation: "نقیض سور همگانی، سور وجودی و نقیض سور وجودی، سور همگانی است؛ همچنین نقیض n≥m برابر n<m است.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۹", verifiedAt,
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۲۹، صفحهٔ ۶ دفترچه؛ سورها و رابطهٔ نامساوی به‌صورت مستقل وارونه شدند."
+  },
+  {
+    id: "upload-maaz-math11-statistics-proposition-value-30",
+    grade: "یازدهم", track: "ریاضی", subject: "آمار و احتمال",
+    chapter: "آشنایی با منطق ریاضی", topic: "استنتاج ارزش گزاره از چند شرط",
+    difficulty: "دشوار",
+    prompt: "اگر هر دو گزارهٔ (p ⇒ q) ⇒ r و q ∨ (p ⇒ r) درست باشند، ارزش r با کدام گزینه هم‌ارز است؟",
+    options: ["p", "درست (T)", "نادرست (F)", "q"],
+    correctIndex: 1,
+    explanation: "اگر r نادرست باشد، درست بودن گزارهٔ اول مستلزم p درست و q نادرست است؛ اما در این حالت گزارهٔ دوم نادرست می‌شود. پس r ناگزیر درست است.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۳۰", verifiedAt,
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۳۰، صفحهٔ ۶ دفترچه؛ ناسازگاری فرض r نادرست بررسی شد."
+  },
+
 ];
