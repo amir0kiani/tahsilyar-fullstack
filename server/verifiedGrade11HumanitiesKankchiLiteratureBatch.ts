@@ -7,7 +7,7 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-literature-simile-21",
     grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "تشبیه و کارگاه تحلیل فصل اول", topic: "تشخیص آرایهٔ تشبیه",
+    chapter: "تشبیه", topic: "تشخیص آرایهٔ تشبیه",
     difficulty: "متوسط",
     prompt: "در همهٔ گزینه‌ها به‌جز کدام مورد، آرایهٔ تشبیه به‌کار رفته است؟",
     options: [
@@ -24,7 +24,7 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-literature-simile-count-23",
     grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "تشبیه و کارگاه تحلیل فصل اول", topic: "شمارش تشبیه‌ها",
+    chapter: "تشبیه", topic: "شمارش تشبیه‌ها",
     difficulty: "دشوار",
     prompt: "تعداد تشبیه در کدام گزینه با سایر گزینه‌ها متفاوت است؟",
     options: [
@@ -41,7 +41,7 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-literature-figure-identification-24",
     grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "تشبیه و کارگاه تحلیل فصل اول", topic: "تشخیص آرایه‌های ادبی",
+    chapter: "تشبیه", topic: "تشخیص آرایه‌های ادبی",
     difficulty: "متوسط",
     prompt: "آرایهٔ مشخص‌شده در کدام بیت به‌درستی نام‌گذاری نشده است؟",
     options: [
@@ -58,7 +58,7 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-literature-figures-sequence-25",
     grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "تشبیه و کارگاه تحلیل فصل اول", topic: "تشخیص تشبیه، تلمیح، کنایه و تضاد",
+    chapter: "تشبیه", topic: "تشخیص تشبیه، تلمیح، کنایه و تضاد",
     difficulty: "دشوار",
     prompt: "هر یک از آرایه‌های ادبی «تشبیه، تلمیح، کنایه، تضاد» به‌ترتیب در کدام گزینه آمده است؟ الف) گر ز مسیح پرست مرده چگونه زنده کرد؛ ب) اگر از کمند عشقت بروم کجا گریزم؛ ج) خوشا و خرما آن دل که هست از عشق بیگانه؛ د) مطرب آهنگ بگردان که ذکر هیچ نماند.",
     options: ["ج، د، الف، ب", "د، ب، الف، ج", "ب، الف، ج، د", "د، ب، ج، الف"],
@@ -70,7 +70,7 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-literature-implicit-simile-26",
     grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "تشبیه و کارگاه تحلیل فصل اول", topic: "تشبیه بلیغ اضافی",
+    chapter: "تشبیه", topic: "تشبیه بلیغ اضافی",
     difficulty: "متوسط",
     prompt: "در کدام بیت بیشترین تشبیه بلیغ اضافی به‌کار رفته است؟",
     options: [
@@ -87,7 +87,7 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-literature-simile-elements-27",
     grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "تشبیه و کارگاه تحلیل فصل اول", topic: "ارکان تشبیه",
+    chapter: "تشبیه", topic: "ارکان تشبیه",
     difficulty: "متوسط",
     prompt: "در همهٔ گزینه‌ها به‌جز کدام مورد، همهٔ ارکان تشبیه وجود دارد؟",
     options: [
@@ -104,7 +104,7 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-literature-extended-simile-28",
     grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "تشبیه و کارگاه تحلیل فصل اول", topic: "تشبیه گسترده",
+    chapter: "تشبیه", topic: "تشبیه گسترده",
     difficulty: "دشوار",
     prompt: "در کدام گزینه تشبیه گسترده یافت نمی‌شود؟",
     options: [
@@ -121,7 +121,7 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-literature-meaning-contrast-29",
     grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "تشبیه و کارگاه تحلیل فصل اول", topic: "مفهوم و قرابت معنایی",
+    chapter: "تشبیه", topic: "مفهوم و قرابت معنایی",
     difficulty: "متوسط",
     prompt: "مفهوم کدام بیت در مقابل بیت «هر چه به گرد خویشتن می‌گردم در این چمن / آیینهٔ ضمیر من جز تو نمی‌دهد نشان» نادرست است؟",
     options: [
@@ -138,7 +138,7 @@ export const verifiedGrade11HumanitiesKankchiLiteratureBatch: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-literature-meaning-similarity-30",
     grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "تشبیه و کارگاه تحلیل فصل اول", topic: "قرابت معنایی",
+    chapter: "تشبیه", topic: "قرابت معنایی",
     difficulty: "متوسط",
     prompt: "کدام گزینه با بیت «این زبان چون سنگ و هم آهن‌وش است / و آنچه بجهد از زبان چون آتش است» قرابت معنایی ندارد؟",
     options: [
