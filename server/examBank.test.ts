@@ -823,4 +823,15 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("imports Grade 11 humanities literature question 18 with the official Kankchi key", () => {
+    const question = verifiedQuestions.find((item) =>
+      item.id === "upload-kankchi-human11-literature-prosody-pattern-18"
+    );
+    expect(question).toBeDefined();
+    expect(question?.sourceStatus).toBe("reviewed");
+    expect(question?.options).toHaveLength(4);
+    expect(question?.correctIndex).toBe(0);
+    expect(question?.chapter).toBe("پایه‌های آوایی");
+  });
+
 });
