@@ -204,4 +204,42 @@ export const verifiedGrade11MathMaazBatch1: ExamQuestion[] = [
     reviewerNote: reviewNote + " شکل و داده‌ها با صفحهٔ ۳ دفترچه بررسی شد؛ پاسخ با روابط مماس، وتر و زاویهٔ محاطی حل شد."
   },
 
+
+  {
+    id: "upload-maaz-math11-geometry-external-tangent-circles-17",
+    grade: "یازدهم", track: "ریاضی", subject: "هندسه",
+    chapter: "دایره", topic: "مماس خارجی دو دایره",
+    difficulty: "متوسط",
+    prompt: "دو دایرهٔ C(O,m+۲) و C′(O′,m−۲) از بیرون بر یکدیگر مماس‌اند. اگر OO′=۳m−۱۲ باشد، مقدار m/۳+۱ کدام است؟",
+    options: ["۱۲", "۵", "۶", "۸"],
+    correctIndex: 1,
+    explanation: "در مماس خارجی، فاصلهٔ مراکز برابر مجموع شعاع‌هاست؛ پس ۳m−۱۲=(m+۲)+(m−۲)=۲m و m=۱۲. بنابراین m/۳+۱=۵.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۷", verifiedAt,
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۱۷، صفحهٔ ۴ دفترچه؛ پاسخ با شرط مماس خارجی حل شد."
+  },
+  {
+    id: "upload-maaz-math11-geometry-semicircle-area-18",
+    grade: "یازدهم", track: "ریاضی", subject: "هندسه",
+    chapter: "دایره", topic: "مساحت ناحیهٔ بین دو نیم‌دایره",
+    difficulty: "متوسط",
+    prompt: "دو نیم‌دایره هم‌مرکزند. وتر AB به طول ۸ از نیم‌دایرهٔ بزرگ‌تر، بر نیم‌دایرهٔ کوچک‌تر مماس است و با قطر CD موازی است. مساحت ناحیهٔ بین دو نیم‌دایره چقدر است؟",
+    options: ["۸π", "۱۶π", "۴π", "۱۰π"],
+    correctIndex: 0,
+    explanation: "فاصلهٔ مرکز تا وتر برابر شعاع نیم‌دایرهٔ کوچک است. با نصف وتر برابر ۴، از مثلث قائم‌الزاویه R²−r²=۴²=۱۶ به‌دست می‌آید. اختلاف مساحت دو نیم‌دایره برابر (π/۲)(R²−r²)=۸π است.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۸", verifiedAt,
+    reviewerNote: reviewNote + " شکل و داده‌ها با صفحهٔ ۴ دفترچه تطبیق داده شد؛ مساحت با رابطهٔ وتر و شعاع محاسبه شد."
+  },
+  {
+    id: "upload-maaz-math11-geometry-tangent-length-19",
+    grade: "یازدهم", track: "ریاضی", subject: "هندسه",
+    chapter: "دایره", topic: "طول مماس‌های رسم‌شده از نقطهٔ بیرون دایره",
+    difficulty: "متوسط",
+    prompt: "از نقطهٔ A بیرون دایره‌ای به مرکز O و شعاع ۲√۳، دو مماس بر دایره رسم شده است. اگر زاویهٔ بین دو مماس ۶۰ درجه باشد، طول هر مماس چقدر است؟",
+    options: ["۲√۳", "۶", "۴", "۳√۳"],
+    correctIndex: 1,
+    explanation: "خط واصل مرکز به A نیمساز زاویهٔ بین دو مماس است؛ پس در مثلث قائم‌الزاویه OAT زاویهٔ A برابر ۳۰ درجه و OT=۲√۳ است. بنابراین AT=OT/tan۳۰°=۶.",
+    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۱۹", verifiedAt,
+    reviewerNote: reviewNote + " شمارهٔ سؤال ۱۹، صفحهٔ ۴ دفترچه؛ پاسخ با مثلث قائم‌الزاویه و نیمساز زاویه حل شد."
+  },
+
 ];
