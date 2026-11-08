@@ -138,7 +138,7 @@ export const verifiedGrade11HumanitiesKankchiPsychologyBatch: ExamQuestion[] = [
     correctIndex: 2,
     explanation: "شباهت ژنتیکی دوقلوهای همسان می‌تواند در برخی ویژگی‌ها و زمان‌بندی رشد نقش داشته باشد؛ بااین‌حال محیط نیز در شکل‌گیری ویژگی‌های رفتاری و تجربه‌های فردی مؤثر است.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۴۹", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۵ دفترچهٔ قلم‌چی و کلید گزینهٔ ۳ با صفحهٔ ۸ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۵ دفترچهٔ قلم‌چی و کلید گزینهٔ ۳ با صفحهٔ ۸ پاسخنامه تطبیق داده شد.",
   },
   {
     id: "upload-kankchi-human11-psychology-environmental-factors-50",
