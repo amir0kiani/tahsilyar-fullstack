@@ -399,7 +399,7 @@ describe("curriculum and assessment question bank", () => {
       ["۹۶", "۹۷", "۹۸", "۹۹", "۱۰۰", "۱۰۱", "۱۰۲", "۱۰۳", "۱۰۴", "۱۰۵"].includes(question.sourceQuestionNumber ?? "") &&
       question.grade === "دهم" && question.track === "انسانی" && question.subject === "اقتصاد"
     );
-    expect(batch).toHaveLength(15);
+    expect(batch).toHaveLength(10);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.sourceTitle?.includes("(فایل ارسالی کاربر)"))).toBe(true);
     expect(batch.every((question) => question.options.length === 4 && question.correctIndex >= 0 && question.correctIndex <= 3)).toBe(true);
     const expectedKeys: Record<string, number> = {
@@ -516,7 +516,7 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
-  it("imports ten independently solved Grade 11 mathematics-track questions from Maaz", () => {
+  it("imports fifteen independently solved Grade 11 mathematics-track questions from Maaz", () => {
     const expectedKeys: Record<string, number> = {
       "۱": 0, "۲": 1, "۳": 3, "۴": 3, "۵": 2,
       "۶": 2, "۷": 3, "۸": 1, "۹": 0, "۱۰": 0,
@@ -529,7 +529,7 @@ describe("curriculum and assessment question bank", () => {
       question.subject === "حسابان" &&
       question.sourceTitle?.includes("آزمون ماز ۱۵ آبان ۱۴۰۵")
     );
-    expect(batch).toHaveLength(10);
+    expect(batch).toHaveLength(15);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
     expect(batch.filter((question) => question.chapter === "جبر و معادله")).toHaveLength(12);
     expect(batch.filter((question) => question.chapter === "تابع")).toHaveLength(3);
