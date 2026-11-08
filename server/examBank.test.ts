@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
+import { buildGradeSpecificCatalog } from "./db";
 
 const allQuestions = [...examQuestions, ...verifiedQuestions];
 
@@ -75,6 +76,33 @@ describe("curriculum and assessment question bank", () => {
 
   it("sets a five-question target for every lesson, not for the whole book", () => {
     expect(curriculumCatalog.every((book) => book.targetQuestionsPerLesson === 5)).toBe(true);
+  });
+
+  it("reports verified question coverage separately for every lesson and excludes pending or sample items", () => {
+    const rows = [
+      ...Array.from({ length: 5 }, (_, index) => ({
+        track: "انسانی", grade: "یازدهم", subject: "ریاضی و آمار",
+        chapter: "آشنایی با منطق و استدلال ریاضی", sourceStatus: "reviewed",
+      })),
+      {
+        track: "انسانی", grade: "یازدهم", subject: "ریاضی و آمار",
+        chapter: "آشنایی با منطق و استدلال ریاضی", sourceStatus: "pending-review",
+      },
+      ...Array.from({ length: 4 }, () => ({
+        track: "انسانی", grade: "یازدهم", subject: "ریاضی و آمار",
+        chapter: "تابع", sourceStatus: "sample-authored",
+      })),
+    ];
+    const book = buildGradeSpecificCatalog(rows).find((item) =>
+      item.track === "انسانی" && item.grade === "یازدهم" && item.subject === "ریاضی و آمار"
+    );
+    expect(book).toBeDefined();
+    const logic = book?.lessonCoverage.find((lesson) => lesson.chapter === "آشنایی با منطق و استدلال ریاضی");
+    const functionLesson = book?.lessonCoverage.find((lesson) => lesson.chapter === "تابع");
+    expect(logic).toMatchObject({ questionCount: 6, verifiedQuestionCount: 5, targetQuestionsPerLesson: 5, targetMet: true });
+    expect(functionLesson).toMatchObject({ questionCount: 4, verifiedQuestionCount: 0, targetQuestionsPerLesson: 5, targetMet: false });
+    expect(book?.lessonsMeetingTarget).toBe(1);
+    expect(book?.lessonCount).toBe(3);
   });
 
   it("keeps every curriculum catalogue entry grade- and track-specific", () => {
