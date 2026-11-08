@@ -586,5 +586,28 @@ describe("curriculum and assessment question bank", () => {
       expect(question.correctIndex, number).toBe(expectedKeys[number]);
     }
   });
+  it("imports ten reviewed Grade 11 humanities philosophy questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۸۱": 2, "۸۲": 1, "۸۳": 2, "۸۴": 3, "۸۵": 1,
+      "۸۶": 1, "۸۷": 0, "۸۸": 2, "۸۹": 3, "۹۰": 2,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "فلسفه" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "ریشه و شاخه‌های فلسفه")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "چیستی انسان")).toHaveLength(1);
+    expect(batch.filter((question) => question.chapter === "فلسفه و زندگی")).toHaveLength(4);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
 
 });
