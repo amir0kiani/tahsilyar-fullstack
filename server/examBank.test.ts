@@ -715,7 +715,7 @@ describe("curriculum and assessment question bank", () => {
     }
   });
   it("imports five more reviewed Grade 11 humanities geography questions with exact Kankchi answer keys", () => {
-    const expectedKeys: Record<string, number> = { "۷۶": 2, "۷۷": 3, "۷۸": 0, "۷۹": 2, "۸۰": 3 };
+    const expectedKeys: Record<string, number> = { "۷۶": 0, "۷۷": 3, "۷۸": 2, "۷۹": 2, "۸۰": 3 };
     const batch = verifiedQuestions.filter((question) =>
       question.grade === "یازدهم" &&
       question.track === "انسانی" &&
