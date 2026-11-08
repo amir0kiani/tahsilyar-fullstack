@@ -541,7 +541,7 @@ describe("curriculum and assessment question bank", () => {
   });
 
   it("imports the independently solved Grade 11 Maaz geometry question with the derived tangent-chord answer", () => {
-    const expectedKeys: Record<string, number> = { "۱۶": 3, "۱۷": 1, "۱۸": 0, "۱۹": 1 };
+    const expectedKeys: Record<string, number> = { "۱۶": 3, "۱۷": 1, "۱۸": 0, "۱۹": 1, "۲۰": 0, "۲۱": 2, "۲۲": 1, "۲۳": 3 };
     const batch = verifiedQuestions.filter((question) =>
       question.grade === "یازدهم" &&
       question.track === "ریاضی" &&
@@ -549,7 +549,7 @@ describe("curriculum and assessment question bank", () => {
       question.sourceTitle?.includes("آزمون ماز ۱۵ آبان ۱۴۰۵") &&
       Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
     );
-    expect(batch).toHaveLength(4);
+    expect(batch).toHaveLength(8);
     expect(batch.every((question) => question.chapter === "دایره" && question.options.length === 4)).toBe(true);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
@@ -570,8 +570,8 @@ describe("curriculum and assessment question bank", () => {
     expect(batch[0].chapter).toBe("آشنایی با منطق ریاضی");
     expect(batch[0].correctIndex).toBe(2);
   });
-  it("imports four more independently solved Grade 11 Maaz logic questions", () => {
-    const expectedKeys: Record<string, number> = { "۲۵": 2, "۲۸": 2, "۲۹": 1, "۳۰": 1 };
+  it("imports six more independently solved Grade 11 Maaz logic questions", () => {
+    const expectedKeys: Record<string, number> = { "۲۵": 2, "۲۶": 3, "۲۷": 3, "۲۸": 2, "۲۹": 1, "۳۰": 1 };
     const batch = verifiedQuestions.filter((question) =>
       question.grade === "یازدهم" &&
       question.track === "ریاضی" &&
@@ -579,7 +579,7 @@ describe("curriculum and assessment question bank", () => {
       question.sourceTitle?.includes("آزمون ماز ۱۵ آبان ۱۴۰۵") &&
       Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
     );
-    expect(batch).toHaveLength(4);
+    expect(batch).toHaveLength(6);
     expect(batch.every((question) => question.chapter === "آشنایی با منطق ریاضی" && question.options.length === 4)).toBe(true);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
