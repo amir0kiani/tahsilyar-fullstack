@@ -48,7 +48,7 @@ export const verifiedGrade11HumanitiesKankchiGeographyBatch2: ExamQuestion[] = [
     correctIndex: 0,
     explanation: "میل محور زمین نسبت به مدار حرکت انتقالی، همراه با حرکت زمین به دور خورشید، سبب تفاوت فصل‌ها در نواحی مختلف و به‌ویژه دو نیمکره می‌شود.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۷۸", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۲۱ دفترچهٔ قلم‌چی و کلید گزینهٔ ۱ با صفحهٔ ۱۳ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۲۱ دفترچهٔ قلم‌چی و کلید گزینهٔ ۴ با صفحهٔ ۱۳ پاسخنامه تطبیق داده شد."
   },
   {
     id: "upload-kankchi-human11-geography-pressure-belts-79",
@@ -79,8 +79,8 @@ export const verifiedGrade11HumanitiesKankchiGeographyBatch2: ExamQuestion[] = [
       "در این نوع بارندگی تودهٔ هوا در امتداد دامنهٔ کوه به طرف قله بالا می‌رود: بارندگی کوهستانی.",
       "بارش‌های بهاری بیشتر از این نوع هستند: بارندگی سیکلونی."
     ],
-    correctIndex: 0,
-    explanation: "بارندگی جبهه‌ای در محل برخورد توده‌های هوای متفاوت شکل می‌گیرد؛ این توصیف با نام آن سازگار است، درحالی‌که کلید پاسخ آزمون گزینهٔ ۱ را به‌عنوان عبارت نامخوان مشخص کرده است.",
+    correctIndex: 3,
+    explanation: "بارش‌های بهاری بیشتر از نوع بارندگی همرفتی‌اند، نه سیکلونی؛ بنابراین تطبیق گزینهٔ ۴ نادرست است.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۸۰", verifiedAt,
     reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۲۱ دفترچهٔ قلم‌چی و کلید گزینهٔ ۱ با صفحهٔ ۱۳ پاسخنامه تطبیق داده شد."
   }
