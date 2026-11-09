@@ -24,7 +24,7 @@ export const verifiedGrade11HumanitiesKankchiGeographyBatch2: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-geography-weather-climate-77",
     grade: "یازدهم", track: "انسانی", subject: "جغرافیا",
-    chapter: "نواحی طبیعی", topic: "تفاوت هوا و آب‌وهوا",
+    chapter: "نواحی آب و هوایی", topic: "تفاوت هوا و آب‌وهوا",
     difficulty: "دشوار",
     prompt: "پژوهشگری تفاوت آب‌وهوا و هوای یک ناحیه را بررسی می‌کند. با توجه به عبارت‌های زیر، کدام مجموعه درست است؟ الف) هوای یک ناحیه با وضعیت جو در یک محل در مدت زمانی کوتاه تفاوت دارد. ب) برای تعیین نوع هوای یک ناحیه معمولاً داده‌های آماری طی سی سال یا بیشتر جمع‌آوری می‌شوند. ج) تابش خورشید بر عناصری چون دما، فشار، رطوبت و بارش تأثیر می‌گذارد. د) هوا فقط بر زیست‌کره اثر می‌گذارد و بر آب‌کره و سنگ‌کره تأثیری ندارد. ه) ویژگی‌های آب‌وهوایی متفاوت موجب تفاوت بخش‌های مختلف زمین و شکل‌گیری نواحی آب‌وهوایی می‌شوند.",
     options: ["الف، ب و د", "ب، ج و د", "الف، ج و ه", "ج، د و ه"],
@@ -36,7 +36,7 @@ export const verifiedGrade11HumanitiesKankchiGeographyBatch2: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-geography-earth-tilt-78",
     grade: "یازدهم", track: "انسانی", subject: "جغرافیا",
-    chapter: "نواحی آب‌وهوایی", topic: "اثر حرکت انتقالی و میل محور زمین",
+    chapter: "نواحی آب و هوایی", topic: "اثر حرکت انتقالی و میل محور زمین",
     difficulty: "متوسط",
     prompt: "به‌ترتیب، مایل بودن محور زمین بر مدار گردش ... آن به دور خورشید موجب می‌شود که ... در نواحی مختلف و در ... متفاوت باشد.",
     options: [
@@ -53,7 +53,7 @@ export const verifiedGrade11HumanitiesKankchiGeographyBatch2: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-geography-pressure-belts-79",
     grade: "یازدهم", track: "انسانی", subject: "جغرافیا",
-    chapter: "نواحی آب‌وهوایی", topic: "شکل‌گیری کمربندهای فشار",
+    chapter: "نواحی آب و هوایی", topic: "شکل‌گیری کمربندهای فشار",
     difficulty: "دشوار",
     prompt: "کدام گزینه دربارهٔ شکل‌گیری کانون‌های کم‌فشار و پرفشار در نواحی استوایی و قطبی درست است؟",
     options: [
@@ -70,7 +70,7 @@ export const verifiedGrade11HumanitiesKankchiGeographyBatch2: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-geography-rainfall-types-80",
     grade: "یازدهم", track: "انسانی", subject: "جغرافیا",
-    chapter: "نواحی آب‌وهوایی", topic: "انواع بارندگی",
+    chapter: "نواحی آب و هوایی", topic: "انواع بارندگی",
     difficulty: "متوسط",
     prompt: "کدام گزینه با عبارت مقابل خود نامخوان است؟",
     options: [
