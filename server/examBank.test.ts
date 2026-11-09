@@ -795,8 +795,8 @@ describe("curriculum and assessment question bank", () => {
     expect(batch).toHaveLength(5);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
     expect(batch.filter((question) => question.chapter === "انسان و ناحیه")).toHaveLength(1);
-    expect(batch.filter((question) => question.chapter === "نواحی طبیعی")).toHaveLength(1);
-    expect(batch.filter((question) => question.chapter === "نواحی آب‌وهوایی")).toHaveLength(3);
+    expect(batch.filter((question) => question.chapter === "نواحی آب و هوایی")).toHaveLength(4);
+    expect(batch.some((question) => question.chapter === "نواحی طبیعی" || question.chapter === "نواحی آب‌وهوایی")).toBe(false);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
       expect(question.correctIndex, number).toBe(expectedKeys[number]);
