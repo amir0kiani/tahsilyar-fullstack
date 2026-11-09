@@ -45,6 +45,25 @@ describe("curriculum and assessment question bank", () => {
     expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
   });
 
+  it("includes five traceable Grade 11 humanities history questions adapted from the official Khordad 1404 final exam", () => {
+    const questions = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "تاریخ" &&
+      question.chapter === "ایران در دوران غزنوی، سلجوقی و خوارزمشاهی" &&
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceTitle?.includes("خرداد ۱۴۰۴")
+    );
+    expect(questions).toHaveLength(5);
+    for (const question of questions) {
+      expect(question.sourceUrl).toBe("https://dl.novinkonkor.com/nahaye/11/ensani/1404/khordad/tarikh_2.pdf");
+      expect(question.sourceYear).toBe("۱۴۰۴");
+      expect(question.sourceQuestionNumber).toBeTruthy();
+      expect(question.verifiedAt).toBeInstanceOf(Date);
+      expect(question.reviewerNote).toBeTruthy();
+    }
+  });
+
   it("lists grade-specific books for all three main tracks", () => {
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       expect(curriculumCatalog.some((book) => book.grade === grade && book.track === "تجربی")).toBe(true);
