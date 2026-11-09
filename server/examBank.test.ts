@@ -45,6 +45,23 @@ describe("curriculum and assessment question bank", () => {
     expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
   });
 
+  it("maps the Grade 11 humanities climate questions to the exact Geography 2 lesson title", () => {
+    const climateQuestions = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "جغرافیا" &&
+      question.chapter === "نواحی آب و هوایی" &&
+      question.sourceStatus === "reviewed"
+    );
+    expect(climateQuestions).toHaveLength(4);
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "جغرافیا" &&
+      ["نواحی طبیعی", "نواحی آب‌وهوایی"].includes(question.chapter)
+    )).toBe(false);
+  });
+
   it("includes five traceable Grade 11 humanities history questions adapted from the official Khordad 1404 final exam", () => {
     const questions = verifiedQuestions.filter((question) =>
       question.grade === "یازدهم" &&
