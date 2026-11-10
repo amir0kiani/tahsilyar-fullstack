@@ -29,8 +29,11 @@ describe("curriculum and assessment question bank", () => {
       expect(["official-exam-adapted", "mock-exam-adapted", "reviewed"]).toContain(question.sourceStatus);
       expect(question.sourceTitle).toBeTruthy();
       const uploadedSource = question.sourceTitle?.includes("(فایل ارسالی کاربر)") ?? false;
+      const authoredReviewed = question.sourceStatus === "reviewed" && question.sourceTitle?.includes("تألیفی تحصیل‌یار");
       if (uploadedSource) {
         expect(question.sourceQuestionNumber).toBeTruthy();
+      } else if (authoredReviewed) {
+        expect(question.reviewerNote).toContain("تألیفی");
       } else {
         expect(question.sourceUrl).toMatch(/^https:\/\//);
         expect(question.sourceYear).toBeTruthy();
@@ -419,7 +422,7 @@ describe("curriculum and assessment question bank", () => {
         question.chapter === target.chapter
       );
       expect(matching.length, `${target.grade} / ${target.subject} / ${target.chapter}`).toBeGreaterThanOrEqual(5);
-      expect(matching.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+      expect(matching.every((question) => ["mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
     }
   });
 
