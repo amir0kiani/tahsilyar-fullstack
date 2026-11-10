@@ -189,8 +189,8 @@ describe("curriculum and assessment question bank", () => {
       item.track === "انسانی" && item.grade === "یازدهم" && item.subject === "ریاضی و آمار"
     );
     expect(book).toBeDefined();
-    const logic = book?.lessonCoverage.find((lesson) => lesson.chapter === "آشنایی با منطق و استدلال ریاضی");
-    const functionLesson = book?.lessonCoverage.find((lesson) => lesson.chapter === "تابع");
+    const logic = book?.lessonCoverage.find((lesson) => lesson.chapter === "گزاره‌ها و ترکیب گزاره‌ها");
+    const functionLesson = book?.lessonCoverage.find((lesson) => lesson.chapter === "توابع ثابت، چند ضابطه‌ای و همانی");
     expect(logic).toMatchObject({ questionCount: 6, verifiedQuestionCount: 5, targetQuestionsPerLesson: 5, targetMet: true });
     expect(functionLesson).toMatchObject({ questionCount: 4, verifiedQuestionCount: 0, targetQuestionsPerLesson: 5, targetMet: false });
     expect(book?.lessonsMeetingTarget).toBe(1);
