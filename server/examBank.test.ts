@@ -310,6 +310,33 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("covers all seven Grade 11 geology lessons in both mathematics and experimental tracks", () => {
+    const chapters = [
+      "آفرینش کیهان و تکوین زمین",
+      "منابع معدنی و ذخایر انرژی",
+      "منابع آب و خاک",
+      "پویایی زمین",
+      "زمین‌شناسی و سلامت",
+      "زمین‌شناسی و سازه‌های مهندسی",
+      "زمین‌شناسی ایران",
+    ];
+    expect(curriculumCatalog.find((book) =>
+      book.grade === "یازدهم" && book.track === "ریاضی" && book.subject === "زمین‌شناسی"
+    )?.chapters).toEqual(chapters);
+    for (const track of ["ریاضی", "تجربی"]) {
+      for (const chapter of chapters) {
+        const matching = verifiedQuestions.filter((question) =>
+          question.grade === "یازدهم" &&
+          question.track === track &&
+          question.subject === "زمین‌شناسی" &&
+          question.chapter === chapter &&
+          question.sourceStatus === "official-exam-adapted"
+        );
+        expect(matching, `${track} / ${chapter}`).toHaveLength(5);
+      }
+    }
+  });
+
   it("adds five official-exam-adapted Grade 11 geology questions for each remaining lesson", () => {
     const chapters = [
       "منابع آب و خاک",
