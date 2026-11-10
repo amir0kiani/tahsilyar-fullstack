@@ -20,7 +20,7 @@ describe("curriculum and assessment question bank", () => {
 
   it("keeps the original sample-authored bank clearly separate", () => {
     expect(examQuestions.length).toBeGreaterThanOrEqual(50);
-    expect(examQuestions.every((question) => question.sourceStatus === "reviewed")).toBe(true);
+    expect(examQuestions.every((question) => question.sourceStatus === "sample-authored")).toBe(true);
   });
 
   it("records traceable provenance for every official- or mock-exam-adapted question", () => {
@@ -1285,7 +1285,7 @@ describe("curriculum and assessment question bank", () => {
       const questions = verifiedQuestions.filter((question) =>
         question.grade === "یازدهم" && question.track === "انسانی" &&
         question.subject === "ریاضی و آمار" && question.chapter === chapter &&
-        question.sourceStatus === "sample-authored"
+        question.sourceStatus === "reviewed"
       );
       expect(questions, chapter).toHaveLength(5);
     }
