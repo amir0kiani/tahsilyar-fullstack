@@ -1027,4 +1027,32 @@ describe("curriculum and assessment question bank", () => {
     expect(question?.chapter).toBe("پایه‌های آوایی");
   });
 
+  it("reaches five reviewed questions in every Grade 11 chemistry chapter", () => {
+    const chapters = [
+      "قدر هدایای زمینی را بدانیم",
+      "در پی غذای سالم",
+      "پوشاک، نیازی پایان‌ناپذیر",
+    ];
+    for (const chapter of chapters) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.track === "تجربی" &&
+        question.grade === "یازدهم" &&
+        question.subject === "شیمی" &&
+        question.chapter === chapter &&
+        ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? "")
+      );
+      expect(questions.length, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const officialBatch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("verified-grade11-chem-1405-")
+    );
+    expect(officialBatch).toHaveLength(10);
+    expect(officialBatch.every((question) =>
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceTitle === "آزمون نهایی شیمی (۲) یازدهم تجربی – ۳ مرداد ۱۴۰۵" &&
+      question.sourceUrl === "https://azmoon.medu.ir/" &&
+      question.reviewerNote?.includes("گزینه‌های انحرافی تألیف شده‌اند")
+    )).toBe(true);
+  });
+
 });
