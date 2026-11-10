@@ -109,8 +109,9 @@ describe("curriculum and assessment question bank", () => {
     expect(mathArabic).toHaveLength(7);
     expect(scienceArabic).toEqual(mathArabic);
     expect(book("انسانی", "دین و زندگی")?.chapters).toHaveLength(18);
-    expect(book("ریاضی", "دین و زندگی")?.chapters).toEqual(["کل کتاب"]);
-    expect(book("تجربی", "دین و زندگی")?.chapters).toEqual(["کل کتاب"]);
+    const nonHumanitiesDini = ["هدایت الهی", "تداوم هدایت", "معجزه جاویدان", "مسئولیت‌های پیامبر (ص)", "امامت، تداوم رسالت", "پیشوایان اسوه", "وضعیت فرهنگی، اجتماعی و سیاسی مسلمانان، پس از رحلت رسول خدا (ص)", "احیای ارزش‌های راستین", "عصر غیبت", "مرجعیت و ولایت فقیه", "عزت نفس", "پیوند مقدس"];
+    expect(book("ریاضی", "دین و زندگی")?.chapters).toEqual(nonHumanitiesDini);
+    expect(book("تجربی", "دین و زندگی")?.chapters).toEqual(nonHumanitiesDini);
   });
 
   it("does not treat Arabic skill labels as official Grade 11 lessons", () => {
