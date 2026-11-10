@@ -1278,4 +1278,23 @@ describe("curriculum and assessment question bank", () => {
       question.reviewerNote?.includes("به هیچ آزمون رسمی نسبت داده نشده")
     )).toBe(true);
   });
+
+  it("reaches five authored questions in every remaining Grade 11 humanities Math & Statistics chapter", () => {
+    const chapters = ["استدلال ریاضی", "توابع ثابت، چند ضابطه‌ای و همانی", "توابع پلکانی و قدر مطلقی", "اعمال بر روی توابع", "شاخص‌های آماری", "سری‌های زمانی"];
+    for (const chapter of chapters) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "انسانی" &&
+        question.subject === "ریاضی و آمار" && question.chapter === chapter &&
+        question.sourceStatus === "sample-authored"
+      );
+      expect(questions, chapter).toHaveLength(5);
+    }
+    const authored = verifiedQuestions.filter((question) => question.id.startsWith("logic-proof-") ||
+      question.id.startsWith("piecewise-") || question.id.startsWith("step-") ||
+      question.id.startsWith("operations-") || question.id.startsWith("stats-index-") ||
+      question.id.startsWith("time-series-"));
+    expect(authored).toHaveLength(30);
+    expect(authored.every((question) => question.sourceTitle?.includes("سؤال تألیفی") && question.reviewerNote?.includes("تألیفی"))).toBe(true);
+  });
+
 });
