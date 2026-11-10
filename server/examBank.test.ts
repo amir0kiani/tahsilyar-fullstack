@@ -98,6 +98,33 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("keeps Grade 11 Arabic and Dini editions separated by track", () => {
+    const book = (track: string, subject: string) =>
+      curriculumCatalog.find((item) => item.grade === "یازدهم" && item.track === track && item.subject === subject);
+
+    expect(curriculumCatalog.some((item) => item.grade === "یازدهم" && item.track === "عمومی" && ["عربی", "دین و زندگی"].includes(item.subject))).toBe(false);
+    expect(book("انسانی", "عربی")?.chapters).toEqual(["مواعظ قیمة", "صناعة التلميع في الأدب الفارسي", "عجائب المخلوقات", "تأثير اللغة الفارسية على اللغة العربية", "الصدق", "ارحموا ثلاثاً", "لا تقنطوا"]);
+    const mathArabic = book("ریاضی", "عربی")?.chapters ?? [];
+    const scienceArabic = book("تجربی", "عربی")?.chapters ?? [];
+    expect(mathArabic).toHaveLength(7);
+    expect(scienceArabic).toEqual(mathArabic);
+    expect(book("انسانی", "دین و زندگی")?.chapters).toHaveLength(18);
+    expect(book("ریاضی", "دین و زندگی")?.chapters).toEqual(["کل کتاب"]);
+    expect(book("تجربی", "دین و زندگی")?.chapters).toEqual(["کل کتاب"]);
+  });
+
+  it("does not treat Arabic skill labels as official Grade 11 lessons", () => {
+    const catalog = buildGradeSpecificCatalog([
+      { track: "انسانی", grade: "یازدهم", subject: "عربی", chapter: "ترجمه", sourceStatus: "reviewed" },
+      { track: "انسانی", grade: "یازدهم", subject: "عربی", chapter: "واژگان", sourceStatus: "reviewed" },
+      { track: "انسانی", grade: "یازدهم", subject: "عربی", chapter: "مفهوم عبارات", sourceStatus: "reviewed" },
+    ]);
+    const arabic = catalog.find((item) => item.track === "انسانی" && item.grade === "یازدهم" && item.subject === "عربی");
+    expect(arabic?.questionCount).toBe(3);
+    expect(arabic?.lessonCoverage).toHaveLength(7);
+    expect(arabic?.lessonCoverage.map((lesson) => lesson.chapter)).not.toContain("ترجمه");
+    expect(arabic?.lessonsMeetingTarget).toBe(0);
+  });
   it("lists grade-specific books for all three main tracks", () => {
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       expect(curriculumCatalog.some((book) => book.grade === grade && book.track === "تجربی")).toBe(true);
