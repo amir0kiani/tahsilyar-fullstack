@@ -1,7 +1,7 @@
 import type { ExamQuestion } from "./examBank";
 
 const verifiedAt = new Date("2026-11-10T00:00:00.000Z");
-const sourceTitle = "سؤال تألیفی بر اساس محتوای کتاب ریاضی و آمار ۲ یازدهم انسانی";
+const sourceTitle = "سؤال تألیفی تحصیل‌یار بر اساس محتوای کتاب ریاضی و آمار ۲ یازدهم انسانی";
 const reviewerNote = "سؤال تألیفی و مستقل از آزمون رسمی؛ پاسخ و گزینه‌های انحرافی بازبینی محاسباتی و مفهومی شده‌اند.";
 type Item = { id: string; chapter: string; topic: string; difficulty: "آسان" | "متوسط" | "دشوار"; prompt: string; options: [string,string,string,string]; correctIndex: number; explanation: string };
 const items: Item[] = [
@@ -44,5 +44,5 @@ const items: Item[] = [
 ];
 export const verifiedGrade11HumanitiesMathStatisticsAuthored: ExamQuestion[] = items.map((item) => ({
   ...item, grade: "یازدهم", track: "انسانی", subject: "ریاضی و آمار",
-  sourceStatus: "sample-authored", sourceTitle, verifiedAt, reviewerNote
+  sourceStatus: "reviewed", sourceTitle, verifiedAt, reviewerNote
 }));
