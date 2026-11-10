@@ -617,7 +617,20 @@ describe("curriculum and assessment question bank", () => {
     );
     expect(batch).toHaveLength(10);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
-    expect(batch.every((question) => question.chapter === "آشنایی با منطق و استدلال ریاضی")).toBe(true);
+    expect(batch.every((question) => question.chapter === "گزاره‌ها و ترکیب گزاره‌ها")).toBe(true);
+    const humanitiesMathBook = curriculumCatalog.find((book) =>
+      book.track === "انسانی" && book.grade === "یازدهم" && book.subject === "ریاضی و آمار"
+    );
+    expect(humanitiesMathBook?.chapters).toEqual([
+      "گزاره‌ها و ترکیب گزاره‌ها",
+      "استدلال ریاضی",
+      "توابع ثابت، چند ضابطه‌ای و همانی",
+      "توابع پلکانی و قدر مطلقی",
+      "اعمال بر روی توابع",
+      "شاخص‌های آماری",
+      "سری‌های زمانی",
+    ]);
+    expect(batch.every((question) => humanitiesMathBook?.chapters.includes(question.chapter))).toBe(true);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
       expect(question.correctIndex, number).toBe(expectedKeys[number]);
