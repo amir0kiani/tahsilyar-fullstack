@@ -629,7 +629,6 @@ export const verifiedGrade11GeologyOfficialExamMordad1405: ExamQuestion[] = [
     "reviewerNote": "صورت سؤال از جزء مشخص آزمون نهایی بازنویسی شده و گزینه‌های انحرافی برای قالب چهارگزینه‌ای تألیف شده‌اند؛ پاسخ با راهنمای رسمی نمره‌گذاری همان آزمون تطبیق داده شده است."
   }
 ,
-[
   {
     "id": "geology11-final1405-ch1-igneous-rock",
     "chapter": "آفرینش کیهان و تکوین زمین",
@@ -880,7 +879,6 @@ export const verifiedGrade11GeologyOfficialExamMordad1405: ExamQuestion[] = [
     verifiedAt: new Date("2026-11-10T00:00:00.000Z"),
     "reviewerNote": "صورت سؤال از جزء مشخص آزمون نهایی بازنویسی شده و گزینه‌های انحرافی برای قالب چهارگزینه‌ای تألیف شده‌اند؛ پاسخ با راهنمای رسمی نمره‌گذاری همان آزمون تطبیق داده شده است."
   }
-]
 ];
 
 export const verifiedGrade11MathGeologyOfficialExamMordad1405: ExamQuestion[] = verifiedGrade11GeologyOfficialExamMordad1405.map((question) => ({
