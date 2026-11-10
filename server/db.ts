@@ -319,7 +319,15 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
       question.subject === book.subject &&
       questionMatchesBookTrack(question.track, book.track)
     );
-    const chapters = Array.from(new Set([...book.chapters, ...bookQuestions.map((question) => question.chapter)]));
+    // For grade 11 Arabic/Dini, the curriculum chapter list is authoritative.
+    // Legacy skill labels (e.g. "ترجمه" or "واژگان") must not become fake textbook lessons.
+    const hasExplicitGrade11LanguageOrDiniMap =
+      book.grade === "یازدهم" &&
+      ["عربی", "دین و زندگی"].includes(book.subject) &&
+      !book.chapters.includes("کل کتاب");
+    const chapters = hasExplicitGrade11LanguageOrDiniMap
+      ? book.chapters
+      : Array.from(new Set([...book.chapters, ...bookQuestions.map((question) => question.chapter)]));
     return {
       ...book,
       chapters,
