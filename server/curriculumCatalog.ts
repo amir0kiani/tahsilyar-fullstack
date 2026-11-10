@@ -9,6 +9,12 @@ export const curriculumCatalog: CurriculumBook[] = [
   ...[
     ["فارسی", "نگارش", "عربی", "دین و زندگی", "زبان انگلیسی", "هنر", "تفکر و سواد رسانه‌ای", "کارگاه کارآفرینی و تولید", "آمادگی دفاعی", "جغرافیای ایران"],
   ].flatMap((subjects) => subjects.map((subject) => add("عمومی", "دهم", subject))),
+  // Verified source pages for the chapter maps:
+  // Persian 2 (Roshd): https://www.roshd.ir/farsi/Content/کتاب-فارسی-2-پایه-یازدهم
+  // Writing 2 (teacher guide / contents): https://www.jafarisaeed.ir/wp-content/uploads/2019/01/rahnama-negharesh2.pdf
+  // English 2 (Roshd): https://www.roshd.ir/zaban/Content/کتاب-زبان-انگلیسی-یازدهم-متوسطه
+  // Contemporary History (Roshd): https://www.roshd.ir/ejtemaee/Content/کتاب-تاریخ-معاصر-ایران-پایه-یازدهم
+  // Human and Environment (Roshd): https://www.roshd.ir/zendegi/Content/کتاب-انسان-و-محیطزیست-پایه-یازدهم
   add("عمومی", "یازدهم", "فارسی", ["ادبیات تعلیمی", "ادبیات سفر و زندگی", "ادبیات غنایی", "ادبیات پایداری", "ادبیات انقلاب اسلامی", "ادبیات حماسی", "ادبیات داستانی", "ادبیات جهان"]),
   add("عمومی", "یازدهم", "نگارش", ["گسترش محتوا (۱): زمان و مکان", "گسترش محتوا (۲): شخصیت", "گسترش محتوا (۳): گفت‌وگو", "سفرنامه", "کاهش محتوا: خلاصه‌نویسی", "مثل‌نویسی"]),
   add("عمومی", "یازدهم", "عربی"),
