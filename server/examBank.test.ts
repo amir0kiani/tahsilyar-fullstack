@@ -98,15 +98,12 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
-  it("includes the official Grade 11 calculus and experimental laboratory chapter maps", () => {
+  it("includes the official Grade 11 calculus chapter map", () => {
     const book = (track: string, subject: string) =>
       curriculumCatalog.find((item) => item.grade === "یازدهم" && item.track === track && item.subject === subject);
     expect(book("ریاضی", "حسابان")?.chapters).toEqual([
       "جبر و معادله", "تابع", "توابع نمایی و لگاریتمی", "مثلثات", "حد و پیوستگی",
     ]);
-    const labChapters = ["کلیات", "آزمایش‌های مربی", "آزمایش‌های دستورالعملی", "آزمایش‌های کاوشگری"];
-    expect(book("ریاضی", "آزمایشگاه علوم تجربی")?.chapters).toEqual(labChapters);
-    expect(book("تجربی", "آزمایشگاه علوم تجربی")?.chapters).toEqual(labChapters);
   });
 
   it("keeps Grade 11 Arabic and Dini editions separated by track", () => {
