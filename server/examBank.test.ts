@@ -198,6 +198,30 @@ describe("curriculum and assessment question bank", () => {
     expect(curriculumCatalog.every((book) => ["دهم", "یازدهم", "دوازدهم"].includes(book.grade))).toBe(true);
     expect(curriculumCatalog.every((book) => ["عمومی", "تجربی", "ریاضی", "انسانی"].includes(book.track))).toBe(true);
   });
+  it("reaches five reviewed questions in every Grade 11 biology chapter", () => {
+    const chapters = [
+      "تنظیم عصبی", "حواس", "دستگاه حرکتی", "تنظیم شیمیایی", "ایمنی",
+      "تقسیم یاخته", "تولیدمثل", "تولیدمثل نهان‌دانگان", "پاسخ گیاهان به محرک‌ها"
+    ];
+    for (const chapter of chapters) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.track === "تجربی" && question.grade === "یازدهم" &&
+        question.subject === "زیست‌شناسی" && question.chapter === chapter &&
+        ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? "")
+      );
+      expect(questions.length, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const officialBatch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("verified-grade11-bio-1405-")
+    );
+    expect(officialBatch).toHaveLength(37);
+    expect(officialBatch.every((question) =>
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceUrl === "https://azmoon.medu.ir/" &&
+      question.reviewerNote?.includes("گزینه‌های انحرافی تألیفی‌اند")
+    )).toBe(true);
+  });
+
   it("reaches the five-question target for each grade-specific biology textbook", () => {
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       const questions = verifiedQuestions.filter((question) =>
