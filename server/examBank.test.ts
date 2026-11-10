@@ -214,7 +214,7 @@ describe("curriculum and assessment question bank", () => {
     const officialBatch = verifiedQuestions.filter((question) =>
       question.id.startsWith("verified-grade11-bio-1405-")
     );
-    expect(officialBatch).toHaveLength(37);
+    expect(officialBatch).toHaveLength(38);
     expect(officialBatch.every((question) =>
       question.sourceStatus === "official-exam-adapted" &&
       question.sourceUrl === "https://azmoon.medu.ir/" &&
