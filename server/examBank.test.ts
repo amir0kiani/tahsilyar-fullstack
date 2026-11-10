@@ -81,6 +81,23 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("uses verified chapter maps for Grade 11 common textbooks", () => {
+    const chaptersFor = (subject: string) =>
+      curriculumCatalog.find((book) => book.track === "عمومی" && book.grade === "یازدهم" && book.subject === subject)?.chapters ?? [];
+
+    expect(chaptersFor("فارسی")).toEqual([
+      "ادبیات تعلیمی", "ادبیات سفر و زندگی", "ادبیات غنایی", "ادبیات پایداری",
+      "ادبیات انقلاب اسلامی", "ادبیات حماسی", "ادبیات داستانی", "ادبیات جهان",
+    ]);
+    expect(chaptersFor("نگارش")).toHaveLength(6);
+    expect(chaptersFor("زبان انگلیسی")).toEqual(["Understanding People", "A Healthy Lifestyle", "Art and Culture"]);
+    expect(chaptersFor("تاریخ معاصر ایران")).toHaveLength(26);
+    expect(chaptersFor("انسان و محیط زیست")).toHaveLength(7);
+    for (const subject of ["فارسی", "نگارش", "زبان انگلیسی", "تاریخ معاصر ایران", "انسان و محیط زیست"]) {
+      expect(chaptersFor(subject)).not.toContain("کل کتاب");
+    }
+  });
+
   it("lists grade-specific books for all three main tracks", () => {
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       expect(curriculumCatalog.some((book) => book.grade === grade && book.track === "تجربی")).toBe(true);
