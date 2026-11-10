@@ -7,7 +7,7 @@ export const verifiedGrade11HumanitiesKankchiBatch1: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-math-logic-01",
     grade: "یازدهم", track: "انسانی", subject: "ریاضی و آمار",
-    chapter: "آشنایی با منطق و استدلال ریاضی", topic: "ترکیب گزاره‌های شرطی",
+    chapter: "گزاره‌ها و ترکیب گزاره‌ها", topic: "ترکیب گزاره‌های شرطی",
     difficulty: "متوسط",
     prompt: "گزارهٔ p درست، گزارهٔ q نادرست و r گزاره‌ای دلخواه است. کدام ترکیب شرطی همواره درست است؟",
     options: [
@@ -24,7 +24,7 @@ export const verifiedGrade11HumanitiesKankchiBatch1: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-math-logic-02",
     grade: "یازدهم", track: "انسانی", subject: "ریاضی و آمار",
-    chapter: "آشنایی با منطق و استدلال ریاضی", topic: "هم‌ارزی گزاره‌های شرطی",
+    chapter: "گزاره‌ها و ترکیب گزاره‌ها", topic: "هم‌ارزی گزاره‌های شرطی",
     difficulty: "متوسط",
     prompt: "کدام‌یک از گزاره‌های زیر نادرست است؟",
     options: [
@@ -41,7 +41,7 @@ export const verifiedGrade11HumanitiesKankchiBatch1: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-math-logic-03",
     grade: "یازدهم", track: "انسانی", subject: "ریاضی و آمار",
-    chapter: "آشنایی با منطق و استدلال ریاضی", topic: "ارزش گزاره‌های مرکب",
+    chapter: "گزاره‌ها و ترکیب گزاره‌ها", topic: "ارزش گزاره‌های مرکب",
     difficulty: "آسان",
     prompt: "فرض کنید p: «عدد ۷ یک عدد اول است»، q: «مجموع دو عدد فرد، عددی زوج است» و r: «عدد ۱۵ بر ۴ بخش‌پذیر است». با توجه به ارزش این گزاره‌ها، ارزش گزارهٔ مرکب ¬(p ∧ q) ∨ r کدام است؟",
     options: ["درست", "نادرست", "هم‌ارز p است", "هم‌ارز ¬r است"],
@@ -53,7 +53,7 @@ export const verifiedGrade11HumanitiesKankchiBatch1: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-math-logic-04",
     grade: "یازدهم", track: "انسانی", subject: "ریاضی و آمار",
-    chapter: "آشنایی با منطق و استدلال ریاضی", topic: "ارزش گزاره‌های شرطی",
+    chapter: "گزاره‌ها و ترکیب گزاره‌ها", topic: "ارزش گزاره‌های شرطی",
     difficulty: "دشوار",
     prompt: "ارزش گزارهٔ ((r ⇒ (p ∨ ¬q)) ⇒ r) به انتفای مقدم درست است. کدام گزینه ارزش p، q و r را به‌ترتیب از راست به چپ نشان می‌دهد؟",
     options: [
@@ -70,7 +70,7 @@ export const verifiedGrade11HumanitiesKankchiBatch1: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-math-logic-05",
     grade: "یازدهم", track: "انسانی", subject: "ریاضی و آمار",
-    chapter: "آشنایی با منطق و استدلال ریاضی", topic: "ارزش همواره نادرست",
+    chapter: "گزاره‌ها و ترکیب گزاره‌ها", topic: "ارزش همواره نادرست",
     difficulty: "متوسط",
     prompt: "اگر p گزاره‌ای درست، q گزاره‌ای نادرست و r گزاره‌ای دلخواه باشد، ارزش کدام گزاره همواره نادرست است؟",
     options: [
@@ -87,7 +87,7 @@ export const verifiedGrade11HumanitiesKankchiBatch1: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-math-logic-06",
     grade: "یازدهم", track: "انسانی", subject: "ریاضی و آمار",
-    chapter: "آشنایی با منطق و استدلال ریاضی", topic: "هم‌ارزی منطقی",
+    chapter: "گزاره‌ها و ترکیب گزاره‌ها", topic: "هم‌ارزی منطقی",
     difficulty: "دشوار",
     prompt: "اگر p گزاره‌ای درست، q گزاره‌ای نادرست و r گزاره‌ای دلخواه باشد، کدام گزاره با r هم‌ارز منطقی است؟",
     options: [
@@ -104,7 +104,7 @@ export const verifiedGrade11HumanitiesKankchiBatch1: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-math-logic-07",
     grade: "یازدهم", track: "انسانی", subject: "ریاضی و آمار",
-    chapter: "آشنایی با منطق و استدلال ریاضی", topic: "وابستگی ارزش گزاره به متغیر",
+    chapter: "گزاره‌ها و ترکیب گزاره‌ها", topic: "وابستگی ارزش گزاره به متغیر",
     difficulty: "دشوار",
     prompt: "اگر p درست و q نادرست باشد، کدام تعداد از پنج عبارت زیر مستقل از r هستند؟ الف) (q implies r) implies not q؛ ب) (not p implies r) implies r؛ ج) (r implies p) implies q؛ د) (r implies not q) implies not p؛ هـ) (p implies r) implies q.",
     options: ["۱", "۲", "۳", "۴"],
@@ -116,7 +116,7 @@ export const verifiedGrade11HumanitiesKankchiBatch1: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-math-logic-08",
     grade: "یازدهم", track: "انسانی", subject: "ریاضی و آمار",
-    chapter: "آشنایی با منطق و استدلال ریاضی", topic: "جدول ارزش گزاره‌های مرکب",
+    chapter: "گزاره‌ها و ترکیب گزاره‌ها", topic: "جدول ارزش گزاره‌های مرکب",
     difficulty: "متوسط",
     prompt: "ستون آخر جدول ارزش گزارهٔ (¬(p ⇔ q) ∧ p) ⇒ ¬q کدام است؟ ترتیب سطرها به‌ترتیب (درست، درست)، (درست، نادرست)، (نادرست، درست) و (نادرست، نادرست) است.",
     options: [
@@ -133,7 +133,7 @@ export const verifiedGrade11HumanitiesKankchiBatch1: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-math-logic-09",
     grade: "یازدهم", track: "انسانی", subject: "ریاضی و آمار",
-    chapter: "آشنایی با منطق و استدلال ریاضی", topic: "عکس نقیض گزاره",
+    chapter: "گزاره‌ها و ترکیب گزاره‌ها", topic: "عکس نقیض گزاره",
     difficulty: "متوسط",
     prompt: "عکس نقیض گزارهٔ p ⇒ (q ⇒ r) کدام است؟",
     options: [
@@ -150,7 +150,7 @@ export const verifiedGrade11HumanitiesKankchiBatch1: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-math-logic-10",
     grade: "یازدهم", track: "انسانی", subject: "ریاضی و آمار",
-    chapter: "آشنایی با منطق و استدلال ریاضی", topic: "استنتاج از گزاره‌های مرکب",
+    chapter: "گزاره‌ها و ترکیب گزاره‌ها", topic: "استنتاج از گزاره‌های مرکب",
     difficulty: "دشوار",
     prompt: "اگر گزارهٔ ((¬q ⇒ r) ∨ ¬p) ∧ ¬p درست باشد، ارزش کدام گزاره حتماً درست است؟",
     options: [
