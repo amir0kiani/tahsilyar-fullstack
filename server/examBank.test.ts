@@ -1297,4 +1297,21 @@ describe("curriculum and assessment question bank", () => {
     expect(authored.every((question) => question.sourceTitle?.includes("سؤال تألیفی") && question.reviewerNote?.includes("تألیفی"))).toBe(true);
   });
 
+
+  it("reaches at least five reviewed questions in every Grade 11 Math-track Calculus chapter", () => {
+    const chapters = ["جبر و معادله", "تابع", "توابع نمایی و لگاریتمی", "مثلثات", "حد و پیوستگی"];
+    for (const chapter of chapters) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "ریاضی" &&
+        question.subject === "حسابان" && question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const authored = verifiedQuestions.filter((question) => question.id.startsWith("function-0") ||
+      question.id.startsWith("exp-0") || question.id.startsWith("trig-0") || question.id.startsWith("limit-0"));
+    expect(authored).toHaveLength(20);
+    expect(authored.every((question) => question.sourceTitle?.includes("سؤال تألیفی") && question.reviewerNote?.includes("تألیفی"))).toBe(true);
+  });
+
 });
