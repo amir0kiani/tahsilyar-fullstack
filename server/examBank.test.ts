@@ -1047,11 +1047,16 @@ describe("curriculum and assessment question bank", () => {
       question.id.startsWith("verified-grade11-chem-1405-")
     );
     expect(officialBatch).toHaveLength(10);
+    const expectedKeys: Record<string, number> = {
+      "۲-الف": 0, "۳-ب": 0, "۳-پ": 0, "۷-الف": 2, "۹": 2,
+      "۱۴-ب": 1, "۲-ت": 0, "۳-ت": 0, "۵-الف و ۵-ب": 0, "۶-ب": 1,
+    };
     expect(officialBatch.every((question) =>
       question.sourceStatus === "official-exam-adapted" &&
       question.sourceTitle === "آزمون نهایی شیمی (۲) یازدهم تجربی – ۳ مرداد ۱۴۰۵" &&
       question.sourceUrl === "https://azmoon.medu.ir/" &&
-      question.reviewerNote?.includes("گزینه‌های انحرافی تألیف شده‌اند")
+      question.reviewerNote?.includes("گزینه‌های انحرافی تألیف شده‌اند") &&
+      question.correctIndex === expectedKeys[question.sourceQuestionNumber ?? ""]
     )).toBe(true);
   });
 
