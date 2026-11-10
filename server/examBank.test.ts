@@ -1244,4 +1244,38 @@ describe("curriculum and assessment question bank", () => {
       expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
     }
   });
+
+  it("fills identified near-threshold Grade 11 humanities lessons to at least five reviewed items", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-gap-authored-")
+    );
+    expect(batch).toHaveLength(13);
+    const expected: Array<[string, string, string, number]> = [
+      ["انسانی", "جغرافیا", "نواحی آب و هوایی", 5],
+      ["انسانی", "جامعه‌شناسی", "فرهنگ جهانی", 5],
+      ["انسانی", "روان‌شناسی", "روان‌شناسی رشد", 5],
+      ["انسانی", "فلسفه", "چیستی انسان", 5],
+      ["انسانی", "فلسفه", "فلسفه و زندگی", 5],
+      ["انسانی", "تاریخ", "منابع پژوهش در تاریخ اسلام و ایران دوران اسلامی", 5],
+      ["انسانی", "تاریخ", "اسلام در مکه", 5],
+    ];
+    for (const [track, subject, chapter, minimum] of expected) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === track &&
+        question.subject === subject &&
+        question.chapter === chapter &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4
+      ).length;
+      expect(count, `${subject} / ${chapter}`).toBeGreaterThanOrEqual(minimum);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.sourceStatus === "sample-authored" &&
+      question.reviewerNote?.includes("به هیچ آزمون رسمی نسبت داده نشده")
+    )).toBe(true);
+  });
 });
