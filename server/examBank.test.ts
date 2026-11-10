@@ -174,15 +174,15 @@ describe("curriculum and assessment question bank", () => {
     const rows = [
       ...Array.from({ length: 5 }, (_, index) => ({
         track: "انسانی", grade: "یازدهم", subject: "ریاضی و آمار",
-        chapter: "آشنایی با منطق و استدلال ریاضی", sourceStatus: "reviewed",
+        chapter: "گزاره‌ها و ترکیب گزاره‌ها", sourceStatus: "reviewed",
       })),
       {
         track: "انسانی", grade: "یازدهم", subject: "ریاضی و آمار",
-        chapter: "آشنایی با منطق و استدلال ریاضی", sourceStatus: "pending-review",
+        chapter: "گزاره‌ها و ترکیب گزاره‌ها", sourceStatus: "pending-review",
       },
       ...Array.from({ length: 4 }, () => ({
         track: "انسانی", grade: "یازدهم", subject: "ریاضی و آمار",
-        chapter: "تابع", sourceStatus: "sample-authored",
+        chapter: "توابع ثابت، چند ضابطه‌ای و همانی", sourceStatus: "sample-authored",
       })),
     ];
     const book = buildGradeSpecificCatalog(rows).find((item) =>
@@ -194,7 +194,7 @@ describe("curriculum and assessment question bank", () => {
     expect(logic).toMatchObject({ questionCount: 6, verifiedQuestionCount: 5, targetQuestionsPerLesson: 5, targetMet: true });
     expect(functionLesson).toMatchObject({ questionCount: 4, verifiedQuestionCount: 0, targetQuestionsPerLesson: 5, targetMet: false });
     expect(book?.lessonsMeetingTarget).toBe(1);
-    expect(book?.lessonCount).toBe(3);
+    expect(book?.lessonCount).toBe(7);
   });
 
   it("keeps every curriculum catalogue entry grade- and track-specific", () => {
