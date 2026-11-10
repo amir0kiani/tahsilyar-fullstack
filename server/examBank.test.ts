@@ -313,6 +313,31 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("adds five official-exam-adapted Grade 11 geology questions for each remaining lesson", () => {
+    const chapters = [
+      "منابع آب و خاک",
+      "پویایی زمین",
+      "زمین‌شناسی و سلامت",
+      "زمین‌شناسی و سازه‌های مهندسی",
+      "زمین‌شناسی ایران",
+    ];
+    for (const chapter of chapters) {
+      const matching = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "تجربی" &&
+        question.subject === "زمین‌شناسی" &&
+        question.chapter === chapter &&
+        question.sourceStatus === "official-exam-adapted"
+      );
+      expect(matching, chapter).toHaveLength(5);
+      expect(matching.every((question) =>
+        question.sourceYear === "۱۴۰۵" &&
+        Boolean(question.sourceQuestionNumber) &&
+        question.sourceTitle?.includes("۱۲ مرداد")
+      )).toBe(true);
+    }
+  });
+
   it("reaches five source-adapted questions for each covered Grade 11 geology lesson", () => {
     const geology = curriculumCatalog.find((book) =>
       book.grade === "یازدهم" && book.track === "تجربی" && book.subject === "زمین‌شناسی"
