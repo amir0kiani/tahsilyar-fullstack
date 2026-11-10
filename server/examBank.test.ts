@@ -1178,4 +1178,70 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+
+  it("covers every Grade 11 mathematics-track Physics 2 chapter with official-exam-adapted questions", () => {
+    const chapters = [
+      "الکتریسیتهٔ ساکن",
+      "جریان الکتریکی و مدارهای جریان مستقیم",
+      "مغناطیس",
+      "القای الکترومغناطیسی و جریان متناوب",
+    ];
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("official-adapted-grade11-math-physics-1405-")
+    );
+    expect(batch).toHaveLength(19);
+    const expectedNewPerChapter: Record<string, number> = {
+      "الکتریسیتهٔ ساکن": 4,
+      "جریان الکتریکی و مدارهای جریان مستقیم": 5,
+      "مغناطیس": 5,
+      "القای الکترومغناطیسی و جریان متناوب": 5,
+    };
+    for (const chapter of chapters) {
+      const allReviewed = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "ریاضی" &&
+        question.subject === "فیزیک" &&
+        question.chapter === chapter &&
+        question.sourceStatus === "official-exam-adapted"
+      );
+      expect(allReviewed.length, chapter).toBeGreaterThanOrEqual(5);
+      expect(batch.filter((question) => question.chapter === chapter), chapter)
+        .toHaveLength(expectedNewPerChapter[chapter]);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "ریاضی" &&
+      question.subject === "فیزیک" &&
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceTitle === "آزمون نهایی فیزیک (۲) یازدهم رشته ریاضی، ۳ مرداد ۱۴۰۵؛ مرکز ارزشیابی و تضمین کیفیت نظام آموزش و پرورش" &&
+      question.reviewerNote?.includes("گزینه‌های انحرافی تألیفی‌اند") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "official-adapted-grade11-math-physics-1405-electrostatic-conductor-01": 0,
+      "official-adapted-grade11-math-physics-1405-electrostatic-drop-field-02": 1,
+      "official-adapted-grade11-math-physics-1405-electrostatic-surface-charge-03": 2,
+      "official-adapted-grade11-math-physics-1405-electrostatic-isolated-capacitor-04": 0,
+      "official-adapted-grade11-math-physics-1405-dc-wire-area-01": 1,
+      "official-adapted-grade11-math-physics-1405-dc-battery-capacity-02": 2,
+      "official-adapted-grade11-math-physics-1405-dc-temperature-resistance-03": 1,
+      "official-adapted-grade11-math-physics-1405-dc-ldr-04": 1,
+      "official-adapted-grade11-math-physics-1405-dc-battery-internal-resistance-05": 0,
+      "official-adapted-grade11-math-physics-1405-magnet-parallel-wires-01": 0,
+      "official-adapted-grade11-math-physics-1405-magnet-moving-charge-02": 1,
+      "official-adapted-grade11-math-physics-1405-magnet-circular-coil-turns-03": 3,
+      "official-adapted-grade11-math-physics-1405-magnet-soft-iron-04": 0,
+      "official-adapted-grade11-math-physics-1405-magnet-wire-aligned-field-05": 0,
+      "official-adapted-grade11-math-physics-1405-induction-flux-emf-01": 1,
+      "official-adapted-grade11-math-physics-1405-induction-field-from-flux-02": 1,
+      "official-adapted-grade11-math-physics-1405-induction-moving-loop-03": 2,
+      "official-adapted-grade11-math-physics-1405-induction-inductor-energy-04": 2,
+      "official-adapted-grade11-math-physics-1405-induction-ac-current-equation-05": 1,
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
 });
