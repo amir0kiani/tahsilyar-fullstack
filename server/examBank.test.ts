@@ -375,8 +375,8 @@ describe("curriculum and assessment question bank", () => {
         question.subject === "زمین‌شناسی" &&
         question.chapter === chapter
       );
-      expect(matching.length, chapter).toBeGreaterThanOrEqual(5);
-      expect(matching.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+      expect(matching.filter((question) => question.sourceStatus === "mock-exam-adapted"), chapter).toHaveLength(5);
+      expect(matching.filter((question) => question.sourceStatus === "official-exam-adapted"), chapter).toHaveLength(5);
     }
   });
 
