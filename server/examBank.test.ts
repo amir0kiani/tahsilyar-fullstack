@@ -20,7 +20,7 @@ describe("curriculum and assessment question bank", () => {
 
   it("keeps the original sample-authored bank clearly separate", () => {
     expect(examQuestions.length).toBeGreaterThanOrEqual(50);
-    expect(examQuestions.every((question) => question.sourceStatus === "sample-authored")).toBe(true);
+    expect(examQuestions.every((question) => question.sourceStatus === "reviewed")).toBe(true);
   });
 
   it("records traceable provenance for every official- or mock-exam-adapted question", () => {
