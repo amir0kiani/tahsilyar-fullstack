@@ -1060,4 +1060,49 @@ describe("curriculum and assessment question bank", () => {
     )).toBe(true);
   });
 
+
+  it("provides five reviewed Grade 11 experimental physics questions in every chapter", () => {
+    const chapters = [
+      "الکتریسیتهٔ ساکن",
+      "جریان الکتریکی و مدارهای جریان مستقیم",
+      "مغناطیس و القای الکترومغناطیسی",
+    ];
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "تجربی" &&
+      question.subject === "فیزیک" &&
+      question.id.startsWith("authored-grade11-experimental-physics-")
+    );
+    expect(batch).toHaveLength(15);
+    for (const chapter of chapters) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(5);
+    }
+    expect(batch.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle === "تألیفی تحصیل‌یار بر اساس محتوای فیزیک (۲) یازدهم" &&
+      question.options.length === 4 &&
+      question.reviewerNote?.includes("به آزمون رسمی نسبت داده نشده")
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "authored-grade11-experimental-physics-static-coulomb-01": 1,
+      "authored-grade11-experimental-physics-static-field-02": 1,
+      "authored-grade11-experimental-physics-static-capacitor-03": 2,
+      "authored-grade11-experimental-physics-static-conductor-04": 1,
+      "authored-grade11-experimental-physics-static-potential-05": 2,
+      "authored-grade11-experimental-physics-dc-ohm-01": 1,
+      "authored-grade11-experimental-physics-dc-series-02": 2,
+      "authored-grade11-experimental-physics-dc-parallel-03": 0,
+      "authored-grade11-experimental-physics-dc-internal-04": 0,
+      "authored-grade11-experimental-physics-dc-power-05": 2,
+      "authored-grade11-experimental-physics-mag-field-01": 2,
+      "authored-grade11-experimental-physics-mag-force-02": 1,
+      "authored-grade11-experimental-physics-mag-wire-03": 2,
+      "authored-grade11-experimental-physics-mag-lenz-04": 1,
+      "authored-grade11-experimental-physics-mag-induction-05": 2,
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
 });
