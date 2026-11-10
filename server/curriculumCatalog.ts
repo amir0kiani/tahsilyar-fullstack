@@ -18,6 +18,8 @@ export const curriculumCatalog: CurriculumBook[] = [
   add("عمومی", "یازدهم", "فارسی", ["ادبیات تعلیمی", "ادبیات سفر و زندگی", "ادبیات غنایی", "ادبیات پایداری", "ادبیات انقلاب اسلامی", "ادبیات حماسی", "ادبیات داستانی", "ادبیات جهان"]),
   add("عمومی", "یازدهم", "نگارش", ["گسترش محتوا (۱): زمان و مکان", "گسترش محتوا (۲): شخصیت", "گسترش محتوا (۳): گفت‌وگو", "سفرنامه", "کاهش محتوا: خلاصه‌نویسی", "مثل‌نویسی"]),
   // Grade 11 Arabic textbooks are track-specific; do not merge humanities and math/science questions.
+  // Lesson-title cross-checks: humanities https://rmoon.ir/mabhas/ensani/arabi-ensani
+  // Math/science https://www.daneshchi.ir/arabi-rt-11/
   // Official Roshd book records: humanities https://www.roshd.ir/quran/Content/کتاب-عربی-2-پایه-یازدهم-رشته-ادبیات-و-علوم-انسانی
   // Math/science https://www.roshd.ir/quran/Content/کتاب-عربی-2-پایه-یازدهم-رشته-های-ریاضی-و-فیزیک-و-علوم-تجربی
   add("انسانی", "یازدهم", "عربی", ["مواعظ قیمة", "صناعة التلميع في الأدب الفارسي", "عجائب المخلوقات", "تأثير اللغة الفارسية على اللغة العربية", "الصدق", "ارحموا ثلاثاً", "لا تقنطوا"]),
