@@ -1108,4 +1108,74 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+
+  it("provides at least five reviewed questions in every Grade 11 experimental mathematics chapter", () => {
+    const chapters = [
+      "هندسه تحلیلی و جبر",
+      "هندسه",
+      "تابع",
+      "مثلثات",
+      "توابع نمایی و لگاریتمی",
+    ];
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("authored-grade11-experimental-math-")
+    );
+    expect(batch).toHaveLength(24);
+    const expectedNewPerChapter: Record<string, number> = {
+      "هندسه تحلیلی و جبر": 5,
+      "هندسه": 5,
+      "تابع": 5,
+      "مثلثات": 5,
+      "توابع نمایی و لگاریتمی": 4,
+    };
+    for (const chapter of chapters) {
+      const allReviewed = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "تجربی" &&
+        question.subject === "ریاضی" &&
+        question.chapter === chapter &&
+        ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? "")
+      );
+      expect(allReviewed.length, chapter).toBeGreaterThanOrEqual(5);
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(expectedNewPerChapter[chapter]);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "تجربی" &&
+      question.subject === "ریاضی" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle === "تألیفی تحصیل‌یار بر اساس محتوای ریاضی (۲) یازدهم تجربی" &&
+      question.reviewerNote?.includes("به آزمون رسمی نسبت داده نشده")
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "authored-grade11-experimental-math-analytic-distance-01": 2,
+      "authored-grade11-experimental-math-analytic-line-02": 0,
+      "authored-grade11-experimental-math-analytic-roots-03": 2,
+      "authored-grade11-experimental-math-analytic-discriminant-04": 1,
+      "authored-grade11-experimental-math-analytic-vertex-05": 0,
+      "authored-grade11-experimental-math-geometry-chord-01": 2,
+      "authored-grade11-experimental-math-geometry-inscribed-angle-02": 1,
+      "authored-grade11-experimental-math-geometry-tangent-03": 2,
+      "authored-grade11-experimental-math-geometry-cyclic-04": 2,
+      "authored-grade11-experimental-math-geometry-similar-05": 1,
+      "authored-grade11-experimental-math-function-domain-01": 1,
+      "authored-grade11-experimental-math-function-value-02": 1,
+      "authored-grade11-experimental-math-function-composition-03": 1,
+      "authored-grade11-experimental-math-function-inverse-04": 1,
+      "authored-grade11-experimental-math-function-range-05": 1,
+      "authored-grade11-experimental-math-trig-special-angle-01": 1,
+      "authored-grade11-experimental-math-trig-equation-02": 1,
+      "authored-grade11-experimental-math-trig-identity-03": 1,
+      "authored-grade11-experimental-math-trig-ratio-04": 0,
+      "authored-grade11-experimental-math-trig-cos-equation-05": 1,
+      "authored-grade11-experimental-math-exp-power-01": 2,
+      "authored-grade11-experimental-math-exp-log-02": 1,
+      "authored-grade11-experimental-math-exp-log-equation-03": 3,
+      "authored-grade11-experimental-math-exp-equation-04": 1,
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
 });
