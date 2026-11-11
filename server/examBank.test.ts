@@ -1481,6 +1481,7 @@ describe("curriculum and assessment question bank", () => {
     expect(book?.chapters).toEqual(officialLessons);
 
     const reviewedChapters = [
+      "آشنایی با منطق ریاضی",
       "مجموعه و زیرمجموعه",
       "قوانین و اعمال بین مجموعه‌ها",
       "مبانی احتمال",
