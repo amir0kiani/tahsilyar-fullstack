@@ -973,7 +973,7 @@ describe("curriculum and assessment question bank", () => {
     );
     expect(batch).toHaveLength(10);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
-    expect(batch.filter((question) => question.chapter === "ترجمه")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "مواعظ قیمة")).toHaveLength(10);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
       expect(question.correctIndex, number).toBe(expectedKeys[number]);
