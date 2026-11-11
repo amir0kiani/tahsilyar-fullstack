@@ -1459,4 +1459,44 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+
+  it("fills the Grade 11 mathematics-track set and subset lessons with five reviewed questions each", () => {
+    const chapters = ["مجموعه و زیرمجموعه", "قوانین و اعمال بین مجموعه‌ها"];
+    for (const chapter of chapters) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "ریاضی" &&
+        question.subject === "آمار و احتمال" && question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("authored-grade11-math-statistics-")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.filter((question) => question.chapter === "مجموعه و زیرمجموعه")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "قوانین و اعمال بین مجموعه‌ها")).toHaveLength(5);
+    expect(batch.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("چاپ دهم ۱۴۰۵") &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Amar-11_Daneshchi.iR.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی")
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "authored-grade11-math-statistics-subset-count-01": 2,
+      "authored-grade11-math-statistics-proper-subset-count-02": 2,
+      "authored-grade11-math-statistics-set-builder-03": 1,
+      "authored-grade11-math-statistics-equal-sets-04": 1,
+      "authored-grade11-math-statistics-subset-relation-05": 0,
+      "authored-grade11-math-statistics-set-difference-01": 1,
+      "authored-grade11-math-statistics-de-morgan-union-02": 1,
+      "authored-grade11-math-statistics-de-morgan-intersection-03": 1,
+      "authored-grade11-math-statistics-cartesian-cardinality-04": 1,
+      "authored-grade11-math-statistics-cartesian-order-05": 1
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
 });
