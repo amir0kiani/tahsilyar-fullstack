@@ -1365,4 +1365,48 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+
+  it("matches the official seven-chapter Grade 11 Experimental Math 2 contents and fills chapters 6 and 7", () => {
+    const chapters = ["هندسه تحلیلی و جبر", "هندسه", "تابع", "مثلثات", "توابع نمایی و لگاریتمی", "حد و پیوستگی", "آمار و احتمال"];
+    const book = curriculumCatalog.find((entry) =>
+      entry.grade === "یازدهم" && entry.track === "تجربی" && entry.subject === "ریاضی"
+    );
+    expect(book?.chapters).toEqual(chapters);
+    for (const chapter of chapters) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "تجربی" &&
+        question.subject === "ریاضی" && question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-experimental-math-gap-")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.filter((question) => question.chapter === "حد و پیوستگی")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "آمار و احتمال")).toHaveLength(5);
+    expect(batch.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("چاپ دهم ۱۴۰۵") &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Rizai-Tajrobi-11_Daneshchi.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی")
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "grade11-experimental-math-gap-limit-polynomial-01": 2,
+      "grade11-experimental-math-gap-limit-factorization-02": 1,
+      "grade11-experimental-math-gap-limit-one-sided-03": 1,
+      "grade11-experimental-math-gap-continuity-parameter-04": 1,
+      "grade11-experimental-math-gap-limit-rational-05": 3,
+      "grade11-experimental-math-gap-conditional-probability-01": 2,
+      "grade11-experimental-math-gap-independent-events-02": 1,
+      "grade11-experimental-math-gap-descriptive-mean-03": 1,
+      "grade11-experimental-math-gap-descriptive-range-04": 2,
+      "grade11-experimental-math-gap-descriptive-variance-05": 1
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
 });
