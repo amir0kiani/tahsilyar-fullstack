@@ -1460,7 +1460,12 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
-  it("fills the Grade 11 mathematics-track set and subset lessons with five reviewed questions each", () => {
+  it("matches the official eleven-lesson Grade 11 Statistics and Probability map and fills set algebra", () => {
+    const officialLessons = ["آشنایی با منطق ریاضی", "جبر مجموعه‌ها", "مبانی احتمال", "احتمال غیرهم‌شانس", "احتمال شرطی", "پیشامدهای مستقل و وابسته", "توصیف و نمایش داده‌ها", "معیارهای گرایش به مرکز", "معیارهای پراکندگی", "گردآوری داده‌ها", "برآورد"];
+    const book = curriculumCatalog.find((entry) =>
+      entry.grade === "یازدهم" && entry.track === "ریاضی" && entry.subject === "آمار و احتمال"
+    );
+    expect(book?.chapters).toEqual(officialLessons);
     const chapters = ["جبر مجموعه‌ها"];
     for (const chapter of chapters) {
       const count = verifiedQuestions.filter((question) =>
