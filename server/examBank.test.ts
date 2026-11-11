@@ -1562,7 +1562,7 @@ describe("curriculum and assessment question bank", () => {
     const batch = verifiedQuestions.filter((question) =>
       question.id.startsWith("authored-grade11-math-statistics-remaining-")
     );
-    expect(batch).toHaveLength(34);
+    expect(batch).toHaveLength(35);
     for (const chapter of chapters) {
       const questions = batch.filter((question) => question.chapter === chapter);
       expect(questions, chapter).toHaveLength(5);
@@ -1714,7 +1714,7 @@ describe("curriculum and assessment question bank", () => {
     const batch = verifiedQuestions.filter((question) =>
       question.id.startsWith("grade11-philosophy-gap-")
     );
-    expect(batch).toHaveLength(35);
+    expect(batch).toHaveLength(34);
     const addedPerLesson: Record<string, number> = {
       "چیستی فلسفه": 5,
       "آغاز تاریخی فلسفه": 5,
