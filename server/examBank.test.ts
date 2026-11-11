@@ -1497,7 +1497,8 @@ describe("curriculum and assessment question bank", () => {
     }
 
     const setBatch = verifiedQuestions.filter((question) =>
-      question.id.startsWith("authored-grade11-math-statistics-")
+      question.id.startsWith("authored-grade11-math-statistics-") &&
+      !question.id.startsWith("authored-grade11-math-statistics-remaining-")
     );
     expect(setBatch).toHaveLength(10);
     expect(setBatch.every((question) => question.chapter === "جبر مجموعه‌ها")).toBe(true);
