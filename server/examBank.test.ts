@@ -1250,7 +1250,8 @@ describe("curriculum and assessment question bank", () => {
 
   it("provides at least five reviewed questions in identified Grade 11 humanities lessons", () => {
     const batch = verifiedQuestions.filter((question) =>
-      question.id.startsWith("grade11-gap-authored-")
+      question.id.startsWith("grade11-gap-authored-") &&
+      !question.id.startsWith("grade11-gap-authored-psych-")
     );
     expect(batch).toHaveLength(13);
     const expected: Array<[string, string, string, number]> = [
