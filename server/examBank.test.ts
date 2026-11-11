@@ -118,8 +118,11 @@ describe("curriculum and assessment question bank", () => {
 
     expect(curriculumCatalog.some((item) => item.grade === "یازدهم" && item.track === "عمومی" && ["عربی", "دین و زندگی"].includes(item.subject))).toBe(false);
     expect(book("انسانی", "عربی")?.chapters).toEqual(["مواعظ قیمة", "صناعة التلميع في الأدب الفارسي", "عجائب المخلوقات", "تأثير اللغة الفارسية على اللغة العربية", "الصدق", "ارحموا ثلاثاً", "لا تقنطوا"]);
+    expect(book("انسانی", "عربی")?.bookCode).toBe("111207");
     const mathArabic = book("ریاضی", "عربی")?.chapters ?? [];
     const scienceArabic = book("تجربی", "عربی")?.chapters ?? [];
+    expect(book("ریاضی", "عربی")?.bookCode).toBe("111206");
+    expect(book("تجربی", "عربی")?.bookCode).toBe("111206");
     expect(mathArabic).toHaveLength(7);
     expect(scienceArabic).toEqual(mathArabic);
     expect(book("انسانی", "دین و زندگی")?.chapters).toHaveLength(18);
