@@ -131,6 +131,22 @@ describe("curriculum and assessment question bank", () => {
     expect(book("تجربی", "دین و زندگی")?.chapters).toEqual(nonHumanitiesDini);
   });
 
+  it("maps all uploaded Grade 11 humanities Arabic questions to the cited pages of Lesson 1", () => {
+    const lessonOne = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "عربی" &&
+      question.chapter === "مواعظ قیمة" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      question.sourceQuestionNumber
+    );
+    expect(lessonOne).toHaveLength(10);
+    expect(lessonOne.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.reviewerNote?.includes("صفحات ۴ تا ۱۳ کتاب درسی")
+    )).toBe(true);
+  });
+
   it("maps the uploaded Grade 11 math/science Arabic mock-exam questions to Lesson 1 only", () => {
     for (const track of ["ریاضی", "تجربی"]) {
       const lessonOne = verifiedQuestions.filter((question) =>
