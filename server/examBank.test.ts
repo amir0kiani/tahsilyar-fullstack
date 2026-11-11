@@ -1461,7 +1461,7 @@ describe("curriculum and assessment question bank", () => {
 
 
   it("fills the Grade 11 mathematics-track set and subset lessons with five reviewed questions each", () => {
-    const chapters = ["مجموعه و زیرمجموعه", "قوانین و اعمال بین مجموعه‌ها"];
+    const chapters = ["جبر مجموعه‌ها"];
     for (const chapter of chapters) {
       const count = verifiedQuestions.filter((question) =>
         question.grade === "یازدهم" && question.track === "ریاضی" &&
@@ -1474,8 +1474,7 @@ describe("curriculum and assessment question bank", () => {
       question.id.startsWith("authored-grade11-math-statistics-")
     );
     expect(batch).toHaveLength(10);
-    expect(batch.filter((question) => question.chapter === "مجموعه و زیرمجموعه")).toHaveLength(5);
-    expect(batch.filter((question) => question.chapter === "قوانین و اعمال بین مجموعه‌ها")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "جبر مجموعه‌ها")).toHaveLength(10);
     expect(batch.every((question) =>
       question.sourceStatus === "reviewed" &&
       question.sourceTitle?.includes("چاپ دهم ۱۴۰۵") &&
