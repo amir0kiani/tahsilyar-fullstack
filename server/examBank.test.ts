@@ -2054,4 +2054,98 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+
+  it("completes all fifteen official Grade 11 humanities Sociology lessons with at least five eligible reviewed questions", () => {
+    const lessons = [
+      "جهان فرهنگی", "فرهنگ جهانی", "نمونه‌های فرهنگ جهانی (۱)", "نمونه‌های فرهنگ جهانی (۲)",
+      "باورها و ارزش‌های بنیادین فرهنگ غرب", "چگونگی تکوین فرهنگ معاصر غرب", "جامعه جهانی",
+      "تحولات نظام جهانی", "جهان دوقطبی", "جنگ‌ها و تقابل‌های جهانی",
+      "بحران‌های اقتصادی و زیست‌محیطی", "بحران‌های معرفتی و معنوی", "سرآغاز بیداری اسلامی",
+      "انقلاب اسلامی ایران؛ نقطه عطف بیداری اسلامی", "افق بیداری اسلامی"
+    ];
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "جامعه‌شناسی"
+    );
+    expect(book?.bookCode).toBe("111222");
+    expect(book?.chapters).toEqual(lessons);
+    for (const chapter of lessons) {
+      const eligible = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "جامعه‌شناسی" &&
+        question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 && question.correctIndex < 4 &&
+        question.explanation.length > 20
+      );
+      expect(eligible.length, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("grade11-sociology-gap-"));
+    expect(batch).toHaveLength(65);
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" && question.track === "انسانی" &&
+      question.subject === "جامعه‌شناسی" && question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("سؤال تألیفی تحصیل‌یار") &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/JameeShenasi-EM-11_Daneshchi.iR.pdf" &&
+      question.reviewerNote?.includes("ارجاع: صفحه‌های") &&
+      question.options.length === 4 && question.correctIndex >= 0 &&
+      question.correctIndex < 4 && question.explanation.length > 20
+    )).toBe(true);
+    for (const chapter of lessons) {
+      expect(batch.filter((question) => question.chapter === chapter).length, chapter)
+        .toBe(chapter === "فرهنگ جهانی" || chapter === "نمونه‌های فرهنگ جهانی (۱)" ? 0 : 5);
+    }
+  });
+
+  it("completes all twelve official Grade 11 humanities Literature and Arts lessons with at least five eligible reviewed questions", () => {
+    const lessons = [
+      "تاریخ ادبیات فارسی در قرن‌های هفتم، هشتم و نهم",
+      "پایه‌های آوایی",
+      "تشبیه",
+      "سبک‌شناسی قرن‌های هفتم، هشتم و نهم (سبک عراقی)",
+      "پایه‌های آوایی همسان (۱)",
+      "مجاز",
+      "تاریخ ادبیات فارسی در قرن‌های دهم و یازدهم",
+      "پایه‌های آوایی همسان (۲)",
+      "استعاره",
+      "سبک‌شناسی قرن‌های دهم و یازدهم (سبک هندی)",
+      "پایه‌های آوایی همسان دولختی",
+      "کنایه"
+    ];
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "علوم و فنون ادبی"
+    );
+    expect(book?.bookCode).toBe("111203");
+    expect(book?.chapters).toEqual(lessons);
+    for (const chapter of lessons) {
+      const eligible = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "علوم و فنون ادبی" &&
+        question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 && question.correctIndex < 4 &&
+        question.explanation.length > 20
+      );
+      expect(eligible.length, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("grade11-literature-gap-"));
+    expect(batch).toHaveLength(50);
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" && question.track === "انسانی" &&
+      question.subject === "علوم و فنون ادبی" && question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("سؤال تألیفی تحصیل‌یار") &&
+      question.sourceUrl === "https://abadgaranedu.ir/wp-content/uploads/2019/01/school-book-humanities-11th-literary-techniques-abadgaranedu.ir_.pdf" &&
+      question.reviewerNote?.includes("ارجاع: صفحه‌های") &&
+      question.options.length === 4 && question.correctIndex >= 0 &&
+      question.correctIndex < 4 && question.explanation.length > 20
+    )).toBe(true);
+    for (const chapter of lessons) {
+      expect(batch.filter((question) => question.chapter === chapter).length, chapter)
+        .toBe(lessons.indexOf(chapter) === 1 || lessons.indexOf(chapter) === 2 ? 0 : 5);
+    }
+  });
+
 });
