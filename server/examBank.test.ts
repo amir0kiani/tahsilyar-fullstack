@@ -1245,7 +1245,7 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
-  it("fills identified near-threshold Grade 11 humanities lessons to at least five reviewed items", () => {
+  it("provides at least five reviewed questions in identified Grade 11 humanities lessons", () => {
     const batch = verifiedQuestions.filter((question) =>
       question.id.startsWith("grade11-gap-authored-")
     );
@@ -1257,6 +1257,7 @@ describe("curriculum and assessment question bank", () => {
       ["انسانی", "فلسفه", "چیستی انسان", 5],
       ["انسانی", "فلسفه", "فلسفه و زندگی", 5],
       ["انسانی", "تاریخ", "منابع پژوهش در تاریخ اسلام و ایران دوران اسلامی", 5],
+      ["انسانی", "تاریخ", "روش پژوهش در تاریخ؛ بررسی و سنجش اعتبار شواهد و مدارک", 5],
       ["انسانی", "تاریخ", "اسلام در مکه", 5],
     ];
     for (const [track, subject, chapter, minimum] of expected) {
@@ -1265,6 +1266,7 @@ describe("curriculum and assessment question bank", () => {
         question.track === track &&
         question.subject === subject &&
         question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
         question.options.length === 4 &&
         question.correctIndex >= 0 &&
         question.correctIndex < 4
@@ -1274,7 +1276,8 @@ describe("curriculum and assessment question bank", () => {
     expect(batch.every((question) =>
       question.grade === "یازدهم" &&
       question.track === "انسانی" &&
-      question.sourceStatus === "sample-authored" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("کتاب") &&
       question.reviewerNote?.includes("به هیچ آزمون رسمی نسبت داده نشده")
     )).toBe(true);
   });
