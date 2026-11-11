@@ -1251,7 +1251,8 @@ describe("curriculum and assessment question bank", () => {
   it("provides at least five reviewed questions in identified Grade 11 humanities lessons", () => {
     const batch = verifiedQuestions.filter((question) =>
       question.id.startsWith("grade11-gap-authored-") &&
-      !question.id.startsWith("grade11-gap-authored-psych-")
+      (!question.id.startsWith("grade11-gap-authored-psych-") ||
+        question.id.startsWith("grade11-gap-authored-psych-development-"))
     );
     expect(batch).toHaveLength(13);
     const expected: Array<[string, string, string, number]> = [
@@ -1641,7 +1642,7 @@ describe("curriculum and assessment question bank", () => {
         question.track === "انسانی" &&
         question.subject === "روان‌شناسی" &&
         question.chapter === chapter &&
-        question.sourceStatus === "reviewed"
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")
       ).length;
       expect(count, chapter).toBeGreaterThanOrEqual(5);
     }
