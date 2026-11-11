@@ -1910,4 +1910,148 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+
+  it("completes all sixteen official Grade 11 humanities History lessons with at least five eligible reviewed questions", () => {
+    const lessons = [
+      "منابع پژوهش در تاریخ اسلام و ایران دوران اسلامی",
+      "روش پژوهش در تاریخ؛ بررسی و سنجش اعتبار شواهد و مدارک",
+      "اسلام در مکه",
+      "امت و حکومت نبوی در مدینه",
+      "تثبیت و گسترش اسلام در دوران خلفای نخستین",
+      "امویان بر مسند قدرت",
+      "جهان اسلام در عصر خلافت عباسی",
+      "اسلام در ایران؛ زمینه‌های ظهور تمدن ایرانی ـ اسلامی",
+      "ظهور و گسترش تمدن ایرانی اسلامی",
+      "ایران در دوران غزنوی، سلجوقی و خوارزمشاهی",
+      "حکومت، جامعه و اقتصاد در عصر مغول تیموری",
+      "فرهنگ و هنر در عصر مغول تیموری",
+      "تحولات سیاسی و اقتصادی ایران در دوره صفوی",
+      "فرهنگ و تمدن در عصر صفوی",
+      "قرون وسطا",
+      "رنسانس و عصر جدید"
+    ];
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "تاریخ"
+    );
+    expect(book?.bookCode).toBe("111219");
+    expect(book?.chapters).toEqual(lessons);
+
+    for (const chapter of lessons) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "تاریخ" &&
+        question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4 &&
+        question.explanation.length > 20
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-history-gap-")
+    );
+    expect(batch).toHaveLength(59);
+    const addedPerLesson: Record<string, number> = {
+      "امت و حکومت نبوی در مدینه": 5,
+      "تثبیت و گسترش اسلام در دوران خلفای نخستین": 5,
+      "امویان بر مسند قدرت": 5,
+      "جهان اسلام در عصر خلافت عباسی": 4,
+      "اسلام در ایران؛ زمینه‌های ظهور تمدن ایرانی ـ اسلامی": 5,
+      "ظهور و گسترش تمدن ایرانی اسلامی": 5,
+      "حکومت، جامعه و اقتصاد در عصر مغول تیموری": 5,
+      "فرهنگ و هنر در عصر مغول تیموری": 5,
+      "تحولات سیاسی و اقتصادی ایران در دوره صفوی": 5,
+      "فرهنگ و تمدن در عصر صفوی": 5,
+      "قرون وسطا": 5,
+      "رنسانس و عصر جدید": 5
+    };
+    for (const [chapter, expected] of Object.entries(addedPerLesson)) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(expected);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "تاریخ" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("کد ۱۱۱۲۱۹") &&
+      question.sourceUrl === "https://pin-pan.com/wp-content/uploads/2019/05/C111219.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی") &&
+      question.reviewerNote?.includes("ارجاع: صفحه‌های") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4 &&
+      question.explanation.length > 20
+    )).toBe(true);
+
+    const expectedKeys: Record<string, number> = {
+      "grade11-history-gap-lesson4-01": 1,
+      "grade11-history-gap-lesson4-02": 0,
+      "grade11-history-gap-lesson4-03": 0,
+      "grade11-history-gap-lesson4-04": 0,
+      "grade11-history-gap-lesson4-05": 1,
+      "grade11-history-gap-lesson5-01": 1,
+      "grade11-history-gap-lesson5-02": 1,
+      "grade11-history-gap-lesson5-03": 0,
+      "grade11-history-gap-lesson5-04": 0,
+      "grade11-history-gap-lesson5-05": 0,
+      "grade11-history-gap-lesson6-01": 0,
+      "grade11-history-gap-lesson6-02": 2,
+      "grade11-history-gap-lesson6-03": 1,
+      "grade11-history-gap-lesson6-04": 0,
+      "grade11-history-gap-lesson6-05": 1,
+      "grade11-history-gap-lesson7-02": 0,
+      "grade11-history-gap-lesson7-03": 1,
+      "grade11-history-gap-lesson7-04": 2,
+      "grade11-history-gap-lesson7-05": 0,
+      "grade11-history-gap-lesson8-01": 0,
+      "grade11-history-gap-lesson8-02": 1,
+      "grade11-history-gap-lesson8-03": 0,
+      "grade11-history-gap-lesson8-04": 1,
+      "grade11-history-gap-lesson8-05": 0,
+      "grade11-history-gap-lesson9-01": 0,
+      "grade11-history-gap-lesson9-02": 1,
+      "grade11-history-gap-lesson9-03": 0,
+      "grade11-history-gap-lesson9-04": 0,
+      "grade11-history-gap-lesson9-05": 1,
+      "grade11-history-gap-lesson11-01": 0,
+      "grade11-history-gap-lesson11-02": 0,
+      "grade11-history-gap-lesson11-03": 0,
+      "grade11-history-gap-lesson11-04": 0,
+      "grade11-history-gap-lesson11-05": 1,
+      "grade11-history-gap-lesson12-01": 0,
+      "grade11-history-gap-lesson12-02": 0,
+      "grade11-history-gap-lesson12-03": 0,
+      "grade11-history-gap-lesson12-04": 0,
+      "grade11-history-gap-lesson12-05": 0,
+      "grade11-history-gap-lesson13-01": 0,
+      "grade11-history-gap-lesson13-02": 0,
+      "grade11-history-gap-lesson13-03": 0,
+      "grade11-history-gap-lesson13-04": 0,
+      "grade11-history-gap-lesson13-05": 0,
+      "grade11-history-gap-lesson14-01": 0,
+      "grade11-history-gap-lesson14-02": 0,
+      "grade11-history-gap-lesson14-03": 0,
+      "grade11-history-gap-lesson14-04": 0,
+      "grade11-history-gap-lesson14-05": 0,
+      "grade11-history-gap-lesson15-01": 0,
+      "grade11-history-gap-lesson15-02": 0,
+      "grade11-history-gap-lesson15-03": 0,
+      "grade11-history-gap-lesson15-04": 0,
+      "grade11-history-gap-lesson15-05": 0,
+      "grade11-history-gap-lesson16-01": 0,
+      "grade11-history-gap-lesson16-02": 0,
+      "grade11-history-gap-lesson16-03": 0,
+      "grade11-history-gap-lesson16-04": 0,
+      "grade11-history-gap-lesson16-05": 0
+    };
+    expect(Object.keys(expectedKeys)).toHaveLength(59);
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
 });
