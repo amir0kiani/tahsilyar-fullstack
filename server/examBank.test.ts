@@ -1317,4 +1317,49 @@ describe("curriculum and assessment question bank", () => {
     expect(authored.every((question) => question.sourceTitle?.includes("سؤال تألیفی") && question.reviewerNote?.includes("تألیفی"))).toBe(true);
   });
 
+
+  it("matches the official Grade 11 Geometry 2 chapter map and reaches five reviewed questions per chapter", () => {
+    const chapters = ["دایره", "تبدیل‌های هندسی و کاربردها", "روابط طولی در مثلث"];
+    const book = curriculumCatalog.find((entry) =>
+      entry.grade === "یازدهم" && entry.track === "ریاضی" && entry.subject === "هندسه"
+    );
+    expect(book?.chapters).toEqual(chapters);
+    expect(book?.chapters).not.toContain("تجسم فضایی");
+    for (const chapter of chapters) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "ریاضی" &&
+        question.subject === "هندسه" && question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("authored-grade11-math-geometry-")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.filter((question) => question.chapter === "تبدیل‌های هندسی و کاربردها")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "روابط طولی در مثلث")).toHaveLength(5);
+    expect(batch.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("چاپ دهم ۱۴۰۵") &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Hendese-Riazi-11_Daneshchi.iR.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی")
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "authored-grade11-math-geometry-reflection-01": 2,
+      "authored-grade11-math-geometry-translation-02": 0,
+      "authored-grade11-math-geometry-rotation-03": 3,
+      "authored-grade11-math-geometry-homothety-04": 1,
+      "authored-grade11-math-geometry-symmetry-05": 2,
+      "authored-grade11-math-geometry-sine-rule-01": 1,
+      "authored-grade11-math-geometry-cosine-rule-02": 1,
+      "authored-grade11-math-geometry-bisector-ratio-03": 1,
+      "authored-grade11-math-geometry-bisector-length-04": 1,
+      "authored-grade11-math-geometry-heron-05": 1
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
 });
