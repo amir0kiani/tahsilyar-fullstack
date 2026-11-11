@@ -29,7 +29,10 @@ describe("curriculum and assessment question bank", () => {
       expect(["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored"]).toContain(question.sourceStatus);
       expect(question.sourceTitle).toBeTruthy();
       const uploadedSource = question.sourceTitle?.includes("(فایل ارسالی کاربر)") ?? false;
-      const authoredReviewed = (question.sourceStatus === "reviewed" && question.sourceTitle?.includes("تألیفی تحصیل‌یار")) || question.sourceStatus === "sample-authored";
+      const authoredReviewed = (question.sourceStatus === "reviewed" && (
+        question.sourceTitle?.includes("تألیفی تحصیل‌یار") ||
+        question.reviewerNote?.includes("سؤال تألیفی")
+      )) || question.sourceStatus === "sample-authored";
       if (uploadedSource) {
         expect(question.sourceQuestionNumber).toBeTruthy();
       } else if (authoredReviewed) {
