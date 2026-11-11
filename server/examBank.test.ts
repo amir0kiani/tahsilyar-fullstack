@@ -1460,14 +1460,33 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
-  it("matches the official eleven-lesson Grade 11 Statistics and Probability map and fills set algebra", () => {
-    const officialLessons = ["آشنایی با منطق ریاضی", "جبر مجموعه‌ها", "مبانی احتمال", "احتمال غیرهم‌شانس", "احتمال شرطی", "پیشامدهای مستقل و وابسته", "توصیف و نمایش داده‌ها", "معیارهای گرایش به مرکز", "معیارهای پراکندگی", "گردآوری داده‌ها", "برآورد"];
+  it("matches all twelve official Grade 11 Statistics and Probability lessons and verifies the reviewed authored batches", () => {
+    const officialLessons = [
+      "آشنایی با منطق ریاضی",
+      "مجموعه و زیرمجموعه",
+      "قوانین و اعمال بین مجموعه‌ها",
+      "مبانی احتمال",
+      "احتمال غیرهم‌شانس",
+      "احتمال شرطی",
+      "پیشامدهای مستقل و وابسته",
+      "توصیف و نمایش داده‌ها",
+      "معیارهای گرایش به مرکز",
+      "معیارهای پراکندگی",
+      "گردآوری داده‌ها",
+      "برآورد"
+    ];
     const book = curriculumCatalog.find((entry) =>
       entry.grade === "یازدهم" && entry.track === "ریاضی" && entry.subject === "آمار و احتمال"
     );
     expect(book?.chapters).toEqual(officialLessons);
-    const chapters = ["جبر مجموعه‌ها"];
-    for (const chapter of chapters) {
+
+    const reviewedChapters = [
+      "مجموعه و زیرمجموعه",
+      "قوانین و اعمال بین مجموعه‌ها",
+      "مبانی احتمال",
+      "احتمال غیرهم‌شانس"
+    ];
+    for (const chapter of reviewedChapters) {
       const count = verifiedQuestions.filter((question) =>
         question.grade === "یازدهم" && question.track === "ریاضی" &&
         question.subject === "آمار و احتمال" && question.chapter === chapter &&
@@ -1475,17 +1494,31 @@ describe("curriculum and assessment question bank", () => {
       ).length;
       expect(count, chapter).toBeGreaterThanOrEqual(5);
     }
-    const batch = verifiedQuestions.filter((question) =>
+
+    const setBatch = verifiedQuestions.filter((question) =>
       question.id.startsWith("authored-grade11-math-statistics-")
     );
-    expect(batch).toHaveLength(10);
-    expect(batch.filter((question) => question.chapter === "جبر مجموعه‌ها")).toHaveLength(10);
-    expect(batch.every((question) =>
-      question.sourceStatus === "reviewed" &&
-      question.sourceTitle?.includes("چاپ دهم ۱۴۰۵") &&
-      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Amar-11_Daneshchi.iR.pdf" &&
-      question.reviewerNote?.includes("سؤال تألیفی")
-    )).toBe(true);
+    expect(setBatch).toHaveLength(10);
+    expect(setBatch.filter((question) => question.chapter === "مجموعه و زیرمجموعه")).toHaveLength(5);
+    expect(setBatch.filter((question) => question.chapter === "قوانین و اعمال بین مجموعه‌ها")).toHaveLength(5);
+
+    const probabilityBatch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("authored-grade11-math-probability-")
+    );
+    expect(probabilityBatch).toHaveLength(10);
+    expect(probabilityBatch.filter((question) => question.chapter === "مبانی احتمال")).toHaveLength(5);
+    expect(probabilityBatch.filter((question) => question.chapter === "احتمال غیرهم‌شانس")).toHaveLength(5);
+
+    for (const question of [...setBatch, ...probabilityBatch]) {
+      expect(question.sourceStatus, question.id).toBe("reviewed");
+      expect(question.sourceTitle, question.id).toContain("چاپ دهم ۱۴۰۵");
+      expect(question.sourceUrl, question.id).toBe("https://dl.daneshchi.ir/file/chap-school/Amar-11_Daneshchi.iR.pdf");
+      expect(question.reviewerNote, question.id).toContain("سؤال تألیفی");
+      expect(question.options, question.id).toHaveLength(4);
+      expect(question.correctIndex, question.id).toBeGreaterThanOrEqual(0);
+      expect(question.correctIndex, question.id).toBeLessThan(4);
+    }
+
     const expectedKeys: Record<string, number> = {
       "authored-grade11-math-statistics-subset-count-01": 2,
       "authored-grade11-math-statistics-proper-subset-count-02": 2,
@@ -1496,9 +1529,19 @@ describe("curriculum and assessment question bank", () => {
       "authored-grade11-math-statistics-de-morgan-union-02": 1,
       "authored-grade11-math-statistics-de-morgan-intersection-03": 1,
       "authored-grade11-math-statistics-cartesian-cardinality-04": 1,
-      "authored-grade11-math-statistics-cartesian-order-05": 1
+      "authored-grade11-math-statistics-cartesian-order-05": 1,
+      "authored-grade11-math-probability-sample-space-two-dice-01": 2,
+      "authored-grade11-math-probability-event-even-die-02": 1,
+      "authored-grade11-math-probability-complement-probability-03": 1,
+      "authored-grade11-math-probability-mutually-exclusive-union-04": 1,
+      "authored-grade11-math-probability-general-union-probability-05": 0,
+      "authored-grade11-math-probability-weighted-die-even-01": 2,
+      "authored-grade11-math-probability-biased-coin-complement-02": 1,
+      "authored-grade11-math-probability-weighted-teams-ratio-03": 1,
+      "authored-grade11-math-probability-weighted-three-outcomes-04": 1,
+      "authored-grade11-math-probability-weighted-dart-zones-05": 0
     };
-    for (const question of batch) {
+    for (const question of [...setBatch, ...probabilityBatch]) {
       expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
     }
   });
