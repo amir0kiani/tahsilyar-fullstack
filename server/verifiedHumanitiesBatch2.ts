@@ -106,7 +106,7 @@ export const verifiedHumanitiesBatch2: ExamQuestion[] = [
   }),
 
   q({
-    id: "upload-human11-math-conditional-logic-01", grade: "یازدهم", subject: "ریاضی و آمار",
+    id: "upload-human11-math-conditional-logic-01", grade: "یازدهم", track: "انسانی", subject: "ریاضی و آمار",
     chapter: "آشنایی با منطق و استدلال ریاضی", topic: "ارزش گزاره شرطی",
     prompt: "گزارهٔ شرطی «اگر p آنگاه q» در کدام حالت کاذب است؟",
     options: ["p و q هر دو درست باشند", "p نادرست و q درست باشد", "p و q هر دو نادرست باشند", "p درست و q نادرست باشد"], correctIndex: 3,
@@ -114,7 +114,7 @@ export const verifiedHumanitiesBatch2: ExamQuestion[] = [
     sourceTitle: source11, sourceQuestionNumber: "ریاضی و آمار (۲)، سؤال‌های ۱ تا ۱۰"
   }),
   q({
-    id: "upload-human11-literature-meter-02", grade: "یازدهم", subject: "علوم و فنون ادبی",
+    id: "upload-human11-literature-meter-02", grade: "یازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "پایه‌های آوایی", topic: "وزن شعر",
     prompt: "برای تعیین وزن یک مصراع فارسی، کدام کار بنیادی‌تر است؟",
     options: ["شمارش تعداد حروف نوشته‌شده بدون توجه به تلفظ", "تقطیع مصراع بر اساس هجاهای شنیداری", "شمارش تعداد واژه‌ها", "تعیین تعداد جمله‌های دستوری"], correctIndex: 1,
@@ -122,7 +122,7 @@ export const verifiedHumanitiesBatch2: ExamQuestion[] = [
     sourceTitle: source11, sourceQuestionNumber: "علوم و فنون ادبی (۲)، سؤال‌های ۱۱ تا ۳۰"
   }),
   q({
-    id: "upload-human11-sociology-global-culture-03", grade: "یازدهم", subject: "جامعه‌شناسی",
+    id: "upload-human11-sociology-global-culture-03", grade: "یازدهم", track: "انسانی", subject: "جامعه‌شناسی",
     chapter: "فرهنگ جهانی", topic: "گسترش فرهنگ جهانی",
     prompt: "کدام عامل در گسترش و انتقال عناصر فرهنگ در مقیاس جهانی نقش مستقیم‌تری دارد؟",
     options: ["قطع کامل ارتباطات میان جوامع", "رسانه‌ها و شبکه‌های ارتباطی فرامرزی", "محدودشدن همهٔ مبادلات فرهنگی به خانواده", "حذف زبان‌های ارتباطی مشترک"], correctIndex: 1,
@@ -130,7 +130,7 @@ export const verifiedHumanitiesBatch2: ExamQuestion[] = [
     sourceTitle: source11, sourceQuestionNumber: "جامعه‌شناسی (۲)، سؤال‌های ۳۱ تا ۴۰"
   }),
   q({
-    id: "upload-human11-psychology-memory-04", grade: "یازدهم", subject: "روان‌شناسی",
+    id: "upload-human11-psychology-memory-04", grade: "یازدهم", track: "انسانی", subject: "روان‌شناسی",
     chapter: "حافظه و علل فراموشی", topic: "رمزگردانی اطلاعات",
     prompt: "کدام روش معمولاً به ماندگاری بهتر اطلاعات در حافظهٔ بلندمدت کمک می‌کند؟",
     options: ["مرور فاصله‌دار همراه با بازیابی فعال", "خواندن سریع و پیوسته بدون توقف", "حفظ‌کردن بدون فهم معنا", "به‌تعویق‌انداختن همهٔ مرورها تا شب امتحان"], correctIndex: 0,
@@ -138,7 +138,7 @@ export const verifiedHumanitiesBatch2: ExamQuestion[] = [
     sourceTitle: source11, sourceQuestionNumber: "روان‌شناسی، سؤال‌های ۴۱ تا ۵۰"
   }),
   q({
-    id: "upload-human11-arabic-fael-05", grade: "یازدهم", subject: "عربی، زبان قرآن",
+    id: "upload-human11-arabic-fael-05", grade: "یازدهم", track: "انسانی", subject: "عربی، زبان قرآن",
     chapter: "اسم فاعل", topic: "ساخت اسم فاعل",
     prompt: "اسم فاعلِ فعل ثلاثی مجرد «کَتَبَ» کدام است؟",
     options: ["مَکْتوب", "کاتِب", "کِتابَة", "مَکْتَب"], correctIndex: 1,
@@ -146,7 +146,7 @@ export const verifiedHumanitiesBatch2: ExamQuestion[] = [
     sourceTitle: source11, sourceQuestionNumber: "عربی، زبان قرآن (۲)، سؤال‌های ۵۱ تا ۶۰"
   }),
   q({
-    id: "upload-human11-history-abbasid-06", grade: "یازدهم", subject: "تاریخ",
+    id: "upload-human11-history-abbasid-06", grade: "یازدهم", track: "انسانی", subject: "تاریخ",
     chapter: "جهان اسلام در عصر خلافت عباسی", topic: "انتقال خلافت به عباسیان",
     prompt: "جنبش عباسیان برای به‌دست‌گرفتن خلافت، بیش از همه از نارضایتی کدام گروه‌ها بهره برد؟",
     options: ["تنها اشراف رومی", "گروه‌هایی از مخالفان اموی، از جمله موالی و برخی شیعیان", "فقط فرماندهان بیزانسی", "کشاورزان اروپای غربی"], correctIndex: 1,
@@ -154,7 +154,7 @@ export const verifiedHumanitiesBatch2: ExamQuestion[] = [
     sourceTitle: source11, sourceQuestionNumber: "تاریخ (۲)، سؤال‌های ۶۱ تا ۷۰"
   }),
   q({
-    id: "upload-human11-geography-region-07", grade: "یازدهم", subject: "جغرافیا",
+    id: "upload-human11-geography-region-07", grade: "یازدهم", track: "انسانی", subject: "جغرافیا",
     chapter: "معنا و مفهوم ناحیه", topic: "معیارهای ناحیه‌بندی",
     prompt: "کدام ویژگی برای تعریف یک ناحیهٔ جغرافیایی ضروری‌تر است؟",
     options: ["وجود ویژگی یا معیار مشترک در محدوده‌ای مشخص", "یکسان‌بودن کامل همهٔ ساکنان", "داشتن مرز سیاسی مستقل در همهٔ موارد", "برابری جمعیت تمام سکونتگاه‌ها"], correctIndex: 0,
@@ -162,7 +162,7 @@ export const verifiedHumanitiesBatch2: ExamQuestion[] = [
     sourceTitle: source11, sourceQuestionNumber: "جغرافیا (۲)، سؤال‌های ۷۱ تا ۸۰"
   }),
   q({
-    id: "upload-human11-philosophy-knowledge-08", grade: "یازدهم", subject: "فلسفه",
+    id: "upload-human11-philosophy-knowledge-08", grade: "یازدهم", track: "انسانی", subject: "فلسفه",
     chapter: "ابزارهای شناخت", topic: "عقل و حس در شناخت",
     prompt: "کدام گزینه تفاوت نقش حس و عقل در شناخت را دقیق‌تر بیان می‌کند؟",
     options: ["حس و عقل هیچ نقشی در شناخت ندارند", "حس داده‌های حسی را فراهم می‌کند و عقل در تحلیل و استدلال دربارهٔ آن‌ها نقش دارد", "عقل فقط رنگ‌ها را تشخیص می‌دهد", "حس به‌تنهایی همهٔ گزاره‌های کلی و ضروری را اثبات می‌کند"], correctIndex: 1,
