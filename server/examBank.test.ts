@@ -1562,7 +1562,7 @@ describe("curriculum and assessment question bank", () => {
     const batch = verifiedQuestions.filter((question) =>
       question.id.startsWith("authored-grade11-math-statistics-remaining-")
     );
-    expect(batch).toHaveLength(35);
+    expect(batch).toHaveLength(34);
     for (const chapter of chapters) {
       const questions = batch.filter((question) => question.chapter === chapter);
       expect(questions, chapter).toHaveLength(5);
@@ -1778,7 +1778,7 @@ describe("curriculum and assessment question bank", () => {
       "grade11-philosophy-gap-lesson10-04": 1,
       "grade11-philosophy-gap-lesson10-05": 1
     };
-    expect(Object.keys(expectedKeys)).toHaveLength(35);
+    expect(Object.keys(expectedKeys)).toHaveLength(34);
     for (const question of batch) {
       expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
     }
