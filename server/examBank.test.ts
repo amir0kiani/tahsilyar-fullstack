@@ -1784,4 +1784,130 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+
+  it("completes all eleven official Grade 11 humanities Geography lessons with at least five eligible reviewed questions", () => {
+    const lessons = [
+      "معنا و مفهوم ناحیه",
+      "انسان و ناحیه",
+      "نواحی آب و هوایی",
+      "ناهمواری‌ها و اشکال زمین",
+      "نواحی زیستی",
+      "نواحی فرهنگی",
+      "نواحی اقتصادی (کشاورزی و صنعتی)",
+      "نواحی اقتصادی (تجارت و اقتصاد جهانی)",
+      "معنا و مفهوم ناحیه سیاسی",
+      "کشور، یک ناحیه سیاسی",
+      "ژئوپلیتیک"
+    ];
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "جغرافیا"
+    );
+    expect(book?.bookCode).toBe("111218");
+    expect(book?.chapters).toEqual(lessons);
+
+    const counts: Record<string, number> = {};
+    for (const chapter of lessons) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "جغرافیا" &&
+        question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4 &&
+        question.explanation.length > 20
+      ).length;
+      counts[chapter] = count;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    expect(counts["معنا و مفهوم ناحیه"]).toBe(5);
+    expect(counts["انسان و ناحیه"]).toBe(6);
+    expect(counts["نواحی آب و هوایی"]).toBe(5);
+
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-geography-gap-")
+    );
+    expect(batch).toHaveLength(44);
+    const addedPerLesson: Record<string, number> = {
+      "معنا و مفهوم ناحیه": 4,
+      "ناهمواری‌ها و اشکال زمین": 5,
+      "نواحی زیستی": 5,
+      "نواحی فرهنگی": 5,
+      "نواحی اقتصادی (کشاورزی و صنعتی)": 5,
+      "نواحی اقتصادی (تجارت و اقتصاد جهانی)": 5,
+      "معنا و مفهوم ناحیه سیاسی": 5,
+      "کشور، یک ناحیه سیاسی": 5,
+      "ژئوپلیتیک": 5
+    };
+    for (const [chapter, expected] of Object.entries(addedPerLesson)) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(expected);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "جغرافیا" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("کد ۱۱۱۲۱۸") &&
+      question.sourceUrl === "https://abadgaranedu.ir/wp-content/uploads/2019/01/school-book-humanities-11th-geography-abadgaranedu.ir_.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی") &&
+      question.reviewerNote?.includes("ارجاع: صفحه‌های") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4 &&
+      question.explanation.length > 20
+    )).toBe(true);
+
+    const expectedKeys: Record<string, number> = {
+      "grade11-geography-gap-lesson1-02": 0,
+      "grade11-geography-gap-lesson1-03": 2,
+      "grade11-geography-gap-lesson1-04": 1,
+      "grade11-geography-gap-lesson1-05": 2,
+      "grade11-geography-gap-lesson4-01": 1,
+      "grade11-geography-gap-lesson4-02": 1,
+      "grade11-geography-gap-lesson4-03": 2,
+      "grade11-geography-gap-lesson4-04": 1,
+      "grade11-geography-gap-lesson4-05": 0,
+      "grade11-geography-gap-lesson5-01": 1,
+      "grade11-geography-gap-lesson5-02": 0,
+      "grade11-geography-gap-lesson5-03": 1,
+      "grade11-geography-gap-lesson5-04": 0,
+      "grade11-geography-gap-lesson5-05": 2,
+      "grade11-geography-gap-lesson6-01": 0,
+      "grade11-geography-gap-lesson6-02": 1,
+      "grade11-geography-gap-lesson6-03": 0,
+      "grade11-geography-gap-lesson6-04": 1,
+      "grade11-geography-gap-lesson6-05": 0,
+      "grade11-geography-gap-lesson7-01": 1,
+      "grade11-geography-gap-lesson7-02": 2,
+      "grade11-geography-gap-lesson7-03": 1,
+      "grade11-geography-gap-lesson7-04": 2,
+      "grade11-geography-gap-lesson7-05": 1,
+      "grade11-geography-gap-lesson8-01": 1,
+      "grade11-geography-gap-lesson8-02": 1,
+      "grade11-geography-gap-lesson8-03": 0,
+      "grade11-geography-gap-lesson8-04": 1,
+      "grade11-geography-gap-lesson8-05": 1,
+      "grade11-geography-gap-lesson9-01": 1,
+      "grade11-geography-gap-lesson9-02": 1,
+      "grade11-geography-gap-lesson9-03": 2,
+      "grade11-geography-gap-lesson9-04": 1,
+      "grade11-geography-gap-lesson9-05": 0,
+      "grade11-geography-gap-lesson10-01": 1,
+      "grade11-geography-gap-lesson10-02": 0,
+      "grade11-geography-gap-lesson10-03": 1,
+      "grade11-geography-gap-lesson10-04": 1,
+      "grade11-geography-gap-lesson10-05": 1,
+      "grade11-geography-gap-lesson11-01": 1,
+      "grade11-geography-gap-lesson11-02": 0,
+      "grade11-geography-gap-lesson11-03": 0,
+      "grade11-geography-gap-lesson11-04": 1,
+      "grade11-geography-gap-lesson11-05": 0
+    };
+    expect(Object.keys(expectedKeys)).toHaveLength(44);
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
 });
