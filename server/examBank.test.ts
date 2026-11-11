@@ -1621,4 +1621,56 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+
+
+  it("reaches five reviewed questions in all eight Grade 11 humanities Psychology lessons", () => {
+    const lessons = [
+      "روان‌شناسی: تعریف و روش مورد مطالعه",
+      "روان‌شناسی رشد",
+      "احساس، توجه، ادراک",
+      "حافظه و علل فراموشی",
+      "تفکر (۱): حل مسئله",
+      "تفکر (۲): تصمیم‌گیری",
+      "انگیزه و نگرش",
+      "روان‌شناسی سلامت"
+    ];
+    for (const chapter of lessons) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "روان‌شناسی" &&
+        question.chapter === chapter &&
+        question.sourceStatus === "reviewed"
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-gap-authored-psych-")
+    );
+    expect(batch).toHaveLength(29);
+    const expectedPerLesson: Record<string, number> = {
+      "احساس، توجه، ادراک": 5,
+      "حافظه و علل فراموشی": 4,
+      "تفکر (۱): حل مسئله": 5,
+      "تفکر (۲): تصمیم‌گیری": 5,
+      "انگیزه و نگرش": 5,
+      "روان‌شناسی سلامت": 5
+    };
+    for (const [chapter, expected] of Object.entries(expectedPerLesson)) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(expected);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "روان‌شناسی" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("سؤال تألیفی") &&
+      question.sourceUrl === undefined &&
+      question.reviewerNote?.includes("تألیفی و بازبینی‌شده") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4 &&
+      question.explanation.length > 20
+    )).toBe(true);
+  });
 });
