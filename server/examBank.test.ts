@@ -1460,11 +1460,10 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
-  it("matches all twelve official Grade 11 Statistics and Probability lessons and verifies the reviewed authored batches", () => {
+  it("matches the official eleven-lesson Grade 11 Statistics and Probability map and verifies reviewed authored coverage", () => {
     const officialLessons = [
       "آشنایی با منطق ریاضی",
-      "مجموعه و زیرمجموعه",
-      "قوانین و اعمال بین مجموعه‌ها",
+      "جبر مجموعه‌ها",
       "مبانی احتمال",
       "احتمال غیرهم‌شانس",
       "احتمال شرطی",
@@ -1479,11 +1478,12 @@ describe("curriculum and assessment question bank", () => {
       entry.grade === "یازدهم" && entry.track === "ریاضی" && entry.subject === "آمار و احتمال"
     );
     expect(book?.chapters).toEqual(officialLessons);
+    expect(book?.chapters).not.toContain("مجموعه و زیرمجموعه");
+    expect(book?.chapters).not.toContain("قوانین و اعمال بین مجموعه‌ها");
 
     const reviewedChapters = [
       "آشنایی با منطق ریاضی",
-      "مجموعه و زیرمجموعه",
-      "قوانین و اعمال بین مجموعه‌ها",
+      "جبر مجموعه‌ها",
       "مبانی احتمال",
       "احتمال غیرهم‌شانس"
     ];
@@ -1500,8 +1500,7 @@ describe("curriculum and assessment question bank", () => {
       question.id.startsWith("authored-grade11-math-statistics-")
     );
     expect(setBatch).toHaveLength(10);
-    expect(setBatch.filter((question) => question.chapter === "مجموعه و زیرمجموعه")).toHaveLength(5);
-    expect(setBatch.filter((question) => question.chapter === "قوانین و اعمال بین مجموعه‌ها")).toHaveLength(5);
+    expect(setBatch.every((question) => question.chapter === "جبر مجموعه‌ها")).toBe(true);
 
     const probabilityBatch = verifiedQuestions.filter((question) =>
       question.id.startsWith("authored-grade11-math-probability-")
