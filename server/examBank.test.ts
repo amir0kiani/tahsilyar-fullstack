@@ -1546,4 +1546,78 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("reaches five reviewed authored questions in each of the seven remaining Grade 11 Statistics and Probability lessons", () => {
+    const chapters = [
+      "احتمال شرطی",
+      "پیشامدهای مستقل و وابسته",
+      "توصیف و نمایش داده‌ها",
+      "معیارهای گرایش به مرکز",
+      "معیارهای پراکندگی",
+      "گردآوری داده‌ها",
+      "برآورد"
+    ];
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("authored-grade11-math-statistics-remaining-")
+    );
+    expect(batch).toHaveLength(35);
+    for (const chapter of chapters) {
+      const questions = batch.filter((question) => question.chapter === chapter);
+      expect(questions, chapter).toHaveLength(5);
+      expect(questions.every((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "ریاضی" &&
+        question.subject === "آمار و احتمال" &&
+        question.sourceStatus === "reviewed" &&
+        question.sourceTitle?.includes("چاپ دهم ۱۴۰۵") &&
+        question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Amar-11_Daneshchi.iR.pdf" &&
+        question.reviewerNote?.includes("سؤال تألیفی") &&
+        question.reviewerNote?.includes("بازبینی شده‌اند") &&
+        question.options.length === 4 &&
+        question.explanation.length > 20
+      )).toBe(true);
+    }
+    const expectedKeys: Record<string, number> = {
+      "authored-grade11-math-statistics-remaining-conditional-dice-sum-01": 1,
+      "authored-grade11-math-statistics-remaining-conditional-urn-without-replacement-02": 2,
+      "authored-grade11-math-statistics-remaining-conditional-number-divisibility-03": 1,
+      "authored-grade11-math-statistics-remaining-conditional-total-probability-04": 1,
+      "authored-grade11-math-statistics-remaining-conditional-bayes-test-05": 1,
+      "authored-grade11-math-statistics-remaining-independent-coin-die-01": 1,
+      "authored-grade11-math-statistics-remaining-dependent-draw-without-replacement-02": 0,
+      "authored-grade11-math-statistics-remaining-independent-draw-with-replacement-03": 1,
+      "authored-grade11-math-statistics-remaining-independence-product-criterion-04": 1,
+      "authored-grade11-math-statistics-remaining-independent-union-05": 1,
+      "authored-grade11-math-statistics-remaining-descriptive-relative-frequency-01": 2,
+      "authored-grade11-math-statistics-remaining-descriptive-frequency-total-02": 2,
+      "authored-grade11-math-statistics-remaining-descriptive-variable-type-03": 2,
+      "authored-grade11-math-statistics-remaining-descriptive-graph-choice-04": 1,
+      "authored-grade11-math-statistics-remaining-descriptive-pie-angle-05": 2,
+      "authored-grade11-math-statistics-remaining-central-mean-01": 1,
+      "authored-grade11-math-statistics-remaining-central-weighted-mean-02": 2,
+      "authored-grade11-math-statistics-remaining-central-median-odd-03": 1,
+      "authored-grade11-math-statistics-remaining-central-mode-04": 2,
+      "authored-grade11-math-statistics-remaining-central-quartiles-05": 1,
+      "authored-grade11-math-statistics-remaining-dispersion-variance-01": 1,
+      "authored-grade11-math-statistics-remaining-dispersion-constant-shift-02": 2,
+      "authored-grade11-math-statistics-remaining-dispersion-scale-03": 1,
+      "authored-grade11-math-statistics-remaining-dispersion-coefficient-variation-04": 2,
+      "authored-grade11-math-statistics-remaining-dispersion-iqr-05": 1,
+      "authored-grade11-math-statistics-remaining-collection-population-sample-01": 1,
+      "authored-grade11-math-statistics-remaining-collection-simple-random-02": 1,
+      "authored-grade11-math-statistics-remaining-collection-stratified-03": 1,
+      "authored-grade11-math-statistics-remaining-collection-cluster-04": 1,
+      "authored-grade11-math-statistics-remaining-collection-data-method-05": 1,
+      "authored-grade11-math-statistics-remaining-estimation-parameter-statistic-01": 1,
+      "authored-grade11-math-statistics-remaining-estimation-point-estimate-02": 0,
+      "authored-grade11-math-statistics-remaining-estimation-sample-mean-03": 1,
+      "authored-grade11-math-statistics-remaining-estimation-interval-midpoint-04": 2,
+      "authored-grade11-math-statistics-remaining-estimation-sample-size-05": 1
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+      expect(question.correctIndex, question.id).toBeGreaterThanOrEqual(0);
+      expect(question.correctIndex, question.id).toBeLessThan(4);
+    }
+  });
+
 });
