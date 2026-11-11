@@ -3,7 +3,7 @@ import type { ExamQuestion } from "./examBank";
 const verifiedAt = new Date("2026-11-11T00:00:00.000Z");
 const sourceTitle = "سؤال تألیفی تحصیل‌یار بر اساس کتاب آمار و احتمال یازدهم رشته ریاضی و فیزیک، چاپ دهم ۱۴۰۵";
 const sourceUrl = "https://dl.daneshchi.ir/file/chap-school/Amar-11_Daneshchi.iR.pdf";
-const reviewerNote = "سؤال تألیفی و مستقل از آزمون؛ فصل، تعریف‌ها، نمادگذاری مجموعه‌ای و پاسخ با کتاب رسمی چاپ دهم ۱۴۰۵ بازبینی شده‌اند.";
+const reviewerNote = "سؤال تألیفی و مستقل از آزمون؛ فصل، تعریف‌ها، نمادگذاری و پاسخ با کتاب رسمی چاپ دهم ۱۴۰۵ بازبینی شده‌اند.";
 
 type Item = {
   id: string;
@@ -20,7 +20,7 @@ type Item = {
 const items: Item[] = [
   // درس «مجموعه و زیرمجموعه» — صفحات ۱۶ تا ۲۰
   {
-    id: "subset-count-01", chapter: "جبر مجموعه‌ها", topic: "تعداد زیرمجموعه‌ها",
+    id: "subset-count-01", chapter: "مجموعه و زیرمجموعه", topic: "تعداد زیرمجموعه‌ها",
     difficulty: "آسان",
     prompt: "یک مجموعهٔ ۳ عضوی چند زیرمجموعه دارد؟",
     options: ["۳", "۶", "۸", "۹"],
@@ -29,7 +29,7 @@ const items: Item[] = [
     page: "۱۶ تا ۱۷"
   },
   {
-    id: "proper-subset-count-02", chapter: "جبر مجموعه‌ها", topic: "تعداد زیرمجموعه‌های سره",
+    id: "proper-subset-count-02", chapter: "مجموعه و زیرمجموعه", topic: "تعداد زیرمجموعه‌های سره",
     difficulty: "متوسط",
     prompt: "اگر مجموعهٔ A چهار عضو داشته باشد، چند زیرمجموعهٔ سره دارد؟",
     options: ["۸", "۱۲", "۱۵", "۱۶"],
@@ -38,7 +38,7 @@ const items: Item[] = [
     page: "۱۶ تا ۱۷"
   },
   {
-    id: "set-builder-03", chapter: "جبر مجموعه‌ها", topic: "نمایش مجموعه با عضوگیری",
+    id: "set-builder-03", chapter: "مجموعه و زیرمجموعه", topic: "نمایش مجموعه با عضوگیری",
     difficulty: "آسان",
     prompt: "اگر A={x∈N | ۱≤x<۵} باشد، کدام گزینه نمایش فهرستی A است؟",
     options: ["{۰،۱،۲،۳،۴}", "{۱،۲،۳،۴}", "{۱،۲،۳،۴،۵}", "{۲،۳،۴}"],
@@ -47,7 +47,7 @@ const items: Item[] = [
     page: "۱۷ تا ۱۸"
   },
   {
-    id: "equal-sets-04", chapter: "جبر مجموعه‌ها", topic: "برابری دو مجموعه",
+    id: "equal-sets-04", chapter: "مجموعه و زیرمجموعه", topic: "برابری دو مجموعه",
     difficulty: "متوسط",
     prompt: "اگر A={۱،۲،۳} و B={x∈N | ۰<x<۴} باشند، کدام رابطه درست است؟",
     options: ["A⊂B و B⊂A", "A=B", "A∩B=∅", "A⊂B ولی B⊄A"],
@@ -56,7 +56,7 @@ const items: Item[] = [
     page: "۱۸ تا ۲۰"
   },
   {
-    id: "subset-relation-05", chapter: "جبر مجموعه‌ها", topic: "تشخیص رابطهٔ زیرمجموعه",
+    id: "subset-relation-05", chapter: "مجموعه و زیرمجموعه", topic: "تشخیص رابطهٔ زیرمجموعه",
     difficulty: "آسان",
     prompt: "اگر A={۱،۳} و B={۱،۲،۳،۴} باشد، کدام گزاره درست است؟",
     options: ["A⊆B", "B⊆A", "A=B", "A∩B=∅"],
@@ -67,7 +67,7 @@ const items: Item[] = [
 
   // درس «قوانین و اعمال بین مجموعه‌ها» — صفحات ۲۱ تا ۳۴
   {
-    id: "set-difference-01", chapter: "جبر مجموعه‌ها", topic: "تفاضل دو مجموعه",
+    id: "set-difference-01", chapter: "قوانین و اعمال بین مجموعه‌ها", topic: "تفاضل دو مجموعه",
     difficulty: "آسان",
     prompt: "اگر A={۱،۲،۳،۴} و B={۳،۴،۵} باشد، A\B کدام است؟",
     options: ["{۳،۴}", "{۱،۲}", "{۱،۲،۵}", "{۱،۲،۳،۴،۵}"],
@@ -76,7 +76,7 @@ const items: Item[] = [
     page: "۲۱ تا ۲۶"
   },
   {
-    id: "de-morgan-union-02", chapter: "جبر مجموعه‌ها", topic: "قانون دمورگان اجتماع",
+    id: "de-morgan-union-02", chapter: "قوانین و اعمال بین مجموعه‌ها", topic: "قانون دمورگان اجتماع",
     difficulty: "متوسط",
     prompt: "متمم اجتماع دو مجموعهٔ A و B نسبت به مجموعهٔ مرجع U با کدام عبارت برابر است؟",
     options: ["Aᶜ∪Bᶜ", "Aᶜ∩Bᶜ", "A∩B", "A∪B"],
@@ -85,7 +85,7 @@ const items: Item[] = [
     page: "۲۷ تا ۲۹"
   },
   {
-    id: "de-morgan-intersection-03", chapter: "جبر مجموعه‌ها", topic: "قانون دمورگان اشتراک",
+    id: "de-morgan-intersection-03", chapter: "قوانین و اعمال بین مجموعه‌ها", topic: "قانون دمورگان اشتراک",
     difficulty: "متوسط",
     prompt: "طبق قانون دمورگان، متمم اشتراک A و B کدام است؟",
     options: ["Aᶜ∩Bᶜ", "Aᶜ∪Bᶜ", "A∩B", "A∪B"],
@@ -94,7 +94,7 @@ const items: Item[] = [
     page: "۲۷ تا ۲۹"
   },
   {
-    id: "cartesian-cardinality-04", chapter: "جبر مجموعه‌ها", topic: "تعداد اعضای ضرب دکارتی",
+    id: "cartesian-cardinality-04", chapter: "قوانین و اعمال بین مجموعه‌ها", topic: "تعداد اعضای ضرب دکارتی",
     difficulty: "آسان",
     prompt: "اگر A سه عضو و B دو عضو داشته باشد، مجموعهٔ A×B چند عضو دارد؟",
     options: ["۵", "۶", "۸", "۹"],
@@ -103,7 +103,7 @@ const items: Item[] = [
     page: "۳۰ تا ۳۴"
   },
   {
-    id: "cartesian-order-05", chapter: "جبر مجموعه‌ها", topic: "ترتیب در زوج مرتب",
+    id: "cartesian-order-05", chapter: "قوانین و اعمال بین مجموعه‌ها", topic: "ترتیب در زوج مرتب",
     difficulty: "متوسط",
     prompt: "اگر A={۱،۲} و B={a،b} باشد، کدام زوج مرتب عضو A×B است؟",
     options: ["(a،۱)", "(۲،b)", "(b،۱)", "(a،۲)"],
