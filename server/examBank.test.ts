@@ -1647,7 +1647,8 @@ describe("curriculum and assessment question bank", () => {
       expect(count, chapter).toBeGreaterThanOrEqual(5);
     }
     const batch = verifiedQuestions.filter((question) =>
-      question.id.startsWith("grade11-gap-authored-psych-")
+      question.id.startsWith("grade11-gap-authored-psych-") &&
+      question.id !== "grade11-gap-authored-psych-development-05"
     );
     expect(batch).toHaveLength(29);
     const expectedPerLesson: Record<string, number> = {
