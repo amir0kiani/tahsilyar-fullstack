@@ -131,6 +131,36 @@ describe("curriculum and assessment question bank", () => {
     expect(book("تجربی", "دین و زندگی")?.chapters).toEqual(nonHumanitiesDini);
   });
 
+  it("maps the uploaded Grade 11 math/science Arabic mock-exam questions to Lesson 1 only", () => {
+    for (const track of ["ریاضی", "تجربی"]) {
+      const lessonOne = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === track &&
+        question.subject === "عربی" &&
+        question.chapter === "مِن آياتِ الْأَخْلاقِ" &&
+        question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+        question.sourceQuestionNumber
+      );
+      expect(lessonOne).toHaveLength(10);
+      expect(lessonOne.every((question) => question.sourceStatus === "reviewed")).toBe(true);
+      expect(new Set(lessonOne.map((question) => question.sourceQuestionNumber))).toEqual(
+        new Set(["۲۱۱", "۲۱۲", "۲۱۳", "۲۱۴", "۲۱۵", "۲۱۶", "۲۱۷", "۲۱۸", "۲۱۹", "۲۲۰"])
+      );
+    }
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "ریاضی" &&
+      question.subject === "عربی" &&
+      question.chapter === "في مَحْضَرِ الْمُعَلِّمِ"
+    )).toBe(false);
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "تجربی" &&
+      question.subject === "عربی" &&
+      question.chapter === "في مَحْضَرِ الْمُعَلِّمِ"
+    )).toBe(false);
+  });
+
   it("does not treat Arabic skill labels as official Grade 11 lessons", () => {
     const catalog = buildGradeSpecificCatalog([
       { track: "انسانی", grade: "یازدهم", subject: "عربی", chapter: "ترجمه", sourceStatus: "reviewed" },
