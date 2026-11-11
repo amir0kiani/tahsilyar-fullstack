@@ -1676,4 +1676,112 @@ describe("curriculum and assessment question bank", () => {
       question.explanation.length > 20
     )).toBe(true);
   });
+
+  it("completes all ten official Grade 11 humanities Philosophy lessons with five eligible reviewed questions each", () => {
+    const lessons = [
+      "چیستی فلسفه",
+      "ریشه و شاخه‌های فلسفه",
+      "آغاز تاریخی فلسفه",
+      "فلسفه و زندگی",
+      "زندگی بر اساس اندیشه",
+      "امکان شناخت",
+      "ابزارهای شناخت",
+      "نگاهی به تاریخچه معرفت",
+      "چیستی انسان",
+      "انسان، موجود اخلاق‌گرا"
+    ];
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "فلسفه"
+    );
+    expect(book?.bookCode).toBe("111226");
+    expect(book?.chapters).toEqual(lessons);
+
+    for (const chapter of lessons) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "فلسفه" &&
+        question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4 &&
+        question.explanation.length > 20
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-philosophy-gap-")
+    );
+    expect(batch).toHaveLength(35);
+    const addedPerLesson: Record<string, number> = {
+      "چیستی فلسفه": 5,
+      "آغاز تاریخی فلسفه": 5,
+      "زندگی بر اساس اندیشه": 5,
+      "امکان شناخت": 5,
+      "ابزارهای شناخت": 4,
+      "نگاهی به تاریخچه معرفت": 5,
+      "انسان، موجود اخلاق‌گرا": 5
+    };
+    for (const [chapter, expected] of Object.entries(addedPerLesson)) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(expected);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "فلسفه" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("کتاب رسمی فلسفه (۱)") &&
+      question.sourceUrl === "https://abadgaranedu.ir/wp-content/uploads/2019/01/school-book-humanities-11th-philosophy-abadgaranedu.ir_.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی") &&
+      question.reviewerNote?.includes("ارجاع: صفحه‌های") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4 &&
+      question.explanation.length > 20
+    )).toBe(true);
+
+    const expectedKeys: Record<string, number> = {
+      "grade11-philosophy-gap-lesson1-01": 1,
+      "grade11-philosophy-gap-lesson1-02": 2,
+      "grade11-philosophy-gap-lesson1-03": 0,
+      "grade11-philosophy-gap-lesson1-04": 2,
+      "grade11-philosophy-gap-lesson1-05": 0,
+      "grade11-philosophy-gap-lesson3-01": 1,
+      "grade11-philosophy-gap-lesson3-02": 1,
+      "grade11-philosophy-gap-lesson3-03": 0,
+      "grade11-philosophy-gap-lesson3-04": 1,
+      "grade11-philosophy-gap-lesson3-05": 1,
+      "grade11-philosophy-gap-lesson5-01": 1,
+      "grade11-philosophy-gap-lesson5-02": 0,
+      "grade11-philosophy-gap-lesson5-03": 1,
+      "grade11-philosophy-gap-lesson5-04": 0,
+      "grade11-philosophy-gap-lesson5-05": 1,
+      "grade11-philosophy-gap-lesson6-01": 1,
+      "grade11-philosophy-gap-lesson6-02": 1,
+      "grade11-philosophy-gap-lesson6-03": 0,
+      "grade11-philosophy-gap-lesson6-04": 2,
+      "grade11-philosophy-gap-lesson6-05": 1,
+      "grade11-philosophy-gap-lesson7-02": 0,
+      "grade11-philosophy-gap-lesson7-03": 2,
+      "grade11-philosophy-gap-lesson7-04": 1,
+      "grade11-philosophy-gap-lesson7-05": 2,
+      "grade11-philosophy-gap-lesson8-01": 1,
+      "grade11-philosophy-gap-lesson8-02": 0,
+      "grade11-philosophy-gap-lesson8-03": 1,
+      "grade11-philosophy-gap-lesson8-04": 1,
+      "grade11-philosophy-gap-lesson8-05": 2,
+      "grade11-philosophy-gap-lesson10-01": 1,
+      "grade11-philosophy-gap-lesson10-02": 2,
+      "grade11-philosophy-gap-lesson10-03": 1,
+      "grade11-philosophy-gap-lesson10-04": 1,
+      "grade11-philosophy-gap-lesson10-05": 1
+    };
+    expect(Object.keys(expectedKeys)).toHaveLength(35);
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
 });
