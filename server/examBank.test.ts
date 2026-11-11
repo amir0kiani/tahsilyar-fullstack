@@ -56,7 +56,7 @@ describe("curriculum and assessment question bank", () => {
       question.chapter === "نواحی آب و هوایی" &&
       question.sourceStatus === "reviewed"
     );
-    expect(climateQuestions).toHaveLength(4);
+    expect(climateQuestions).toHaveLength(5);
     expect(verifiedQuestions.some((question) =>
       question.grade === "یازدهم" &&
       question.track === "انسانی" &&
