@@ -2081,6 +2081,16 @@ describe("curriculum and assessment question bank", () => {
       );
       expect(eligible.length, chapter).toBeGreaterThanOrEqual(5);
     }
+    const eligibleTotal = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" && question.track === "انسانی" &&
+      question.subject === "جامعه‌شناسی" && lessons.includes(question.chapter) &&
+      ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+      question.options.length === 4 && question.correctIndex >= 0 && question.correctIndex < 4 &&
+      question.explanation.length > 20
+    ).length;
+    expect(eligibleTotal).toBe(77);
+    expect(verifiedQuestions.filter((question) => question.grade === "یازدهم" && question.track === "انسانی" && question.subject === "جامعه‌شناسی" && question.chapter === "فرهنگ جهانی" && ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")).length).toBe(6);
+    expect(verifiedQuestions.filter((question) => question.grade === "یازدهم" && question.track === "انسانی" && question.subject === "جامعه‌شناسی" && question.chapter === "نمونه‌های فرهنگ جهانی (۱)" && ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")).length).toBe(6);
     const batch = verifiedQuestions.filter((question) => question.id.startsWith("grade11-sociology-gap-"));
     expect(batch).toHaveLength(65);
     expect(batch.every((question) =>
@@ -2131,6 +2141,16 @@ describe("curriculum and assessment question bank", () => {
       );
       expect(eligible.length, chapter).toBeGreaterThanOrEqual(5);
     }
+    const eligibleTotal = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" && question.track === "انسانی" &&
+      question.subject === "علوم و فنون ادبی" && lessons.includes(question.chapter) &&
+      ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+      question.options.length === 4 && question.correctIndex >= 0 && question.correctIndex < 4 &&
+      question.explanation.length > 20
+    ).length;
+    expect(eligibleTotal).toBe(69);
+    expect(verifiedQuestions.filter((question) => question.grade === "یازدهم" && question.track === "انسانی" && question.subject === "علوم و فنون ادبی" && question.chapter === "تشبیه" && ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")).length).toBe(10);
+    expect(verifiedQuestions.filter((question) => question.grade === "یازدهم" && question.track === "انسانی" && question.subject === "علوم و فنون ادبی" && question.chapter === "پایه‌های آوایی" && ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")).length).toBe(9);
     const batch = verifiedQuestions.filter((question) => question.id.startsWith("grade11-literature-gap-"));
     expect(batch).toHaveLength(50);
     expect(batch.every((question) =>
