@@ -1409,4 +1409,54 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+
+  it("provides five reviewed questions in each chapter of the shared Grade 11 Chemistry 2 book for the mathematics track", () => {
+    const chapters = ["قدر هدایای زمینی را بدانیم", "در پی غذای سالم", "پوشاک، نیازی پایان‌ناپذیر"];
+    const book = curriculumCatalog.find((entry) =>
+      entry.grade === "یازدهم" && entry.track === "ریاضی" && entry.subject === "شیمی"
+    );
+    expect(book?.chapters).toEqual(chapters);
+    for (const chapter of chapters) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "ریاضی" &&
+        question.subject === "شیمی" && question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("authored-grade11-math-chemistry-")
+    );
+    expect(batch).toHaveLength(15);
+    expect(batch.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("مشترک رشته‌های ریاضی و تجربی") &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Shimi-RT-11_Daneshchi.iR.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی")
+    )).toBe(true);
+    for (const chapter of chapters) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(5);
+    }
+    const expectedKeys: Record<string, number> = {
+      "authored-grade11-math-chemistry-periodic-radius-01": 1,
+      "authored-grade11-math-chemistry-transition-metals-02": 0,
+      "authored-grade11-math-chemistry-ionic-formula-03": 2,
+      "authored-grade11-math-chemistry-hydrocarbon-bonds-04": 2,
+      "authored-grade11-math-chemistry-fractional-distillation-05": 1,
+      "authored-grade11-math-chemistry-enthalpy-sign-01": 1,
+      "authored-grade11-math-chemistry-calorimetry-02": 2,
+      "authored-grade11-math-chemistry-bond-enthalpy-03": 1,
+      "authored-grade11-math-chemistry-reaction-rate-catalyst-04": 1,
+      "authored-grade11-math-chemistry-reaction-rate-temperature-05": 1,
+      "authored-grade11-math-chemistry-esterification-01": 0,
+      "authored-grade11-math-chemistry-polyester-02": 0,
+      "authored-grade11-math-chemistry-polyamide-03": 0,
+      "authored-grade11-math-chemistry-kevlar-04": 0,
+      "authored-grade11-math-chemistry-polymer-degradation-05": 0
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
 });
