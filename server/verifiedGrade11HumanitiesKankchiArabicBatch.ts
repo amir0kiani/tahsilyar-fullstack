@@ -7,7 +7,7 @@ export const verifiedGrade11HumanitiesKankchiArabicBatch: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-arabic-translation-51",
     grade: "یازدهم", track: "انسانی", subject: "عربی",
-    chapter: "ترجمه", topic: "ترجمهٔ عبارت قرآنی",
+    chapter: "مواعظ قیمة", topic: "ترجمهٔ عبارت قرآنی",
     difficulty: "متوسط",
     prompt: "ترجمهٔ مناسب برای عبارت «رَبَّنا آمَنّا فاغفِرْ لَنا وَارحَمْنا وَأنتَ خَیرُ الرّاحِمینَ» کدام است؟",
     options: [
@@ -19,12 +19,12 @@ export const verifiedGrade11HumanitiesKankchiArabicBatch: ExamQuestion[] = [
     correctIndex: 2,
     explanation: "«آمَنّا» یعنی ایمان آوردیم، «فاغفر لنا» یعنی پس ما را بیامرز و «ارحمنا» یعنی بر ما رحم کن؛ گزینهٔ ۳ ترجمهٔ دقیق‌تری دارد.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۵۱", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۶ دفترچهٔ قلم‌چی و کلید گزینهٔ ۳ با صفحهٔ ۹ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۶ دفترچهٔ قلم‌چی و کلید گزینهٔ ۳ با صفحهٔ ۹ پاسخنامه تطبیق داده شد. ارجاع‌های پاسخ‌نامه به صفحات ۴ تا ۱۳ کتاب درسی است و این سؤال به درس اول «مواعظ قیمة» متصل شده است."
   },
   {
     id: "upload-kankchi-human11-arabic-translation-52",
     grade: "یازدهم", track: "انسانی", subject: "عربی",
-    chapter: "ترجمه", topic: "ترجمهٔ عبارت اخلاقی",
+    chapter: "مواعظ قیمة", topic: "ترجمهٔ عبارت اخلاقی",
     difficulty: "متوسط",
     prompt: "ترجمهٔ نزدیک‌تر به مفهوم عبارت «ما أَرْضى المُؤمِنَ رَبَّهُ بِمِثلِ الحِلمِ وَلا أَسخَطَ الشَّیطانَ بِمِثلِ الصَّمتِ عَنهُ» کدام است؟",
     options: [
@@ -36,12 +36,12 @@ export const verifiedGrade11HumanitiesKankchiArabicBatch: ExamQuestion[] = [
     correctIndex: 1,
     explanation: "در عبارت، فعل‌های ماضی «أرضى» و «أسخط» به‌ترتیب معنای «خشنود کرد» و «خشمگین کرد» دارند؛ گزینهٔ ۲ زمان و ساختار جمله را دقیق‌تر منتقل می‌کند.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۵۲", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۶ دفترچهٔ قلم‌چی و کلید گزینهٔ ۲ با صفحهٔ ۹ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۶ دفترچهٔ قلم‌چی و کلید گزینهٔ ۲ با صفحهٔ ۹ پاسخنامه تطبیق داده شد. ارجاع‌های پاسخ‌نامه به صفحات ۴ تا ۱۳ کتاب درسی است و این سؤال به درس اول «مواعظ قیمة» متصل شده است."
   },
   {
     id: "upload-kankchi-human11-arabic-translation-53",
     grade: "یازدهم", track: "انسانی", subject: "عربی",
-    chapter: "ترجمه", topic: "ترجمهٔ جملهٔ دارای اسم تفضیل",
+    chapter: "مواعظ قیمة", topic: "ترجمهٔ جملهٔ دارای اسم تفضیل",
     difficulty: "دشوار",
     prompt: "ترجمهٔ درست‌تر برای عبارت «لَیسَ شَیءٌ أَثقَلَ فی میزانِ النّاسِ یَومَ القِیامَةِ مِنَ الخُلُقِ الحَسَنِ، فَإِنَّ اللهَ یُریدُ أَن یُحَسِّنَ خُلُقی کَما حَسَّنَ خَلقی» کدام است؟",
     options: [
@@ -53,12 +53,12 @@ export const verifiedGrade11HumanitiesKankchiArabicBatch: ExamQuestion[] = [
     correctIndex: 3,
     explanation: "در بخش پایانی، «أُریدُ» به معنای «می‌خواهم» و «یُحَسِّنَ خُلُقی» به معنای «اخلاقم را نیکو بگرداند» است؛ گزینهٔ ۴ این معنا را منتقل می‌کند.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۵۳", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۶ دفترچهٔ قلم‌چی و کلید گزینهٔ ۴ با صفحهٔ ۹ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۶ دفترچهٔ قلم‌چی و کلید گزینهٔ ۴ با صفحهٔ ۹ پاسخنامه تطبیق داده شد. ارجاع‌های پاسخ‌نامه به صفحات ۴ تا ۱۳ کتاب درسی است و این سؤال به درس اول «مواعظ قیمة» متصل شده است."
   },
   {
     id: "upload-kankchi-human11-arabic-correct-54",
     grade: "یازدهم", track: "انسانی", subject: "عربی",
-    chapter: "ترجمه", topic: "تشخیص ترجمهٔ صحیح",
+    chapter: "مواعظ قیمة", topic: "تشخیص ترجمهٔ صحیح",
     difficulty: "متوسط",
     prompt: "کدام گزینه مطابق کلید پاسخ آزمون، عبارت عربی را درست ترجمه کرده است؟",
     options: [
@@ -70,12 +70,12 @@ export const verifiedGrade11HumanitiesKankchiArabicBatch: ExamQuestion[] = [
     correctIndex: 3,
     explanation: "ترجمهٔ گزینهٔ ۴ با ساختار فعل «أنزل» و ترکیب «على رسوله وعلى المؤمنين» مطابق است؛ کلید پاسخ آزمون نیز گزینهٔ ۴ را تعیین کرده است.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۵۴", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۶ دفترچهٔ قلم‌چی و کلید گزینهٔ ۴ با صفحهٔ ۹ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۶ دفترچهٔ قلم‌چی و کلید گزینهٔ ۴ با صفحهٔ ۹ پاسخنامه تطبیق داده شد. ارجاع‌های پاسخ‌نامه به صفحات ۴ تا ۱۳ کتاب درسی است و این سؤال به درس اول «مواعظ قیمة» متصل شده است."
   },
   {
     id: "upload-kankchi-human11-arabic-translation-55",
     grade: "یازدهم", track: "انسانی", subject: "عربی",
-    chapter: "ترجمه", topic: "تعریب جملهٔ فارسی",
+    chapter: "مواعظ قیمة", topic: "تعریب جملهٔ فارسی",
     difficulty: "متوسط",
     prompt: "تعریب مناسب برای جملهٔ «کتابخانهٔ جندی‌شاپور یکی از بزرگ‌ترین کتابخانه‌های ایرانی دیگر در جهان کهن بود» کدام است؟",
     options: [
@@ -87,12 +87,12 @@ export const verifiedGrade11HumanitiesKankchiArabicBatch: ExamQuestion[] = [
     correctIndex: 0,
     explanation: "کلید پاسخ آزمون گزینهٔ ۱ را تعیین کرده است؛ ساختار مؤنث «مكتبة» با «إحدى» هماهنگ است و «كانت» برای بیان گذشته به کار می‌رود.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۵۵", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۱ با صفحهٔ ۹ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۱ با صفحهٔ ۹ پاسخنامه تطبیق داده شد. ارجاع‌های پاسخ‌نامه به صفحات ۴ تا ۱۳ کتاب درسی است و این سؤال به درس اول «مواعظ قیمة» متصل شده است."
   },
   {
     id: "upload-kankchi-human11-arabic-concept-56",
     grade: "یازدهم", track: "انسانی", subject: "عربی",
-    chapter: "مفهوم عبارات", topic: "درک مفهوم ضرب‌المثل عربی",
+    chapter: "مواعظ قیمة", topic: "درک مفهوم ضرب‌المثل عربی",
     difficulty: "آسان",
     prompt: "مفهوم نزدیک‌تر به عبارت «شَرُّ النّاسِ ذُو الوَجهَینِ» کدام است؟",
     options: [
@@ -104,12 +104,12 @@ export const verifiedGrade11HumanitiesKankchiArabicBatch: ExamQuestion[] = [
     correctIndex: 2,
     explanation: "«ذو الوجهین» به معنای دورو و دوچهره است؛ گزینهٔ ۳ به تفاوت ظاهر و باطن و دورویی اشاره می‌کند.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۵۶", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۳ با صفحهٔ ۹ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۳ با صفحهٔ ۹ پاسخنامه تطبیق داده شد. ارجاع‌های پاسخ‌نامه به صفحات ۴ تا ۱۳ کتاب درسی است و این سؤال به درس اول «مواعظ قیمة» متصل شده است."
   },
   {
     id: "upload-kankchi-human11-arabic-vocabulary-57",
     grade: "یازدهم", track: "انسانی", subject: "عربی",
-    chapter: "واژگان", topic: "معنای واژگان عربی",
+    chapter: "مواعظ قیمة", topic: "معنای واژگان عربی",
     difficulty: "آسان",
     prompt: "کدام گزینه در توضیح واژهٔ عربی درست است؟",
     options: [
@@ -121,12 +121,12 @@ export const verifiedGrade11HumanitiesKankchiArabicBatch: ExamQuestion[] = [
     correctIndex: 3,
     explanation: "«مُنکَر» به معنای کار ناپسند و زشت است؛ «مُختال» خودپسند، «حَذَر» احتیاط و «مُتَواضِع» فروتن است.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۵۷", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۴ با صفحهٔ ۹ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۴ با صفحهٔ ۹ پاسخنامه تطبیق داده شد. ارجاع‌های پاسخ‌نامه به صفحات ۴ تا ۱۳ کتاب درسی است و این سؤال به درس اول «مواعظ قیمة» متصل شده است."
   },
   {
     id: "upload-kankchi-human11-arabic-ism-tafdil-58",
     grade: "یازدهم", track: "انسانی", subject: "عربی",
-    chapter: "اسم تفضیل", topic: "تشخیص اسم تفضیل",
+    chapter: "مواعظ قیمة", topic: "تشخیص اسم تفضیل",
     difficulty: "متوسط",
     prompt: "کدام عبارت دارای اسم تفضیل است؟",
     options: [
@@ -138,12 +138,12 @@ export const verifiedGrade11HumanitiesKankchiArabicBatch: ExamQuestion[] = [
     correctIndex: 1,
     explanation: "«خَیر» و «أَجمَل» در گزینهٔ ۲ اسم تفضیل‌اند؛ «أَصفَر» بر رنگ دلالت می‌کند و «أَحسِن/أَحسَن» در گزینهٔ ۴ فعل هستند.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۵۸", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۲ با صفحهٔ ۱۰ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۲ با صفحهٔ ۱۰ پاسخنامه تطبیق داده شد. ارجاع‌های پاسخ‌نامه به صفحات ۴ تا ۱۳ کتاب درسی است و این سؤال به درس اول «مواعظ قیمة» متصل شده است."
   },
   {
     id: "upload-kankchi-human11-arabic-ism-makan-59",
     grade: "یازدهم", track: "انسانی", subject: "عربی",
-    chapter: "اسم مکان", topic: "تشخیص اسم مکان",
+    chapter: "مواعظ قیمة", topic: "تشخیص اسم مکان",
     difficulty: "متوسط",
     prompt: "کدام عبارت فاقد اسم مکان است؟",
     options: [
@@ -155,12 +155,12 @@ export const verifiedGrade11HumanitiesKankchiArabicBatch: ExamQuestion[] = [
     correctIndex: 2,
     explanation: "«المشرق» در این جمله به زمان طلوع اشاره دارد، نه مکان؛ «مصادر»، «المجالس» و «المرمى» در گزینه‌های دیگر اسم مکان‌اند.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۵۹", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۳ با صفحهٔ ۱۰ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۳ با صفحهٔ ۱۰ پاسخنامه تطبیق داده شد. ارجاع‌های پاسخ‌نامه به صفحات ۴ تا ۱۳ کتاب درسی است و این سؤال به درس اول «مواعظ قیمة» متصل شده است."
   },
   {
     id: "upload-kankchi-human11-arabic-tafdil-makan-60",
     grade: "یازدهم", track: "انسانی", subject: "عربی",
-    chapter: "اسم تفضیل و اسم مکان", topic: "تشخیص هم‌زمان اسم تفضیل و اسم مکان",
+    chapter: "مواعظ قیمة", topic: "تشخیص هم‌زمان اسم تفضیل و اسم مکان",
     difficulty: "متوسط",
     prompt: "کدام عبارت هم‌زمان دارای اسم تفضیل و اسم مکان است؟",
     options: [
@@ -172,6 +172,6 @@ export const verifiedGrade11HumanitiesKankchiArabicBatch: ExamQuestion[] = [
     correctIndex: 1,
     explanation: "«المكتبة» اسم مکان و «أهمّ» و «أفضل» اسم تفضیل‌اند؛ بنابراین گزینهٔ ۲ هر دو ساختار را دارد.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۶۰", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۲ با صفحهٔ ۱۰ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۱۷ دفترچهٔ قلم‌چی و کلید گزینهٔ ۲ با صفحهٔ ۱۰ پاسخنامه تطبیق داده شد. ارجاع‌های پاسخ‌نامه به صفحات ۴ تا ۱۳ کتاب درسی است و این سؤال به درس اول «مواعظ قیمة» متصل شده است."
   }
 ];
