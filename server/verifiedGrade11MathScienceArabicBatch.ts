@@ -1,11 +1,11 @@
 import type { ExamQuestion } from "./examBank";
 
-const verifiedAt = new Date("2026-11-11T00:00:00.000Z");
-const sourceTitle = "آزمون قلم‌چی ۱۵ آبان ۱۴۰۵ – یازدهم ریاضی و تجربی (فایل ارسالی کاربر)";
+const sourceTitle = "تمرین‌های بازنویسی‌شده عربی یازدهم ریاضی و تجربی – منبع آزمونی در حال راستی‌آزمایی";
 
-// Questions 211–220 are explicitly scoped to Lesson 1 (pages 7–18) in the uploaded booklet.
-// The math and experimental editions share this textbook, so each reviewed item is exposed
-// under both tracks while retaining a distinct row ID for track-specific catalog coverage.
+// These ten records were previously attributed to a Kankchi 15 Aban paper. The archived
+// Grade 11 experimental Kankchi paper and the available 11R/11T Maz papers do not contain
+// an Arabic section. Retain them for investigation, but exclude them from verified coverage
+// until the original Arabic booklet and answer key are identified.
 const lessonOneQuestions: Omit<ExamQuestion, "id" | "track">[] = [
   {
     grade: "یازدهم", subject: "عربی", chapter: "مِن آياتِ الْأَخْلاقِ",
@@ -19,7 +19,7 @@ const lessonOneQuestions: Omit<ExamQuestion, "id" | "track">[] = [
     ],
     correctIndex: 3,
     explanation: "«مَرْقَد» در این سیاق به آرامگاه اشاره دارد؛ «ما وَعَدَ الرَّحمن» نیز یعنی آنچه خدای رحمان وعده داده است. گزینه چهارم اجزای جمله را درست منتقل می‌کند.",
-    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۱۱", verifiedAt,
+    sourceStatus: "pending-review", sourceTitle, sourceQuestionNumber: "۲۱۱",
     reviewerNote: "صورت سؤال از دفترچه ارسالی قلم‌چی و کلید گزینه ۴ از پاسخ‌نامه همان آزمون تطبیق داده شد؛ بخش عربی دفترچه صریحاً درس اول، صفحات ۷ تا ۱۸ را مشخص می‌کند."
   },
   {
@@ -34,7 +34,7 @@ const lessonOneQuestions: Omit<ExamQuestion, "id" | "track">[] = [
     ],
     correctIndex: 1,
     explanation: "«آمَنّا» فعل ماضی و به معنای «ایمان آوردیم» است؛ «فاغفر لنا» یعنی «پس ما را بیامرز» و «ارحمنا» یعنی «به ما رحم کن».",
-    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۱۲", verifiedAt,
+    sourceStatus: "pending-review", sourceTitle, sourceQuestionNumber: "۲۱۲",
     reviewerNote: "صورت سؤال از دفترچه ارسالی قلم‌چی و کلید گزینه ۲ از پاسخ‌نامه همان آزمون تطبیق داده شد؛ بخش عربی دفترچه صریحاً درس اول، صفحات ۷ تا ۱۸ را مشخص می‌کند."
   },
   {
@@ -49,7 +49,7 @@ const lessonOneQuestions: Omit<ExamQuestion, "id" | "track">[] = [
     ],
     correctIndex: 1,
     explanation: "«يا مَنْ» یعنی «ای کسی که» و «يُحِبُّ الْمُحْسِنينَ» یعنی «نیکوکاران را دوست می‌دارد»؛ گزینه دوم درست است.",
-    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۱۳", verifiedAt,
+    sourceStatus: "pending-review", sourceTitle, sourceQuestionNumber: "۲۱۳",
     reviewerNote: "صورت سؤال از دفترچه ارسالی قلم‌چی و کلید گزینه ۴ در شماره‌گذاری اصلی آزمون بررسی شد؛ پاسخ در نسخه بازنویسی‌شده در گزینه دوم قرار دارد."
   },
   {
@@ -59,7 +59,7 @@ const lessonOneQuestions: Omit<ExamQuestion, "id" | "track">[] = [
     options: ["أَحَبُّ", "أَقَلُّ", "أَهْدى", "أَسْرَعُ"],
     correctIndex: 2,
     explanation: "در عبارت مورد نظر، «أهدى إليكم عيوبكم» یعنی کسی که عیب‌هایتان را به شما نشان می‌دهد؛ کلید آزمون گزینه سوم را تأیید کرده است.",
-    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۱۴", verifiedAt,
+    sourceStatus: "pending-review", sourceTitle, sourceQuestionNumber: "۲۱۴",
     reviewerNote: "صورت سؤال از دفترچه ارسالی قلم‌چی و کلید گزینه ۳ از پاسخ‌نامه همان آزمون تطبیق داده شد."
   },
   {
@@ -74,7 +74,7 @@ const lessonOneQuestions: Omit<ExamQuestion, "id" | "track">[] = [
     ],
     correctIndex: 3,
     explanation: "عبارت عربی، انسان دورو و دوچهره را نکوهش می‌کند. گزینه چهارم درباره آگاهی نداشتن زاهد ظاهرپرست است و مفهوم مستقیم دورویی را بیان نمی‌کند.",
-    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۱۵", verifiedAt,
+    sourceStatus: "pending-review", sourceTitle, sourceQuestionNumber: "۲۱۵",
     reviewerNote: "صورت سؤال از دفترچه ارسالی قلم‌چی و کلید گزینه ۲ در شماره‌گذاری اصلی آزمون بررسی شد؛ گزینه ناسازگار در نسخه بازنویسی‌شده به گزینه چهارم منتقل شده است."
   },
   {
@@ -89,7 +89,7 @@ const lessonOneQuestions: Omit<ExamQuestion, "id" | "track">[] = [
     ],
     correctIndex: 3,
     explanation: "«مَوْقِف» بر جایگاه یا محل ایستادن دلالت دارد و اسم مکان است؛ گزینه چهارم پاسخ درست است.",
-    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۱۶", verifiedAt,
+    sourceStatus: "pending-review", sourceTitle, sourceQuestionNumber: "۲۱۶",
     reviewerNote: "صورت سؤال از دفترچه ارسالی قلم‌چی و کلید گزینه ۴ از پاسخ‌نامه همان آزمون تطبیق داده شد."
   },
   {
@@ -104,7 +104,7 @@ const lessonOneQuestions: Omit<ExamQuestion, "id" | "track">[] = [
     ],
     correctIndex: 2,
     explanation: "در گزینه سوم ساختار اسم تفضیل دیده نمی‌شود؛ در گزینه‌های دیگر «أُولى»، «أُخرى» و «أَحَبّ» در جایگاه اسم تفضیل آمده‌اند.",
-    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۱۷", verifiedAt,
+    sourceStatus: "pending-review", sourceTitle, sourceQuestionNumber: "۲۱۷",
     reviewerNote: "صورت سؤال از دفترچه ارسالی قلم‌چی و کلید گزینه ۳ از پاسخ‌نامه همان آزمون تطبیق داده شد."
   },
   {
@@ -119,7 +119,7 @@ const lessonOneQuestions: Omit<ExamQuestion, "id" | "track">[] = [
     ],
     correctIndex: 0,
     explanation: "در گزینه اول اسم تفضیل به کار نرفته است؛ «الأصفر» صفت رنگ است. پاسخ‌نامه آزمون نیز گزینه اول را تعیین کرده است.",
-    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۱۸", verifiedAt,
+    sourceStatus: "pending-review", sourceTitle, sourceQuestionNumber: "۲۱۸",
     reviewerNote: "صورت سؤال از دفترچه ارسالی قلم‌چی و کلید گزینه ۱ از پاسخ‌نامه همان آزمون تطبیق داده شد."
   },
   {
@@ -129,7 +129,7 @@ const lessonOneQuestions: Omit<ExamQuestion, "id" | "track">[] = [
     options: ["الْعُجْب", "الْإِثْم", "النَّوْعِيّات", "التَّخْفيض"],
     correctIndex: 2,
     explanation: "«حسب النوعيات» یعنی بر اساس نوع و کیفیت کالاها؛ این ترکیب با معنای جمله سازگار است.",
-    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۱۹", verifiedAt,
+    sourceStatus: "pending-review", sourceTitle, sourceQuestionNumber: "۲۱۹",
     reviewerNote: "صورت سؤال از دفترچه ارسالی قلم‌چی و کلید گزینه ۳ از پاسخ‌نامه همان آزمون تطبیق داده شد."
   },
   {
@@ -144,7 +144,7 @@ const lessonOneQuestions: Omit<ExamQuestion, "id" | "track">[] = [
     ],
     correctIndex: 1,
     explanation: "در جمله دوم، «الْمُؤْمِنينَ» مفعول فعل «اغتابَ» است، نه فاعل؛ بنابراین نسبت دستوریِ مشخص‌شده نادرست است.",
-    sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۲۲۰", verifiedAt,
+    sourceStatus: "pending-review", sourceTitle, sourceQuestionNumber: "۲۲۰",
     reviewerNote: "صورت سؤال از دفترچه ارسالی قلم‌چی و کلید گزینه ۲ از پاسخ‌نامه همان آزمون تطبیق داده شد."
   }
 ];
