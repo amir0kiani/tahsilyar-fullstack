@@ -102,9 +102,8 @@ describe("curriculum and assessment question bank", () => {
       "مطالعۀ مفهوم زیبایی و هنر", "خلاقیت هنری", "تحلیل آثار هنری", "هنر، میراث فرهنگی و سبک زندگی",
     ]);
     expect(curriculumCatalog.find((book) => book.track === "عمومی" && book.grade === "یازدهم" && book.subject === "کتاب کار انگلیسی")?.bookCode).toBe("111231");
-    expect(chaptersFor("تاریخ معاصر ایران")).toHaveLength(26);
     expect(chaptersFor("انسان و محیط زیست")).toHaveLength(7);
-    for (const subject of ["فارسی", "نگارش", "زبان انگلیسی", "کتاب کار انگلیسی", "هنر", "تاریخ معاصر ایران", "انسان و محیط زیست"]) {
+    for (const subject of ["فارسی", "نگارش", "زبان انگلیسی", "کتاب کار انگلیسی", "هنر", "انسان و محیط زیست"]) {
       expect(chaptersFor(subject)).not.toContain("کل کتاب");
     }
   });
@@ -216,6 +215,22 @@ describe("curriculum and assessment question bank", () => {
         question.correctIndex < 4
       )).toBe(true);
     }
+  });
+
+  it("assigns Grade 11 Contemporary History only to mathematics and experimental-sciences tracks", () => {
+    for (const track of ["ریاضی", "تجربی"]) {
+      const book = curriculumCatalog.find((item) =>
+        item.grade === "یازدهم" && item.track === track && item.subject === "تاریخ معاصر ایران"
+      );
+      expect(book?.bookCode).toBe("111220");
+      expect(book?.chapters).toHaveLength(26);
+    }
+    expect(curriculumCatalog.some((item) =>
+      item.grade === "یازدهم" && item.track === "عمومی" && item.subject === "تاریخ معاصر ایران"
+    )).toBe(false);
+    expect(curriculumCatalog.some((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "تاریخ معاصر ایران"
+    )).toBe(false);
   });
 
   it("catalogs the official Grade 11 lab-science book for both mathematics and experimental tracks", () => {
