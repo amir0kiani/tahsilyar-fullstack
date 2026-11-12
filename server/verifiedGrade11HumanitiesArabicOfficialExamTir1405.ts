@@ -480,7 +480,7 @@ const lessonQuestions: Omit<ExamQuestion, "id">[] = [
     explanation: "در متن آمده است که مهتاب نبوی در شنا به مدال‌های متعددی دست یافت.",
     sourceStatus: "official-exam-adapted", sourceTitle, sourceUrl, sourceYear: "۱۴۰۵",
     sourceQuestionNumber: "۱۸-الف", verifiedAt,
-    reviewerNote: "زیرقسمت الف سؤال درک مطلب ۱۸؛ پاسخ از متن صفحهٔ ۳ دفترچه و ارجاع همان مجموعه به درس ۷، صفحهٔ ۹۱ تطبیق شد. گزینه‌های انحرافی تألیفی‌اند."
+    reviewerNote: "زیرقسمت الف سؤال درک مطلب ۱۸؛ پاسخ از متن صفحهٔ ۳ دفترچه و راهنمای نمره‌گذاری رسمی صفحهٔ ۵ تطبیق شد؛ ارجاع محتوایی درس ۷، صفحهٔ ۹۱ است. گزینه‌های انحرافی تألیفی‌اند."
   },
   {
     grade: "یازدهم", track: "انسانی", subject: "عربی", chapter: "لا تقنطوا",
