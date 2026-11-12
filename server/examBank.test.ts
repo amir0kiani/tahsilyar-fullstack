@@ -97,9 +97,14 @@ describe("curriculum and assessment question bank", () => {
     ]);
     expect(chaptersFor("نگارش")).toHaveLength(6);
     expect(chaptersFor("زبان انگلیسی")).toEqual(["Understanding People", "A Healthy Lifestyle", "Art and Culture"]);
+    expect(chaptersFor("کتاب کار انگلیسی")).toEqual(["Understanding People", "A Healthy Lifestyle", "Art and Culture"]);
+    expect(chaptersFor("هنر")).toEqual([
+      "مطالعۀ مفهوم زیبایی و هنر", "خلاقیت هنری", "تحلیل آثار هنری", "هنر، میراث فرهنگی و سبک زندگی",
+    ]);
+    expect(curriculumCatalog.find((book) => book.track === "عمومی" && book.grade === "یازدهم" && book.subject === "کتاب کار انگلیسی")?.bookCode).toBe("111231");
     expect(chaptersFor("تاریخ معاصر ایران")).toHaveLength(26);
     expect(chaptersFor("انسان و محیط زیست")).toHaveLength(7);
-    for (const subject of ["فارسی", "نگارش", "زبان انگلیسی", "تاریخ معاصر ایران", "انسان و محیط زیست"]) {
+    for (const subject of ["فارسی", "نگارش", "زبان انگلیسی", "کتاب کار انگلیسی", "هنر", "تاریخ معاصر ایران", "انسان و محیط زیست"]) {
       expect(chaptersFor(subject)).not.toContain("کل کتاب");
     }
   });
@@ -206,6 +211,43 @@ describe("curriculum and assessment question bank", () => {
         Boolean(question.sourceQuestionNumber) &&
         question.verifiedAt instanceof Date &&
         question.reviewerNote?.includes("راهنمای نمره‌گذاری رسمی") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4
+      )).toBe(true);
+    }
+  });
+
+  it("catalogs the official Grade 11 lab-science book for both mathematics and experimental tracks", () => {
+    const expected = ["کلیات", "آزمایش‌های مربی", "آزمایش‌های دستورالعملی", "آزمایش‌های کاوشگری"];
+    for (const track of ["ریاضی", "تجربی"]) {
+      const book = curriculumCatalog.find((item) =>
+        item.grade === "یازدهم" && item.track === track && item.subject === "آزمایشگاه علوم تجربی"
+      );
+      expect(book?.bookCode).toBe("111217");
+      expect(book?.chapters).toEqual(expected);
+    }
+  });
+
+  it("provides five reviewed authored lab-science questions per chapter and track", () => {
+    const expected = ["کلیات", "آزمایش‌های مربی", "آزمایش‌های دستورالعملی", "آزمایش‌های کاوشگری"];
+    for (const track of ["ریاضی", "تجربی"]) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === track &&
+        question.subject === "آزمایشگاه علوم تجربی"
+      );
+      expect(questions).toHaveLength(20);
+      for (const chapter of expected) {
+        expect(questions.filter((question) => question.chapter === chapter), `${track}: ${chapter}`).toHaveLength(5);
+      }
+      expect(questions.every((question) =>
+        question.sourceStatus === "reviewed" &&
+        question.sourceTitle?.includes("تألیفی تحصیل‌یار") &&
+        question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Azmayeshgah-RT-11_Daneshchi.iR.pdf" &&
+        question.sourceYear === "۱۴۰۵" &&
+        question.verifiedAt instanceof Date &&
+        question.reviewerNote?.includes("سؤال تألیفی") &&
         question.options.length === 4 &&
         question.correctIndex >= 0 &&
         question.correctIndex < 4
