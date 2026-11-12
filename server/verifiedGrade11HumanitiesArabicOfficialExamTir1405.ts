@@ -1,7 +1,7 @@
 import type { ExamQuestion } from "./examBank";
 
 const verifiedAt = new Date("2026-11-12T00:00:00.000Z");
-const sourceTitle = "آزمون نهایی عربی، زبان قرآن (۲) پایه یازدهم رشته علوم انسانی – ۲۹ تیر ۱۴۰۵";
+const sourceTitle = "مرکز ارزشیابی و تضمین کیفیت نظام آموزش و پرورش – آزمون نهایی عربی، زبان قرآن (۲) پایه یازدهم رشته علوم انسانی – ۲۹ تیر ۱۴۰۵ (فایل مرجع: Tir-05-Arabi2-E.pdf)";
 const sourceUrl = "https://azmoon.medu.ir";
 
 const lessonQuestions: Omit<ExamQuestion, "id">[] = [

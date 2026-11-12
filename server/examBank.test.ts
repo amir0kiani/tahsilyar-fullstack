@@ -147,34 +147,70 @@ describe("curriculum and assessment question bank", () => {
     )).toBe(true);
   });
 
-  it("maps the uploaded Grade 11 math/science Arabic mock-exam questions to Lesson 1 only", () => {
+  it("covers all seven Grade 11 humanities Arabic lessons with five official final-exam adaptations each", () => {
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "عربی"
+    );
+    expect(book?.bookCode).toBe("111207");
+    const questions = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "عربی" &&
+      question.sourceTitle?.includes("۲۹ تیر ۱۴۰۵")
+    );
+    expect(questions).toHaveLength(35);
+    for (const lesson of book?.chapters ?? []) {
+      expect(questions.filter((question) => question.chapter === lesson), lesson).toHaveLength(5);
+    }
+    expect(questions.every((question) =>
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceUrl === "https://azmoon.medu.ir" &&
+      question.sourceYear === "۱۴۰۵" &&
+      Boolean(question.sourceQuestionNumber) &&
+      question.verifiedAt instanceof Date &&
+      question.reviewerNote?.includes("راهنمای نمره‌گذاری رسمی") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4
+    )).toBe(true);
+  });
+
+  it("does not bundle unverified Grade 11 math/science Arabic candidates as verified questions", () => {
+    expect(verifiedQuestions.some((question) =>
+      question.id.startsWith("upload-kankchi-math-science11-arabic-lesson1-")
+    )).toBe(false);
+    expect(verifiedQuestions.every((question) => question.sourceStatus !== "pending-review")).toBe(true);
+  });
+
+  it("covers all seven Grade 11 math/science Arabic lessons with five official final-exam adaptations per track", () => {
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "ریاضی" && item.subject === "عربی"
+    );
+    expect(book?.bookCode).toBe("111206");
+    const lessons = book?.chapters ?? [];
     for (const track of ["ریاضی", "تجربی"]) {
-      const lessonOne = verifiedQuestions.filter((question) =>
+      const questions = verifiedQuestions.filter((question) =>
         question.grade === "یازدهم" &&
         question.track === track &&
         question.subject === "عربی" &&
-        question.chapter === "مِن آياتِ الْأَخْلاقِ" &&
-        question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
-        question.sourceQuestionNumber
+        question.sourceTitle?.includes("۷ مرداد ۱۴۰۵")
       );
-      expect(lessonOne).toHaveLength(10);
-      expect(lessonOne.every((question) => question.sourceStatus === "reviewed")).toBe(true);
-      expect(new Set(lessonOne.map((question) => question.sourceQuestionNumber))).toEqual(
-        new Set(["۲۱۱", "۲۱۲", "۲۱۳", "۲۱۴", "۲۱۵", "۲۱۶", "۲۱۷", "۲۱۸", "۲۱۹", "۲۲۰"])
-      );
+      expect(questions, track).toHaveLength(35);
+      for (const lesson of lessons) {
+        expect(questions.filter((question) => question.chapter === lesson), `${track}: ${lesson}`).toHaveLength(5);
+      }
+      expect(questions.every((question) =>
+        question.sourceStatus === "official-exam-adapted" &&
+        question.sourceUrl === "https://azmoon.medu.ir" &&
+        question.sourceYear === "۱۴۰۵" &&
+        Boolean(question.sourceQuestionNumber) &&
+        question.verifiedAt instanceof Date &&
+        question.reviewerNote?.includes("راهنمای نمره‌گذاری رسمی") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4
+      )).toBe(true);
     }
-    expect(verifiedQuestions.some((question) =>
-      question.grade === "یازدهم" &&
-      question.track === "ریاضی" &&
-      question.subject === "عربی" &&
-      question.chapter === "في مَحْضَرِ الْمُعَلِّمِ"
-    )).toBe(false);
-    expect(verifiedQuestions.some((question) =>
-      question.grade === "یازدهم" &&
-      question.track === "تجربی" &&
-      question.subject === "عربی" &&
-      question.chapter === "في مَحْضَرِ الْمُعَلِّمِ"
-    )).toBe(false);
   });
 
   it("does not treat Arabic skill labels as official Grade 11 lessons", () => {
