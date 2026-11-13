@@ -115,8 +115,22 @@ const grade11SubjectAliases: Record<string, string> = {
   "تاریخ ۲": "تاریخ",
 };
 
+export function canonicalizeGrade11AssessmentSubject(subject: string): string {
+  return grade11SubjectAliases[subject.trim()] ?? subject.trim();
+}
+
+export function canonicalizeGrade11AssessmentQuestion<T extends {
+  grade: string;
+  track: string;
+  subject: string;
+}>(question: T): T {
+  if (question.grade !== "یازدهم") return question;
+  const subject = canonicalizeGrade11AssessmentSubject(question.subject);
+  return subject === question.subject ? question : { ...question, subject };
+}
+
 export function isGrade11AssessmentSubjectEligible(track: string, subject: string): boolean {
-  const canonicalSubject = grade11SubjectAliases[subject.trim()] ?? subject.trim();
+  const canonicalSubject = canonicalizeGrade11AssessmentSubject(subject);
 
   if (track === "عمومی") {
     return (commonFinalExamSubjects as readonly string[]).includes(canonicalSubject);
