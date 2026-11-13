@@ -881,8 +881,3 @@ export const verifiedGrade11GeologyOfficialExamMordad1405: ExamQuestion[] = [
   }
 ];
 
-export const verifiedGrade11MathGeologyOfficialExamMordad1405: ExamQuestion[] = verifiedGrade11GeologyOfficialExamMordad1405.map((question) => ({
-  ...question,
-  id: question.id.replace("geology11-final1405-", "geology11-final1405-math-"),
-  track: "ریاضی",
-}));
