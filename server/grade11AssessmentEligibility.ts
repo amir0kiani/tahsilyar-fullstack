@@ -75,6 +75,8 @@ export const grade11EntranceExamSubjectsByTrack = {
   ],
 } as const;
 
+export const grade11DiniSharedChapters = ["هدایت الهی","تداوم هدایت","معجزه جاویدان","مسئولیت‌های پیامبر (ص)","امامت، تداوم رسالت","پیشوای اسوه","وضعیت فرهنگی، اجتماعی و سیاسی مسلمانان، پس از رحلت رسول خدا","احیای ارزش‌های راستین","عصر غیبت","مرجعیت و ولایت فقیه","عزت نفس","پیوند مقدس"] as const;
+export const grade11HumanitiesDiniExclusiveChapters = ["آخرین پیامبر","جان و جانشین پیامبر (ص)","جهاد در راستای ولایت ظاهری","در انتظار ظهور","رهبری و مردم","زمینه‌های پیوند"] as const;
 const commonFinalExamSubjects = ["فارسی", "زبان انگلیسی"] as const;
 
 // The math/experimental shared track is allowed only for books with the same
@@ -143,11 +145,15 @@ export function isGrade11AssessmentSubjectEligible(track: string, subject: strin
   return subjectsForTrack[track as keyof typeof subjectsForTrack]?.has(canonicalSubject) ?? false;
 }
 
-export function isGrade11AssessmentQuestionEligible(question: {
-  grade: string;
-  track: string;
-  subject: string;
-}): boolean {
-  return question.grade !== "یازدهم" ||
-    isGrade11AssessmentSubjectEligible(question.track, question.subject);
+const diniChapterAliases: Record<string,string> = {"معجزۀ جاودان":"معجزه جاویدان","پیشوایان اسوه":"پیشوای اسوه","وضعیت فرهنگی، اجتماعی و سیاسی مسلمانان، پس از رحلت رسول خدا (ص)":"وضعیت فرهنگی، اجتماعی و سیاسی مسلمانان، پس از رحلت رسول خدا","احیای ارزش های راستین":"احیای ارزش‌های راستین","عصر غیبت امام زمان (ع)":"عصر غیبت","عزّت نفس":"عزت نفس","پیوند مقدّس":"پیوند مقدس"};
+export function canonicalizeGrade11AssessmentChapter(track:string,subject:string,chapter:string):string {
+  return subject === "دین و زندگی" ? (diniChapterAliases[chapter.trim()] ?? chapter.trim()) : chapter.trim();
+}
+export function isGrade11AssessmentQuestionEligible(question: {grade:string;track:string;subject:string;chapter?:string}):boolean {
+  if(question.grade!=="یازدهم") return true;
+  const subject=canonicalizeGrade11AssessmentSubject(question.subject);
+  if(question.track==="عمومی" && subject==="دین و زندگی") {
+    return (grade11DiniSharedChapters as readonly string[]).includes(canonicalizeGrade11AssessmentChapter(question.track,subject,question.chapter??""));
+  }
+  return isGrade11AssessmentSubjectEligible(question.track,subject);
 }

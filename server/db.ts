@@ -18,7 +18,7 @@ import { ENV } from "./_core/env";
 import { examQuestions as starterQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
-import { canonicalizeGrade11AssessmentQuestion, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
+import { canonicalizeGrade11AssessmentChapter, canonicalizeGrade11AssessmentQuestion, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
 const allStarterQuestions = [...starterQuestions, ...verifiedQuestions].map(canonicalizeGrade11AssessmentQuestion).filter(isGrade11AssessmentQuestionEligible);
 
@@ -212,7 +212,7 @@ function matchesAssessmentTrack(questionTrack: string, selectedTrack?: string) {
 
 function matchesAssessmentQuestion(question: typeof allStarterQuestions[number], filters: AssessmentFilters) {
   return (!filters.subject || question.subject === filters.subject) &&
-    (!filters.chapter || filters.chapter === "کل کتاب" || question.chapter === filters.chapter) &&
+    (!filters.chapter || filters.chapter === "کل کتاب" || (question.grade === "یازدهم" && question.subject === "دین و زندگی" ? canonicalizeGrade11AssessmentChapter(question.track, question.subject, question.chapter) === canonicalizeGrade11AssessmentChapter(filters.track ?? question.track, question.subject, filters.chapter) : question.chapter === filters.chapter)) &&
     (!filters.grade || question.grade === filters.grade) &&
     matchesAssessmentTrack(question.track, filters.track) &&
     (!filters.difficulty || question.difficulty === filters.difficulty) &&
@@ -228,11 +228,12 @@ async function ensureAssessmentBankSeeded(db: NonNullable<Awaited<ReturnType<typ
           grade: examQuestionRows.grade,
           track: examQuestionRows.track,
           subject: examQuestionRows.subject,
+          chapter: examQuestionRows.chapter,
         }).from(examQuestionRows),
         db.select({ id: curriculumChapterRows.id, track: curriculumChapterRows.track, grade: curriculumChapterRows.grade, subject: curriculumChapterRows.subject, chapter: curriculumChapterRows.chapter }).from(curriculumChapterRows),
       ]);
       const ineligibleGrade11Rows = existingQuestionRows.filter((row) =>
-        row.grade === "یازدهم" && !isGrade11AssessmentSubjectEligible(row.track, row.subject)
+        row.grade === "یازدهم" && !isGrade11AssessmentQuestionEligible(row)
       );
       for (const row of ineligibleGrade11Rows) {
         await db.update(examQuestionRows)
@@ -322,8 +323,9 @@ export async function getAssessmentQuestions(filters: AssessmentFilters = {}) {
   }
 }
 
-function questionMatchesBookTrack(questionTrack: string, bookTrack: string) {
+function questionMatchesBookTrack(questionTrack: string, bookTrack: string, subject: string) {
   if (bookTrack === "عمومی") return questionTrack === "عمومی";
+  if (questionTrack === "عمومی" && ["فارسی", "زبان انگلیسی", "دین و زندگی"].includes(subject)) return true;
   if (bookTrack === "تجربی") return questionTrack === "تجربی" || questionTrack === "ریاضی و تجربی";
   if (bookTrack === "ریاضی") return questionTrack === "ریاضی" || questionTrack === "ریاضی و تجربی";
   return questionTrack === bookTrack;
@@ -339,7 +341,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
     const bookQuestions = assessmentQuestionRows.filter((question) =>
       question.grade === book.grade &&
       question.subject === book.subject &&
-      questionMatchesBookTrack(question.track, book.track)
+      questionMatchesBookTrack(question.track, book.track, book.subject)
     );
     // For grade 11 Arabic/Dini, the curriculum chapter list is authoritative.
     // Legacy skill labels (e.g. "ترجمه" or "واژگان") must not become fake textbook lessons.
@@ -377,12 +379,12 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
       const bookQuestions = assessmentQuestionRows.filter((question) =>
         question.grade === book.grade &&
         question.subject === book.subject &&
-        questionMatchesBookTrack(question.track, book.track)
+        questionMatchesBookTrack(question.track, book.track, book.subject)
       );
       const lessonCoverage = book.chapters
         .filter((chapter) => chapter !== "کل کتاب")
         .map((chapter) => {
-          const lessonQuestions = bookQuestions.filter((question) => question.chapter === chapter);
+          const lessonQuestions = bookQuestions.filter((question) => book.grade === "یازدهم" && book.subject === "دین و زندگی" ? canonicalizeGrade11AssessmentChapter(question.track, question.subject, question.chapter) === canonicalizeGrade11AssessmentChapter(book.track, book.subject, chapter) : question.chapter === chapter);
           const verifiedQuestionCount = lessonQuestions.filter((question) => isVerified(question.sourceStatus)).length;
           return {
             chapter,

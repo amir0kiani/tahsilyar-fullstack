@@ -3,7 +3,7 @@ import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
 import { buildGradeSpecificCatalog } from "./db";
-import { grade11AssessmentYear, grade11FinalExamSubjectsByTrack, grade11EntranceExamSubjectsByTrack, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
+import { canonicalizeGrade11AssessmentChapter, grade11AssessmentYear, grade11DiniSharedChapters, grade11HumanitiesDiniExclusiveChapters, grade11FinalExamSubjectsByTrack, grade11EntranceExamSubjectsByTrack, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
 const allQuestions = [...examQuestions, ...verifiedQuestions];
 
@@ -2369,6 +2369,26 @@ describe("curriculum and assessment question bank", () => {
     for (const chapter of lessons) {
       expect(batch.filter((question) => question.chapter === chapter).length, chapter)
         .toBe(lessons.indexOf(chapter) === 1 || lessons.indexOf(chapter) === 2 ? 0 : 5);
+    }
+  });
+
+
+  it("shares Dini questions across tracks while isolating the six humanities-only lessons", () => {
+    expect(grade11DiniSharedChapters).toHaveLength(12);
+    expect(grade11HumanitiesDiniExclusiveChapters).toHaveLength(6);
+    const common = verifiedQuestions.filter(q => q.grade === "یازدهم" && q.track === "عمومی" && q.subject === "دین و زندگی" && q.chapter === "هدایت الهی");
+    expect(common).toHaveLength(5);
+    expect(common.every(isGrade11AssessmentQuestionEligible)).toBe(true);
+    expect(isGrade11AssessmentQuestionEligible({grade:"یازدهم",track:"عمومی",subject:"دین و زندگی",chapter:"آخرین پیامبر"})).toBe(false);
+    expect(canonicalizeGrade11AssessmentChapter("انسانی","دین و زندگی","معجزۀ جاودان")).toBe(canonicalizeGrade11AssessmentChapter("ریاضی","دین و زندگی","معجزه جاویدان"));
+    expect(canonicalizeGrade11AssessmentChapter("انسانی","دین و زندگی","پیشوای اسوه")).toBe(canonicalizeGrade11AssessmentChapter("تجربی","دین و زندگی","پیشوایان اسوه"));
+  });
+  it("exposes one shared Dini lesson question set in all three track-specific catalogs", () => {
+    const rows=[{track:"عمومی",grade:"یازدهم",subject:"دین و زندگی",chapter:"هدایت الهی",sourceStatus:"reviewed"}];
+    const catalog=buildGradeSpecificCatalog(rows);
+    for(const track of ["انسانی","ریاضی","تجربی"]) {
+      const book=catalog.find(b=>b.grade==="یازدهم"&&b.track===track&&b.subject==="دین و زندگی");
+      expect(book?.lessonCoverage?.find(l=>canonicalizeGrade11AssessmentChapter(track,"دین و زندگی",l.chapter)==="هدایت الهی")?.verifiedQuestionCount).toBe(1);
     }
   });
 
