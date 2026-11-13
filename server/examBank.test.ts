@@ -3,6 +3,7 @@ import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
 import { buildGradeSpecificCatalog } from "./db";
+import { grade11AssessmentYear, grade11FinalExamSubjectsByTrack, grade11EntranceExamSubjectsByTrack, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
 const allQuestions = [...examQuestions, ...verifiedQuestions];
 
@@ -106,6 +107,65 @@ describe("curriculum and assessment question bank", () => {
     for (const subject of ["فارسی", "نگارش", "زبان انگلیسی", "کتاب کار انگلیسی", "هنر", "انسان و محیط زیست"]) {
       expect(chaptersFor(subject)).not.toContain("کل کتاب");
     }
+  });
+
+  it("uses only Grade 11 subjects listed in the official 1406 final-exam or entrance-exam sources", () => {
+    expect(grade11AssessmentYear).toBe("۱۴۰۶");
+    expect(grade11FinalExamSubjectsByTrack["انسانی"]).toEqual([
+      "فارسی", "زبان انگلیسی", "دین و زندگی", "عربی", "تاریخ", "جامعه‌شناسی",
+    ]);
+    expect(grade11FinalExamSubjectsByTrack["ریاضی"]).toEqual([
+      "فارسی", "زبان انگلیسی", "دین و زندگی", "عربی", "هندسه", "فیزیک",
+    ]);
+    expect(grade11FinalExamSubjectsByTrack["تجربی"]).toEqual([
+      "فارسی", "زبان انگلیسی", "دین و زندگی", "عربی", "زیست‌شناسی", "شیمی",
+    ]);
+    expect(grade11EntranceExamSubjectsByTrack["انسانی"]).toContain("روان‌شناسی");
+    expect(grade11EntranceExamSubjectsByTrack["انسانی"]).toContain("جغرافیا");
+    expect(grade11EntranceExamSubjectsByTrack["ریاضی"]).toEqual([
+      "هندسه", "آمار و احتمال", "حسابان", "فیزیک", "شیمی",
+    ]);
+    expect(grade11EntranceExamSubjectsByTrack["تجربی"]).toEqual([
+      "زمین‌شناسی", "ریاضی", "زیست‌شناسی", "فیزیک", "شیمی",
+    ]);
+
+    for (const question of verifiedQuestions.filter((item) => item.grade === "یازدهم")) {
+      expect(isGrade11AssessmentQuestionEligible(question)).toBe(true);
+    }
+
+    for (const [track, subject] of [
+      ["عمومی", "نگارش"],
+      ["عمومی", "فارسی و نگارش"],
+      ["عمومی", "کتاب کار انگلیسی"],
+      ["عمومی", "هنر"],
+      ["عمومی", "انسان و محیط زیست"],
+      ["عمومی", "عربی"],
+      ["عمومی", "دین و زندگی"],
+      ["ریاضی", "تاریخ معاصر ایران"],
+      ["تجربی", "تاریخ معاصر ایران"],
+      ["ریاضی", "زمین‌شناسی"],
+      ["ریاضی", "آزمایشگاه علوم تجربی"],
+      ["تجربی", "آزمایشگاه علوم تجربی"],
+    ]) {
+      expect(isGrade11AssessmentSubjectEligible(track, subject), `${track} / ${subject}`).toBe(false);
+    }
+
+    expect(isGrade11AssessmentSubjectEligible("عمومی", "فارسی")).toBe(true);
+    expect(isGrade11AssessmentSubjectEligible("عمومی", "زبان انگلیسی")).toBe(true);
+    expect(isGrade11AssessmentSubjectEligible("انسانی", "فلسفه")).toBe(true);
+    expect(isGrade11AssessmentSubjectEligible("انسانی", "روان‌شناسی")).toBe(true);
+    expect(isGrade11AssessmentSubjectEligible("تجربی", "زمین‌شناسی")).toBe(true);
+    expect(isGrade11AssessmentSubjectEligible("ریاضی", "حسابان")).toBe(true);
+
+    const assessmentBooks = buildGradeSpecificCatalog([]).filter((book) => book.grade === "یازدهم");
+    expect(assessmentBooks.some((book) => book.subject === "نگارش")).toBe(false);
+    expect(assessmentBooks.some((book) => book.subject === "کتاب کار انگلیسی")).toBe(false);
+    expect(assessmentBooks.some((book) => book.subject === "هنر")).toBe(false);
+    expect(assessmentBooks.some((book) => book.subject === "انسان و محیط زیست")).toBe(false);
+    expect(assessmentBooks.some((book) => book.subject === "تاریخ معاصر ایران")).toBe(false);
+    expect(assessmentBooks.some((book) => book.subject === "آزمایشگاه علوم تجربی")).toBe(false);
+    expect(assessmentBooks.some((book) => book.track === "ریاضی" && book.subject === "زمین‌شناسی")).toBe(false);
+    expect(assessmentBooks.some((book) => book.track === "تجربی" && book.subject === "زمین‌شناسی")).toBe(true);
   });
 
   it("includes the official Grade 11 calculus chapter map", () => {
@@ -231,6 +291,12 @@ describe("curriculum and assessment question bank", () => {
     expect(curriculumCatalog.some((item) =>
       item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "تاریخ معاصر ایران"
     )).toBe(false);
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "یازدهم" && question.subject === "تاریخ معاصر ایران"
+    )).toBe(false);
+    expect(buildGradeSpecificCatalog([]).some((book) =>
+      book.grade === "یازدهم" && book.subject === "تاریخ معاصر ایران"
+    )).toBe(false);
   });
 
   it("catalogs the official Grade 11 lab-science book for both mathematics and experimental tracks", () => {
@@ -244,30 +310,19 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
-  it("provides five reviewed authored lab-science questions per chapter and track", () => {
-    const expected = ["کلیات", "آزمایش‌های مربی", "آزمایش‌های دستورالعملی", "آزمایش‌های کاوشگری"];
-    for (const track of ["ریاضی", "تجربی"]) {
-      const questions = verifiedQuestions.filter((question) =>
-        question.grade === "یازدهم" &&
-        question.track === track &&
-        question.subject === "آزمایشگاه علوم تجربی"
-      );
-      expect(questions).toHaveLength(20);
-      for (const chapter of expected) {
-        expect(questions.filter((question) => question.chapter === chapter), `${track}: ${chapter}`).toHaveLength(5);
-      }
-      expect(questions.every((question) =>
-        question.sourceStatus === "reviewed" &&
-        question.sourceTitle?.includes("تألیفی تحصیل‌یار") &&
-        question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Azmayeshgah-RT-11_Daneshchi.iR.pdf" &&
-        question.sourceYear === "۱۴۰۵" &&
-        question.verifiedAt instanceof Date &&
-        question.reviewerNote?.includes("سؤال تألیفی") &&
-        question.options.length === 4 &&
-        question.correctIndex >= 0 &&
-        question.correctIndex < 4
-      )).toBe(true);
-    }
+  it("keeps Grade 11 lab-science in the curriculum map but excludes it from the assessment bank", () => {
+    expect(curriculumCatalog.some((book) =>
+      book.grade === "یازدهم" && book.track === "ریاضی" && book.subject === "آزمایشگاه علوم تجربی"
+    )).toBe(true);
+    expect(curriculumCatalog.some((book) =>
+      book.grade === "یازدهم" && book.track === "تجربی" && book.subject === "آزمایشگاه علوم تجربی"
+    )).toBe(true);
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "یازدهم" && question.subject === "آزمایشگاه علوم تجربی"
+    )).toBe(false);
+    expect(buildGradeSpecificCatalog([]).some((book) =>
+      book.grade === "یازدهم" && book.subject === "آزمایشگاه علوم تجربی"
+    )).toBe(false);
   });
 
   it("does not treat Arabic skill labels as official Grade 11 lessons", () => {
@@ -482,7 +537,7 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
-  it("covers all seven Grade 11 geology lessons in both mathematics and experimental tracks", () => {
+  it("keeps Grade 11 geology in the experimental assessment bank only", () => {
     const chapters = [
       "آفرینش کیهان و تکوین زمین",
       "منابع معدنی و ذخایر انرژی",
@@ -495,17 +550,21 @@ describe("curriculum and assessment question bank", () => {
     expect(curriculumCatalog.find((book) =>
       book.grade === "یازدهم" && book.track === "ریاضی" && book.subject === "زمین‌شناسی"
     )?.chapters).toEqual(chapters);
-    for (const track of ["ریاضی", "تجربی"]) {
-      for (const chapter of chapters) {
-        const matching = verifiedQuestions.filter((question) =>
-          question.grade === "یازدهم" &&
-          question.track === track &&
-          question.subject === "زمین‌شناسی" &&
-          question.chapter === chapter &&
-          question.sourceStatus === "official-exam-adapted"
-        );
-        expect(matching, `${track} / ${chapter}`).toHaveLength(5);
-      }
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "یازدهم" && question.track === "ریاضی" && question.subject === "زمین‌شناسی"
+    )).toBe(false);
+    expect(buildGradeSpecificCatalog([]).some((book) =>
+      book.grade === "یازدهم" && book.track === "ریاضی" && book.subject === "زمین‌شناسی"
+    )).toBe(false);
+    for (const chapter of chapters) {
+      const matching = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "تجربی" &&
+        question.subject === "زمین‌شناسی" &&
+        question.chapter === chapter &&
+        question.sourceStatus === "official-exam-adapted"
+      );
+      expect(matching, `تجربی / ${chapter}`).toHaveLength(5);
     }
   });
 
