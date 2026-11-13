@@ -97,16 +97,36 @@ const subjectsForTrack = {
   ]),
 };
 
+const grade11SubjectAliases: Record<string, string> = {
+  "عربی، زبان قرآن": "عربی",
+  "عربی زبان قرآن": "عربی",
+  "عربی، زبان قرآن (۲)": "عربی",
+  "عربی، زبان قرآن ۲": "عربی",
+  "عربی ۲ (زبان تخصصی رشته)": "عربی",
+  "فارسی (۲)": "فارسی",
+  "فارسی ۲": "فارسی",
+  "زبان خارجی (۲)": "زبان انگلیسی",
+  "زبان خارجی ۲": "زبان انگلیسی",
+  "تعلیمات دینی ۲": "دین و زندگی",
+  "تعلیمات دینی ۲ (دینی، اخلاق و قرآن)": "دین و زندگی",
+  "جامعه شناسی (۲)": "جامعه‌شناسی",
+  "جامعه‌شناسی (۲)": "جامعه‌شناسی",
+  "تاریخ (۲)": "تاریخ",
+  "تاریخ ۲": "تاریخ",
+};
+
 export function isGrade11AssessmentSubjectEligible(track: string, subject: string): boolean {
+  const canonicalSubject = grade11SubjectAliases[subject.trim()] ?? subject.trim();
+
   if (track === "عمومی") {
-    return (commonFinalExamSubjects as readonly string[]).includes(subject);
+    return (commonFinalExamSubjects as readonly string[]).includes(canonicalSubject);
   }
 
   if (track === "ریاضی و تجربی") {
-    return (sharedMathScienceSubjects as readonly string[]).includes(subject);
+    return (sharedMathScienceSubjects as readonly string[]).includes(canonicalSubject);
   }
 
-  return subjectsForTrack[track as keyof typeof subjectsForTrack]?.has(subject) ?? false;
+  return subjectsForTrack[track as keyof typeof subjectsForTrack]?.has(canonicalSubject) ?? false;
 }
 
 export function isGrade11AssessmentQuestionEligible(question: {
