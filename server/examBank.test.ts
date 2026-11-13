@@ -154,6 +154,7 @@ describe("curriculum and assessment question bank", () => {
     expect(isGrade11AssessmentSubjectEligible("عمومی", "زبان انگلیسی")).toBe(true);
     expect(isGrade11AssessmentSubjectEligible("انسانی", "فلسفه")).toBe(true);
     expect(isGrade11AssessmentSubjectEligible("انسانی", "عربی، زبان قرآن")).toBe(true);
+    expect(verifiedQuestions.find((question) => question.id === "upload-human11-arabic-fael-05")?.subject).toBe("عربی");
     expect(isGrade11AssessmentSubjectEligible("انسانی", "روان‌شناسی")).toBe(true);
     expect(isGrade11AssessmentSubjectEligible("تجربی", "زمین‌شناسی")).toBe(true);
     expect(isGrade11AssessmentSubjectEligible("ریاضی", "حسابان")).toBe(true);
