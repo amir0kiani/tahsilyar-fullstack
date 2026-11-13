@@ -2400,6 +2400,39 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
+  it("reports complete Dini lesson coverage in all three tracks without cross-track leakage", () => {
+    const diniRows = verifiedQuestions
+      .filter((question) => question.grade === "یازدهم" && question.subject === "دین و زندگی")
+      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
+    const catalog = buildGradeSpecificCatalog(diniRows);
+
+    for (const track of ["انسانی", "ریاضی", "تجربی"]) {
+      const book = catalog.find((item) =>
+        item.grade === "یازدهم" && item.track === track && item.subject === "دین و زندگی"
+      );
+      const expectedChapters = track === "انسانی"
+        ? [...grade11DiniSharedChapters, ...grade11HumanitiesDiniExclusiveChapters]
+        : [...grade11DiniSharedChapters];
+
+      expect(book?.chapters).toHaveLength(expectedChapters.length);
+      expect(book?.lessonCoverage).toHaveLength(expectedChapters.length);
+      for (const chapter of expectedChapters) {
+        const lesson = book?.lessonCoverage?.find((item) =>
+          canonicalizeGrade11AssessmentChapter(track, "دین و زندگی", item.chapter) ===
+          canonicalizeGrade11AssessmentChapter(track, "دین و زندگی", chapter)
+        );
+        expect(lesson, `${track} / ${chapter}`).toBeTruthy();
+        expect(lesson?.verifiedQuestionCount, `${track} / ${chapter}`).toBe(5);
+        expect(lesson?.targetMet, `${track} / ${chapter}`).toBe(true);
+      }
+      if (track !== "انسانی") {
+        for (const exclusiveChapter of grade11HumanitiesDiniExclusiveChapters) {
+          expect(book?.chapters).not.toContain(exclusiveChapter);
+        }
+      }
+    }
+  });
+
   it("adds five reviewed original questions for shared Dini Lesson 2 only once", () => {
     expect(verifiedGrade11DiniSharedLesson2).toHaveLength(5);
     expect(verifiedGrade11DiniSharedLesson2.every(q =>

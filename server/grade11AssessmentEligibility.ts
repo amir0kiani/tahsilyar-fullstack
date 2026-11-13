@@ -145,7 +145,7 @@ export function isGrade11AssessmentSubjectEligible(track: string, subject: strin
   return subjectsForTrack[track as keyof typeof subjectsForTrack]?.has(canonicalSubject) ?? false;
 }
 
-const diniChapterAliases: Record<string,string> = {"معجزۀ جاودان":"معجزه جاویدان","پیشوایان اسوه":"پیشوای اسوه","وضعیت فرهنگی، اجتماعی و سیاسی مسلمانان، پس از رحلت رسول خدا (ص)":"وضعیت فرهنگی، اجتماعی و سیاسی مسلمانان، پس از رحلت رسول خدا","احیای ارزش های راستین":"احیای ارزش‌های راستین","عصر غیبت امام زمان (ع)":"عصر غیبت","عزّت نفس":"عزت نفس","پیوند مقدّس":"پیوند مقدس"};
+const diniChapterAliases: Record<string,string> = {"معجزۀ جاودان":"معجزه جاویدان","پیشوایان اسوه":"پیشوای اسوه","وضعیت فرهنگی، اجتماعی و سیاسی مسلمانان، پس از رحلت رسول خدا (ص)":"وضعیت فرهنگی، اجتماعی و سیاسی مسلمانان، پس از رحلت رسول خدا","احیای ارزش های راستین":"احیای ارزش‌های راستین","عصر غیبت امام زمان (ع)":"عصر غیبت","عزّت نفس":"عزت نفس","پیوند مقدّس":"پیوند مقدس","جان و جانشینی پیامبر (ص)":"جان و جانشین پیامبر (ص)","مرجعیت و ولایت‌فقیه":"مرجعیت و ولایت فقیه"};
 export function canonicalizeGrade11AssessmentChapter(track:string,subject:string,chapter:string):string {
   return subject === "دین و زندگی" ? (diniChapterAliases[chapter.trim()] ?? chapter.trim()) : chapter.trim();
 }
