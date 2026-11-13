@@ -3,6 +3,12 @@ import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
 import { verifiedGrade11DiniSharedLesson2 } from "./verifiedGrade11DiniSharedLesson2";
+import { verifiedGrade11HumanitiesDiniLesson3 } from "./verifiedGrade11HumanitiesDiniLesson3";
+import { verifiedGrade11HumanitiesDiniLesson8 } from "./verifiedGrade11HumanitiesDiniLesson8";
+import { verifiedGrade11HumanitiesDiniLesson11 } from "./verifiedGrade11HumanitiesDiniLesson11";
+import { verifiedGrade11HumanitiesDiniLesson13 } from "./verifiedGrade11HumanitiesDiniLesson13";
+import { verifiedGrade11HumanitiesDiniLesson15 } from "./verifiedGrade11HumanitiesDiniLesson15";
+import { verifiedGrade11HumanitiesDiniLesson17 } from "./verifiedGrade11HumanitiesDiniLesson17";
 import { buildGradeSpecificCatalog } from "./db";
 import { canonicalizeGrade11AssessmentChapter, grade11AssessmentYear, grade11DiniSharedChapters, grade11HumanitiesDiniExclusiveChapters, grade11FinalExamSubjectsByTrack, grade11EntranceExamSubjectsByTrack, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
@@ -2409,6 +2415,48 @@ describe("curriculum and assessment question bank", () => {
       q.grade === "یازدهم" && q.track === "عمومی" &&
       q.subject === "دین و زندگی" && q.chapter === "تداوم هدایت"
     )).toHaveLength(5);
+  });
+
+
+  it("completes all six humanities-exclusive Grade 11 Dini lessons with five reviewed original questions each", () => {
+    const batches = [
+      ["آخرین پیامبر", verifiedGrade11HumanitiesDiniLesson3],
+      ["جان و جانشین پیامبر (ص)", verifiedGrade11HumanitiesDiniLesson8],
+      ["جهاد در راستای ولایت ظاهری", verifiedGrade11HumanitiesDiniLesson11],
+      ["در انتظار ظهور", verifiedGrade11HumanitiesDiniLesson13],
+      ["رهبری و مردم", verifiedGrade11HumanitiesDiniLesson15],
+      ["زمینه‌های پیوند", verifiedGrade11HumanitiesDiniLesson17],
+    ] as const;
+    expect(grade11HumanitiesDiniExclusiveChapters).toEqual(batches.map(([chapter]) => chapter));
+    const ids = batches.flatMap(([, batch]) => batch.map((question) => question.id));
+    expect(ids).toHaveLength(30);
+    expect(new Set(ids).size).toBe(30);
+    for (const [chapter, batch] of batches) {
+      expect(batch, chapter).toHaveLength(5);
+      expect(batch.every((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "دین و زندگی" &&
+        question.chapter === chapter &&
+        question.sourceStatus === "reviewed" &&
+        question.sourceTitle?.includes("سؤال تألیفی تحصیل‌یار") &&
+        question.reviewerNote?.includes("AUTHORED/ORIGINAL") &&
+        question.reviewerNote?.includes("صفحات مرجع") &&
+        question.sourceUrl?.startsWith("https://1xai.ir/darsnameh/") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 && question.correctIndex < 4 &&
+        question.explanation.length > 20
+      )).toBe(true);
+      expect(batch.every(isGrade11AssessmentQuestionEligible)).toBe(true);
+      expect(verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "انسانی" &&
+        question.subject === "دین و زندگی" && question.chapter === chapter
+      )).toHaveLength(5);
+      expect(verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "عمومی" &&
+        question.subject === "دین و زندگی" && question.chapter === chapter
+      )).toHaveLength(0);
+    }
   });
 
 });
