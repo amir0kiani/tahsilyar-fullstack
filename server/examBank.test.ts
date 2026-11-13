@@ -153,6 +153,7 @@ describe("curriculum and assessment question bank", () => {
     expect(isGrade11AssessmentSubjectEligible("عمومی", "فارسی")).toBe(true);
     expect(isGrade11AssessmentSubjectEligible("عمومی", "زبان انگلیسی")).toBe(true);
     expect(isGrade11AssessmentSubjectEligible("انسانی", "فلسفه")).toBe(true);
+    expect(isGrade11AssessmentSubjectEligible("انسانی", "عربی، زبان قرآن")).toBe(true);
     expect(isGrade11AssessmentSubjectEligible("انسانی", "روان‌شناسی")).toBe(true);
     expect(isGrade11AssessmentSubjectEligible("تجربی", "زمین‌شناسی")).toBe(true);
     expect(isGrade11AssessmentSubjectEligible("ریاضی", "حسابان")).toBe(true);
@@ -651,7 +652,8 @@ describe("curriculum and assessment question bank", () => {
 
   it("includes source-based science and mathematics questions across grades and tracks", () => {
     const batch = verifiedQuestions.filter((question) => question.id.startsWith("upload-exp") || question.id.startsWith("upload-math"));
-    expect(batch).toHaveLength(19);
+    expect(batch).toHaveLength(18);
+    expect(batch.some((question) => question.id === "upload-math11-math-combination-14")).toBe(false);
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       expect(batch.some((question) => question.grade === grade), grade).toBe(true);
     }
