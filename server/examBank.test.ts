@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
+import { verifiedGrade11DiniSharedLesson2 } from "./verifiedGrade11DiniSharedLesson2";
 import { buildGradeSpecificCatalog } from "./db";
 import { canonicalizeGrade11AssessmentChapter, grade11AssessmentYear, grade11DiniSharedChapters, grade11HumanitiesDiniExclusiveChapters, grade11FinalExamSubjectsByTrack, grade11EntranceExamSubjectsByTrack, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
@@ -2390,6 +2391,24 @@ describe("curriculum and assessment question bank", () => {
       const book=catalog.find(b=>b.grade==="یازدهم"&&b.track===track&&b.subject==="دین و زندگی");
       expect(book?.lessonCoverage?.find(l=>canonicalizeGrade11AssessmentChapter(track,"دین و زندگی",l.chapter)==="هدایت الهی")?.verifiedQuestionCount).toBe(1);
     }
+  });
+
+
+  it("adds five reviewed original questions for shared Dini Lesson 2 only once", () => {
+    expect(verifiedGrade11DiniSharedLesson2).toHaveLength(5);
+    expect(verifiedGrade11DiniSharedLesson2.every(q =>
+      q.grade === "یازدهم" && q.track === "عمومی" &&
+      q.subject === "دین و زندگی" && q.chapter === "تداوم هدایت" &&
+      q.sourceStatus === "reviewed" &&
+      q.sourceTitle?.includes("سؤال تألیفی تحصیل‌یار") &&
+      q.reviewerNote?.includes("AUTHORED/ORIGINAL") &&
+      q.options.length === 4 && q.correctIndex >= 0 &&
+      q.correctIndex < 4 && q.explanation.length > 20
+    )).toBe(true);
+    expect(verifiedQuestions.filter(q =>
+      q.grade === "یازدهم" && q.track === "عمومی" &&
+      q.subject === "دین و زندگی" && q.chapter === "تداوم هدایت"
+    )).toHaveLength(5);
   });
 
 });
