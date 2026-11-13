@@ -18,8 +18,9 @@ import { ENV } from "./_core/env";
 import { examQuestions as starterQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
+import { isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
-const allStarterQuestions = [...starterQuestions, ...verifiedQuestions];
+const allStarterQuestions = [...starterQuestions, ...verifiedQuestions].filter(isGrade11AssessmentQuestionEligible);
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -222,9 +223,22 @@ async function ensureAssessmentBankSeeded(db: NonNullable<Awaited<ReturnType<typ
   if (!assessmentSeedPromise) {
     assessmentSeedPromise = (async () => {
       const [existingQuestionRows, existingChapterRows] = await Promise.all([
-        db.select({ id: examQuestionRows.id }).from(examQuestionRows),
+        db.select({
+          id: examQuestionRows.id,
+          grade: examQuestionRows.grade,
+          track: examQuestionRows.track,
+          subject: examQuestionRows.subject,
+        }).from(examQuestionRows),
         db.select({ id: curriculumChapterRows.id, track: curriculumChapterRows.track, grade: curriculumChapterRows.grade, subject: curriculumChapterRows.subject, chapter: curriculumChapterRows.chapter }).from(curriculumChapterRows),
       ]);
+      const ineligibleGrade11Rows = existingQuestionRows.filter((row) =>
+        row.grade === "یازدهم" && !isGrade11AssessmentSubjectEligible(row.track, row.subject)
+      );
+      for (const row of ineligibleGrade11Rows) {
+        await db.update(examQuestionRows)
+          .set({ isActive: 0 })
+          .where(eq(examQuestionRows.id, row.id));
+      }
       const existingIds = new Set(existingQuestionRows.map((row) => row.id));
       const missingQuestions = allStarterQuestions.filter((question) => !existingIds.has(question.id));
       for (let offset = 0; offset < missingQuestions.length; offset += 100) {
@@ -296,8 +310,10 @@ export async function getAssessmentQuestions(filters: AssessmentFilters = {}) {
   try {
     await ensureAssessmentBankSeeded(db);
     const rows = await db.select().from(examQuestionRows).where(eq(examQuestionRows.isActive, 1));
-    return rows.filter((question) => matchesAssessmentQuestion(question as typeof allStarterQuestions[number], filters))
-      .slice(0, filters.limit ?? 20);
+    return rows.filter((question) =>
+      isGrade11AssessmentQuestionEligible(question as typeof allStarterQuestions[number]) &&
+      matchesAssessmentQuestion(question as typeof allStarterQuestions[number], filters)
+    ).slice(0, filters.limit ?? 20);
   } catch (error) {
     console.warn("[Assessment] Persistent bank unavailable; using bundled question data:", error);
     return filterBundledQuestions(filters);
@@ -313,8 +329,12 @@ function questionMatchesBookTrack(questionTrack: string, bookTrack: string) {
 
 export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: string; subject: string; chapter: string; sourceStatus?: string }>) {
   const isVerified = (status?: string) => Boolean(status && status !== "sample-authored" && status !== "pending-review");
-  const catalog = curriculumCatalog.map((book) => {
-    const bookQuestions = questionRows.filter((question) =>
+  const assessmentQuestionRows = questionRows.filter(isGrade11AssessmentQuestionEligible);
+  const assessmentCurriculumCatalog = curriculumCatalog.filter((book) =>
+    book.grade !== "یازدهم" || isGrade11AssessmentSubjectEligible(book.track, book.subject)
+  );
+  const catalog = assessmentCurriculumCatalog.map((book) => {
+    const bookQuestions = assessmentQuestionRows.filter((question) =>
       question.grade === book.grade &&
       question.subject === book.subject &&
       questionMatchesBookTrack(question.track, book.track)
@@ -340,7 +360,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
   // Preserve legacy sample subjects that do not yet have a one-to-one official-book mapping.
   const knownKeys = new Set(catalog.map((book) => [book.track, book.grade, book.subject].join("::")));
   const extras = new Map<string, { track: string; grade: string; subject: string; chapters: string[]; questionCount: number; verifiedQuestionCount: number; targetQuestionsPerLesson: number }>();
-  for (const question of questionRows) {
+  for (const question of assessmentQuestionRows) {
     const key = [question.track, question.grade, question.subject].join("::");
     if (knownKeys.has(key) || question.grade === "دهم تا دوازدهم") continue;
     const current = extras.get(key) ?? { track: question.track, grade: question.grade, subject: question.subject, chapters: [], questionCount: 0, verifiedQuestionCount: 0, targetQuestionsPerLesson: 5 };
@@ -352,7 +372,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
 
   return [...catalog, ...Array.from(extras.values())]
     .map((book) => {
-      const bookQuestions = questionRows.filter((question) =>
+      const bookQuestions = assessmentQuestionRows.filter((question) =>
         question.grade === book.grade &&
         question.subject === book.subject &&
         questionMatchesBookTrack(question.track, book.track)
