@@ -1,0 +1,119 @@
+/**
+ * Grade 11 assessment eligibility for the 1406 national entrance-exam cycle.
+ *
+ * This is deliberately an assessment allowlist, not a complete curriculum list.
+ * A Grade 11 subject is eligible only when it appears in either:
+ * 1) the official Grade 11 transcript/final-exam subjects for that track, or
+ * 2) the official 1406 national entrance-exam textbook sources for that track.
+ *
+ * Official Sanjesh sources:
+ * - Grade 11 transcript subjects and coefficients (1406):
+ *   https://www.sanjesh.org/_sanjesh/documents/1406/shora/anavin1406.pdf
+ * - 1406 policy amendments:
+ *   https://www.sanjesh.org/_sanjesh/documents/1406/shora/eslahat1406.pdf
+ * - 1406 entrance-exam textbook sources:
+ *   https://www.sanjesh.org/_sanjesh/documents/فهرست%20دروس%20آزمون%20سراسری%20سال%2014061406.pdf
+ *
+ * The 1406 Sanjesh notice (1405/07/01; resolution 927) explicitly lists six
+ * Grade 11 transcript subjects per diploma. It supersedes preliminary 1404
+ * statements that had described all Grade 11 subjects as final exams.
+ */
+
+export const grade11AssessmentYear = "۱۴۰۶";
+
+export const grade11FinalExamSubjectsByTrack = {
+  "انسانی": [
+    "فارسی",
+    "زبان انگلیسی",
+    "دین و زندگی",
+    "عربی",
+    "تاریخ",
+    "جامعه‌شناسی",
+  ],
+  "ریاضی": [
+    "فارسی",
+    "زبان انگلیسی",
+    "دین و زندگی",
+    "عربی",
+    "هندسه",
+    "فیزیک",
+  ],
+  "تجربی": [
+    "فارسی",
+    "زبان انگلیسی",
+    "دین و زندگی",
+    "عربی",
+    "زیست‌شناسی",
+    "شیمی",
+  ],
+} as const;
+
+export const grade11EntranceExamSubjectsByTrack = {
+  "انسانی": [
+    "ریاضی و آمار",
+    "علوم و فنون ادبی",
+    "عربی",
+    "تاریخ",
+    "جغرافیا",
+    "جامعه‌شناسی",
+    "فلسفه",
+    "روان‌شناسی",
+  ],
+  "ریاضی": [
+    "هندسه",
+    "آمار و احتمال",
+    "حسابان",
+    "فیزیک",
+    "شیمی",
+  ],
+  "تجربی": [
+    "زمین‌شناسی",
+    "ریاضی",
+    "زیست‌شناسی",
+    "فیزیک",
+    "شیمی",
+  ],
+} as const;
+
+const commonFinalExamSubjects = ["فارسی", "زبان انگلیسی"] as const;
+
+// The math/experimental shared track is allowed only for books with the same
+// Grade 11 textbook edition in both tracks. Physics is intentionally excluded:
+// its Grade 11 textbook codes and chapter maps differ between the two tracks.
+const sharedMathScienceSubjects = ["عربی", "دین و زندگی", "شیمی"] as const;
+
+const subjectsForTrack = {
+  "انسانی": new Set<string>([
+    ...grade11FinalExamSubjectsByTrack["انسانی"],
+    ...grade11EntranceExamSubjectsByTrack["انسانی"],
+  ]),
+  "ریاضی": new Set<string>([
+    ...grade11FinalExamSubjectsByTrack["ریاضی"],
+    ...grade11EntranceExamSubjectsByTrack["ریاضی"],
+  ]),
+  "تجربی": new Set<string>([
+    ...grade11FinalExamSubjectsByTrack["تجربی"],
+    ...grade11EntranceExamSubjectsByTrack["تجربی"],
+  ]),
+};
+
+export function isGrade11AssessmentSubjectEligible(track: string, subject: string): boolean {
+  if (track === "عمومی") {
+    return (commonFinalExamSubjects as readonly string[]).includes(subject);
+  }
+
+  if (track === "ریاضی و تجربی") {
+    return (sharedMathScienceSubjects as readonly string[]).includes(subject);
+  }
+
+  return subjectsForTrack[track as keyof typeof subjectsForTrack]?.has(subject) ?? false;
+}
+
+export function isGrade11AssessmentQuestionEligible(question: {
+  grade: string;
+  track: string;
+  subject: string;
+}): boolean {
+  return question.grade !== "یازدهم" ||
+    isGrade11AssessmentSubjectEligible(question.track, question.subject);
+}
