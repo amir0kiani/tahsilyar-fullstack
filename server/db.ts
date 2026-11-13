@@ -18,9 +18,9 @@ import { ENV } from "./_core/env";
 import { examQuestions as starterQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
-import { isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
+import { canonicalizeGrade11AssessmentQuestion, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
-const allStarterQuestions = [...starterQuestions, ...verifiedQuestions].filter(isGrade11AssessmentQuestionEligible);
+const allStarterQuestions = [...starterQuestions, ...verifiedQuestions].map(canonicalizeGrade11AssessmentQuestion).filter(isGrade11AssessmentQuestionEligible);
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -310,10 +310,12 @@ export async function getAssessmentQuestions(filters: AssessmentFilters = {}) {
   try {
     await ensureAssessmentBankSeeded(db);
     const rows = await db.select().from(examQuestionRows).where(eq(examQuestionRows.isActive, 1));
-    return rows.filter((question) =>
-      isGrade11AssessmentQuestionEligible(question as typeof allStarterQuestions[number]) &&
-      matchesAssessmentQuestion(question as typeof allStarterQuestions[number], filters)
-    ).slice(0, filters.limit ?? 20);
+    return rows
+      .map((question) => canonicalizeGrade11AssessmentQuestion(question as typeof allStarterQuestions[number]))
+      .filter((question) =>
+        isGrade11AssessmentQuestionEligible(question) &&
+        matchesAssessmentQuestion(question, filters)
+      ).slice(0, filters.limit ?? 20);
   } catch (error) {
     console.warn("[Assessment] Persistent bank unavailable; using bundled question data:", error);
     return filterBundledQuestions(filters);
@@ -329,7 +331,7 @@ function questionMatchesBookTrack(questionTrack: string, bookTrack: string) {
 
 export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: string; subject: string; chapter: string; sourceStatus?: string }>) {
   const isVerified = (status?: string) => Boolean(status && status !== "sample-authored" && status !== "pending-review");
-  const assessmentQuestionRows = questionRows.filter(isGrade11AssessmentQuestionEligible);
+  const assessmentQuestionRows = questionRows.map(canonicalizeGrade11AssessmentQuestion).filter(isGrade11AssessmentQuestionEligible);
   const assessmentCurriculumCatalog = curriculumCatalog.filter((book) =>
     book.grade !== "یازدهم" || isGrade11AssessmentSubjectEligible(book.track, book.subject)
   );
