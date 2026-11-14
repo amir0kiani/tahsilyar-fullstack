@@ -363,7 +363,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
 
   // Preserve legacy sample subjects that do not yet have a one-to-one official-book mapping.
   const knownKeys = new Set(catalog.map((book) => [book.track, book.grade, book.subject].join("::")));
-  const extras = new Map<string, { track: string; grade: string; subject: string; chapters: string[]; questionCount: number; verifiedQuestionCount: number; targetQuestionsPerLesson: number }>();
+  const extras = new Map<string, { track: string; grade: string; subject: string; chapters: string[]; assessmentExcludedChapters?: string[]; questionCount: number; verifiedQuestionCount: number; targetQuestionsPerLesson: number }>();
   for (const question of assessmentQuestionRows) {
     const key = [question.track, question.grade, question.subject].join("::");
     if (knownKeys.has(key) || question.grade === "دهم تا دوازدهم") continue;
