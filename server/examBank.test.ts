@@ -1529,6 +1529,15 @@ describe("curriculum and assessment question bank", () => {
       question.sourceTitle?.includes("کتاب رسمی ریاضی و آمار (۲)") &&
       question.reviewerNote?.includes("سؤال تألیفی")
     )).toBe(true);
+
+    const catalog = buildGradeSpecificCatalog(verifiedQuestions
+      .filter((question) => question.grade === "یازدهم")
+      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus })));
+    const mathStatistics = catalog.find((book) =>
+      book.grade === "یازدهم" && book.track === "انسانی" && book.subject === "ریاضی و آمار"
+    );
+    expect(mathStatistics?.chapters).toEqual(chapters);
+    expect(mathStatistics?.chapters).not.toContain("آشنایی با منطق و استدلال ریاضی");
   });
 
   it("reaches at least five reviewed questions in every Grade 11 Math-track Calculus chapter", () => {
