@@ -2587,6 +2587,9 @@ describe("curriculum and assessment question bank", () => {
     const niki = persian?.lessonCoverage?.find((lesson) => lesson.chapter === "نیکی");
     expect(niki?.verifiedQuestionCount).toBe(5);
     expect(niki?.targetMet).toBe(true);
+    const qazi = persian?.lessonCoverage?.find((lesson) => lesson.chapter === "قاضی بُست");
+    expect(qazi?.verifiedQuestionCount).toBe(5);
+    expect(qazi?.targetMet).toBe(true);
   });
 
   it("audits every eligible Grade 11 book and leaves only the remaining Persian lessons below target", () => {
@@ -2607,7 +2610,6 @@ describe("curriculum and assessment question bank", () => {
     expect(gaps.map((gap) => gap.book).filter((value, index, values) => values.indexOf(value) === index))
       .toEqual(["عمومی::فارسی"]);
     expect(gaps.map((gap) => gap.chapter).sort()).toEqual([
-      "قاضی بُست",
       "در امواج سند",
       "درس آزاد (۱)",
       "آغازگری تنها",
