@@ -32,7 +32,7 @@ function authored(
     sourceUrl,
     sourceYear: "۱۴۰۵–۱۴۰۶",
     verifiedAt,
-    reviewerNote: `AUTHORED/ORIGINAL — سؤال از نو نوشته شده و به هیچ آزمونی منتسب نیست. متن، پاسخ و گزینه‌های انحرافی با کتاب درسی تطبیق داده شده‌اند؛ ارجاع: درس «${chapter}»، صفحات ${pages}.`,
+    reviewerNote: `AUTHORED/ORIGINAL — سؤال تألیفی است، از نو نوشته شده و به هیچ آزمونی منتسب نیست. متن، پاسخ و گزینه‌های انحرافی با کتاب درسی تطبیق داده شده‌اند؛ ارجاع: درس «${chapter}»، صفحات ${pages}.`,
   };
 }
 

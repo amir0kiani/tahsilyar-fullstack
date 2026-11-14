@@ -2537,6 +2537,29 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("has five reviewed questions for each of the seven official Grade 11 humanities Math and Statistics lessons", () => {
+    const expectedChapters = [
+      "گزاره‌ها و ترکیب گزاره‌ها",
+      "استدلال ریاضی",
+      "توابع ثابت، چند ضابطه‌ای و همانی",
+      "توابع پلکانی و قدر مطلقی",
+      "اعمال بر روی توابع",
+      "شاخص‌های آماری",
+      "سری‌های زمانی",
+    ];
+    const questions = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" && question.track === "انسانی" && question.subject === "ریاضی و آمار"
+    );
+    expect(questions).toHaveLength(35);
+    for (const chapter of expectedChapters) {
+      const lessonQuestions = questions.filter((question) => question.chapter === chapter);
+      expect(lessonQuestions, chapter).toHaveLength(5);
+      expect(lessonQuestions.every((question) => question.sourceStatus === "reviewed")).toBe(true);
+      expect(lessonQuestions.every((question) => question.sourceUrl?.includes("Amar-EM-11"))).toBe(true);
+      expect(lessonQuestions.every((question) => question.reviewerNote?.includes("سؤال تألیفی"))).toBe(true);
+    }
+  });
+
   it("audits every eligible Grade 11 book and leaves Persian as the only remaining coverage gap", () => {
     const rows = verifiedQuestions
       .filter((question) => question.grade === "یازدهم")
