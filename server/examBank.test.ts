@@ -2537,4 +2537,34 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("audits every eligible Grade 11 book and leaves Persian as the only remaining coverage gap", () => {
+    const rows = verifiedQuestions
+      .filter((question) => question.grade === "یازدهم")
+      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
+    const catalog = buildGradeSpecificCatalog(rows);
+    const eligibleBooks = catalog.filter((book) =>
+      book.grade === "یازدهم" && isGrade11AssessmentSubjectEligible(book.track, book.subject)
+    );
+
+    expect(eligibleBooks).toHaveLength(25);
+    const gaps = eligibleBooks.flatMap((book) =>
+      (book.lessonCoverage ?? [])
+        .filter((lesson) => !lesson.targetMet)
+        .map((lesson) => ({ book: `${book.track}::${book.subject}`, chapter: lesson.chapter, count: lesson.verifiedQuestionCount }))
+    );
+    expect(gaps.map((gap) => gap.book).filter((value, index, values) => values.indexOf(value) === index))
+      .toEqual(["عمومی::فارسی"]);
+    expect(gaps.map((gap) => gap.chapter).sort()).toEqual([
+      "ادبیات تعلیمی",
+      "ادبیات سفر و زندگی",
+      "ادبیات غنایی",
+      "ادبیات پایداری",
+      "ادبیات انقلاب اسلامی",
+      "ادبیات حماسی",
+      "ادبیات داستانی",
+      "ادبیات جهان",
+    ].sort());
+    expect(gaps.every((gap) => gap.count === 0)).toBe(true);
+  });
+
 });
