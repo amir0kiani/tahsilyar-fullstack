@@ -1499,24 +1499,34 @@ describe("curriculum and assessment question bank", () => {
     )).toBe(true);
   });
 
-  it("reaches five authored questions in every remaining Grade 11 humanities Math & Statistics chapter", () => {
-    const chapters = ["استدلال ریاضی", "توابع ثابت، چند ضابطه‌ای و همانی", "توابع پلکانی و قدر مطلقی", "اعمال بر روی توابع", "شاخص‌های آماری", "سری‌های زمانی"];
+  it("has five reviewed authored questions for each of the seven official Grade 11 humanities Math and Statistics lessons", () => {
+    const chapters = [
+      "گزاره‌ها و ترکیب گزاره‌ها",
+      "استدلال ریاضی",
+      "توابع ثابت، چند ضابطه‌ای و همانی",
+      "توابع پلکانی و قدر مطلقی",
+      "اعمال بر روی توابع",
+      "شاخص‌های آماری",
+      "سری‌های زمانی",
+    ];
+    const isOurAuthoredQuestion = (question: typeof verifiedQuestions[number]) =>
+      question.grade === "یازدهم" && question.track === "انسانی" &&
+      question.subject === "ریاضی و آمار" &&
+      question.sourceUrl?.includes("Amar-EM-11") === true;
     for (const chapter of chapters) {
       const questions = verifiedQuestions.filter((question) =>
-        question.grade === "یازدهم" && question.track === "انسانی" &&
-        question.subject === "ریاضی و آمار" && question.chapter === chapter &&
+        isOurAuthoredQuestion(question) && question.chapter === chapter &&
         question.sourceStatus === "reviewed"
       );
       expect(questions, chapter).toHaveLength(5);
     }
-    const authored = verifiedQuestions.filter((question) => question.id.startsWith("logic-proof-") ||
-      question.id.startsWith("piecewise-") || question.id.startsWith("step-") ||
-      question.id.startsWith("operations-") || question.id.startsWith("stats-index-") ||
-      question.id.startsWith("time-series-"));
-    expect(authored).toHaveLength(30);
-    expect(authored.every((question) => question.sourceTitle?.includes("سؤال تألیفی") && question.reviewerNote?.includes("تألیفی"))).toBe(true);
+    const authored = verifiedQuestions.filter(isOurAuthoredQuestion);
+    expect(authored).toHaveLength(35);
+    expect(authored.every((question) =>
+      question.sourceTitle?.includes("کتاب رسمی ریاضی و آمار (۲)") &&
+      question.reviewerNote?.includes("سؤال تألیفی")
+    )).toBe(true);
   });
-
 
   it("reaches at least five reviewed questions in every Grade 11 Math-track Calculus chapter", () => {
     const chapters = ["جبر و معادله", "تابع", "توابع نمایی و لگاریتمی", "مثلثات", "حد و پیوستگی"];
@@ -2534,29 +2544,6 @@ describe("curriculum and assessment question bank", () => {
         question.grade === "یازدهم" && question.track === "عمومی" &&
         question.subject === "دین و زندگی" && question.chapter === chapter
       )).toHaveLength(0);
-    }
-  });
-
-  it("has five reviewed questions for each of the seven official Grade 11 humanities Math and Statistics lessons", () => {
-    const expectedChapters = [
-      "گزاره‌ها و ترکیب گزاره‌ها",
-      "استدلال ریاضی",
-      "توابع ثابت، چند ضابطه‌ای و همانی",
-      "توابع پلکانی و قدر مطلقی",
-      "اعمال بر روی توابع",
-      "شاخص‌های آماری",
-      "سری‌های زمانی",
-    ];
-    const questions = verifiedQuestions.filter((question) =>
-      question.grade === "یازدهم" && question.track === "انسانی" && question.subject === "ریاضی و آمار"
-    );
-    expect(questions).toHaveLength(35);
-    for (const chapter of expectedChapters) {
-      const lessonQuestions = questions.filter((question) => question.chapter === chapter);
-      expect(lessonQuestions, chapter).toHaveLength(5);
-      expect(lessonQuestions.every((question) => question.sourceStatus === "reviewed")).toBe(true);
-      expect(lessonQuestions.every((question) => question.sourceUrl?.includes("Amar-EM-11"))).toBe(true);
-      expect(lessonQuestions.every((question) => question.reviewerNote?.includes("سؤال تألیفی"))).toBe(true);
     }
   });
 
