@@ -2602,11 +2602,13 @@ describe("curriculum and assessment question bank", () => {
     );
 
     expect(eligibleBooks).toHaveLength(25);
+    expect(eligibleBooks.reduce((total, book) => total + (book.lessonCoverage?.length ?? 0), 0)).toBe(218);
     const gaps = eligibleBooks.flatMap((book) =>
       (book.lessonCoverage ?? [])
         .filter((lesson) => !lesson.targetMet)
         .map((lesson) => ({ book: `${book.track}::${book.subject}`, chapter: lesson.chapter, count: lesson.verifiedQuestionCount }))
     );
+    expect(gaps).toHaveLength(16);
     expect(gaps.map((gap) => gap.book).filter((value, index, values) => values.indexOf(value) === index))
       .toEqual(["عمومی::فارسی"]);
     expect(gaps.map((gap) => gap.chapter).sort()).toEqual([
