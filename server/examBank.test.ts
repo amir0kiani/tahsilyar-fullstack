@@ -2,6 +2,16 @@ import { describe, expect, it } from "vitest";
 import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
+import { verifiedGrade11DiniSharedLesson2 } from "./verifiedGrade11DiniSharedLesson2";
+import { verifiedGrade11HumanitiesDiniLesson3 } from "./verifiedGrade11HumanitiesDiniLesson3";
+import { verifiedGrade11HumanitiesDiniLesson8 } from "./verifiedGrade11HumanitiesDiniLesson8";
+import { verifiedGrade11HumanitiesDiniLesson11 } from "./verifiedGrade11HumanitiesDiniLesson11";
+import { verifiedGrade11HumanitiesDiniLesson13 } from "./verifiedGrade11HumanitiesDiniLesson13";
+import { verifiedGrade11HumanitiesDiniLesson15 } from "./verifiedGrade11HumanitiesDiniLesson15";
+import { verifiedGrade11HumanitiesDiniLesson17 } from "./verifiedGrade11HumanitiesDiniLesson17";
+import { verifiedGrade11English2 } from "./verifiedGrade11English2";
+import { buildGradeSpecificCatalog } from "./db";
+import { canonicalizeGrade11AssessmentChapter, grade11AssessmentYear, grade11DiniSharedChapters, grade11HumanitiesDiniExclusiveChapters, grade11FinalExamSubjectsByTrack, grade11EntranceExamSubjectsByTrack, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
 const allQuestions = [...examQuestions, ...verifiedQuestions];
 
@@ -25,11 +35,17 @@ describe("curriculum and assessment question bank", () => {
   it("records traceable provenance for every official- or mock-exam-adapted question", () => {
     expect(verifiedQuestions.length).toBeGreaterThanOrEqual(29);
     for (const question of verifiedQuestions) {
-      expect(["official-exam-adapted", "mock-exam-adapted", "reviewed"]).toContain(question.sourceStatus);
+      expect(["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored"]).toContain(question.sourceStatus);
       expect(question.sourceTitle).toBeTruthy();
       const uploadedSource = question.sourceTitle?.includes("(فایل ارسالی کاربر)") ?? false;
+      const authoredReviewed = (question.sourceStatus === "reviewed" && (
+        question.sourceTitle?.includes("تألیفی تحصیل‌یار") ||
+        question.reviewerNote?.includes("سؤال تألیفی")
+      )) || question.sourceStatus === "sample-authored";
       if (uploadedSource) {
         expect(question.sourceQuestionNumber).toBeTruthy();
+      } else if (authoredReviewed) {
+        expect(question.reviewerNote).toContain("تألیفی");
       } else {
         expect(question.sourceUrl).toMatch(/^https:\/\//);
         expect(question.sourceYear).toBeTruthy();
@@ -41,9 +57,299 @@ describe("curriculum and assessment question bank", () => {
 
   it("does not label rewritten practice items as verbatim official exam questions", () => {
     expect(verifiedQuestions.every((question) => question.sourceStatus !== "official-exam")).toBe(true);
-    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
+    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored"].includes(question.sourceStatus ?? ""))).toBe(true);
   });
 
+  it("maps the Grade 11 humanities climate questions to the exact Geography 2 lesson title", () => {
+    const climateQuestions = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "جغرافیا" &&
+      question.chapter === "نواحی آب و هوایی" &&
+      question.sourceStatus === "reviewed"
+    );
+    expect(climateQuestions).toHaveLength(5);
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "جغرافیا" &&
+      ["نواحی طبیعی", "نواحی آب‌وهوایی"].includes(question.chapter)
+    )).toBe(false);
+  });
+
+  it("includes five traceable Grade 11 humanities history questions adapted from the official Khordad 1404 final exam", () => {
+    const questions = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "تاریخ" &&
+      question.chapter === "ایران در دوران غزنوی، سلجوقی و خوارزمشاهی" &&
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceTitle?.includes("خرداد ۱۴۰۴")
+    );
+    expect(questions).toHaveLength(5);
+    for (const question of questions) {
+      expect(question.sourceUrl).toBe("https://dl.novinkonkor.com/nahaye/11/ensani/1404/khordad/tarikh_2.pdf");
+      expect(question.sourceYear).toBe("۱۴۰۴");
+      expect(question.sourceQuestionNumber).toBeTruthy();
+      expect(question.verifiedAt).toBeInstanceOf(Date);
+      expect(question.reviewerNote).toBeTruthy();
+    }
+  });
+
+  it("uses verified chapter maps for Grade 11 common textbooks", () => {
+    const chaptersFor = (subject: string) =>
+      curriculumCatalog.find((book) => book.track === "عمومی" && book.grade === "یازدهم" && book.subject === subject)?.chapters ?? [];
+
+    expect(chaptersFor("فارسی")).toEqual([
+      "نیکی", "قاضی بُست", "در امواج سند", "درس آزاد (۱)", "آغازگری تنها",
+      "پروردهٔ عشق", "باران محبت", "در کوی عاشقان", "ذوق لطیف", "بانگ جرس",
+      "یاران عاشق", "کاوهٔ دادخواه", "درس آزاد (۲)", "حملهٔ حیدری",
+      "کبوتر طوق‌دار", "قصهٔ عینکم", "خاموشی دریا", "خوان عدل",
+    ]);
+    expect(curriculumCatalog.find((book) => book.track === "عمومی" && book.grade === "یازدهم" && book.subject === "فارسی")?.sections).toHaveLength(8);
+    expect(chaptersFor("نگارش")).toHaveLength(6);
+    expect(chaptersFor("زبان انگلیسی")).toEqual(["Understanding People", "A Healthy Lifestyle", "Art and Culture"]);
+    expect(chaptersFor("کتاب کار انگلیسی")).toEqual(["Understanding People", "A Healthy Lifestyle", "Art and Culture"]);
+    expect(chaptersFor("هنر")).toEqual([
+      "مطالعۀ مفهوم زیبایی و هنر", "خلاقیت هنری", "تحلیل آثار هنری", "هنر، میراث فرهنگی و سبک زندگی",
+    ]);
+    expect(curriculumCatalog.find((book) => book.track === "عمومی" && book.grade === "یازدهم" && book.subject === "کتاب کار انگلیسی")?.bookCode).toBe("111231");
+    expect(chaptersFor("انسان و محیط زیست")).toHaveLength(7);
+    for (const subject of ["فارسی", "نگارش", "زبان انگلیسی", "کتاب کار انگلیسی", "هنر", "انسان و محیط زیست"]) {
+      expect(chaptersFor(subject)).not.toContain("کل کتاب");
+    }
+  });
+
+  it("uses only Grade 11 subjects listed in the official 1406 final-exam or entrance-exam sources", () => {
+    expect(grade11AssessmentYear).toBe("۱۴۰۶");
+    expect(grade11FinalExamSubjectsByTrack["انسانی"]).toEqual([
+      "فارسی", "زبان انگلیسی", "دین و زندگی", "عربی", "تاریخ", "جامعه‌شناسی",
+    ]);
+    expect(grade11FinalExamSubjectsByTrack["ریاضی"]).toEqual([
+      "فارسی", "زبان انگلیسی", "دین و زندگی", "عربی", "هندسه", "فیزیک",
+    ]);
+    expect(grade11FinalExamSubjectsByTrack["تجربی"]).toEqual([
+      "فارسی", "زبان انگلیسی", "دین و زندگی", "عربی", "زیست‌شناسی", "شیمی",
+    ]);
+    expect(grade11EntranceExamSubjectsByTrack["انسانی"]).toContain("روان‌شناسی");
+    expect(grade11EntranceExamSubjectsByTrack["انسانی"]).toContain("جغرافیا");
+    expect(grade11EntranceExamSubjectsByTrack["ریاضی"]).toEqual([
+      "هندسه", "آمار و احتمال", "حسابان", "فیزیک", "شیمی",
+    ]);
+    expect(grade11EntranceExamSubjectsByTrack["تجربی"]).toEqual([
+      "زمین‌شناسی", "ریاضی", "زیست‌شناسی", "فیزیک", "شیمی",
+    ]);
+
+    for (const question of verifiedQuestions.filter((item) => item.grade === "یازدهم")) {
+      expect(isGrade11AssessmentQuestionEligible(question)).toBe(true);
+    }
+
+    for (const [track, subject] of [
+      ["عمومی", "نگارش"],
+      ["عمومی", "فارسی و نگارش"],
+      ["عمومی", "کتاب کار انگلیسی"],
+      ["عمومی", "هنر"],
+      ["عمومی", "انسان و محیط زیست"],
+      ["عمومی", "عربی"],
+      ["عمومی", "دین و زندگی"],
+      ["ریاضی", "تاریخ معاصر ایران"],
+      ["تجربی", "تاریخ معاصر ایران"],
+      ["ریاضی", "زمین‌شناسی"],
+      ["ریاضی", "آزمایشگاه علوم تجربی"],
+      ["تجربی", "آزمایشگاه علوم تجربی"],
+    ]) {
+      expect(isGrade11AssessmentSubjectEligible(track, subject), `${track} / ${subject}`).toBe(false);
+    }
+
+    expect(isGrade11AssessmentSubjectEligible("عمومی", "فارسی")).toBe(true);
+    expect(isGrade11AssessmentSubjectEligible("عمومی", "زبان انگلیسی")).toBe(true);
+    expect(isGrade11AssessmentSubjectEligible("انسانی", "فلسفه")).toBe(true);
+    expect(isGrade11AssessmentSubjectEligible("انسانی", "عربی، زبان قرآن")).toBe(true);
+    expect(verifiedQuestions.find((question) => question.id === "upload-human11-arabic-fael-05")?.subject).toBe("عربی");
+    expect(isGrade11AssessmentSubjectEligible("انسانی", "روان‌شناسی")).toBe(true);
+    expect(isGrade11AssessmentSubjectEligible("تجربی", "زمین‌شناسی")).toBe(true);
+    expect(isGrade11AssessmentSubjectEligible("ریاضی", "حسابان")).toBe(true);
+
+    const assessmentBooks = buildGradeSpecificCatalog([]).filter((book) => book.grade === "یازدهم");
+    expect(assessmentBooks.some((book) => book.subject === "نگارش")).toBe(false);
+    expect(assessmentBooks.some((book) => book.subject === "کتاب کار انگلیسی")).toBe(false);
+    expect(assessmentBooks.some((book) => book.subject === "هنر")).toBe(false);
+    expect(assessmentBooks.some((book) => book.subject === "انسان و محیط زیست")).toBe(false);
+    expect(assessmentBooks.some((book) => book.subject === "تاریخ معاصر ایران")).toBe(false);
+    expect(assessmentBooks.some((book) => book.subject === "آزمایشگاه علوم تجربی")).toBe(false);
+    expect(assessmentBooks.some((book) => book.track === "ریاضی" && book.subject === "زمین‌شناسی")).toBe(false);
+    expect(assessmentBooks.some((book) => book.track === "تجربی" && book.subject === "زمین‌شناسی")).toBe(true);
+  });
+
+  it("includes the official Grade 11 calculus chapter map", () => {
+    const book = (track: string, subject: string) =>
+      curriculumCatalog.find((item) => item.grade === "یازدهم" && item.track === track && item.subject === subject);
+    expect(book("ریاضی", "حسابان")?.chapters).toEqual([
+      "جبر و معادله", "تابع", "توابع نمایی و لگاریتمی", "مثلثات", "حد و پیوستگی",
+    ]);
+  });
+
+  it("keeps Grade 11 Arabic and Dini editions separated by track", () => {
+    const book = (track: string, subject: string) =>
+      curriculumCatalog.find((item) => item.grade === "یازدهم" && item.track === track && item.subject === subject);
+
+    expect(curriculumCatalog.some((item) => item.grade === "یازدهم" && item.track === "عمومی" && ["عربی", "دین و زندگی"].includes(item.subject))).toBe(false);
+    expect(book("انسانی", "عربی")?.chapters).toEqual(["مواعظ قیمة", "صناعة التلميع في الأدب الفارسي", "عجائب المخلوقات", "تأثير اللغة الفارسية على اللغة العربية", "الصدق", "ارحموا ثلاثاً", "لا تقنطوا"]);
+    expect(book("انسانی", "عربی")?.bookCode).toBe("111207");
+    const mathArabic = book("ریاضی", "عربی")?.chapters ?? [];
+    const scienceArabic = book("تجربی", "عربی")?.chapters ?? [];
+    expect(book("ریاضی", "عربی")?.bookCode).toBe("111206");
+    expect(book("تجربی", "عربی")?.bookCode).toBe("111206");
+    expect(mathArabic).toHaveLength(7);
+    expect(scienceArabic).toEqual(mathArabic);
+    expect(book("انسانی", "دین و زندگی")?.chapters).toHaveLength(18);
+    const nonHumanitiesDini = ["هدایت الهی", "تداوم هدایت", "معجزه جاویدان", "مسئولیت‌های پیامبر (ص)", "امامت، تداوم رسالت", "پیشوایان اسوه", "وضعیت فرهنگی، اجتماعی و سیاسی مسلمانان، پس از رحلت رسول خدا (ص)", "احیای ارزش‌های راستین", "عصر غیبت", "مرجعیت و ولایت فقیه", "عزت نفس", "پیوند مقدس"];
+    expect(book("ریاضی", "دین و زندگی")?.chapters).toEqual(nonHumanitiesDini);
+    expect(book("تجربی", "دین و زندگی")?.chapters).toEqual(nonHumanitiesDini);
+  });
+
+  it("maps all uploaded Grade 11 humanities Arabic questions to the cited pages of Lesson 1", () => {
+    const lessonOne = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "عربی" &&
+      question.chapter === "مواعظ قیمة" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      question.sourceQuestionNumber
+    );
+    expect(lessonOne).toHaveLength(10);
+    expect(lessonOne.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.reviewerNote?.includes("صفحات ۴ تا ۱۳ کتاب درسی")
+    )).toBe(true);
+  });
+
+  it("covers all seven Grade 11 humanities Arabic lessons with five official final-exam adaptations each", () => {
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "عربی"
+    );
+    expect(book?.bookCode).toBe("111207");
+    const questions = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "عربی" &&
+      question.sourceTitle?.includes("۲۹ تیر ۱۴۰۵")
+    );
+    expect(questions).toHaveLength(35);
+    for (const lesson of book?.chapters ?? []) {
+      expect(questions.filter((question) => question.chapter === lesson), lesson).toHaveLength(5);
+    }
+    expect(questions.every((question) =>
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceUrl === "https://azmoon.medu.ir" &&
+      question.sourceYear === "۱۴۰۵" &&
+      Boolean(question.sourceQuestionNumber) &&
+      question.verifiedAt instanceof Date &&
+      question.reviewerNote?.includes("راهنمای نمره‌گذاری رسمی") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4
+    )).toBe(true);
+  });
+
+  it("does not bundle unverified Grade 11 math/science Arabic candidates as verified questions", () => {
+    expect(verifiedQuestions.some((question) =>
+      question.id.startsWith("upload-kankchi-math-science11-arabic-lesson1-")
+    )).toBe(false);
+    expect(verifiedQuestions.every((question) => question.sourceStatus !== "pending-review")).toBe(true);
+  });
+
+  it("covers all seven Grade 11 math/science Arabic lessons with five official final-exam adaptations per track", () => {
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "ریاضی" && item.subject === "عربی"
+    );
+    expect(book?.bookCode).toBe("111206");
+    const lessons = book?.chapters ?? [];
+    for (const track of ["ریاضی", "تجربی"]) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === track &&
+        question.subject === "عربی" &&
+        question.sourceTitle?.includes("۷ مرداد ۱۴۰۵")
+      );
+      expect(questions, track).toHaveLength(35);
+      for (const lesson of lessons) {
+        expect(questions.filter((question) => question.chapter === lesson), `${track}: ${lesson}`).toHaveLength(5);
+      }
+      expect(questions.every((question) =>
+        question.sourceStatus === "official-exam-adapted" &&
+        question.sourceUrl === "https://azmoon.medu.ir" &&
+        question.sourceYear === "۱۴۰۵" &&
+        Boolean(question.sourceQuestionNumber) &&
+        question.verifiedAt instanceof Date &&
+        question.reviewerNote?.includes("راهنمای نمره‌گذاری رسمی") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4
+      )).toBe(true);
+    }
+  });
+
+  it("assigns Grade 11 Contemporary History only to mathematics and experimental-sciences tracks", () => {
+    for (const track of ["ریاضی", "تجربی"]) {
+      const book = curriculumCatalog.find((item) =>
+        item.grade === "یازدهم" && item.track === track && item.subject === "تاریخ معاصر ایران"
+      );
+      expect(book?.bookCode).toBe("111220");
+      expect(book?.chapters).toHaveLength(26);
+    }
+    expect(curriculumCatalog.some((item) =>
+      item.grade === "یازدهم" && item.track === "عمومی" && item.subject === "تاریخ معاصر ایران"
+    )).toBe(false);
+    expect(curriculumCatalog.some((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "تاریخ معاصر ایران"
+    )).toBe(false);
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "یازدهم" && question.subject === "تاریخ معاصر ایران"
+    )).toBe(false);
+    expect(buildGradeSpecificCatalog([]).some((book) =>
+      book.grade === "یازدهم" && book.subject === "تاریخ معاصر ایران"
+    )).toBe(false);
+  });
+
+  it("catalogs the official Grade 11 lab-science book for both mathematics and experimental tracks", () => {
+    const expected = ["کلیات", "آزمایش‌های مربی", "آزمایش‌های دستورالعملی", "آزمایش‌های کاوشگری"];
+    for (const track of ["ریاضی", "تجربی"]) {
+      const book = curriculumCatalog.find((item) =>
+        item.grade === "یازدهم" && item.track === track && item.subject === "آزمایشگاه علوم تجربی"
+      );
+      expect(book?.bookCode).toBe("111217");
+      expect(book?.chapters).toEqual(expected);
+    }
+  });
+
+  it("keeps Grade 11 lab-science in the curriculum map but excludes it from the assessment bank", () => {
+    expect(curriculumCatalog.some((book) =>
+      book.grade === "یازدهم" && book.track === "ریاضی" && book.subject === "آزمایشگاه علوم تجربی"
+    )).toBe(true);
+    expect(curriculumCatalog.some((book) =>
+      book.grade === "یازدهم" && book.track === "تجربی" && book.subject === "آزمایشگاه علوم تجربی"
+    )).toBe(true);
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "یازدهم" && question.subject === "آزمایشگاه علوم تجربی"
+    )).toBe(false);
+    expect(buildGradeSpecificCatalog([]).some((book) =>
+      book.grade === "یازدهم" && book.subject === "آزمایشگاه علوم تجربی"
+    )).toBe(false);
+  });
+
+  it("does not treat Arabic skill labels as official Grade 11 lessons", () => {
+    const catalog = buildGradeSpecificCatalog([
+      { track: "انسانی", grade: "یازدهم", subject: "عربی", chapter: "ترجمه", sourceStatus: "reviewed" },
+      { track: "انسانی", grade: "یازدهم", subject: "عربی", chapter: "واژگان", sourceStatus: "reviewed" },
+      { track: "انسانی", grade: "یازدهم", subject: "عربی", chapter: "مفهوم عبارات", sourceStatus: "reviewed" },
+    ]);
+    const arabic = catalog.find((item) => item.track === "انسانی" && item.grade === "یازدهم" && item.subject === "عربی");
+    expect(arabic?.questionCount).toBe(3);
+    expect(arabic?.lessonCoverage).toHaveLength(7);
+    expect(arabic?.lessonCoverage.map((lesson) => lesson.chapter)).not.toContain("ترجمه");
+    expect(arabic?.lessonsMeetingTarget).toBe(0);
+  });
   it("lists grade-specific books for all three main tracks", () => {
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       expect(curriculumCatalog.some((book) => book.grade === grade && book.track === "تجربی")).toBe(true);
@@ -77,17 +383,68 @@ describe("curriculum and assessment question bank", () => {
     expect(curriculumCatalog.every((book) => book.targetQuestionsPerLesson === 5)).toBe(true);
   });
 
+  it("reports verified question coverage separately for every lesson and excludes pending or sample items", () => {
+    const rows = [
+      ...Array.from({ length: 5 }, (_, index) => ({
+        track: "انسانی", grade: "یازدهم", subject: "ریاضی و آمار",
+        chapter: "گزاره‌ها و ترکیب گزاره‌ها", sourceStatus: "reviewed",
+      })),
+      {
+        track: "انسانی", grade: "یازدهم", subject: "ریاضی و آمار",
+        chapter: "گزاره‌ها و ترکیب گزاره‌ها", sourceStatus: "pending-review",
+      },
+      ...Array.from({ length: 4 }, () => ({
+        track: "انسانی", grade: "یازدهم", subject: "ریاضی و آمار",
+        chapter: "توابع ثابت، چند ضابطه‌ای و همانی", sourceStatus: "sample-authored",
+      })),
+    ];
+    const book = buildGradeSpecificCatalog(rows).find((item) =>
+      item.track === "انسانی" && item.grade === "یازدهم" && item.subject === "ریاضی و آمار"
+    );
+    expect(book).toBeDefined();
+    const logic = book?.lessonCoverage.find((lesson) => lesson.chapter === "گزاره‌ها و ترکیب گزاره‌ها");
+    const functionLesson = book?.lessonCoverage.find((lesson) => lesson.chapter === "توابع ثابت، چند ضابطه‌ای و همانی");
+    expect(logic).toMatchObject({ questionCount: 6, verifiedQuestionCount: 5, targetQuestionsPerLesson: 5, targetMet: true });
+    expect(functionLesson).toMatchObject({ questionCount: 4, verifiedQuestionCount: 0, targetQuestionsPerLesson: 5, targetMet: false });
+    expect(book?.lessonsMeetingTarget).toBe(1);
+    expect(book?.lessonCount).toBe(7);
+  });
+
   it("keeps every curriculum catalogue entry grade- and track-specific", () => {
     expect(curriculumCatalog.every((book) => ["دهم", "یازدهم", "دوازدهم"].includes(book.grade))).toBe(true);
     expect(curriculumCatalog.every((book) => ["عمومی", "تجربی", "ریاضی", "انسانی"].includes(book.track))).toBe(true);
   });
+  it("reaches five reviewed questions in every Grade 11 biology chapter", () => {
+    const chapters = [
+      "تنظیم عصبی", "حواس", "دستگاه حرکتی", "تنظیم شیمیایی", "ایمنی",
+      "تقسیم یاخته", "تولیدمثل", "تولیدمثل نهان‌دانگان", "پاسخ گیاهان به محرک‌ها"
+    ];
+    for (const chapter of chapters) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.track === "تجربی" && question.grade === "یازدهم" &&
+        question.subject === "زیست‌شناسی" && question.chapter === chapter &&
+        ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? "")
+      );
+      expect(questions.length, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const officialBatch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("verified-grade11-bio-1405-")
+    );
+    expect(officialBatch).toHaveLength(38);
+    expect(officialBatch.every((question) =>
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceUrl === "https://azmoon.medu.ir/" &&
+      question.reviewerNote?.includes("گزینه‌های انحرافی تألیفی‌اند")
+    )).toBe(true);
+  });
+
   it("reaches the five-question target for each grade-specific biology textbook", () => {
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       const questions = verifiedQuestions.filter((question) =>
         question.track === "تجربی" && question.grade === grade && question.subject === "زیست‌شناسی"
       );
       expect(questions.length).toBeGreaterThanOrEqual(5);
-      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? ""))).toBe(true);
+      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
     }
   });
 
@@ -103,7 +460,7 @@ describe("curriculum and assessment question bank", () => {
         question.track === "تجربی" && question.grade === grade && question.subject === "شیمی"
       );
       expect(questions.length).toBeGreaterThanOrEqual(5);
-      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? ""))).toBe(true);
+      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
     }
   });
 
@@ -188,8 +545,64 @@ describe("curriculum and assessment question bank", () => {
           (book.subject !== "شیمی" || ["تجربی", "ریاضی", "ریاضی و تجربی"].includes(question.track))
         );
         expect(matching.length, `${book.subject} / ${chapter}`).toBeGreaterThanOrEqual(5);
-        expect(matching.every((question) => ["official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? ""))).toBe(true);
+        expect(matching.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
       }
+    }
+  });
+
+  it("keeps Grade 11 geology in the experimental assessment bank only", () => {
+    const chapters = [
+      "آفرینش کیهان و تکوین زمین",
+      "منابع معدنی و ذخایر انرژی",
+      "منابع آب و خاک",
+      "پویایی زمین",
+      "زمین‌شناسی و سلامت",
+      "زمین‌شناسی و سازه‌های مهندسی",
+      "زمین‌شناسی ایران",
+    ];
+    expect(curriculumCatalog.find((book) =>
+      book.grade === "یازدهم" && book.track === "ریاضی" && book.subject === "زمین‌شناسی"
+    )?.chapters).toEqual(chapters);
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "یازدهم" && question.track === "ریاضی" && question.subject === "زمین‌شناسی"
+    )).toBe(false);
+    expect(buildGradeSpecificCatalog([]).some((book) =>
+      book.grade === "یازدهم" && book.track === "ریاضی" && book.subject === "زمین‌شناسی"
+    )).toBe(false);
+    for (const chapter of chapters) {
+      const matching = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "تجربی" &&
+        question.subject === "زمین‌شناسی" &&
+        question.chapter === chapter &&
+        question.sourceStatus === "official-exam-adapted"
+      );
+      expect(matching, `تجربی / ${chapter}`).toHaveLength(5);
+    }
+  });
+
+  it("adds five official-exam-adapted Grade 11 geology questions for each remaining lesson", () => {
+    const chapters = [
+      "منابع آب و خاک",
+      "پویایی زمین",
+      "زمین‌شناسی و سلامت",
+      "زمین‌شناسی و سازه‌های مهندسی",
+      "زمین‌شناسی ایران",
+    ];
+    for (const chapter of chapters) {
+      const matching = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "تجربی" &&
+        question.subject === "زمین‌شناسی" &&
+        question.chapter === chapter &&
+        question.sourceStatus === "official-exam-adapted"
+      );
+      expect(matching, chapter).toHaveLength(5);
+      expect(matching.every((question) =>
+        question.sourceYear === "۱۴۰۵" &&
+        Boolean(question.sourceQuestionNumber) &&
+        question.sourceTitle?.includes("۱۲ مرداد")
+      )).toBe(true);
     }
   });
 
@@ -206,8 +619,8 @@ describe("curriculum and assessment question bank", () => {
         question.subject === "زمین‌شناسی" &&
         question.chapter === chapter
       );
-      expect(matching.length, chapter).toBeGreaterThanOrEqual(5);
-      expect(matching.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+      expect(matching.filter((question) => question.sourceStatus === "mock-exam-adapted"), chapter).toHaveLength(5);
+      expect(matching.filter((question) => question.sourceStatus === "official-exam-adapted"), chapter).toHaveLength(5);
     }
   });
 
@@ -226,7 +639,7 @@ describe("curriculum and assessment question bank", () => {
         question.chapter === target.chapter
       );
       expect(matching.length, `${target.grade} / ${target.subject} / ${target.chapter}`).toBeGreaterThanOrEqual(5);
-      expect(matching.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+      expect(matching.every((question) => ["mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
     }
   });
 
@@ -251,7 +664,8 @@ describe("curriculum and assessment question bank", () => {
 
   it("includes source-based science and mathematics questions across grades and tracks", () => {
     const batch = verifiedQuestions.filter((question) => question.id.startsWith("upload-exp") || question.id.startsWith("upload-math"));
-    expect(batch).toHaveLength(19);
+    expect(batch).toHaveLength(18);
+    expect(batch.some((question) => question.id === "upload-math11-math-combination-14")).toBe(false);
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       expect(batch.some((question) => question.grade === grade), grade).toBe(true);
     }
@@ -494,5 +908,1733 @@ describe("curriculum and assessment question bank", () => {
     expect(batch.every((question) => question.chapter === "کل کتاب")).toBe(true);
   });
 
+  it("imports ten reviewed Grade 11 humanities mathematics questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۱": 0, "۲": 2, "۳": 1, "۴": 1, "۵": 3,
+      "۶": 2, "۷": 2, "۸": 1, "۹": 2, "۱۰": 1,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "") &&
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "ریاضی و آمار" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.every((question) => question.chapter === "گزاره‌ها و ترکیب گزاره‌ها")).toBe(true);
+    const humanitiesMathBook = curriculumCatalog.find((book) =>
+      book.track === "انسانی" && book.grade === "یازدهم" && book.subject === "ریاضی و آمار"
+    );
+    expect(humanitiesMathBook?.chapters).toEqual([
+      "گزاره‌ها و ترکیب گزاره‌ها",
+      "استدلال ریاضی",
+      "توابع ثابت، چند ضابطه‌ای و همانی",
+      "توابع پلکانی و قدر مطلقی",
+      "اعمال بر روی توابع",
+      "شاخص‌های آماری",
+      "سری‌های زمانی",
+    ]);
+    expect(batch.every((question) => humanitiesMathBook?.chapters.includes(question.chapter))).toBe(true);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("قلم‌چی");
+    }
+  });
+
+  it("imports fifteen independently solved Grade 11 mathematics-track questions from Maaz", () => {
+    const expectedKeys: Record<string, number> = {
+      "۱": 0, "۲": 1, "۳": 3, "۴": 3, "۵": 2,
+      "۶": 2, "۷": 3, "۸": 1, "۹": 0, "۱۰": 0,
+      "۱۱": 0, "۱۲": 1, "۱۳": 1, "۱۴": 0, "۱۵": 1,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "") &&
+      question.grade === "یازدهم" &&
+      question.track === "ریاضی" &&
+      question.subject === "حسابان" &&
+      question.sourceTitle?.includes("آزمون ماز ۱۵ آبان ۱۴۰۵")
+    );
+    expect(batch).toHaveLength(15);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "جبر و معادله")).toHaveLength(12);
+    expect(batch.filter((question) => question.chapter === "تابع")).toHaveLength(3);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("حل مستقل");
+    }
+  });
+
+  it("imports the independently solved Grade 11 Maaz geometry question with the derived tangent-chord answer", () => {
+    const expectedKeys: Record<string, number> = { "۱۶": 3, "۱۷": 1, "۱۸": 0, "۱۹": 1, "۲۰": 0, "۲۱": 2, "۲۲": 1, "۲۳": 3 };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "ریاضی" &&
+      question.subject === "هندسه" &&
+      question.sourceTitle?.includes("آزمون ماز ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(8);
+    expect(batch.every((question) => question.chapter === "دایره" && question.options.length === 4)).toBe(true);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("حل");
+    }
+  });
+
+  it("imports the independently solved Grade 11 Maaz statistics truth-table question", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "ریاضی" &&
+      question.subject === "آمار و احتمال" &&
+      question.sourceTitle?.includes("آزمون ماز ۱۵ آبان ۱۴۰۵") &&
+      question.sourceQuestionNumber === "۲۴"
+    );
+    expect(batch).toHaveLength(1);
+    expect(batch[0].chapter).toBe("آشنایی با منطق ریاضی");
+    expect(batch[0].correctIndex).toBe(2);
+  });
+  it("imports six more independently solved Grade 11 Maaz logic questions", () => {
+    const expectedKeys: Record<string, number> = { "۲۵": 2, "۲۶": 2, "۲۷": 3, "۲۸": 2, "۲۹": 1, "۳۰": 1 };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "ریاضی" &&
+      question.subject === "آمار و احتمال" &&
+      question.sourceTitle?.includes("آزمون ماز ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(6);
+    expect(batch.every((question) => question.chapter === "آشنایی با منطق ریاضی" && question.options.length === 4)).toBe(true);
+    const question26 = batch.find((question) => question.sourceQuestionNumber === "۲۶");
+    expect(question26?.prompt).toContain("۳^x<۳۹");
+    expect(question26?.options[2]).toContain("۵^x");
+    expect(question26?.options[3]).toContain("۲^x");
+    expect(question26?.correctIndex).toBe(2);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+    }
+  });
+  it("imports ten reviewed Grade 11 humanities philosophy questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۸۱": 2, "۸۲": 1, "۸۳": 2, "۸۴": 3, "۸۵": 1,
+      "۸۶": 1, "۸۷": 0, "۸۸": 2, "۸۹": 3, "۹۰": 2,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "فلسفه" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "ریشه و شاخه‌های فلسفه")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "چیستی انسان")).toHaveLength(1);
+    expect(batch.filter((question) => question.chapter === "فلسفه و زندگی")).toHaveLength(4);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
+  it("imports ten reviewed Grade 11 humanities history questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۶۱": 2, "۶۲": 2, "۶۳": 0, "۶۴": 1, "۶۵": 0,
+      "۶۶": 0, "۶۷": 0, "۶۸": 1, "۶۹": 0, "۷۰": 2,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "تاریخ" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "روش پژوهش در تاریخ؛ بررسی و سنجش اعتبار شواهد و مدارک")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "منابع پژوهش در تاریخ اسلام و ایران دوران اسلامی")).toHaveLength(1);
+    expect(batch.filter((question) => question.chapter === "اسلام در مکه")).toHaveLength(4);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
+  it("imports five reviewed Grade 11 humanities geography questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = { "۷۱": 0, "۷۲": 3, "۷۳": 0, "۷۴": 1, "۷۵": 2 };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "جغرافیا" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(5);
+    expect(batch.every((question) => question.chapter === "انسان و ناحیه" && question.options.length === 4)).toBe(true);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
+  it("imports nine reviewed Grade 11 humanities sociology questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۳۱": 3, "۳۲": 3, "۳۳": 1, "۳۴": 1, "۳۵": 2, "۳۶": 0,
+      "۳۷": 3, "۳۸": 1, "۳۹": 1, "۴۰": 2,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "جامعه‌شناسی" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "فرهنگ جهانی")).toHaveLength(4);
+    expect(batch.filter((question) => question.chapter === "نمونه‌های فرهنگ جهانی (۱)")).toHaveLength(6);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
+  it("imports nine reviewed Grade 11 humanities psychology questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۴۱": 3, "۴۲": 2, "۴۳": 0, "۴۴": 2, "۴۵": 1, "۴۶": 3,
+      "۴۷": 3, "۴۸": 1, "۴۹": 2, "۵۰": 2,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "روان‌شناسی" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "روان‌شناسی: تعریف و روش مورد مطالعه")).toHaveLength(6);
+    expect(batch.filter((question) => question.chapter === "روان‌شناسی رشد")).toHaveLength(4);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
+  it("imports ten reviewed Grade 11 humanities Arabic questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۵۱": 2, "۵۲": 1, "۵۳": 3, "۵۴": 3, "۵۵": 0,
+      "۵۶": 2, "۵۷": 3, "۵۸": 1, "۵۹": 2, "۶۰": 1,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "عربی" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "مواعظ قیمة")).toHaveLength(10);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
+  it("imports five more reviewed Grade 11 humanities geography questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = { "۷۶": 0, "۷۷": 3, "۷۸": 2, "۷۹": 2, "۸۰": 3 };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "جغرافیا" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(5);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "انسان و ناحیه")).toHaveLength(1);
+    expect(batch.filter((question) => question.chapter === "نواحی آب و هوایی")).toHaveLength(4);
+    expect(batch.some((question) => question.chapter === "نواحی طبیعی" || question.chapter === "نواحی آب‌وهوایی")).toBe(false);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
+  it("imports nine reviewed Grade 11 humanities literature questions with exact Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = {
+      "۲۱": 3, "۲۳": 0, "۲۴": 3, "۲۵": 1, "۲۶": 1,
+      "۲۷": 2, "۲۸": 1, "۲۹": 3, "۳۰": 1,
+    };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "علوم و فنون ادبی" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(9);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.every((question) => question.chapter === "تشبیه")).toBe(true);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.reviewerNote).toContain("پاسخنامه");
+    }
+  });
+  it("imports six reviewed Grade 11 humanities literature questions from the prosody and meaning section", () => {
+    const expectedKeys: Record<string, number> = { "۱۱": 1, "۱۲": 3, "۱۳": 1, "۱۴": 1, "۱۵": 3, "۲۰": 0 };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "علوم و فنون ادبی" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(6);
+    expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
+    expect(batch.filter((question) => question.chapter === "پایه‌های آوایی")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "کل کتاب")).toHaveLength(1);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+    }
+  });
+  it("imports three additional reviewed Grade 11 literature questions with Kankchi answer keys", () => {
+    const expectedKeys: Record<string, number> = { "۱۶": 2, "۱۷": 1, "۱۹": 1, "۲۲": 1 };
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "علوم و فنون ادبی" &&
+      question.sourceTitle?.includes("قلم‌چی ۱۵ آبان ۱۴۰۵") &&
+      Object.keys(expectedKeys).includes(question.sourceQuestionNumber ?? "")
+    );
+    expect(batch).toHaveLength(4);
+    for (const question of batch) {
+      const number = question.sourceQuestionNumber ?? "";
+      expect(question.correctIndex, number).toBe(expectedKeys[number]);
+      expect(question.sourceStatus).toBe("reviewed");
+    }
+  });
+
+  it("imports independently authored Grade 11 experimental questions for identified chapter gaps", () => {
+    const ids = [
+      "authored-experimental11-biology-neural-control-synapse-01",
+      "authored-experimental11-biology-neural-control-reflex-02",
+      "authored-experimental11-physics-dc-series-parallel-03",
+      "authored-experimental11-chemistry-polymer-04",
+      "authored-experimental11-math-logarithm-domain-05",
+    ];
+    const batch = verifiedQuestions.filter((question) => ids.includes(question.id));
+    expect(batch).toHaveLength(5);
+    expect(batch.every((question) => question.sourceStatus === "reviewed")).toBe(true);
+    expect(batch.every((question) => question.sourceTitle?.includes("تألیفی تحصیل‌یار"))).toBe(true);
+    expect(batch.every((question) => question.options.length === 4)).toBe(true);
+  });
+
+  it("imports Grade 11 humanities literature question 18 with the official Kankchi key", () => {
+    const question = verifiedQuestions.find((item) =>
+      item.id === "upload-kankchi-human11-literature-prosody-pattern-18"
+    );
+    expect(question).toBeDefined();
+    expect(question?.sourceStatus).toBe("reviewed");
+    expect(question?.options).toHaveLength(4);
+    expect(question?.correctIndex).toBe(0);
+    expect(question?.chapter).toBe("پایه‌های آوایی");
+  });
+
+  it("reaches five reviewed questions in every Grade 11 chemistry chapter", () => {
+    const chapters = [
+      "قدر هدایای زمینی را بدانیم",
+      "در پی غذای سالم",
+      "پوشاک، نیازی پایان‌ناپذیر",
+    ];
+    for (const chapter of chapters) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.track === "تجربی" &&
+        question.grade === "یازدهم" &&
+        question.subject === "شیمی" &&
+        question.chapter === chapter &&
+        ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? "")
+      );
+      expect(questions.length, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const officialBatch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("verified-grade11-chem-1405-")
+    );
+    expect(officialBatch).toHaveLength(10);
+    const expectedKeys: Record<string, number> = {
+      "۲-الف": 0, "۳-ب": 0, "۳-پ": 0, "۷-الف": 2, "۹": 2,
+      "۱۴-ب": 1, "۲-ت": 0, "۳-ت": 0, "۵-الف و ۵-ب": 0, "۶-ب": 1,
+    };
+    expect(officialBatch.every((question) =>
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceTitle === "آزمون نهایی شیمی (۲) یازدهم تجربی – ۳ مرداد ۱۴۰۵" &&
+      question.sourceUrl === "https://azmoon.medu.ir/" &&
+      question.reviewerNote?.includes("گزینه‌های انحرافی تألیف شده‌اند") &&
+      question.correctIndex === expectedKeys[question.sourceQuestionNumber ?? ""]
+    )).toBe(true);
+  });
+
+
+  it("provides five reviewed Grade 11 experimental physics questions in every chapter", () => {
+    const chapters = [
+      "الکتریسیتهٔ ساکن",
+      "جریان الکتریکی و مدارهای جریان مستقیم",
+      "مغناطیس و القای الکترومغناطیسی",
+    ];
+    const batch = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "تجربی" &&
+      question.subject === "فیزیک" &&
+      question.id.startsWith("authored-grade11-experimental-physics-")
+    );
+    expect(batch).toHaveLength(15);
+    for (const chapter of chapters) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(5);
+    }
+    expect(batch.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle === "تألیفی تحصیل‌یار بر اساس محتوای فیزیک (۲) یازدهم" &&
+      question.options.length === 4 &&
+      question.reviewerNote?.includes("به آزمون رسمی نسبت داده نشده")
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "authored-grade11-experimental-physics-static-coulomb-01": 1,
+      "authored-grade11-experimental-physics-static-field-02": 1,
+      "authored-grade11-experimental-physics-static-capacitor-03": 2,
+      "authored-grade11-experimental-physics-static-conductor-04": 1,
+      "authored-grade11-experimental-physics-static-potential-05": 2,
+      "authored-grade11-experimental-physics-dc-ohm-01": 1,
+      "authored-grade11-experimental-physics-dc-series-02": 2,
+      "authored-grade11-experimental-physics-dc-parallel-03": 0,
+      "authored-grade11-experimental-physics-dc-internal-04": 0,
+      "authored-grade11-experimental-physics-dc-power-05": 2,
+      "authored-grade11-experimental-physics-mag-field-01": 2,
+      "authored-grade11-experimental-physics-mag-force-02": 1,
+      "authored-grade11-experimental-physics-mag-wire-03": 2,
+      "authored-grade11-experimental-physics-mag-lenz-04": 1,
+      "authored-grade11-experimental-physics-mag-induction-05": 2,
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
+
+  it("provides at least five reviewed questions in every Grade 11 experimental mathematics chapter", () => {
+    const chapters = [
+      "هندسه تحلیلی و جبر",
+      "هندسه",
+      "تابع",
+      "مثلثات",
+      "توابع نمایی و لگاریتمی",
+    ];
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("authored-grade11-experimental-math-")
+    );
+    expect(batch).toHaveLength(24);
+    const expectedNewPerChapter: Record<string, number> = {
+      "هندسه تحلیلی و جبر": 5,
+      "هندسه": 5,
+      "تابع": 5,
+      "مثلثات": 5,
+      "توابع نمایی و لگاریتمی": 4,
+    };
+    for (const chapter of chapters) {
+      const allReviewed = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "تجربی" &&
+        question.subject === "ریاضی" &&
+        question.chapter === chapter &&
+        ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? "")
+      );
+      expect(allReviewed.length, chapter).toBeGreaterThanOrEqual(5);
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(expectedNewPerChapter[chapter]);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "تجربی" &&
+      question.subject === "ریاضی" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle === "تألیفی تحصیل‌یار بر اساس محتوای ریاضی (۲) یازدهم تجربی" &&
+      question.reviewerNote?.includes("به آزمون رسمی نسبت داده نشده")
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "authored-grade11-experimental-math-analytic-distance-01": 2,
+      "authored-grade11-experimental-math-analytic-line-02": 0,
+      "authored-grade11-experimental-math-analytic-roots-03": 2,
+      "authored-grade11-experimental-math-analytic-discriminant-04": 1,
+      "authored-grade11-experimental-math-analytic-vertex-05": 0,
+      "authored-grade11-experimental-math-geometry-chord-01": 2,
+      "authored-grade11-experimental-math-geometry-inscribed-angle-02": 1,
+      "authored-grade11-experimental-math-geometry-tangent-03": 2,
+      "authored-grade11-experimental-math-geometry-cyclic-04": 2,
+      "authored-grade11-experimental-math-geometry-similar-05": 1,
+      "authored-grade11-experimental-math-function-domain-01": 1,
+      "authored-grade11-experimental-math-function-value-02": 1,
+      "authored-grade11-experimental-math-function-composition-03": 1,
+      "authored-grade11-experimental-math-function-inverse-04": 1,
+      "authored-grade11-experimental-math-function-range-05": 1,
+      "authored-grade11-experimental-math-trig-special-angle-01": 1,
+      "authored-grade11-experimental-math-trig-equation-02": 1,
+      "authored-grade11-experimental-math-trig-identity-03": 1,
+      "authored-grade11-experimental-math-trig-ratio-04": 0,
+      "authored-grade11-experimental-math-trig-cos-equation-05": 1,
+      "authored-grade11-experimental-math-exp-power-01": 2,
+      "authored-grade11-experimental-math-exp-log-02": 1,
+      "authored-grade11-experimental-math-exp-log-equation-03": 3,
+      "authored-grade11-experimental-math-exp-equation-04": 1,
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
+
+  it("covers every Grade 11 mathematics-track Physics 2 chapter with official-exam-adapted questions", () => {
+    const chapters = [
+      "الکتریسیتهٔ ساکن",
+      "جریان الکتریکی و مدارهای جریان مستقیم",
+      "مغناطیس",
+      "القای الکترومغناطیسی و جریان متناوب",
+    ];
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("official-adapted-grade11-math-physics-1405-")
+    );
+    expect(batch).toHaveLength(19);
+    const expectedNewPerChapter: Record<string, number> = {
+      "الکتریسیتهٔ ساکن": 4,
+      "جریان الکتریکی و مدارهای جریان مستقیم": 5,
+      "مغناطیس": 5,
+      "القای الکترومغناطیسی و جریان متناوب": 5,
+    };
+    for (const chapter of chapters) {
+      const allReviewed = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "ریاضی" &&
+        question.subject === "فیزیک" &&
+        question.chapter === chapter &&
+        question.sourceStatus === "official-exam-adapted"
+      );
+      expect(allReviewed.length, chapter).toBeGreaterThanOrEqual(5);
+      expect(batch.filter((question) => question.chapter === chapter), chapter)
+        .toHaveLength(expectedNewPerChapter[chapter]);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "ریاضی" &&
+      question.subject === "فیزیک" &&
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceTitle === "آزمون نهایی فیزیک (۲) یازدهم رشته ریاضی، ۳ مرداد ۱۴۰۵؛ مرکز ارزشیابی و تضمین کیفیت نظام آموزش و پرورش" &&
+      question.reviewerNote?.includes("گزینه‌های انحرافی تألیفی‌اند") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "official-adapted-grade11-math-physics-1405-electrostatic-conductor-01": 0,
+      "official-adapted-grade11-math-physics-1405-electrostatic-drop-field-02": 1,
+      "official-adapted-grade11-math-physics-1405-electrostatic-surface-charge-03": 2,
+      "official-adapted-grade11-math-physics-1405-electrostatic-isolated-capacitor-04": 0,
+      "official-adapted-grade11-math-physics-1405-dc-wire-area-01": 1,
+      "official-adapted-grade11-math-physics-1405-dc-battery-capacity-02": 2,
+      "official-adapted-grade11-math-physics-1405-dc-temperature-resistance-03": 1,
+      "official-adapted-grade11-math-physics-1405-dc-ldr-04": 1,
+      "official-adapted-grade11-math-physics-1405-dc-battery-internal-resistance-05": 0,
+      "official-adapted-grade11-math-physics-1405-magnet-parallel-wires-01": 0,
+      "official-adapted-grade11-math-physics-1405-magnet-moving-charge-02": 1,
+      "official-adapted-grade11-math-physics-1405-magnet-circular-coil-turns-03": 3,
+      "official-adapted-grade11-math-physics-1405-magnet-soft-iron-04": 0,
+      "official-adapted-grade11-math-physics-1405-magnet-wire-aligned-field-05": 0,
+      "official-adapted-grade11-math-physics-1405-induction-flux-emf-01": 1,
+      "official-adapted-grade11-math-physics-1405-induction-field-from-flux-02": 1,
+      "official-adapted-grade11-math-physics-1405-induction-moving-loop-03": 2,
+      "official-adapted-grade11-math-physics-1405-induction-inductor-energy-04": 2,
+      "official-adapted-grade11-math-physics-1405-induction-ac-current-equation-05": 1,
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
+  it("provides at least five reviewed questions in identified Grade 11 humanities lessons", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-gap-authored-") &&
+      (!question.id.startsWith("grade11-gap-authored-psych-") ||
+        question.id.startsWith("grade11-gap-authored-psych-development-"))
+    );
+    expect(batch).toHaveLength(13);
+    const expected: Array<[string, string, string, number]> = [
+      ["انسانی", "جغرافیا", "نواحی آب و هوایی", 5],
+      ["انسانی", "جامعه‌شناسی", "فرهنگ جهانی", 5],
+      ["انسانی", "روان‌شناسی", "روان‌شناسی رشد", 5],
+      ["انسانی", "فلسفه", "چیستی انسان", 5],
+      ["انسانی", "فلسفه", "فلسفه و زندگی", 5],
+      ["انسانی", "تاریخ", "منابع پژوهش در تاریخ اسلام و ایران دوران اسلامی", 5],
+      ["انسانی", "تاریخ", "روش پژوهش در تاریخ؛ بررسی و سنجش اعتبار شواهد و مدارک", 5],
+      ["انسانی", "تاریخ", "اسلام در مکه", 5],
+    ];
+    for (const [track, subject, chapter, minimum] of expected) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === track &&
+        question.subject === subject &&
+        question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4
+      ).length;
+      expect(count, `${subject} / ${chapter}`).toBeGreaterThanOrEqual(minimum);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("کتاب") &&
+      question.reviewerNote?.includes("به هیچ آزمون رسمی نسبت داده نشده")
+    )).toBe(true);
+  });
+
+  it("has five reviewed authored questions for each of the seven official Grade 11 humanities Math and Statistics lessons", () => {
+    const chapters = [
+      "گزاره‌ها و ترکیب گزاره‌ها",
+      "استدلال ریاضی",
+      "توابع ثابت، چند ضابطه‌ای و همانی",
+      "توابع پلکانی و قدر مطلقی",
+      "اعمال بر روی توابع",
+      "شاخص‌های آماری",
+      "سری‌های زمانی",
+    ];
+    const isOurAuthoredQuestion = (question: typeof verifiedQuestions[number]) =>
+      question.grade === "یازدهم" && question.track === "انسانی" &&
+      question.subject === "ریاضی و آمار" &&
+      question.sourceUrl?.includes("Amar-EM-11") === true;
+    for (const chapter of chapters) {
+      const questions = verifiedQuestions.filter((question) =>
+        isOurAuthoredQuestion(question) && question.chapter === chapter &&
+        question.sourceStatus === "reviewed"
+      );
+      expect(questions, chapter).toHaveLength(5);
+    }
+    const authored = verifiedQuestions.filter(isOurAuthoredQuestion);
+    expect(authored).toHaveLength(35);
+    expect(authored.every((question) =>
+      question.sourceTitle?.includes("کتاب رسمی ریاضی و آمار (۲)") &&
+      question.reviewerNote?.includes("سؤال تألیفی")
+    )).toBe(true);
+
+    const catalog = buildGradeSpecificCatalog(verifiedQuestions
+      .filter((question) => question.grade === "یازدهم")
+      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus })));
+    const mathStatistics = catalog.find((book) =>
+      book.grade === "یازدهم" && book.track === "انسانی" && book.subject === "ریاضی و آمار"
+    );
+    expect(mathStatistics?.chapters).toEqual(chapters);
+    expect(mathStatistics?.chapters).not.toContain("آشنایی با منطق و استدلال ریاضی");
+  });
+
+  it("reaches at least five reviewed questions in every Grade 11 Math-track Calculus chapter", () => {
+    const chapters = ["جبر و معادله", "تابع", "توابع نمایی و لگاریتمی", "مثلثات", "حد و پیوستگی"];
+    for (const chapter of chapters) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "ریاضی" &&
+        question.subject === "حسابان" && question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const authored = verifiedQuestions.filter((question) => question.id.startsWith("function-0") ||
+      question.id.startsWith("exp-0") || question.id.startsWith("trig-0") || question.id.startsWith("limit-0"));
+    expect(authored).toHaveLength(20);
+    expect(authored.every((question) => question.sourceTitle?.includes("سؤال تألیفی") && question.reviewerNote?.includes("تألیفی"))).toBe(true);
+  });
+
+
+  it("matches the official Grade 11 Geometry 2 chapter map and reaches five reviewed questions per chapter", () => {
+    const chapters = ["دایره", "تبدیل‌های هندسی و کاربردها", "روابط طولی در مثلث"];
+    const book = curriculumCatalog.find((entry) =>
+      entry.grade === "یازدهم" && entry.track === "ریاضی" && entry.subject === "هندسه"
+    );
+    expect(book?.chapters).toEqual(chapters);
+    expect(book?.chapters).not.toContain("تجسم فضایی");
+    for (const chapter of chapters) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "ریاضی" &&
+        question.subject === "هندسه" && question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("authored-grade11-math-geometry-")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.filter((question) => question.chapter === "تبدیل‌های هندسی و کاربردها")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "روابط طولی در مثلث")).toHaveLength(5);
+    expect(batch.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("چاپ دهم ۱۴۰۵") &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Hendese-Riazi-11_Daneshchi.iR.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی")
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "authored-grade11-math-geometry-reflection-01": 2,
+      "authored-grade11-math-geometry-translation-02": 0,
+      "authored-grade11-math-geometry-rotation-03": 3,
+      "authored-grade11-math-geometry-homothety-04": 1,
+      "authored-grade11-math-geometry-symmetry-05": 2,
+      "authored-grade11-math-geometry-sine-rule-01": 1,
+      "authored-grade11-math-geometry-cosine-rule-02": 1,
+      "authored-grade11-math-geometry-bisector-ratio-03": 1,
+      "authored-grade11-math-geometry-bisector-length-04": 1,
+      "authored-grade11-math-geometry-heron-05": 1
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
+
+  it("matches the official seven-chapter Grade 11 Experimental Math 2 contents and fills chapters 6 and 7", () => {
+    const chapters = ["هندسه تحلیلی و جبر", "هندسه", "تابع", "مثلثات", "توابع نمایی و لگاریتمی", "حد و پیوستگی", "آمار و احتمال"];
+    const book = curriculumCatalog.find((entry) =>
+      entry.grade === "یازدهم" && entry.track === "تجربی" && entry.subject === "ریاضی"
+    );
+    expect(book?.chapters).toEqual(chapters);
+    for (const chapter of chapters) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "تجربی" &&
+        question.subject === "ریاضی" && question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-experimental-math-gap-")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.filter((question) => question.chapter === "حد و پیوستگی")).toHaveLength(5);
+    expect(batch.filter((question) => question.chapter === "آمار و احتمال")).toHaveLength(5);
+    expect(batch.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("چاپ دهم ۱۴۰۵") &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Rizai-Tajrobi-11_Daneshchi.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی")
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "grade11-experimental-math-gap-limit-polynomial-01": 2,
+      "grade11-experimental-math-gap-limit-factorization-02": 1,
+      "grade11-experimental-math-gap-limit-one-sided-03": 1,
+      "grade11-experimental-math-gap-continuity-parameter-04": 1,
+      "grade11-experimental-math-gap-limit-rational-05": 3,
+      "grade11-experimental-math-gap-conditional-probability-01": 2,
+      "grade11-experimental-math-gap-independent-events-02": 1,
+      "grade11-experimental-math-gap-descriptive-mean-03": 1,
+      "grade11-experimental-math-gap-descriptive-range-04": 2,
+      "grade11-experimental-math-gap-descriptive-variance-05": 1
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
+
+  it("provides five reviewed questions in each chapter of the shared Grade 11 Chemistry 2 book for the mathematics track", () => {
+    const chapters = ["قدر هدایای زمینی را بدانیم", "در پی غذای سالم", "پوشاک، نیازی پایان‌ناپذیر"];
+    const book = curriculumCatalog.find((entry) =>
+      entry.grade === "یازدهم" && entry.track === "ریاضی" && entry.subject === "شیمی"
+    );
+    expect(book?.chapters).toEqual(chapters);
+    for (const chapter of chapters) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "ریاضی" &&
+        question.subject === "شیمی" && question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("authored-grade11-math-chemistry-")
+    );
+    expect(batch).toHaveLength(15);
+    expect(batch.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("مشترک رشته‌های ریاضی و تجربی") &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Shimi-RT-11_Daneshchi.iR.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی")
+    )).toBe(true);
+    for (const chapter of chapters) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(5);
+    }
+    const expectedKeys: Record<string, number> = {
+      "authored-grade11-math-chemistry-periodic-radius-01": 1,
+      "authored-grade11-math-chemistry-transition-metals-02": 0,
+      "authored-grade11-math-chemistry-thermite-stoichiometry-03": 2,
+      "authored-grade11-math-chemistry-hydrocarbon-bonds-04": 2,
+      "authored-grade11-math-chemistry-fractional-distillation-05": 1,
+      "authored-grade11-math-chemistry-enthalpy-sign-01": 1,
+      "authored-grade11-math-chemistry-calorimetry-02": 2,
+      "authored-grade11-math-chemistry-iodine-sublimation-enthalpy-03": 0,
+      "authored-grade11-math-chemistry-reaction-rate-catalyst-04": 1,
+      "authored-grade11-math-chemistry-reaction-rate-temperature-05": 1,
+      "authored-grade11-math-chemistry-esterification-01": 0,
+      "authored-grade11-math-chemistry-polyester-02": 0,
+      "authored-grade11-math-chemistry-polyamide-03": 0,
+      "authored-grade11-math-chemistry-kevlar-04": 0,
+      "authored-grade11-math-chemistry-polymer-degradation-05": 0
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
+
+  it("matches the official eleven-lesson Grade 11 Statistics and Probability map and verifies reviewed authored coverage", () => {
+    const officialLessons = [
+      "آشنایی با منطق ریاضی",
+      "جبر مجموعه‌ها",
+      "مبانی احتمال",
+      "احتمال غیرهم‌شانس",
+      "احتمال شرطی",
+      "پیشامدهای مستقل و وابسته",
+      "توصیف و نمایش داده‌ها",
+      "معیارهای گرایش به مرکز",
+      "معیارهای پراکندگی",
+      "گردآوری داده‌ها",
+      "برآورد"
+    ];
+    const book = curriculumCatalog.find((entry) =>
+      entry.grade === "یازدهم" && entry.track === "ریاضی" && entry.subject === "آمار و احتمال"
+    );
+    expect(book?.chapters).toEqual(officialLessons);
+    expect(book?.chapters).not.toContain("مجموعه و زیرمجموعه");
+    expect(book?.chapters).not.toContain("قوانین و اعمال بین مجموعه‌ها");
+
+    const reviewedChapters = [
+      "آشنایی با منطق ریاضی",
+      "جبر مجموعه‌ها",
+      "مبانی احتمال",
+      "احتمال غیرهم‌شانس"
+    ];
+    for (const chapter of reviewedChapters) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "ریاضی" &&
+        question.subject === "آمار و احتمال" && question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+
+    const setBatch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("authored-grade11-math-statistics-") &&
+      !question.id.startsWith("authored-grade11-math-statistics-remaining-")
+    );
+    expect(setBatch).toHaveLength(10);
+    expect(setBatch.every((question) => question.chapter === "جبر مجموعه‌ها")).toBe(true);
+
+    const probabilityBatch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("authored-grade11-math-probability-")
+    );
+    expect(probabilityBatch).toHaveLength(10);
+    expect(probabilityBatch.filter((question) => question.chapter === "مبانی احتمال")).toHaveLength(5);
+    expect(probabilityBatch.filter((question) => question.chapter === "احتمال غیرهم‌شانس")).toHaveLength(5);
+
+    for (const question of [...setBatch, ...probabilityBatch]) {
+      expect(question.sourceStatus, question.id).toBe("reviewed");
+      expect(question.sourceTitle, question.id).toContain("چاپ دهم ۱۴۰۵");
+      expect(question.sourceUrl, question.id).toBe("https://dl.daneshchi.ir/file/chap-school/Amar-11_Daneshchi.iR.pdf");
+      expect(question.reviewerNote, question.id).toContain("سؤال تألیفی");
+      expect(question.options, question.id).toHaveLength(4);
+      expect(question.correctIndex, question.id).toBeGreaterThanOrEqual(0);
+      expect(question.correctIndex, question.id).toBeLessThan(4);
+    }
+
+    const expectedKeys: Record<string, number> = {
+      "authored-grade11-math-statistics-subset-count-01": 2,
+      "authored-grade11-math-statistics-proper-subset-count-02": 2,
+      "authored-grade11-math-statistics-set-builder-03": 1,
+      "authored-grade11-math-statistics-equal-sets-04": 1,
+      "authored-grade11-math-statistics-subset-relation-05": 0,
+      "authored-grade11-math-statistics-set-difference-01": 1,
+      "authored-grade11-math-statistics-de-morgan-union-02": 1,
+      "authored-grade11-math-statistics-de-morgan-intersection-03": 1,
+      "authored-grade11-math-statistics-cartesian-cardinality-04": 1,
+      "authored-grade11-math-statistics-cartesian-order-05": 1,
+      "authored-grade11-math-probability-sample-space-two-dice-01": 2,
+      "authored-grade11-math-probability-event-even-die-02": 1,
+      "authored-grade11-math-probability-complement-probability-03": 1,
+      "authored-grade11-math-probability-mutually-exclusive-union-04": 1,
+      "authored-grade11-math-probability-general-union-probability-05": 0,
+      "authored-grade11-math-probability-weighted-die-even-01": 2,
+      "authored-grade11-math-probability-biased-coin-complement-02": 1,
+      "authored-grade11-math-probability-weighted-teams-ratio-03": 1,
+      "authored-grade11-math-probability-weighted-three-outcomes-04": 1,
+      "authored-grade11-math-probability-weighted-dart-zones-05": 0
+    };
+    for (const question of [...setBatch, ...probabilityBatch]) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
+  it("reaches five reviewed authored questions in each of the seven remaining Grade 11 Statistics and Probability lessons", () => {
+    const chapters = [
+      "احتمال شرطی",
+      "پیشامدهای مستقل و وابسته",
+      "توصیف و نمایش داده‌ها",
+      "معیارهای گرایش به مرکز",
+      "معیارهای پراکندگی",
+      "گردآوری داده‌ها",
+      "برآورد"
+    ];
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("authored-grade11-math-statistics-remaining-")
+    );
+    expect(batch).toHaveLength(35);
+    for (const chapter of chapters) {
+      const questions = batch.filter((question) => question.chapter === chapter);
+      expect(questions, chapter).toHaveLength(5);
+      expect(questions.every((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "ریاضی" &&
+        question.subject === "آمار و احتمال" &&
+        question.sourceStatus === "reviewed" &&
+        question.sourceTitle?.includes("چاپ دهم ۱۴۰۵") &&
+        question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Amar-11_Daneshchi.iR.pdf" &&
+        question.reviewerNote?.includes("سؤال تألیفی") &&
+        question.reviewerNote?.includes("بازبینی شده‌اند") &&
+        question.options.length === 4 &&
+        question.explanation.length > 20
+      )).toBe(true);
+    }
+    const expectedKeys: Record<string, number> = {
+      "authored-grade11-math-statistics-remaining-conditional-dice-sum-01": 1,
+      "authored-grade11-math-statistics-remaining-conditional-urn-without-replacement-02": 2,
+      "authored-grade11-math-statistics-remaining-conditional-number-divisibility-03": 1,
+      "authored-grade11-math-statistics-remaining-conditional-total-probability-04": 1,
+      "authored-grade11-math-statistics-remaining-conditional-bayes-test-05": 1,
+      "authored-grade11-math-statistics-remaining-independent-coin-die-01": 1,
+      "authored-grade11-math-statistics-remaining-dependent-draw-without-replacement-02": 0,
+      "authored-grade11-math-statistics-remaining-independent-draw-with-replacement-03": 1,
+      "authored-grade11-math-statistics-remaining-independence-product-criterion-04": 1,
+      "authored-grade11-math-statistics-remaining-independent-union-05": 1,
+      "authored-grade11-math-statistics-remaining-descriptive-relative-frequency-01": 2,
+      "authored-grade11-math-statistics-remaining-descriptive-frequency-total-02": 2,
+      "authored-grade11-math-statistics-remaining-descriptive-variable-type-03": 2,
+      "authored-grade11-math-statistics-remaining-descriptive-graph-choice-04": 1,
+      "authored-grade11-math-statistics-remaining-descriptive-pie-angle-05": 2,
+      "authored-grade11-math-statistics-remaining-central-mean-01": 1,
+      "authored-grade11-math-statistics-remaining-central-weighted-mean-02": 2,
+      "authored-grade11-math-statistics-remaining-central-median-odd-03": 1,
+      "authored-grade11-math-statistics-remaining-central-mode-04": 2,
+      "authored-grade11-math-statistics-remaining-central-quartiles-05": 1,
+      "authored-grade11-math-statistics-remaining-dispersion-variance-01": 1,
+      "authored-grade11-math-statistics-remaining-dispersion-constant-shift-02": 2,
+      "authored-grade11-math-statistics-remaining-dispersion-scale-03": 1,
+      "authored-grade11-math-statistics-remaining-dispersion-coefficient-variation-04": 2,
+      "authored-grade11-math-statistics-remaining-dispersion-iqr-05": 1,
+      "authored-grade11-math-statistics-remaining-collection-population-sample-01": 1,
+      "authored-grade11-math-statistics-remaining-collection-simple-random-02": 1,
+      "authored-grade11-math-statistics-remaining-collection-stratified-03": 1,
+      "authored-grade11-math-statistics-remaining-collection-cluster-04": 1,
+      "authored-grade11-math-statistics-remaining-collection-data-method-05": 1,
+      "authored-grade11-math-statistics-remaining-estimation-parameter-statistic-01": 1,
+      "authored-grade11-math-statistics-remaining-estimation-point-estimate-02": 0,
+      "authored-grade11-math-statistics-remaining-estimation-sample-mean-03": 1,
+      "authored-grade11-math-statistics-remaining-estimation-interval-midpoint-04": 2,
+      "authored-grade11-math-statistics-remaining-estimation-sample-size-05": 1
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+      expect(question.correctIndex, question.id).toBeGreaterThanOrEqual(0);
+      expect(question.correctIndex, question.id).toBeLessThan(4);
+    }
+  });
+
+
+
+  it("reaches five reviewed questions in all eight Grade 11 humanities Psychology lessons", () => {
+    const lessons = [
+      "روان‌شناسی: تعریف و روش مورد مطالعه",
+      "روان‌شناسی رشد",
+      "احساس، توجه، ادراک",
+      "حافظه و علل فراموشی",
+      "تفکر (۱): حل مسئله",
+      "تفکر (۲): تصمیم‌گیری",
+      "انگیزه و نگرش",
+      "روان‌شناسی سلامت"
+    ];
+    for (const chapter of lessons) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "روان‌شناسی" &&
+        question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-gap-authored-psych-") &&
+      question.id !== "grade11-gap-authored-psych-development-05"
+    );
+    expect(batch).toHaveLength(29);
+    const expectedPerLesson: Record<string, number> = {
+      "احساس، توجه، ادراک": 5,
+      "حافظه و علل فراموشی": 4,
+      "تفکر (۱): حل مسئله": 5,
+      "تفکر (۲): تصمیم‌گیری": 5,
+      "انگیزه و نگرش": 5,
+      "روان‌شناسی سلامت": 5
+    };
+    for (const [chapter, expected] of Object.entries(expectedPerLesson)) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(expected);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "روان‌شناسی" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("سؤال تألیفی") &&
+      question.sourceUrl === undefined &&
+      question.reviewerNote?.includes("تألیفی و بازبینی‌شده") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4 &&
+      question.explanation.length > 20
+    )).toBe(true);
+  });
+
+  it("completes all ten official Grade 11 humanities Philosophy lessons with five eligible reviewed questions each", () => {
+    const lessons = [
+      "چیستی فلسفه",
+      "ریشه و شاخه‌های فلسفه",
+      "آغاز تاریخی فلسفه",
+      "فلسفه و زندگی",
+      "زندگی بر اساس اندیشه",
+      "امکان شناخت",
+      "ابزارهای شناخت",
+      "نگاهی به تاریخچه معرفت",
+      "چیستی انسان",
+      "انسان، موجود اخلاق‌گرا"
+    ];
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "فلسفه"
+    );
+    expect(book?.bookCode).toBe("111226");
+    expect(book?.chapters).toEqual(lessons);
+
+    for (const chapter of lessons) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "فلسفه" &&
+        question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4 &&
+        question.explanation.length > 20
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-philosophy-gap-")
+    );
+    expect(batch).toHaveLength(34);
+    const addedPerLesson: Record<string, number> = {
+      "چیستی فلسفه": 5,
+      "آغاز تاریخی فلسفه": 5,
+      "زندگی بر اساس اندیشه": 5,
+      "امکان شناخت": 5,
+      "ابزارهای شناخت": 4,
+      "نگاهی به تاریخچه معرفت": 5,
+      "انسان، موجود اخلاق‌گرا": 5
+    };
+    for (const [chapter, expected] of Object.entries(addedPerLesson)) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(expected);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "فلسفه" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("کتاب رسمی فلسفه (۱)") &&
+      question.sourceUrl === "https://abadgaranedu.ir/wp-content/uploads/2019/01/school-book-humanities-11th-philosophy-abadgaranedu.ir_.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی") &&
+      question.reviewerNote?.includes("ارجاع: صفحه‌های") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4 &&
+      question.explanation.length > 20
+    )).toBe(true);
+
+    const expectedKeys: Record<string, number> = {
+      "grade11-philosophy-gap-lesson1-01": 1,
+      "grade11-philosophy-gap-lesson1-02": 2,
+      "grade11-philosophy-gap-lesson1-03": 0,
+      "grade11-philosophy-gap-lesson1-04": 2,
+      "grade11-philosophy-gap-lesson1-05": 0,
+      "grade11-philosophy-gap-lesson3-01": 1,
+      "grade11-philosophy-gap-lesson3-02": 1,
+      "grade11-philosophy-gap-lesson3-03": 0,
+      "grade11-philosophy-gap-lesson3-04": 1,
+      "grade11-philosophy-gap-lesson3-05": 1,
+      "grade11-philosophy-gap-lesson5-01": 1,
+      "grade11-philosophy-gap-lesson5-02": 0,
+      "grade11-philosophy-gap-lesson5-03": 1,
+      "grade11-philosophy-gap-lesson5-04": 0,
+      "grade11-philosophy-gap-lesson5-05": 1,
+      "grade11-philosophy-gap-lesson6-01": 1,
+      "grade11-philosophy-gap-lesson6-02": 1,
+      "grade11-philosophy-gap-lesson6-03": 0,
+      "grade11-philosophy-gap-lesson6-04": 2,
+      "grade11-philosophy-gap-lesson6-05": 1,
+      "grade11-philosophy-gap-lesson7-02": 0,
+      "grade11-philosophy-gap-lesson7-03": 2,
+      "grade11-philosophy-gap-lesson7-04": 1,
+      "grade11-philosophy-gap-lesson7-05": 2,
+      "grade11-philosophy-gap-lesson8-01": 1,
+      "grade11-philosophy-gap-lesson8-02": 0,
+      "grade11-philosophy-gap-lesson8-03": 1,
+      "grade11-philosophy-gap-lesson8-04": 1,
+      "grade11-philosophy-gap-lesson8-05": 2,
+      "grade11-philosophy-gap-lesson10-01": 1,
+      "grade11-philosophy-gap-lesson10-02": 2,
+      "grade11-philosophy-gap-lesson10-03": 1,
+      "grade11-philosophy-gap-lesson10-04": 1,
+      "grade11-philosophy-gap-lesson10-05": 1
+    };
+    expect(Object.keys(expectedKeys)).toHaveLength(34);
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
+
+  it("completes all eleven official Grade 11 humanities Geography lessons with at least five eligible reviewed questions", () => {
+    const lessons = [
+      "معنا و مفهوم ناحیه",
+      "انسان و ناحیه",
+      "نواحی آب و هوایی",
+      "ناهمواری‌ها و اشکال زمین",
+      "نواحی زیستی",
+      "نواحی فرهنگی",
+      "نواحی اقتصادی (کشاورزی و صنعتی)",
+      "نواحی اقتصادی (تجارت و اقتصاد جهانی)",
+      "معنا و مفهوم ناحیه سیاسی",
+      "کشور، یک ناحیه سیاسی",
+      "ژئوپلیتیک"
+    ];
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "جغرافیا"
+    );
+    expect(book?.bookCode).toBe("111218");
+    expect(book?.chapters).toEqual(lessons);
+
+    const counts: Record<string, number> = {};
+    for (const chapter of lessons) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "جغرافیا" &&
+        question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4 &&
+        question.explanation.length > 20
+      ).length;
+      counts[chapter] = count;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+    expect(counts["معنا و مفهوم ناحیه"]).toBe(5);
+    expect(counts["انسان و ناحیه"]).toBe(6);
+    expect(counts["نواحی آب و هوایی"]).toBe(5);
+
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-geography-gap-")
+    );
+    expect(batch).toHaveLength(44);
+    const addedPerLesson: Record<string, number> = {
+      "معنا و مفهوم ناحیه": 4,
+      "ناهمواری‌ها و اشکال زمین": 5,
+      "نواحی زیستی": 5,
+      "نواحی فرهنگی": 5,
+      "نواحی اقتصادی (کشاورزی و صنعتی)": 5,
+      "نواحی اقتصادی (تجارت و اقتصاد جهانی)": 5,
+      "معنا و مفهوم ناحیه سیاسی": 5,
+      "کشور، یک ناحیه سیاسی": 5,
+      "ژئوپلیتیک": 5
+    };
+    for (const [chapter, expected] of Object.entries(addedPerLesson)) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(expected);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "جغرافیا" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("کد ۱۱۱۲۱۸") &&
+      question.sourceUrl === "https://abadgaranedu.ir/wp-content/uploads/2019/01/school-book-humanities-11th-geography-abadgaranedu.ir_.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی") &&
+      question.reviewerNote?.includes("ارجاع: صفحه‌های") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4 &&
+      question.explanation.length > 20
+    )).toBe(true);
+
+    const expectedKeys: Record<string, number> = {
+      "grade11-geography-gap-lesson1-02": 0,
+      "grade11-geography-gap-lesson1-03": 2,
+      "grade11-geography-gap-lesson1-04": 1,
+      "grade11-geography-gap-lesson1-05": 2,
+      "grade11-geography-gap-lesson4-01": 1,
+      "grade11-geography-gap-lesson4-02": 1,
+      "grade11-geography-gap-lesson4-03": 2,
+      "grade11-geography-gap-lesson4-04": 1,
+      "grade11-geography-gap-lesson4-05": 0,
+      "grade11-geography-gap-lesson5-01": 1,
+      "grade11-geography-gap-lesson5-02": 0,
+      "grade11-geography-gap-lesson5-03": 1,
+      "grade11-geography-gap-lesson5-04": 0,
+      "grade11-geography-gap-lesson5-05": 2,
+      "grade11-geography-gap-lesson6-01": 0,
+      "grade11-geography-gap-lesson6-02": 1,
+      "grade11-geography-gap-lesson6-03": 0,
+      "grade11-geography-gap-lesson6-04": 1,
+      "grade11-geography-gap-lesson6-05": 0,
+      "grade11-geography-gap-lesson7-01": 1,
+      "grade11-geography-gap-lesson7-02": 2,
+      "grade11-geography-gap-lesson7-03": 1,
+      "grade11-geography-gap-lesson7-04": 2,
+      "grade11-geography-gap-lesson7-05": 1,
+      "grade11-geography-gap-lesson8-01": 1,
+      "grade11-geography-gap-lesson8-02": 1,
+      "grade11-geography-gap-lesson8-03": 0,
+      "grade11-geography-gap-lesson8-04": 1,
+      "grade11-geography-gap-lesson8-05": 1,
+      "grade11-geography-gap-lesson9-01": 1,
+      "grade11-geography-gap-lesson9-02": 1,
+      "grade11-geography-gap-lesson9-03": 2,
+      "grade11-geography-gap-lesson9-04": 1,
+      "grade11-geography-gap-lesson9-05": 0,
+      "grade11-geography-gap-lesson10-01": 1,
+      "grade11-geography-gap-lesson10-02": 0,
+      "grade11-geography-gap-lesson10-03": 1,
+      "grade11-geography-gap-lesson10-04": 1,
+      "grade11-geography-gap-lesson10-05": 1,
+      "grade11-geography-gap-lesson11-01": 1,
+      "grade11-geography-gap-lesson11-02": 0,
+      "grade11-geography-gap-lesson11-03": 0,
+      "grade11-geography-gap-lesson11-04": 1,
+      "grade11-geography-gap-lesson11-05": 0
+    };
+    expect(Object.keys(expectedKeys)).toHaveLength(44);
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
+
+  it("completes all sixteen official Grade 11 humanities History lessons with at least five eligible reviewed questions", () => {
+    const lessons = [
+      "منابع پژوهش در تاریخ اسلام و ایران دوران اسلامی",
+      "روش پژوهش در تاریخ؛ بررسی و سنجش اعتبار شواهد و مدارک",
+      "اسلام در مکه",
+      "امت و حکومت نبوی در مدینه",
+      "تثبیت و گسترش اسلام در دوران خلفای نخستین",
+      "امویان بر مسند قدرت",
+      "جهان اسلام در عصر خلافت عباسی",
+      "اسلام در ایران؛ زمینه‌های ظهور تمدن ایرانی ـ اسلامی",
+      "ظهور و گسترش تمدن ایرانی اسلامی",
+      "ایران در دوران غزنوی، سلجوقی و خوارزمشاهی",
+      "حکومت، جامعه و اقتصاد در عصر مغول تیموری",
+      "فرهنگ و هنر در عصر مغول تیموری",
+      "تحولات سیاسی و اقتصادی ایران در دوره صفوی",
+      "فرهنگ و تمدن در عصر صفوی",
+      "قرون وسطا",
+      "رنسانس و عصر جدید"
+    ];
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "تاریخ"
+    );
+    expect(book?.bookCode).toBe("111219");
+    expect(book?.chapters).toEqual(lessons);
+
+    for (const chapter of lessons) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "تاریخ" &&
+        question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4 &&
+        question.explanation.length > 20
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(5);
+    }
+
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-history-gap-")
+    );
+    expect(batch).toHaveLength(59);
+    const addedPerLesson: Record<string, number> = {
+      "امت و حکومت نبوی در مدینه": 5,
+      "تثبیت و گسترش اسلام در دوران خلفای نخستین": 5,
+      "امویان بر مسند قدرت": 5,
+      "جهان اسلام در عصر خلافت عباسی": 4,
+      "اسلام در ایران؛ زمینه‌های ظهور تمدن ایرانی ـ اسلامی": 5,
+      "ظهور و گسترش تمدن ایرانی اسلامی": 5,
+      "حکومت، جامعه و اقتصاد در عصر مغول تیموری": 5,
+      "فرهنگ و هنر در عصر مغول تیموری": 5,
+      "تحولات سیاسی و اقتصادی ایران در دوره صفوی": 5,
+      "فرهنگ و تمدن در عصر صفوی": 5,
+      "قرون وسطا": 5,
+      "رنسانس و عصر جدید": 5
+    };
+    for (const [chapter, expected] of Object.entries(addedPerLesson)) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(expected);
+    }
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "تاریخ" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("کد ۱۱۱۲۱۹") &&
+      question.sourceUrl === "https://pin-pan.com/wp-content/uploads/2019/05/C111219.pdf" &&
+      question.reviewerNote?.includes("سؤال تألیفی") &&
+      question.reviewerNote?.includes("ارجاع: صفحه‌های") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4 &&
+      question.explanation.length > 20
+    )).toBe(true);
+
+    const expectedKeys: Record<string, number> = {
+      "grade11-history-gap-lesson4-01": 1,
+      "grade11-history-gap-lesson4-02": 0,
+      "grade11-history-gap-lesson4-03": 0,
+      "grade11-history-gap-lesson4-04": 0,
+      "grade11-history-gap-lesson4-05": 1,
+      "grade11-history-gap-lesson5-01": 1,
+      "grade11-history-gap-lesson5-02": 1,
+      "grade11-history-gap-lesson5-03": 0,
+      "grade11-history-gap-lesson5-04": 0,
+      "grade11-history-gap-lesson5-05": 0,
+      "grade11-history-gap-lesson6-01": 0,
+      "grade11-history-gap-lesson6-02": 2,
+      "grade11-history-gap-lesson6-03": 1,
+      "grade11-history-gap-lesson6-04": 0,
+      "grade11-history-gap-lesson6-05": 1,
+      "grade11-history-gap-lesson7-02": 0,
+      "grade11-history-gap-lesson7-03": 1,
+      "grade11-history-gap-lesson7-04": 2,
+      "grade11-history-gap-lesson7-05": 0,
+      "grade11-history-gap-lesson8-01": 0,
+      "grade11-history-gap-lesson8-02": 1,
+      "grade11-history-gap-lesson8-03": 0,
+      "grade11-history-gap-lesson8-04": 1,
+      "grade11-history-gap-lesson8-05": 0,
+      "grade11-history-gap-lesson9-01": 0,
+      "grade11-history-gap-lesson9-02": 1,
+      "grade11-history-gap-lesson9-03": 0,
+      "grade11-history-gap-lesson9-04": 0,
+      "grade11-history-gap-lesson9-05": 1,
+      "grade11-history-gap-lesson11-01": 0,
+      "grade11-history-gap-lesson11-02": 0,
+      "grade11-history-gap-lesson11-03": 0,
+      "grade11-history-gap-lesson11-04": 0,
+      "grade11-history-gap-lesson11-05": 1,
+      "grade11-history-gap-lesson12-01": 0,
+      "grade11-history-gap-lesson12-02": 0,
+      "grade11-history-gap-lesson12-03": 0,
+      "grade11-history-gap-lesson12-04": 0,
+      "grade11-history-gap-lesson12-05": 0,
+      "grade11-history-gap-lesson13-01": 0,
+      "grade11-history-gap-lesson13-02": 0,
+      "grade11-history-gap-lesson13-03": 0,
+      "grade11-history-gap-lesson13-04": 0,
+      "grade11-history-gap-lesson13-05": 0,
+      "grade11-history-gap-lesson14-01": 0,
+      "grade11-history-gap-lesson14-02": 0,
+      "grade11-history-gap-lesson14-03": 0,
+      "grade11-history-gap-lesson14-04": 0,
+      "grade11-history-gap-lesson14-05": 0,
+      "grade11-history-gap-lesson15-01": 0,
+      "grade11-history-gap-lesson15-02": 0,
+      "grade11-history-gap-lesson15-03": 0,
+      "grade11-history-gap-lesson15-04": 0,
+      "grade11-history-gap-lesson15-05": 0,
+      "grade11-history-gap-lesson16-01": 0,
+      "grade11-history-gap-lesson16-02": 0,
+      "grade11-history-gap-lesson16-03": 0,
+      "grade11-history-gap-lesson16-04": 0,
+      "grade11-history-gap-lesson16-05": 0
+    };
+    expect(Object.keys(expectedKeys)).toHaveLength(59);
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
+
+  it("completes all fifteen official Grade 11 humanities Sociology lessons with at least five eligible reviewed questions", () => {
+    const lessons = [
+      "جهان فرهنگی", "فرهنگ جهانی", "نمونه‌های فرهنگ جهانی (۱)", "نمونه‌های فرهنگ جهانی (۲)",
+      "باورها و ارزش‌های بنیادین فرهنگ غرب", "چگونگی تکوین فرهنگ معاصر غرب", "جامعه جهانی",
+      "تحولات نظام جهانی", "جهان دوقطبی", "جنگ‌ها و تقابل‌های جهانی",
+      "بحران‌های اقتصادی و زیست‌محیطی", "بحران‌های معرفتی و معنوی", "سرآغاز بیداری اسلامی",
+      "انقلاب اسلامی ایران؛ نقطه عطف بیداری اسلامی", "افق بیداری اسلامی"
+    ];
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "جامعه‌شناسی"
+    );
+    expect(book?.bookCode).toBe("111222");
+    expect(book?.chapters).toEqual(lessons);
+    for (const chapter of lessons) {
+      const eligible = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "جامعه‌شناسی" &&
+        question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 && question.correctIndex < 4 &&
+        question.explanation.length > 20
+      );
+      expect(eligible.length, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const eligibleTotal = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" && question.track === "انسانی" &&
+      question.subject === "جامعه‌شناسی" && lessons.includes(question.chapter) &&
+      ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+      question.options.length === 4 && question.correctIndex >= 0 && question.correctIndex < 4 &&
+      question.explanation.length > 20
+    ).length;
+    expect(eligibleTotal).toBe(77);
+    expect(verifiedQuestions.filter((question) => question.grade === "یازدهم" && question.track === "انسانی" && question.subject === "جامعه‌شناسی" && question.chapter === "فرهنگ جهانی" && ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")).length).toBe(6);
+    expect(verifiedQuestions.filter((question) => question.grade === "یازدهم" && question.track === "انسانی" && question.subject === "جامعه‌شناسی" && question.chapter === "نمونه‌های فرهنگ جهانی (۱)" && ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")).length).toBe(6);
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("grade11-sociology-gap-"));
+    expect(batch).toHaveLength(65);
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" && question.track === "انسانی" &&
+      question.subject === "جامعه‌شناسی" && question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("سؤال تألیفی تحصیل‌یار") &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/JameeShenasi-EM-11_Daneshchi.iR.pdf" &&
+      question.reviewerNote?.includes("ارجاع: صفحه‌های") &&
+      question.options.length === 4 && question.correctIndex >= 0 &&
+      question.correctIndex < 4 && question.explanation.length > 20
+    )).toBe(true);
+    for (const chapter of lessons) {
+      expect(batch.filter((question) => question.chapter === chapter).length, chapter)
+        .toBe(chapter === "فرهنگ جهانی" || chapter === "نمونه‌های فرهنگ جهانی (۱)" ? 0 : 5);
+    }
+  });
+
+  it("completes all twelve official Grade 11 humanities Literature and Arts lessons with at least five eligible reviewed questions", () => {
+    const lessons = [
+      "تاریخ ادبیات فارسی در قرن‌های هفتم، هشتم و نهم",
+      "پایه‌های آوایی",
+      "تشبیه",
+      "سبک‌شناسی قرن‌های هفتم، هشتم و نهم (سبک عراقی)",
+      "پایه‌های آوایی همسان (۱)",
+      "مجاز",
+      "تاریخ ادبیات فارسی در قرن‌های دهم و یازدهم",
+      "پایه‌های آوایی همسان (۲)",
+      "استعاره",
+      "سبک‌شناسی قرن‌های دهم و یازدهم (سبک هندی)",
+      "پایه‌های آوایی همسان دولختی",
+      "کنایه"
+    ];
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "انسانی" && item.subject === "علوم و فنون ادبی"
+    );
+    expect(book?.bookCode).toBe("111203");
+    expect(book?.chapters).toEqual(lessons);
+    for (const chapter of lessons) {
+      const eligible = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "علوم و فنون ادبی" &&
+        question.chapter === chapter &&
+        ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 && question.correctIndex < 4 &&
+        question.explanation.length > 20
+      );
+      expect(eligible.length, chapter).toBeGreaterThanOrEqual(5);
+    }
+    const eligibleTotal = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" && question.track === "انسانی" &&
+      question.subject === "علوم و فنون ادبی" && lessons.includes(question.chapter) &&
+      ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "") &&
+      question.options.length === 4 && question.correctIndex >= 0 && question.correctIndex < 4 &&
+      question.explanation.length > 20
+    ).length;
+    expect(eligibleTotal).toBe(69);
+    expect(verifiedQuestions.filter((question) => question.grade === "یازدهم" && question.track === "انسانی" && question.subject === "علوم و فنون ادبی" && question.chapter === "تشبیه" && ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")).length).toBe(10);
+    expect(verifiedQuestions.filter((question) => question.grade === "یازدهم" && question.track === "انسانی" && question.subject === "علوم و فنون ادبی" && question.chapter === "پایه‌های آوایی" && ["reviewed", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus ?? "")).length).toBe(9);
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("grade11-literature-gap-"));
+    expect(batch).toHaveLength(50);
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" && question.track === "انسانی" &&
+      question.subject === "علوم و فنون ادبی" && question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("سؤال تألیفی تحصیل‌یار") &&
+      question.sourceUrl === "https://abadgaranedu.ir/wp-content/uploads/2019/01/school-book-humanities-11th-literary-techniques-abadgaranedu.ir_.pdf" &&
+      question.reviewerNote?.includes("ارجاع: صفحه‌های") &&
+      question.options.length === 4 && question.correctIndex >= 0 &&
+      question.correctIndex < 4 && question.explanation.length > 20
+    )).toBe(true);
+    for (const chapter of lessons) {
+      expect(batch.filter((question) => question.chapter === chapter).length, chapter)
+        .toBe(lessons.indexOf(chapter) === 1 || lessons.indexOf(chapter) === 2 ? 0 : 5);
+    }
+  });
+
+
+  it("shares Dini questions across tracks while isolating the six humanities-only lessons", () => {
+    expect(grade11DiniSharedChapters).toHaveLength(12);
+    expect(grade11HumanitiesDiniExclusiveChapters).toHaveLength(6);
+    const common = verifiedQuestions.filter(q => q.grade === "یازدهم" && q.track === "عمومی" && q.subject === "دین و زندگی" && q.chapter === "هدایت الهی");
+    expect(common).toHaveLength(5);
+    expect(common.every(isGrade11AssessmentQuestionEligible)).toBe(true);
+    expect(isGrade11AssessmentQuestionEligible({grade:"یازدهم",track:"عمومی",subject:"دین و زندگی",chapter:"آخرین پیامبر"})).toBe(false);
+    expect(canonicalizeGrade11AssessmentChapter("انسانی","دین و زندگی","معجزۀ جاودان")).toBe(canonicalizeGrade11AssessmentChapter("ریاضی","دین و زندگی","معجزه جاویدان"));
+    expect(canonicalizeGrade11AssessmentChapter("انسانی","دین و زندگی","پیشوای اسوه")).toBe(canonicalizeGrade11AssessmentChapter("تجربی","دین و زندگی","پیشوایان اسوه"));
+  });
+  it("exposes one shared Dini lesson question set in all three track-specific catalogs", () => {
+    const rows=[{track:"عمومی",grade:"یازدهم",subject:"دین و زندگی",chapter:"هدایت الهی",sourceStatus:"reviewed"}];
+    const catalog=buildGradeSpecificCatalog(rows);
+    for(const track of ["انسانی","ریاضی","تجربی"]) {
+      const book=catalog.find(b=>b.grade==="یازدهم"&&b.track===track&&b.subject==="دین و زندگی");
+      expect(book?.lessonCoverage?.find(l=>canonicalizeGrade11AssessmentChapter(track,"دین و زندگی",l.chapter)==="هدایت الهی")?.verifiedQuestionCount).toBe(1);
+    }
+  });
+
+
+  it("reports complete Dini lesson coverage in all three tracks without cross-track leakage", () => {
+    const diniRows = verifiedQuestions
+      .filter((question) => question.grade === "یازدهم" && question.subject === "دین و زندگی")
+      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
+    const catalog = buildGradeSpecificCatalog(diniRows);
+
+    for (const track of ["انسانی", "ریاضی", "تجربی"]) {
+      const book = catalog.find((item) =>
+        item.grade === "یازدهم" && item.track === track && item.subject === "دین و زندگی"
+      );
+      const expectedChapters = track === "انسانی"
+        ? [...grade11DiniSharedChapters, ...grade11HumanitiesDiniExclusiveChapters]
+        : [...grade11DiniSharedChapters];
+
+      expect(book?.chapters).toHaveLength(expectedChapters.length);
+      expect(book?.lessonCoverage).toHaveLength(expectedChapters.length);
+      for (const chapter of expectedChapters) {
+        const lesson = book?.lessonCoverage?.find((item) =>
+          canonicalizeGrade11AssessmentChapter(track, "دین و زندگی", item.chapter) ===
+          canonicalizeGrade11AssessmentChapter(track, "دین و زندگی", chapter)
+        );
+        expect(lesson, `${track} / ${chapter}`).toBeTruthy();
+        expect(lesson?.verifiedQuestionCount, `${track} / ${chapter}`).toBe(5);
+        expect(lesson?.targetMet, `${track} / ${chapter}`).toBe(true);
+      }
+      if (track !== "انسانی") {
+        for (const exclusiveChapter of grade11HumanitiesDiniExclusiveChapters) {
+          expect(book?.chapters).not.toContain(exclusiveChapter);
+        }
+      }
+    }
+  });
+
+  it("completes all three shared Grade 11 English lessons with five reviewed original questions each", () => {
+    const chapters = ["Understanding People", "A Healthy Lifestyle", "Art and Culture"];
+    expect(verifiedGrade11English2).toHaveLength(15);
+    expect(verifiedGrade11English2.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "عمومی" &&
+      question.subject === "زبان انگلیسی" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("سؤال تألیفی تحصیل‌یار") &&
+      question.sourceUrl?.startsWith("https://www.roshd.ir/") &&
+      question.reviewerNote?.includes("AUTHORED/ORIGINAL") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 && question.correctIndex < 4 &&
+      question.explanation.length > 20
+    )).toBe(true);
+
+    for (const chapter of chapters) {
+      const batch = verifiedGrade11English2.filter((question) => question.chapter === chapter);
+      expect(batch, chapter).toHaveLength(5);
+      expect(batch.every(isGrade11AssessmentQuestionEligible)).toBe(true);
+      expect(verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "عمومی" &&
+        question.subject === "زبان انگلیسی" &&
+        question.chapter === chapter
+      )).toHaveLength(5);
+    }
+
+    const rows = verifiedQuestions
+      .filter((question) => question.grade === "یازدهم" && question.subject === "زبان انگلیسی")
+      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
+    const catalog = buildGradeSpecificCatalog(rows);
+    const book = catalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "عمومی" && item.subject === "زبان انگلیسی"
+    );
+    expect(book?.chapters).toEqual(chapters);
+    expect(book?.lessonCoverage).toHaveLength(3);
+    for (const chapter of chapters) {
+      const lesson = book?.lessonCoverage?.find((item) => item.chapter === chapter);
+      expect(lesson?.verifiedQuestionCount, chapter).toBe(5);
+      expect(lesson?.targetMet, chapter).toBe(true);
+    }
+  });
+
+  it("adds five reviewed original questions for shared Dini Lesson 2 only once", () => {
+    expect(verifiedGrade11DiniSharedLesson2).toHaveLength(5);
+    expect(verifiedGrade11DiniSharedLesson2.every(q =>
+      q.grade === "یازدهم" && q.track === "عمومی" &&
+      q.subject === "دین و زندگی" && q.chapter === "تداوم هدایت" &&
+      q.sourceStatus === "reviewed" &&
+      q.sourceTitle?.includes("سؤال تألیفی تحصیل‌یار") &&
+      q.reviewerNote?.includes("AUTHORED/ORIGINAL") &&
+      q.options.length === 4 && q.correctIndex >= 0 &&
+      q.correctIndex < 4 && q.explanation.length > 20
+    )).toBe(true);
+    expect(verifiedQuestions.filter(q =>
+      q.grade === "یازدهم" && q.track === "عمومی" &&
+      q.subject === "دین و زندگی" && q.chapter === "تداوم هدایت"
+    )).toHaveLength(5);
+  });
+
+
+  it("completes all six humanities-exclusive Grade 11 Dini lessons with five reviewed original questions each", () => {
+    const batches = [
+      ["آخرین پیامبر", verifiedGrade11HumanitiesDiniLesson3],
+      ["جان و جانشین پیامبر (ص)", verifiedGrade11HumanitiesDiniLesson8],
+      ["جهاد در راستای ولایت ظاهری", verifiedGrade11HumanitiesDiniLesson11],
+      ["در انتظار ظهور", verifiedGrade11HumanitiesDiniLesson13],
+      ["رهبری و مردم", verifiedGrade11HumanitiesDiniLesson15],
+      ["زمینه‌های پیوند", verifiedGrade11HumanitiesDiniLesson17],
+    ] as const;
+    expect(grade11HumanitiesDiniExclusiveChapters).toEqual(batches.map(([chapter]) => chapter));
+    const ids = batches.flatMap(([, batch]) => batch.map((question) => question.id));
+    expect(ids).toHaveLength(30);
+    expect(new Set(ids).size).toBe(30);
+    for (const [chapter, batch] of batches) {
+      expect(batch, chapter).toHaveLength(5);
+      expect(batch.every((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "انسانی" &&
+        question.subject === "دین و زندگی" &&
+        question.chapter === chapter &&
+        question.sourceStatus === "reviewed" &&
+        question.sourceTitle?.includes("سؤال تألیفی تحصیل‌یار") &&
+        question.reviewerNote?.includes("AUTHORED/ORIGINAL") &&
+        question.reviewerNote?.includes("صفحات مرجع") &&
+        question.sourceUrl?.startsWith("https://1xai.ir/darsnameh/") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 && question.correctIndex < 4 &&
+        question.explanation.length > 20
+      )).toBe(true);
+      expect(batch.every(isGrade11AssessmentQuestionEligible)).toBe(true);
+      expect(verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "انسانی" &&
+        question.subject === "دین و زندگی" && question.chapter === chapter
+      )).toHaveLength(5);
+      expect(verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "عمومی" &&
+        question.subject === "دین و زندگی" && question.chapter === chapter
+      )).toHaveLength(0);
+    }
+  });
+
+  it("maps all 18 official Grade 11 Persian lessons and preserves the eight chapter groupings", () => {
+    const rows = verifiedQuestions
+      .filter((question) => question.grade === "یازدهم")
+      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
+    const catalog = buildGradeSpecificCatalog(rows);
+    const persian = catalog.find((book) =>
+      book.grade === "یازدهم" && book.track === "عمومی" && book.subject === "فارسی"
+    );
+    expect(persian?.bookCode).toBe("111201");
+    expect(persian?.chapters).toEqual([
+      "نیکی", "قاضی بُست", "در امواج سند", "درس آزاد (۱)", "آغازگری تنها",
+      "پروردهٔ عشق", "باران محبت", "در کوی عاشقان", "ذوق لطیف", "بانگ جرس",
+      "یاران عاشق", "کاوهٔ دادخواه", "درس آزاد (۲)", "حملهٔ حیدری",
+      "کبوتر طوق‌دار", "قصهٔ عینکم", "خاموشی دریا", "خوان عدل",
+    ]);
+    expect(persian?.sections?.map((section) => section.title)).toEqual([
+      "فصل اول: ادبیات تعلیمی",
+      "فصل دوم: ادبیات پایداری",
+      "فصل سوم: ادبیات غنایی",
+      "فصل چهارم: ادبیات سفر و زندگی",
+      "فصل پنجم: ادبیات انقلاب اسلامی",
+      "فصل ششم: ادبیات حماسی",
+      "فصل هفتم: ادبیات داستانی",
+      "فصل هشتم: ادبیات جهان",
+    ]);
+    const niki = persian?.lessonCoverage?.find((lesson) => lesson.chapter === "نیکی");
+    expect(niki?.verifiedQuestionCount).toBe(5);
+    expect(niki?.targetMet).toBe(true);
+    const qazi = persian?.lessonCoverage?.find((lesson) => lesson.chapter === "قاضی بُست");
+    expect(qazi?.verifiedQuestionCount).toBe(5);
+    expect(qazi?.targetMet).toBe(true);
+    const amvaj = persian?.lessonCoverage?.find((lesson) => lesson.chapter === "در امواج سند");
+    expect(amvaj?.verifiedQuestionCount).toBe(5);
+    expect(amvaj?.targetMet).toBe(true);
+    const aghazgari = persian?.lessonCoverage?.find((lesson) => lesson.chapter === "آغازگری تنها");
+    expect(aghazgari?.verifiedQuestionCount).toBe(5);
+    expect(aghazgari?.targetMet).toBe(true);
+    expect(persian?.assessmentExcludedChapters).toEqual(["درس آزاد (۱)", "درس آزاد (۲)"]);
+    expect(persian?.lessonCoverage?.some((lesson) => lesson.chapter.startsWith("درس آزاد"))).toBe(false);
+    expect(persian?.lessonCoverage).toHaveLength(16);
+  });
+
+  it("audits every eligible Grade 11 book and leaves only the remaining Persian lessons below target", () => {
+    const rows = verifiedQuestions
+      .filter((question) => question.grade === "یازدهم")
+      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
+    const catalog = buildGradeSpecificCatalog(rows);
+    const eligibleBooks = catalog.filter((book) =>
+      book.grade === "یازدهم" && isGrade11AssessmentSubjectEligible(book.track, book.subject)
+    );
+
+    expect(eligibleBooks).toHaveLength(25);
+    expect(eligibleBooks.reduce((total, book) => total + (book.lessonCoverage?.length ?? 0), 0)).toBe(216);
+    const gaps = eligibleBooks.flatMap((book) =>
+      (book.lessonCoverage ?? [])
+        .filter((lesson) => !lesson.targetMet)
+        .map((lesson) => ({ book: `${book.track}::${book.subject}`, chapter: lesson.chapter, count: lesson.verifiedQuestionCount }))
+    );
+    expect(gaps).toHaveLength(12);
+    expect(gaps.map((gap) => gap.book).filter((value, index, values) => values.indexOf(value) === index))
+      .toEqual(["عمومی::فارسی"]);
+    expect(gaps.map((gap) => gap.chapter).sort()).toEqual([
+      "پروردهٔ عشق",
+      "باران محبت",
+      "در کوی عاشقان",
+      "ذوق لطیف",
+      "بانگ جرس",
+      "یاران عاشق",
+      "کاوهٔ دادخواه",
+      "حملهٔ حیدری",
+      "کبوتر طوق‌دار",
+      "قصهٔ عینکم",
+      "خاموشی دریا",
+      "خوان عدل",
+    ].sort());
+    expect(gaps.every((gap) => gap.count === 0)).toBe(true);
+  });
 
 });
