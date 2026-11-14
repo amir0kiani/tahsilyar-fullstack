@@ -9,6 +9,7 @@ import { verifiedGrade11HumanitiesDiniLesson11 } from "./verifiedGrade11Humaniti
 import { verifiedGrade11HumanitiesDiniLesson13 } from "./verifiedGrade11HumanitiesDiniLesson13";
 import { verifiedGrade11HumanitiesDiniLesson15 } from "./verifiedGrade11HumanitiesDiniLesson15";
 import { verifiedGrade11HumanitiesDiniLesson17 } from "./verifiedGrade11HumanitiesDiniLesson17";
+import { verifiedGrade11English2 } from "./verifiedGrade11English2";
 import { buildGradeSpecificCatalog } from "./db";
 import { canonicalizeGrade11AssessmentChapter, grade11AssessmentYear, grade11DiniSharedChapters, grade11HumanitiesDiniExclusiveChapters, grade11FinalExamSubjectsByTrack, grade11EntranceExamSubjectsByTrack, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
@@ -2430,6 +2431,50 @@ describe("curriculum and assessment question bank", () => {
           expect(book?.chapters).not.toContain(exclusiveChapter);
         }
       }
+    }
+  });
+
+  it("completes all three shared Grade 11 English lessons with five reviewed original questions each", () => {
+    const chapters = ["Understanding People", "A Healthy Lifestyle", "Art and Culture"];
+    expect(verifiedGrade11English2).toHaveLength(15);
+    expect(verifiedGrade11English2.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "عمومی" &&
+      question.subject === "زبان انگلیسی" &&
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle?.includes("سؤال تألیفی تحصیل‌یار") &&
+      question.sourceUrl?.startsWith("https://www.roshd.ir/") &&
+      question.reviewerNote?.includes("AUTHORED/ORIGINAL") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 && question.correctIndex < 4 &&
+      question.explanation.length > 20
+    )).toBe(true);
+
+    for (const chapter of chapters) {
+      const batch = verifiedGrade11English2.filter((question) => question.chapter === chapter);
+      expect(batch, chapter).toHaveLength(5);
+      expect(batch.every(isGrade11AssessmentQuestionEligible)).toBe(true);
+      expect(verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "عمومی" &&
+        question.subject === "زبان انگلیسی" &&
+        question.chapter === chapter
+      )).toHaveLength(5);
+    }
+
+    const rows = verifiedQuestions
+      .filter((question) => question.grade === "یازدهم" && question.subject === "زبان انگلیسی")
+      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
+    const catalog = buildGradeSpecificCatalog(rows);
+    const book = catalog.find((item) =>
+      item.grade === "یازدهم" && item.track === "عمومی" && item.subject === "زبان انگلیسی"
+    );
+    expect(book?.chapters).toEqual(chapters);
+    expect(book?.lessonCoverage).toHaveLength(3);
+    for (const chapter of chapters) {
+      const lesson = book?.lessonCoverage?.find((item) => item.chapter === chapter);
+      expect(lesson?.verifiedQuestionCount, chapter).toBe(5);
+      expect(lesson?.targetMet, chapter).toBe(true);
     }
   });
 
