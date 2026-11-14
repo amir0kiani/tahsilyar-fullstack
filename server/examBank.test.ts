@@ -101,9 +101,12 @@ describe("curriculum and assessment question bank", () => {
       curriculumCatalog.find((book) => book.track === "عمومی" && book.grade === "یازدهم" && book.subject === subject)?.chapters ?? [];
 
     expect(chaptersFor("فارسی")).toEqual([
-      "ادبیات تعلیمی", "ادبیات سفر و زندگی", "ادبیات غنایی", "ادبیات پایداری",
-      "ادبیات انقلاب اسلامی", "ادبیات حماسی", "ادبیات داستانی", "ادبیات جهان",
+      "نیکی", "قاضی بُست", "در امواج سند", "درس آزاد (۱)", "آغازگری تنها",
+      "پروردهٔ عشق", "باران محبت", "در کوی عاشقان", "ذوق لطیف", "بانگ جرس",
+      "یاران عاشق", "کاوهٔ دادخواه", "درس آزاد (۲)", "حملهٔ حیدری",
+      "کبوتر طوق‌دار", "قصهٔ عینکم", "خاموشی دریا", "خوان عدل",
     ]);
+    expect(curriculumCatalog.find((book) => book.track === "عمومی" && book.grade === "یازدهم" && book.subject === "فارسی")?.sections).toHaveLength(8);
     expect(chaptersFor("نگارش")).toHaveLength(6);
     expect(chaptersFor("زبان انگلیسی")).toEqual(["Understanding People", "A Healthy Lifestyle", "Art and Culture"]);
     expect(chaptersFor("کتاب کار انگلیسی")).toEqual(["Understanding People", "A Healthy Lifestyle", "Art and Culture"]);
