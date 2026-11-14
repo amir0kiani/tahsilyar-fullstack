@@ -382,7 +382,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
         questionMatchesBookTrack(question.track, book.track, book.subject)
       );
       const lessonCoverage = book.chapters
-        .filter((chapter) => chapter !== "کل کتاب")
+        .filter((chapter) => chapter !== "کل کتاب" && !(book.assessmentExcludedChapters ?? []).includes(chapter))
         .map((chapter) => {
           const lessonQuestions = bookQuestions.filter((question) => book.grade === "یازدهم" && book.subject === "دین و زندگی" ? canonicalizeGrade11AssessmentChapter(question.track, question.subject, question.chapter) === canonicalizeGrade11AssessmentChapter(book.track, book.subject, chapter) : question.chapter === chapter);
           const verifiedQuestionCount = lessonQuestions.filter((question) => isVerified(question.sourceStatus)).length;
