@@ -1,4 +1,5 @@
-export type CurriculumBook = { track: string; grade: string; subject: string; chapters: string[]; questionCount?: number; verifiedQuestionCount?: number; targetQuestionsPerLesson?: number; bookCode?: string };
+export type CurriculumSection = { title: string; lessons: string[] };
+export type CurriculumBook = { track: string; grade: string; subject: string; chapters: string[]; sections?: CurriculumSection[]; questionCount?: number; verifiedQuestionCount?: number; targetQuestionsPerLesson?: number; bookCode?: string };
 
 const wholeBook = ["کل کتاب"];
 const grade11ContemporaryHistoryChapters = ["حکومت قاجار از آقا محمدخان تا محمدشاه", "دوران ناصرالدین‌شاه", "زمینه‌های نهضت مشروطه", "آغاز حرکت مردم علیه استبداد و پیروزی نهضت مشروطه", "مشروطه در دوره محمدعلی‌شاه", "دوره دوم مشروطه (۱۲۸۸–۱۲۹۳ش)", "کودتای ۱۲۹۹", "رضاخان؛ تثبیت قدرت", "ویژگی‌های حکومت رضاشاه", "سقوط رضاشاه", "اشغال ایران توسط متفقین و آثار آن", "نهضت ملی شدن صنعت نفت", "زمینه‌های کودتای ۲۸ مرداد", "کودتای ۲۸ مرداد", "ربع قرن سیطره آمریکا بر ایران", "زمینه‌ها و هدف‌های اصلاحات آمریکایی در ایران", "پیدایش نهضت روحانیت و اوج‌گیری بیداری اسلامی", "قیام ۱۵ خرداد", "تحولات ایران پس از تبعید امام خمینی", "ایران در مسیر انقلاب اسلامی", "پیروزی انقلاب اسلامی", "دولت موقت مهندس مهدی بازرگان", "اولین دوره ریاست جمهوری", "جنگ تحمیلی رژیم بعثی حاکم بر عراق علیه ایران", "آرمان‌ها و دستاوردهای انقلاب اسلامی", "بیداری اسلامی در جهان اسلام"];
@@ -16,7 +17,39 @@ export const curriculumCatalog: CurriculumBook[] = [
   // English 2 (Roshd): https://www.roshd.ir/zaban/Content/کتاب-زبان-انگلیسی-یازدهم-متوسطه
   // Contemporary History is assigned to Grade 11 mathematics and experimental-sciences tracks, not humanities (Roshd): https://www.roshd.ir/ejtemaee/Content/کتاب-تاریخ-معاصر-ایران-پایه-یازدهم
   // Human and Environment (Roshd): https://www.roshd.ir/zendegi/Content/کتاب-انسان-و-محیطزیست-پایه-یازدهم
-  add("عمومی", "یازدهم", "فارسی", ["ادبیات تعلیمی", "ادبیات سفر و زندگی", "ادبیات غنایی", "ادبیات پایداری", "ادبیات انقلاب اسلامی", "ادبیات حماسی", "ادبیات داستانی", "ادبیات جهان"]),
+  // Persian 2 is tracked at lesson level (18 numbered lessons); the eight official chapters are retained in sections.
+  {
+    ...add("عمومی", "یازدهم", "فارسی", [
+      "نیکی",
+      "قاضی بُست",
+      "در امواج سند",
+      "درس آزاد (۱)",
+      "آغازگری تنها",
+      "پروردهٔ عشق",
+      "باران محبت",
+      "در کوی عاشقان",
+      "ذوق لطیف",
+      "بانگ جرس",
+      "یاران عاشق",
+      "کاوهٔ دادخواه",
+      "درس آزاد (۲)",
+      "حملهٔ حیدری",
+      "کبوتر طوق‌دار",
+      "قصهٔ عینکم",
+      "خاموشی دریا",
+      "خوان عدل",
+    ], 5, "111201"),
+    sections: [
+      { title: "فصل اول: ادبیات تعلیمی", lessons: ["نیکی", "قاضی بُست"] },
+      { title: "فصل دوم: ادبیات پایداری", lessons: ["در امواج سند", "درس آزاد (۱)", "آغازگری تنها"] },
+      { title: "فصل سوم: ادبیات غنایی", lessons: ["پروردهٔ عشق", "باران محبت"] },
+      { title: "فصل چهارم: ادبیات سفر و زندگی", lessons: ["در کوی عاشقان", "ذوق لطیف"] },
+      { title: "فصل پنجم: ادبیات انقلاب اسلامی", lessons: ["بانگ جرس", "یاران عاشق"] },
+      { title: "فصل ششم: ادبیات حماسی", lessons: ["کاوهٔ دادخواه", "درس آزاد (۲)", "حملهٔ حیدری"] },
+      { title: "فصل هفتم: ادبیات داستانی", lessons: ["کبوتر طوق‌دار", "قصهٔ عینکم"] },
+      { title: "فصل هشتم: ادبیات جهان", lessons: ["خاموشی دریا", "خوان عدل"] },
+    ],
+  },
   add("عمومی", "یازدهم", "نگارش", ["گسترش محتوا (۱): زمان و مکان", "گسترش محتوا (۲): شخصیت", "گسترش محتوا (۳): گفت‌وگو", "سفرنامه", "کاهش محتوا: خلاصه‌نویسی", "مثل‌نویسی"]),
   // Grade 11 Arabic textbooks are track-specific; do not merge humanities and math/science questions.
   // Lesson-title cross-checks: humanities https://rmoon.ir/mabhas/ensani/arabi-ensani

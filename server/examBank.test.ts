@@ -2547,7 +2547,37 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
-  it("audits every eligible Grade 11 book and leaves Persian as the only remaining coverage gap", () => {
+  it("maps all 18 official Grade 11 Persian lessons and preserves the eight chapter groupings", () => {
+    const rows = verifiedQuestions
+      .filter((question) => question.grade === "یازدهم")
+      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
+    const catalog = buildGradeSpecificCatalog(rows);
+    const persian = catalog.find((book) =>
+      book.grade === "یازدهم" && book.track === "عمومی" && book.subject === "فارسی"
+    );
+    expect(persian?.bookCode).toBe("111201");
+    expect(persian?.chapters).toEqual([
+      "نیکی", "قاضی بُست", "در امواج سند", "درس آزاد (۱)", "آغازگری تنها",
+      "پروردهٔ عشق", "باران محبت", "در کوی عاشقان", "ذوق لطیف", "بانگ جرس",
+      "یاران عاشق", "کاوهٔ دادخواه", "درس آزاد (۲)", "حملهٔ حیدری",
+      "کبوتر طوق‌دار", "قصهٔ عینکم", "خاموشی دریا", "خوان عدل",
+    ]);
+    expect(persian?.sections?.map((section) => section.title)).toEqual([
+      "فصل اول: ادبیات تعلیمی",
+      "فصل دوم: ادبیات پایداری",
+      "فصل سوم: ادبیات غنایی",
+      "فصل چهارم: ادبیات سفر و زندگی",
+      "فصل پنجم: ادبیات انقلاب اسلامی",
+      "فصل ششم: ادبیات حماسی",
+      "فصل هفتم: ادبیات داستانی",
+      "فصل هشتم: ادبیات جهان",
+    ]);
+    const niki = persian?.lessonCoverage?.find((lesson) => lesson.chapter === "نیکی");
+    expect(niki?.verifiedQuestionCount).toBe(5);
+    expect(niki?.targetMet).toBe(true);
+  });
+
+  it("audits every eligible Grade 11 book and leaves only the remaining Persian lessons below target", () => {
     const rows = verifiedQuestions
       .filter((question) => question.grade === "یازدهم")
       .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
@@ -2565,14 +2595,23 @@ describe("curriculum and assessment question bank", () => {
     expect(gaps.map((gap) => gap.book).filter((value, index, values) => values.indexOf(value) === index))
       .toEqual(["عمومی::فارسی"]);
     expect(gaps.map((gap) => gap.chapter).sort()).toEqual([
-      "ادبیات تعلیمی",
-      "ادبیات سفر و زندگی",
-      "ادبیات غنایی",
-      "ادبیات پایداری",
-      "ادبیات انقلاب اسلامی",
-      "ادبیات حماسی",
-      "ادبیات داستانی",
-      "ادبیات جهان",
+      "قاضی بُست",
+      "در امواج سند",
+      "درس آزاد (۱)",
+      "آغازگری تنها",
+      "پروردهٔ عشق",
+      "باران محبت",
+      "در کوی عاشقان",
+      "ذوق لطیف",
+      "بانگ جرس",
+      "یاران عاشق",
+      "کاوهٔ دادخواه",
+      "درس آزاد (۲)",
+      "حملهٔ حیدری",
+      "کبوتر طوق‌دار",
+      "قصهٔ عینکم",
+      "خاموشی دریا",
+      "خوان عدل",
     ].sort());
     expect(gaps.every((gap) => gap.count === 0)).toBe(true);
   });
