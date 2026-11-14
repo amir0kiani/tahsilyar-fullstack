@@ -2590,6 +2590,15 @@ describe("curriculum and assessment question bank", () => {
     const qazi = persian?.lessonCoverage?.find((lesson) => lesson.chapter === "قاضی بُست");
     expect(qazi?.verifiedQuestionCount).toBe(5);
     expect(qazi?.targetMet).toBe(true);
+    const amvaj = persian?.lessonCoverage?.find((lesson) => lesson.chapter === "در امواج سند");
+    expect(amvaj?.verifiedQuestionCount).toBe(5);
+    expect(amvaj?.targetMet).toBe(true);
+    const aghazgari = persian?.lessonCoverage?.find((lesson) => lesson.chapter === "آغازگری تنها");
+    expect(aghazgari?.verifiedQuestionCount).toBe(5);
+    expect(aghazgari?.targetMet).toBe(true);
+    expect(persian?.assessmentExcludedChapters).toEqual(["درس آزاد (۱)", "درس آزاد (۲)"]);
+    expect(persian?.lessonCoverage?.some((lesson) => lesson.chapter.startsWith("درس آزاد"))).toBe(false);
+    expect(persian?.lessonCoverage).toHaveLength(16);
   });
 
   it("audits every eligible Grade 11 book and leaves only the remaining Persian lessons below target", () => {
@@ -2602,19 +2611,16 @@ describe("curriculum and assessment question bank", () => {
     );
 
     expect(eligibleBooks).toHaveLength(25);
-    expect(eligibleBooks.reduce((total, book) => total + (book.lessonCoverage?.length ?? 0), 0)).toBe(218);
+    expect(eligibleBooks.reduce((total, book) => total + (book.lessonCoverage?.length ?? 0), 0)).toBe(216);
     const gaps = eligibleBooks.flatMap((book) =>
       (book.lessonCoverage ?? [])
         .filter((lesson) => !lesson.targetMet)
         .map((lesson) => ({ book: `${book.track}::${book.subject}`, chapter: lesson.chapter, count: lesson.verifiedQuestionCount }))
     );
-    expect(gaps).toHaveLength(16);
+    expect(gaps).toHaveLength(12);
     expect(gaps.map((gap) => gap.book).filter((value, index, values) => values.indexOf(value) === index))
       .toEqual(["عمومی::فارسی"]);
     expect(gaps.map((gap) => gap.chapter).sort()).toEqual([
-      "در امواج سند",
-      "درس آزاد (۱)",
-      "آغازگری تنها",
       "پروردهٔ عشق",
       "باران محبت",
       "در کوی عاشقان",
@@ -2622,7 +2628,6 @@ describe("curriculum and assessment question bank", () => {
       "بانگ جرس",
       "یاران عاشق",
       "کاوهٔ دادخواه",
-      "درس آزاد (۲)",
       "حملهٔ حیدری",
       "کبوتر طوق‌دار",
       "قصهٔ عینکم",
