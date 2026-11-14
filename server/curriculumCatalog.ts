@@ -1,5 +1,5 @@
 export type CurriculumSection = { title: string; lessons: string[] };
-export type CurriculumBook = { track: string; grade: string; subject: string; chapters: string[]; sections?: CurriculumSection[]; questionCount?: number; verifiedQuestionCount?: number; targetQuestionsPerLesson?: number; bookCode?: string };
+export type CurriculumBook = { track: string; grade: string; subject: string; chapters: string[]; sections?: CurriculumSection[]; assessmentExcludedChapters?: string[]; questionCount?: number; verifiedQuestionCount?: number; targetQuestionsPerLesson?: number; bookCode?: string };
 
 const wholeBook = ["کل کتاب"];
 const grade11ContemporaryHistoryChapters = ["حکومت قاجار از آقا محمدخان تا محمدشاه", "دوران ناصرالدین‌شاه", "زمینه‌های نهضت مشروطه", "آغاز حرکت مردم علیه استبداد و پیروزی نهضت مشروطه", "مشروطه در دوره محمدعلی‌شاه", "دوره دوم مشروطه (۱۲۸۸–۱۲۹۳ش)", "کودتای ۱۲۹۹", "رضاخان؛ تثبیت قدرت", "ویژگی‌های حکومت رضاشاه", "سقوط رضاشاه", "اشغال ایران توسط متفقین و آثار آن", "نهضت ملی شدن صنعت نفت", "زمینه‌های کودتای ۲۸ مرداد", "کودتای ۲۸ مرداد", "ربع قرن سیطره آمریکا بر ایران", "زمینه‌ها و هدف‌های اصلاحات آمریکایی در ایران", "پیدایش نهضت روحانیت و اوج‌گیری بیداری اسلامی", "قیام ۱۵ خرداد", "تحولات ایران پس از تبعید امام خمینی", "ایران در مسیر انقلاب اسلامی", "پیروزی انقلاب اسلامی", "دولت موقت مهندس مهدی بازرگان", "اولین دوره ریاست جمهوری", "جنگ تحمیلی رژیم بعثی حاکم بر عراق علیه ایران", "آرمان‌ها و دستاوردهای انقلاب اسلامی", "بیداری اسلامی در جهان اسلام"];
@@ -39,6 +39,7 @@ export const curriculumCatalog: CurriculumBook[] = [
       "خاموشی دریا",
       "خوان عدل",
     ], 5, "111201"),
+    assessmentExcludedChapters: ["درس آزاد (۱)", "درس آزاد (۲)"],
     sections: [
       { title: "فصل اول: ادبیات تعلیمی", lessons: ["نیکی", "قاضی بُست"] },
       { title: "فصل دوم: ادبیات پایداری", lessons: ["در امواج سند", "درس آزاد (۱)", "آغازگری تنها"] },
