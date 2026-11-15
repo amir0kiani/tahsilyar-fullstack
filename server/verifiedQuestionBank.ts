@@ -5,6 +5,7 @@ import { verifiedHumanitiesBatch2 } from "./verifiedHumanitiesBatch2";
 import { verifiedHumanitiesMath12Batch1 } from "./verifiedHumanitiesMath12Batch1";
 import { verifiedHumanitiesLiterature12Batch1 } from "./verifiedHumanitiesLiterature12Batch1";
 import { verifiedHumanitiesLiterature12Batch2 } from "./verifiedHumanitiesLiterature12Batch2";
+import { verifiedHumanitiesLiterature12Batch3 } from "./verifiedHumanitiesLiterature12Batch3";
 import { verifiedBiologyBatch2 } from "./verifiedQuestionBankBiologyBatch2";
 import { verifiedChemistryBatch1 } from "./verifiedQuestionBankChemistryBatch1";
 import { verifiedPhysicsBatch1 } from "./verifiedQuestionBankPhysicsBatch1";
