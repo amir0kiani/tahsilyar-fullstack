@@ -141,7 +141,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
   { year: "۱۴۰۴", question: {
     id: "verified-human12-literature-1404-lesson4-postwar-fiction",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "سبک‌شناسی قرن‌های دوازدهم و سیزدهم", topic: "تحولات داستان‌نویسی معاصر", difficulty: "متوسط",
+    chapter: "سبک‌شناسی دوره معاصر و انقلاب اسلامی", topic: "تحولات داستان‌نویسی معاصر", difficulty: "متوسط",
     prompt: "طبق سؤال سبک‌شناسی آزمون خرداد ۱۴۰۴، کدام گرایش داستان‌نویسی پس از جنگ در گزینه‌ها به‌عنوان گرایشی که دیده نمی‌شود مطرح شده بود؟",
     options: ["جریان سیال ذهن", "رمان‌نویسی", "مدرن‌نویسی", "داستانک‌نویسی"],
     correctIndex: 1,
@@ -151,7 +151,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
   { year: "۱۴۰۴", question: {
     id: "verified-human12-literature-1404-lesson4-new-poetry",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "سبک‌شناسی قرن‌های دوازدهم و سیزدهم", topic: "زمینه‌های ظهور شعر نو", difficulty: "متوسط",
+    chapter: "سبک‌شناسی دوره معاصر و انقلاب اسلامی", topic: "زمینه‌های ظهور شعر نو", difficulty: "متوسط",
     prompt: "در آزمون خرداد ۱۴۰۴، کدام گرایش به‌عنوان یکی از زمینه‌های ظهور شعر نو معرفی شد؟",
     options: ["گرایش به قالب‌های کم‌کاربرد", "بازگشت انحصاری به قالب قصیده", "حذف تخیل از شعر", "پرهیز از نوآوری زبانی"],
     correctIndex: 0,
@@ -169,6 +169,26 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۸"
   }},
 
+  { year: "۱۴۰۵", question: {
+    id: "verified-human12-literature-1405-lesson4-intellectual-level",
+    grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
+    chapter: "سبک‌شناسی قرن‌های دوازدهم و سیزدهم", topic: "قلمرو فکری شعر و نثر دوره بیداری", difficulty: "متوسط",
+    prompt: "در سؤال تطبیق قلمروها در آزمون مرداد ۱۴۰۵، توجه نویسندگان دوره مشروطه به حقوق مدنی زنان در نثر، به کدام قلمرو مربوط دانسته شد؟",
+    options: ["زبانی", "ادبی", "فکری", "موسیقایی"],
+    correctIndex: 2,
+    explanation: "راهنمای رسمی سؤال ۹، توجه به حقوق مدنی زنان را در قلمرو فکری قرار می‌دهد.",
+    sourceQuestionNumber: "۹ ـ بخش ب"
+  }},
+  { year: "۱۴۰۵", question: {
+    id: "verified-human12-literature-1405-lesson4-literary-level",
+    grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
+    chapter: "سبک‌شناسی قرن‌های دوازدهم و سیزدهم", topic: "قلمرو ادبی شعر معاصر", difficulty: "متوسط",
+    prompt: "در سؤال تطبیق قلمروها در آزمون مرداد ۱۴۰۵، «واحد شعری بودن بند در شعر دوره معاصر» به کدام قلمرو نسبت داده شد؟",
+    options: ["زبانی", "ادبی", "فکری", "موسیقایی"],
+    correctIndex: 1,
+    explanation: "راهنمای رسمی سؤال ۹، ویژگی واحد شعری بودن بند را در قلمرو ادبی قرار می‌دهد.",
+    sourceQuestionNumber: "۹ ـ بخش الف"
+  }},
   // درس ۵: اختیارات شاعری ـ زبانی
   { year: "۱۴۰۴", question: {
     id: "verified-human12-literature-1404-lesson5-short-vowel",
