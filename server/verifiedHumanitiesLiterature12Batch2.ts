@@ -54,7 +54,7 @@ export const verifiedHumanitiesLiterature12Batch2: ExamQuestion[] = [
     correctIndex: 1,
     explanation: "راهنمای تصحیح رسمی آزمون خرداد ۱۴۰۴، «قائم‌مقام فراهانی» را پاسخ درست معرفی می‌کند.",
     sourceQuestionNumber: "۳ ـ بخش ب"
-  }
+  },
   {
     id: "verified-human12-literature-1404-nasim-shomal-05",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
