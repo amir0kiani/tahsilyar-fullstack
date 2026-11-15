@@ -118,6 +118,36 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("reaches at least five questions in every Grade 12 humanities literature lesson", () => {
+    const questions = verifiedQuestions.filter((question) =>
+      question.track === "انسانی" && question.grade === "دوازدهم" && question.subject === "علوم و فنون ادبی"
+    );
+    const expectedLessons = [
+      "تاریخ ادبیات قرن‌های دوازدهم و سیزدهم (دوره بازگشت و بیداری)",
+      "پایه‌های آوایی ناهمسان",
+      "مراعات نظیر، تلمیح و تضمین",
+      "سبک‌شناسی قرن‌های دوازدهم و سیزدهم",
+      "اختیارات شاعری ـ زبانی",
+      "لف و نشر، تضاد و متناقض‌نما",
+      "تاریخ ادبیات قرن چهاردهم (دوره معاصر و انقلاب اسلامی)",
+      "اختیارات شاعری ـ وزنی",
+      "اغراق، ایهام و ایهام تناسب",
+      "سبک‌شناسی دوره معاصر و انقلاب اسلامی",
+      "وزن در شعر نیمایی",
+      "حسن تعلیل، حس‌آمیزی و اسلوب معادله"
+    ];
+    for (const lesson of expectedLessons) {
+      expect(questions.filter((question) => question.chapter === lesson).length).toBeGreaterThanOrEqual(5);
+    }
+    expect(questions).toHaveLength(61);
+  });
+
+  it("links literature batch 4 to its official exams and marking guides", () => {
+    const batch4 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1405-lesson8") || question.id.startsWith("verified-human12-literature-1404-lesson8") || question.id.startsWith("verified-human12-literature-1404-lesson9") || question.id.startsWith("verified-human12-literature-1405-lesson9") || question.id.startsWith("verified-human12-literature-1405-lesson10") || question.id.startsWith("verified-human12-literature-1404-lesson10") || question.id.startsWith("verified-human12-literature-1404-lesson11") || question.id.startsWith("verified-human12-literature-1404-lesson12") || question.id.startsWith("verified-human12-literature-1405-lesson12"));
+    expect(batch4).toHaveLength(22);
+    expect(batch4.every((question) => question.sourceStatus === "official-exam-adapted" && question.sourceQuestionNumber && question.sourceUrl?.startsWith("https://"))).toBe(true);
+  });
+
   it("links literature batch 3 to the official 1404 and 1405 exams and marking guides", () => {
     const batch3 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1405-lesson") || question.id.startsWith("verified-human12-literature-1404-lesson"));
     expect(batch3).toHaveLength(28);
