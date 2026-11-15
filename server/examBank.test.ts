@@ -143,7 +143,7 @@ describe("curriculum and assessment question bank", () => {
   });
 
   it("links literature batch 4 to its official exams and marking guides", () => {
-    const batch4 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1405-lesson8") || question.id.startsWith("verified-human12-literature-1404-lesson8") || question.id.startsWith("verified-human12-literature-1404-lesson9") || question.id.startsWith("verified-human12-literature-1405-lesson9") || question.id.startsWith("verified-human12-literature-1405-lesson10") || question.id.startsWith("verified-human12-literature-1404-lesson10") || question.id.startsWith("verified-human12-literature-1404-lesson11") || question.id.startsWith("verified-human12-literature-1404-lesson12") || question.id.startsWith("verified-human12-literature-1405-lesson12"));
+    const batch4 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-b4-"));
     expect(batch4).toHaveLength(22);
     expect(batch4.every((question) => question.sourceStatus === "official-exam-adapted" && question.sourceQuestionNumber && question.sourceUrl?.startsWith("https://"))).toBe(true);
   });
