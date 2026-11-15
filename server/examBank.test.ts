@@ -126,14 +126,14 @@ describe("curriculum and assessment question bank", () => {
   });
 
   it("links the humanities literature batches to their official exams and marking guides", () => {
-    const batch1405 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1405-"));
+    const batch1405 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1405-") && !question.id.includes("-lesson"));
     expect(batch1405).toHaveLength(6);
     expect(batch1405.every((question) =>
       question.sourceUrl === "https://dl.novinkonkor.com/nahaye/12/moaref/1405/soal-oloom-fonon-12-m-1405.pdf" &&
       question.sourceAnswerUrl === "https://dl.novinkonkor.com/nahaye/12/ensani/moshtarak/1405/tir/javab-oloom-fonon-12-1405-tir-e-m.pdf"
     )).toBe(true);
 
-    const batch1404 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1404-"));
+    const batch1404 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1404-") && !question.id.includes("-lesson"));
     expect(batch1404).toHaveLength(5);
     expect(batch1404.every((question) =>
       question.sourceYear === "۱۴۰۴" &&
