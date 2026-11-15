@@ -120,7 +120,7 @@ describe("curriculum and assessment question bank", () => {
 
   it("links literature batch 3 to the official 1404 and 1405 exams and marking guides", () => {
     const batch3 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1405-lesson") || question.id.startsWith("verified-human12-literature-1404-lesson"));
-    expect(batch3).toHaveLength(25);
+    expect(batch3).toHaveLength(27);
     expect(batch3.every((question) => question.sourceStatus === "official-exam-adapted" && question.sourceQuestionNumber)).toBe(true);
     expect(batch3.every((question) => question.sourceUrl?.startsWith("https://"))).toBe(true);
   });
