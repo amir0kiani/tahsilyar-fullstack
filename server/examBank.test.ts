@@ -89,7 +89,7 @@ describe("curriculum and assessment question bank", () => {
     )).toBe(true);
   });
 
-  it("reaches the five-question target for the Grade 12 humanities literature 14th-century chapter", () => {
+  it("reaches the five-question target for both Grade 12 humanities literature history chapters", () => {
     const questions = verifiedQuestions.filter((question) =>
       question.track === "انسانی" && question.grade === "دوازدهم" && question.subject === "علوم و فنون ادبی"
     );
@@ -99,15 +99,23 @@ describe("curriculum and assessment question bank", () => {
     expect(count).toBe(5);
     expect(questions.filter((question) =>
       question.chapter === "تاریخ ادبیات قرن‌های دوازدهم و سیزدهم (دوره بازگشت و بیداری)"
-    )).toHaveLength(1);
+    )).toHaveLength(5);
   });
 
-  it("links the new humanities literature batch to its official 1405 exam and marking guide", () => {
-    const batch = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1405-"));
-    expect(batch).toHaveLength(6);
-    expect(batch.every((question) =>
+  it("links the humanities literature batches to their official exams and marking guides", () => {
+    const batch1405 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1405-"));
+    expect(batch1405).toHaveLength(6);
+    expect(batch1405.every((question) =>
       question.sourceUrl === "https://dl.novinkonkor.com/nahaye/12/moaref/1405/soal-oloom-fonon-12-m-1405.pdf" &&
       question.sourceAnswerUrl === "https://dl.novinkonkor.com/nahaye/12/ensani/moshtarak/1405/tir/javab-oloom-fonon-12-1405-tir-e-m.pdf"
+    )).toBe(true);
+
+    const batch1404 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1404-"));
+    expect(batch1404).toHaveLength(4);
+    expect(batch1404.every((question) =>
+      question.sourceYear === "۱۴۰۴" &&
+      question.sourceUrl === "https://irantahsil.org/wp-content/uploads/2025/07/%D9%86%D9%85%D9%88%D9%86%D9%87-%D8%B3%D9%88%D8%A7%D9%84%D8%A7%D8%AA-%D8%B9%D9%84%D9%88%D9%85-%D9%88-%D9%81%D9%86%D9%88%D9%86-%D8%B1%D8%B4%D8%AA%D9%87-%D8%A7%D8%AF%D8%A8%DB%8C%D8%A7%D8%AA-%D9%88-%D8%A7%D9%86%D8%B3%D8%A7%D9%86%DB%8C-%D9%88-%D9%85%D8%B9%D8%A7%D8%B1%D9%81_unlocked.pdf" &&
+      question.sourceAnswerUrl === question.sourceUrl
     )).toBe(true);
   });
 
