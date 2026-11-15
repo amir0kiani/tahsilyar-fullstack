@@ -102,6 +102,30 @@ describe("curriculum and assessment question bank", () => {
     )).toHaveLength(5);
   });
 
+  it("reaches five questions in Grade 12 humanities literature lessons 2 through 6", () => {
+    const questions = verifiedQuestions.filter((question) =>
+      question.track === "انسانی" && question.grade === "دوازدهم" && question.subject === "علوم و فنون ادبی"
+    );
+    const expected = [
+      "پایه‌های آوایی ناهمسان",
+      "مراعات نظیر، تلمیح و تضمین",
+      "سبک‌شناسی قرن‌های دوازدهم و سیزدهم",
+      "اختیارات شاعری ـ زبانی",
+      "لف و نشر، تضاد و متناقض‌نما"
+    ];
+    for (const chapter of expected) {
+      expect(questions.filter((question) => question.chapter === chapter)).toHaveLength(5);
+    }
+  });
+
+  it("links literature batch 3 to the official 1404 and 1405 exams and marking guides", () => {
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-140"));
+    const batch3 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1405-lesson") || question.id.startsWith("verified-human12-literature-1404-lesson"));
+    expect(batch3).toHaveLength(25);
+    expect(batch3.every((question) => question.sourceStatus === "official-exam-adapted" && question.sourceQuestionNumber)).toBe(true);
+    expect(batch3.every((question) => question.sourceUrl?.startsWith("https://"))).toBe(true);
+  });
+
   it("links the humanities literature batches to their official exams and marking guides", () => {
     const batch1405 = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1405-"));
     expect(batch1405).toHaveLength(6);
