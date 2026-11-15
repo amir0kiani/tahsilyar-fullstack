@@ -93,10 +93,10 @@ describe("curriculum and assessment question bank", () => {
     const questions = verifiedQuestions.filter((question) =>
       question.track === "انسانی" && question.grade === "دوازدهم" && question.subject === "علوم و فنون ادبی"
     );
-    const count = questions.filter((question) =>
+    const contemporaryCount = questions.filter((question) =>
       question.chapter === "تاریخ ادبیات قرن چهاردهم (دوره معاصر و انقلاب اسلامی)"
     ).length;
-    expect(count).toBe(5);
+    expect(contemporaryCount).toBe(6);
     expect(questions.filter((question) =>
       question.chapter === "تاریخ ادبیات قرن‌های دوازدهم و سیزدهم (دوره بازگشت و بیداری)"
     )).toHaveLength(5);
