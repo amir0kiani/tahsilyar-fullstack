@@ -48,7 +48,7 @@ const navItems: { id: Screen; label: string; icon: IconName }[] = [
 const commonSubjects = ["فارسی و نگارش", "عربی", "دین و زندگی", "زبان انگلیسی"];
 const subjectsByTrack: Record<string, string[]> = {
   "انسانی": [...commonSubjects, "علوم و فنون ادبی", "جامعه‌شناسی", "روان‌شناسی", "فلسفه و منطق", "تاریخ", "جغرافیا", "اقتصاد", "ریاضی و آمار"],
-  "ریاضی": [...commonSubjects, "ریاضی", "هندسه", "حسابان", "آمار و احتمال", "گسسته", "فیزیک", "شیمی"],
+  "ریاضی": [...commonSubjects, "ریاضی", "هندسه", "حسابان", "آمار و احتمال", "گسسته", "فیزیک", "شیمی", "زمین‌شناسی"],
   "تجربی": [...commonSubjects, "زیست‌شناسی", "شیمی", "فیزیک", "ریاضی", "زمین‌شناسی"],
 };
 const subjectOptionsForTrack = (track: string) => subjectsByTrack[Object.keys(subjectsByTrack).find((key) => track.includes(key)) ?? "تجربی"];
