@@ -89,6 +89,39 @@ describe("curriculum and assessment question bank", () => {
     )).toBe(true);
   });
 
+  it("reaches the five-question target for the Grade 12 humanities literature 14th-century chapter", () => {
+    const questions = verifiedQuestions.filter((question) =>
+      question.track === "انسانی" && question.grade === "دوازدهم" && question.subject === "علوم و فنون ادبی"
+    );
+    const count = questions.filter((question) =>
+      question.chapter === "تاریخ ادبیات قرن چهاردهم (دوره معاصر و انقلاب اسلامی)"
+    ).length;
+    expect(count).toBe(5);
+    expect(questions.filter((question) =>
+      question.chapter === "تاریخ ادبیات قرن‌های دوازدهم و سیزدهم (دوره بازگشت و بیداری)"
+    )).toHaveLength(1);
+  });
+
+  it("links the new humanities literature batch to its official 1405 exam and marking guide", () => {
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-literature-1405-"));
+    expect(batch).toHaveLength(6);
+    expect(batch.every((question) =>
+      question.sourceUrl === "https://dl.novinkonkor.com/nahaye/12/moaref/1405/soal-oloom-fonon-12-m-1405.pdf" &&
+      question.sourceAnswerUrl === "https://dl.novinkonkor.com/nahaye/12/ensani/moshtarak/1405/tir/javab-oloom-fonon-12-1405-tir-e-m.pdf"
+    )).toBe(true);
+  });
+
+  it("maps cumulative Grade 12 mock questions to their actual Grade 11 textbook chapters", () => {
+    const literature = verifiedQuestions.find((question) => question.id === "upload-human12-literature-rhetoric-02");
+    const psychology = verifiedQuestions.find((question) => question.id === "upload-human12-psychology-development-04");
+    expect(literature?.grade).toBe("یازدهم");
+    expect(literature?.chapter).toBe("تشبیه");
+    expect(psychology?.grade).toBe("یازدهم");
+    expect(verifiedQuestions.some((question) =>
+      question.track === "انسانی" && question.grade === "دوازدهم" && question.subject === "روان‌شناسی"
+    )).toBe(false);
+  });
+
   it("keeps biology source references mapped to each biology textbook grade", () => {
     expect(verifiedQuestions.some((question) => question.subject === "زیست‌شناسی" && question.grade === "دهم")).toBe(true);
     expect(verifiedQuestions.some((question) => question.subject === "زیست‌شناسی" && question.grade === "یازدهم")).toBe(true);
