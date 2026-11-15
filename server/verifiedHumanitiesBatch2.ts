@@ -179,8 +179,8 @@ export const verifiedHumanitiesBatch2: ExamQuestion[] = [
     sourceTitle: source12, sourceQuestionNumber: "ریاضی و آمار (۳)، سؤال‌های ۱ تا ۱۰"
   }),
   q({
-    id: "upload-human12-literature-rhetoric-02", grade: "دوازدهم", subject: "علوم و فنون ادبی",
-    chapter: "آرایه‌های ادبی", topic: "تشبیه",
+    id: "upload-human12-literature-rhetoric-02", grade: "یازدهم", subject: "علوم و فنون ادبی",
+    chapter: "تشبیه",
     prompt: "در جملهٔ «دانش، چراغ راه زندگی است»، کدام آرایهٔ ادبی برجسته‌تر است؟",
     options: ["تشبیه بلیغ", "واج‌آرایی", "جناس تام", "تلمیح"], correctIndex: 0,
     explanation: "در این عبارت، دانش به چراغ تشبیه شده و ادات تشبیه و وجه شبه حذف شده‌اند؛ بنابراین تشبیه بلیغ است.",
@@ -195,7 +195,7 @@ export const verifiedHumanitiesBatch2: ExamQuestion[] = [
     sourceTitle: source12, sourceQuestionNumber: "جامعه‌شناسی (۳)، سؤال‌های ۶۱ تا ۷۰"
   }),
   q({
-    id: "upload-human12-psychology-development-04", grade: "دوازدهم", subject: "روان‌شناسی",
+    id: "upload-human12-psychology-development-04", grade: "یازدهم", subject: "روان‌شناسی",
     chapter: "روان‌شناسی رشد", topic: "رشد چندبعدی",
     prompt: "کدام عبارت دربارهٔ رشد انسان دقیق‌تر است؟",
     options: ["رشد فقط به افزایش قد و وزن محدود است", "رشد در ابعاد جسمانی، شناختی، هیجانی و اجتماعی رخ می‌دهد و این ابعاد بر هم اثر می‌گذارند", "رشد پس از کودکی کاملاً متوقف می‌شود", "همهٔ افراد در هر مرحله دقیقاً با سرعت یکسان رشد می‌کنند"], correctIndex: 1,
