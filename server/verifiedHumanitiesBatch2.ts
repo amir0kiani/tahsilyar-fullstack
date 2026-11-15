@@ -107,7 +107,7 @@ export const verifiedHumanitiesBatch2: ExamQuestion[] = [
 
   q({
     id: "upload-human11-math-conditional-logic-01", grade: "یازدهم", subject: "ریاضی و آمار",
-    chapter: "آشنایی با منطق و استدلال ریاضی", topic: "ارزش گزاره شرطی",
+    chapter: "گزاره‌ها و ترکیب گزاره‌ها", topic: "ارزش گزاره شرطی",
     prompt: "گزارهٔ شرطی «اگر p آنگاه q» در کدام حالت کاذب است؟",
     options: ["p و q هر دو درست باشند", "p نادرست و q درست باشد", "p و q هر دو نادرست باشند", "p درست و q نادرست باشد"], correctIndex: 3,
     explanation: "گزارهٔ شرطی فقط زمانی کاذب است که شرط آن برقرار باشد اما نتیجه‌اش برقرار نباشد؛ یعنی p درست و q نادرست باشد.",
