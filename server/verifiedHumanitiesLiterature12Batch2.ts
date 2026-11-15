@@ -36,8 +36,8 @@ export const verifiedHumanitiesLiterature12Batch2: ExamQuestion[] = [
   {
     id: "verified-human12-literature-1404-ainhayedar-03",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
-    chapter: "تاریخ ادبیات قرن‌های دوازدهم و سیزدهم (دوره بازگشت و بیداری)",
-    topic: "آثار ادبی دوره‌های معاصر", difficulty: "آسان",
+    chapter: "تاریخ ادبیات قرن چهاردهم (دوره معاصر و انقلاب اسلامی)",
+    topic: "آثار ادبی دوره معاصر و انقلاب اسلامی", difficulty: "آسان",
     prompt: "رمان «آینه‌های دردار» از نمونه‌های نثر کدام دوره ادبی به شمار می‌آید؟",
     options: ["دوره بازگشت ادبی", "دوره بیداری", "دوره انقلاب اسلامی", "دوره سبک هندی"],
     correctIndex: 2,
@@ -55,6 +55,17 @@ export const verifiedHumanitiesLiterature12Batch2: ExamQuestion[] = [
     explanation: "راهنمای تصحیح رسمی آزمون خرداد ۱۴۰۴، «قائم‌مقام فراهانی» را پاسخ درست معرفی می‌کند.",
     sourceQuestionNumber: "۳ ـ بخش ب"
   }
+  {
+    id: "verified-human12-literature-1404-nasim-shomal-05",
+    grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
+    chapter: "تاریخ ادبیات قرن‌های دوازدهم و سیزدهم (دوره بازگشت و بیداری)",
+    topic: "روزنامه‌نگاری دوره بیداری", difficulty: "متوسط",
+    prompt: "روزنامهٔ «نسیم شمال» با مدیریت و نویسندگی کدام شخصیت ادبی منتشر می‌شد؟",
+    options: ["میرزا جهانگیرخان صوراسرافیل", "سیداشرف‌الدین گیلانی", "علی‌اکبر دهخدا", "ملک‌الشعرای بهار"],
+    correctIndex: 1,
+    explanation: "راهنمای تصحیح رسمی آزمون خرداد ۱۴۰۴ انتساب «نسیم شمال» به میرزا جهانگیرخان صوراسرافیل را نادرست اعلام می‌کند. مدیر و نویسندهٔ این روزنامه سیداشرف‌الدین حسینی گیلانی بود.",
+    sourceQuestionNumber: "۴ ـ بخش الف"
+  },
 ].map((question) => ({
   ...question,
   sourceStatus: "official-exam-adapted",
