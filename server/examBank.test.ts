@@ -67,6 +67,28 @@ describe("curriculum and assessment question bank", () => {
     )?.bookCode).toBe("112212");
   });
 
+  it("reaches the five-question target for every Grade 12 humanities Math & Statistics lesson", () => {
+    const questions = verifiedQuestions.filter((question) =>
+      question.track === "انسانی" && question.grade === "دوازدهم" && question.subject === "ریاضی و آمار"
+    );
+    const counts = new Map<string, number>();
+    for (const question of questions) counts.set(question.chapter, (counts.get(question.chapter) ?? 0) + 1);
+    expect(Object.fromEntries([...counts.entries()].sort(([a], [b]) => a.localeCompare(b)))).toEqual({
+      "آمار و احتمال": 5,
+      "الگوهای خطی": 5,
+      "الگوهای غیرخطی": 5,
+    });
+  });
+
+  it("links the new humanities Math & Statistics batch to its official 1405 exam and marking guide", () => {
+    const batch = verifiedQuestions.filter((question) => question.id.startsWith("verified-human12-math3-1405-"));
+    expect(batch).toHaveLength(9);
+    expect(batch.every((question) =>
+      question.sourceUrl === "https://dl.novinkonkor.com/nahaye/12/ensani/1405/khordad/soal-riazi-amar-12-e-m-1405.pdf" &&
+      question.sourceAnswerUrl === "https://dl.novinkonkor.com/nahaye/12/ensani/1405/khordad/javab-riazi-amar-12-e-m-1405.pdf"
+    )).toBe(true);
+  });
+
   it("keeps biology source references mapped to each biology textbook grade", () => {
     expect(verifiedQuestions.some((question) => question.subject === "زیست‌شناسی" && question.grade === "دهم")).toBe(true);
     expect(verifiedQuestions.some((question) => question.subject === "زیست‌شناسی" && question.grade === "یازدهم")).toBe(true);
