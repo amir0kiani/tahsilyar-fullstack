@@ -12,7 +12,7 @@ type Seed = Omit<ExamQuestion, "sourceStatus" | "sourceTitle" | "sourceUrl" | "s
 const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
   // درس ۸: اختیارات شاعری ـ وزنی
   { year: "۱۴۰۵", question: {
-    id: "verified-human12-literature-1405-lesson8-final-syllable",
+    id: "verified-human12-literature-b4-1405-lesson8-final-syllable",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "اختیارات شاعری ـ وزنی", topic: "بلند بودن هجای پایانی", difficulty: "متوسط",
     prompt: "در راهنمای رسمی آزمون مرداد ۱۴۰۵، اختیار وزنی مشترک دو بیت سؤال ۱۱ چه بود؟",
@@ -22,7 +22,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۱۱"
   }},
   { year: "۱۴۰۵", question: {
-    id: "verified-human12-literature-1405-lesson8-ghalb",
+    id: "verified-human12-literature-b4-1405-lesson8-ghalb",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "اختیارات شاعری ـ وزنی", topic: "قلب", difficulty: "متوسط",
     prompt: "در بیت «یک سخن از من بدان مرد سخندان برد / کیست که پیغام من به شهر شروان برد؟» کدام اختیار وزنی در راهنمای تصحیح سؤال ۱۹ ثبت شده است؟",
@@ -32,7 +32,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۱۹"
   }},
   { year: "۱۴۰۵", question: {
-    id: "verified-human12-literature-1405-lesson8-ebdal",
+    id: "verified-human12-literature-b4-1405-lesson8-ebdal",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "اختیارات شاعری ـ وزنی", topic: "ابدال", difficulty: "متوسط",
     prompt: "در سؤال ۲۰ آزمون مرداد ۱۴۰۵، آوردن «فاعلاتن» به جای «فعلاتن» نمونه کدام اختیار وزنی معرفی شده است؟",
@@ -42,7 +42,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۲۰ ـ بخش ب"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson8-ebdal-definition",
+    id: "verified-human12-literature-b4-1404-lesson8-ebdal-definition",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "اختیارات شاعری ـ وزنی", topic: "تعریف ابدال", difficulty: "آسان",
     prompt: "طبق راهنمای تصحیح آزمون خرداد ۱۴۰۴، ابدال وزنی به چه معناست؟",
@@ -52,7 +52,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۱۴"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson8-ghalb",
+    id: "verified-human12-literature-b4-1404-lesson8-ghalb",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "اختیارات شاعری ـ وزنی", topic: "قلب", difficulty: "متوسط",
     prompt: "در مصراع اول بیت «کیست که پیغام من به شهر شروان برد؟ / یک سخن از من بدان مرد سخندان برد» کدام اختیار وزنی وجود دارد؟",
@@ -64,7 +64,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
 
   // درس ۹: اغراق، ایهام و ایهام تناسب
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson9-hyperbole",
+    id: "verified-human12-literature-b4-1404-lesson9-hyperbole",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "اغراق، ایهام و ایهام تناسب", topic: "اغراق", difficulty: "آسان",
     prompt: "در کدام تصویر شعری، اغراق برای نشان‌دادن توان رزمی قهرمان به کار رفته است؟",
@@ -74,7 +74,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۲۳"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson9-ambiguity-baaghi",
+    id: "verified-human12-literature-b4-1404-lesson9-ambiguity-baaghi",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "اغراق، ایهام و ایهام تناسب", topic: "ایهام", difficulty: "متوسط",
     prompt: "در سؤال ۲۵ آزمون خرداد ۱۴۰۴، آرایه مشترک واژه‌های «باقی» و «عهد» در دو بیت چه بود؟",
@@ -84,7 +84,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۲۵"
   }},
   { year: "۱۴۰۵", question: {
-    id: "verified-human12-literature-1405-lesson9-ambiguity-golestan",
+    id: "verified-human12-literature-b4-1405-lesson9-ambiguity-golestan",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "اغراق، ایهام و ایهام تناسب", topic: "ایهام", difficulty: "متوسط",
     prompt: "در بیت «خانه زندان است و تنهایی و ضلال / چون که هر کس چون سعدی گلستانیش نیست»، کدام واژه در سؤال ۳۳ آزمون مرداد ۱۴۰۵ محل توجه به آرایه ایهام بود؟",
@@ -94,7 +94,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۳۳ ـ بخش الف"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson9-ambiguity-mehr",
+    id: "verified-human12-literature-b4-1404-lesson9-ambiguity-mehr",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "اغراق، ایهام و ایهام تناسب", topic: "ایهام", difficulty: "متوسط",
     prompt: "در بیت «بی مهر رخت روز مرا نور نمانده‌است / وز عمر مرا جز شب دیجور نمانده‌است»، راهنمای تصحیح آزمون خرداد ۱۴۰۴ چه آرایه‌ای را برای بیت تعیین کرده است؟",
@@ -104,7 +104,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۳۴ ـ بخش ب"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson9-ambiguity-tanasob",
+    id: "verified-human12-literature-b4-1404-lesson9-ambiguity-tanasob",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "اغراق، ایهام و ایهام تناسب", topic: "ایهام تناسب", difficulty: "متوسط",
     prompt: "در بیت «گر هزار است بلبل این باغ / همه را نغمه و ترانه یکی است»، کدام آرایه در راهنمای رسمی سؤال ۳۴ آزمون خرداد ۱۴۰۴ ثبت شده است؟",
@@ -116,7 +116,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
 
   // درس ۱۰: سبک‌شناسی دوره معاصر و انقلاب اسلامی
   { year: "۱۴۰۵", question: {
-    id: "verified-human12-literature-1405-lesson10-khorasani",
+    id: "verified-human12-literature-b4-1405-lesson10-khorasani",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "سبک‌شناسی دوره معاصر و انقلاب اسلامی", topic: "ویژگی زبانی شعر انقلاب", difficulty: "متوسط",
     prompt: "طبق سؤال ۶ آزمون مرداد ۱۴۰۵، زبان و واژگان قصاید دوره انقلاب از نظر نزدیکی سبکی به کدام سبک نزدیک دانسته شده است؟",
@@ -126,7 +126,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۶ ـ بخش الف"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson10-simple-sentences",
+    id: "verified-human12-literature-b4-1404-lesson10-simple-sentences",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "سبک‌شناسی دوره معاصر و انقلاب اسلامی", topic: "ویژگی زبانی شعر معاصر", difficulty: "آسان",
     prompt: "در سؤال ۱۰ آزمون خرداد ۱۴۰۴، کدام ویژگی به‌عنوان نشانه سطح زبانی شعر دوره معاصر تا انقلاب مطرح شد؟",
@@ -138,7 +138,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
 
   // درس ۱۱: وزن در شعر نیمایی
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson11-nima-rhythm",
+    id: "verified-human12-literature-b4-1404-lesson11-nima-rhythm",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "وزن در شعر نیمایی", topic: "وزن شعر نیمایی", difficulty: "متوسط",
     prompt: "در سؤال مربوط به شعر «می‌تراود مهتاب» در آزمون خرداد ۱۴۰۴، گزاره «این شعر در بحر رجز سروده شده است» چگونه ارزیابی شد؟",
@@ -148,7 +148,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۱۹ ـ بخش الف"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson11-nima-pattern",
+    id: "verified-human12-literature-b4-1404-lesson11-nima-pattern",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "وزن در شعر نیمایی", topic: "وزن‌واژه شعر نیمایی", difficulty: "متوسط",
     prompt: "وزن‌واژه تکرارشونده در سروده «می‌تراود مهتاب» که در راهنمای تصحیح آزمون خرداد ۱۴۰۴ آمده است، کدام است؟",
@@ -158,7 +158,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۱۹ ـ بخش ب"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson11-nima-license-faelat",
+    id: "verified-human12-literature-b4-1404-lesson11-nima-license-faelat",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "وزن در شعر نیمایی", topic: "اختیار وزنی در شعر نیمایی", difficulty: "متوسط",
     prompt: "در مصراع سوم شعر «می‌تراود مهتاب»، کدام اختیار وزنی با آوردن «فاعلاتن» به جای «فعلان» ایجاد شده است؟",
@@ -168,7 +168,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۱۹ ـ بخش ج"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson11-nima-final-syllable",
+    id: "verified-human12-literature-b4-1404-lesson11-nima-final-syllable",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "وزن در شعر نیمایی", topic: "اختیار وزنی در شعر نیمایی", difficulty: "متوسط",
     prompt: "بر اساس راهنمای رسمی سؤال ۱۹ آزمون خرداد ۱۴۰۴، کدام ویژگی هجایی نیز در مصراع سوم «می‌تراود مهتاب» به‌عنوان اختیار وزنی دیده می‌شود؟",
@@ -178,7 +178,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۱۹ ـ بخش ج"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson11-nima-form",
+    id: "verified-human12-literature-b4-1404-lesson11-nima-form",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "وزن در شعر نیمایی", topic: "شناخت شعر نیمایی", difficulty: "آسان",
     prompt: "سروده «می‌تراود مهتاب» از نیما یوشیج در کدام گونه شعر فارسی قرار می‌گیرد؟",
@@ -190,7 +190,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
 
   // درس ۱۲: حسن تعلیل، حس‌آمیزی و اسلوب معادله
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson12-hosn-taalil",
+    id: "verified-human12-literature-b4-1404-lesson12-hosn-taalil",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "حسن تعلیل، حس‌آمیزی و اسلوب معادله", topic: "حسن تعلیل", difficulty: "آسان",
     prompt: "در بیت «ز نرگس همه رکوع کند در میان باغ / زیرا که کرد فاخته بر سرو مؤذنی»، علت شاعرانه خم‌شدن نرگس چیست؟",
@@ -200,7 +200,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۲۷"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson12-oslo-moadaleh",
+    id: "verified-human12-literature-b4-1404-lesson12-oslo-moadaleh",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "حسن تعلیل، حس‌آمیزی و اسلوب معادله", topic: "اسلوب معادله", difficulty: "متوسط",
     prompt: "در آزمون خرداد ۱۴۰۴، کدام بیت به‌عنوان نمونه اسلوب معادله معرفی شد؟",
@@ -210,7 +210,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۳۰"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson12-hessamizi-blue",
+    id: "verified-human12-literature-b4-1404-lesson12-hessamizi-blue",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "حسن تعلیل، حس‌آمیزی و اسلوب معادله", topic: "حس‌آمیزی", difficulty: "متوسط",
     prompt: "در عبارت «آسمان، فریبی آبی‌رنگ شد»، همراهی واژه «فریب» با ویژگی دیداری «آبی‌رنگ» چه آرایه‌ای می‌سازد؟",
@@ -220,7 +220,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۳۱"
   }},
   { year: "۱۴۰۴", question: {
-    id: "verified-human12-literature-1404-lesson12-hessamizi-light",
+    id: "verified-human12-literature-b4-1404-lesson12-hessamizi-light",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "حسن تعلیل، حس‌آمیزی و اسلوب معادله", topic: "حس‌آمیزی", difficulty: "متوسط",
     prompt: "در عبارت «باغ باران‌خورده می‌نوشید نور»، کدام ترکیب سبب خلق آرایه حس‌آمیزی شده است؟",
@@ -230,7 +230,7 @@ const seeds: Array<{ question: Seed; year: "۱۴۰۴" | "۱۴۰۵" }> = [
     sourceQuestionNumber: "۳۳"
   }},
   { year: "۱۴۰۵", question: {
-    id: "verified-human12-literature-1405-lesson12-hessamizi",
+    id: "verified-human12-literature-b4-1405-lesson12-hessamizi",
     grade: "دوازدهم", track: "انسانی", subject: "علوم و فنون ادبی",
     chapter: "حسن تعلیل، حس‌آمیزی و اسلوب معادله", topic: "حس‌آمیزی", difficulty: "متوسط",
     prompt: "در سؤال تطبیق آرایه‌های آزمون مرداد ۱۴۰۵، عبارت «نرم‌آوای شیرین سخن‌ها» به کدام آرایه نسبت داده شد؟",
