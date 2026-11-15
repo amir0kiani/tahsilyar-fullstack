@@ -180,7 +180,7 @@ export const verifiedHumanitiesBatch2: ExamQuestion[] = [
   }),
   q({
     id: "upload-human12-literature-rhetoric-02", grade: "یازدهم", subject: "علوم و فنون ادبی",
-    chapter: "تشبیه",
+    chapter: "تشبیه", topic: "تشبیه",
     prompt: "در جملهٔ «دانش، چراغ راه زندگی است»، کدام آرایهٔ ادبی برجسته‌تر است؟",
     options: ["تشبیه بلیغ", "واج‌آرایی", "جناس تام", "تلمیح"], correctIndex: 0,
     explanation: "در این عبارت، دانش به چراغ تشبیه شده و ادات تشبیه و وجه شبه حذف شده‌اند؛ بنابراین تشبیه بلیغ است.",
