@@ -2822,7 +2822,7 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(chapterQuestions).toHaveLength(5);
     expect(chapterQuestions.every((question) =>
       question.sourceStatus === "curriculum-verified" &&
-      question.sourceUrl?.includes("زیست-3.pdf") &&
+      question.sourceUrl?.includes("1757923687_") &&
       question.verifiedAt instanceof Date &&
       question.options.length === 4 &&
       question.correctIndex >= 0 &&
