@@ -92,7 +92,7 @@ export const verifiedGrade11HumanitiesKankchiBatch2: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-philosophy-individual-society-86",
     grade: "یازدهم", track: "انسانی", subject: "فلسفه",
-    chapter: "چیستی انسان", topic: "دیدگاه‌های اصالت فرد و جامعه",
+    chapter: "چیستی انسان (۱)", topic: "دیدگاه‌های اصالت فرد و جامعه",
     difficulty: "دشوار",
     prompt: "با استناد به دیدگاه‌های سه‌گانه در فلسفهٔ علوم اجتماعی پیرامون اصالت فرد یا جامعه، کدام گزینه از نظر منطقی نادرست است؟",
     options: [
