@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
+import { verifiedHumanitiesArabic12Batch1 } from "./verifiedHumanitiesArabic12Batch1";
+import { isGrade12AssessmentQuestionEligible } from "./grade12AssessmentEligibility";
 import { verifiedGrade11DiniSharedLesson2 } from "./verifiedGrade11DiniSharedLesson2";
 import { verifiedGrade11HumanitiesDiniLesson3 } from "./verifiedGrade11HumanitiesDiniLesson3";
 import { verifiedGrade11HumanitiesDiniLesson8 } from "./verifiedGrade11HumanitiesDiniLesson8";
@@ -2808,6 +2810,68 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(psychology?.grade).toBe("یازدهم");
     expect(verifiedQuestions.some((question) =>
       question.track === "انسانی" && question.grade === "دوازدهم" && question.subject === "روان‌شناسی"
+    )).toBe(false);
+  });
+
+
+  it("adds exactly five verified Grade 12 Humanities Arabic questions for each textbook lesson", () => {
+    const chapters = [
+      "من الأشعار المنسوبة إلى الإمام علي (ع)",
+      "الوجه النافع والوجه المضر",
+      "ثلاث قصص قصيرة",
+      "نظام الطبيعة",
+      "يا إلهي",
+    ];
+    expect(verifiedHumanitiesArabic12Batch1).toHaveLength(25);
+    expect(chapters.map((chapter) =>
+      verifiedHumanitiesArabic12Batch1.filter((question) => question.chapter === chapter).length
+    )).toEqual([5, 5, 5, 5, 5]);
+    expect(verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" && question.track === "انسانی" && question.subject === "عربی"
+    )).toHaveLength(25);
+    expect(verifiedHumanitiesArabic12Batch1.every((question) =>
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceUrl === question.sourceAnswerUrl &&
+      Boolean(question.sourceQuestionNumber) &&
+      question.verifiedAt instanceof Date &&
+      question.reviewerNote?.includes("راهنمای رسمی نمره‌گذاری")
+    )).toBe(true);
+  });
+
+  it("keeps the Grade 12 bundled question bank within the assessment allowlist", () => {
+    expect(verifiedQuestions.filter((question) => question.grade === "دوازدهم")
+      .every(isGrade12AssessmentQuestionEligible)).toBe(true);
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "دوازدهم" && question.track === "انسانی" && question.subject === "تحلیل فرهنگی"
+    )).toBe(false);
+  });
+
+  it("maps Grade 12 Arabic textbook editions to their correct tracks", () => {
+    const humanitiesArabic = curriculumCatalog.find((book) =>
+      book.track === "انسانی" && book.grade === "دوازدهم" && book.subject === "عربی"
+    );
+    expect(humanitiesArabic?.chapters).toEqual([
+      "من الأشعار المنسوبة إلى الإمام علي (ع)",
+      "الوجه النافع والوجه المضر",
+      "ثلاث قصص قصيرة",
+      "نظام الطبيعة",
+      "يا إلهي",
+    ]);
+    expect(curriculumCatalog.some((book) =>
+      book.track === "عمومی" && book.grade === "دوازدهم" && book.subject === "عربی"
+    )).toBe(false);
+  });
+
+  it("omits non-assessment Grade 12 Humanities courses from the assessment catalog", () => {
+    const catalog = buildGradeSpecificCatalog(verifiedQuestions.map((question) => ({
+      track: question.track,
+      grade: question.grade,
+      subject: question.subject,
+      chapter: question.chapter,
+      sourceStatus: question.sourceStatus,
+    })));
+    expect(catalog.some((book) =>
+      book.grade === "دوازدهم" && book.subject === "تحلیل فرهنگی"
     )).toBe(false);
   });
 
