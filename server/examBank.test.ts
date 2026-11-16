@@ -4,6 +4,7 @@ import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
 import { verifiedHumanitiesArabic12Batch1 } from "./verifiedHumanitiesArabic12Batch1";
 import { isGrade12AssessmentQuestionEligible } from "./grade12AssessmentEligibility";
+import { buildGradeSpecificCatalog } from "./db";
 import { verifiedGrade11DiniSharedLesson2 } from "./verifiedGrade11DiniSharedLesson2";
 import { verifiedGrade11HumanitiesDiniLesson3 } from "./verifiedGrade11HumanitiesDiniLesson3";
 import { verifiedGrade11HumanitiesDiniLesson8 } from "./verifiedGrade11HumanitiesDiniLesson8";
@@ -2871,6 +2872,24 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(verifiedQuestions.some((question) =>
       question.grade === "دوازدهم" && question.track === "انسانی" && question.subject === "تحلیل فرهنگی"
     )).toBe(false);
+  });
+
+
+  it("counts shared Grade 12 Arabic and Hoviat questions from both Math and Experimental tracks", () => {
+    const catalog = buildGradeSpecificCatalog([
+      { track: "ریاضی", grade: "دوازدهم", subject: "عربی", chapter: "الدين والتدين", sourceStatus: "official-exam-adapted" },
+      { track: "تجربی", grade: "دوازدهم", subject: "عربی", chapter: "الدين والتدين", sourceStatus: "official-exam-adapted" },
+      { track: "ریاضی", grade: "دوازدهم", subject: "هویت اجتماعی", chapter: "کنش‌های ما", sourceStatus: "official-exam-adapted" },
+      { track: "تجربی", grade: "دوازدهم", subject: "هویت اجتماعی", chapter: "کنش‌های ما", sourceStatus: "official-exam-adapted" },
+    ]);
+    const arabic = catalog.find((book) =>
+      book.track === "ریاضی و تجربی" && book.grade === "دوازدهم" && book.subject === "عربی"
+    );
+    const hovi = catalog.find((book) =>
+      book.track === "ریاضی و تجربی" && book.grade === "دوازدهم" && book.subject === "هویت اجتماعی"
+    );
+    expect(arabic?.questionCount).toBe(2);
+    expect(hovi?.questionCount).toBe(2);
   });
 
 });
