@@ -2811,4 +2811,63 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     )).toBe(false);
   });
 
+
+  it("covers all eight Grade 12 Biology chapters with five countable questions each", () => {
+    const chapters = [
+      "مولکول‌های اطلاعاتی",
+      "جریان اطلاعات در یاخته",
+      "انتقال اطلاعات در نسل‌ها",
+      "تغییر در اطلاعات وراثتی",
+      "از ماده به انرژی",
+      "از انرژی به ماده",
+      "فناوری‌های نوین زیستی",
+      "رفتارهای جانوران",
+    ];
+    const biology = verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" &&
+      question.track === "تجربی" &&
+      question.subject === "زیست‌شناسی"
+    );
+    for (const chapter of chapters) {
+      const chapterQuestions = biology.filter((question) => question.chapter === chapter);
+      // Chapter 3's legacy probability-style item is excluded from the count
+      // because numerical/calculation questions are outside the chapter's scope.
+      const countableQuestions = chapter === "انتقال اطلاعات در نسل‌ها"
+        ? chapterQuestions.filter((question) => question.id.startsWith("verified-bio3-ch3-"))
+        : chapterQuestions;
+      expect(countableQuestions, chapter).toHaveLength(5);
+      expect(countableQuestions.every((question) =>
+        ["curriculum-verified", "official-exam-adapted"].includes(question.sourceStatus)
+      )).toBe(true);
+      expect(countableQuestions.every((question) =>
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < question.options.length &&
+        question.explanation.length > 0 &&
+        question.sourceUrl?.startsWith("https://") &&
+        question.verifiedAt instanceof Date
+      )).toBe(true);
+    }
+    expect(biology).toHaveLength(41);
+    expect(new Set(biology.map((question) => question.id)).size).toBe(41);
+  });
+
+  it("registers 36 new original textbook-grounded questions for Grade 12 Biology", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("verified-bio3-ch")
+    );
+    expect(batch).toHaveLength(36);
+    expect(batch.every((question) =>
+      question.sourceStatus === "curriculum-verified" &&
+      question.reviewerNote?.includes("سؤال تألیفی") &&
+      question.sourceTitle?.includes("112216") ||
+      question.id.startsWith("verified-bio3-ch4-") &&
+      question.sourceStatus === "curriculum-verified" &&
+      question.sourceUrl?.includes("1757923687_")
+    )).toBe(true);
+    const chapterOne = batch.filter((question) => question.chapter === "مولکول‌های اطلاعاتی");
+    expect(chapterOne).toHaveLength(4);
+    expect(chapterOne.every((question) => !/\\d/.test(question.prompt))).toBe(true);
+  });
+
 });
