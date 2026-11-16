@@ -2865,7 +2865,7 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     )).toBe(true);
     const chapterOne = batch.filter((question) => question.chapter === "مولکول‌های اطلاعاتی");
     expect(chapterOne).toHaveLength(4);
-    expect(chapterOne.every((question) => !/\\d/.test(question.prompt))).toBe(true);
+    expect(chapterOne.every((question) => !/\d/.test(question.prompt))).toBe(true);
   });
 
 });
