@@ -2955,7 +2955,7 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(new Set(biology.map((question) => question.id)).size).toBe(41);
   });
 
-  it("registers exactly 30 original textbook-grounded questions for the seven remaining Biology chapters", () => {
+  it("registers 31 original textbook-grounded questions for the seven remaining Biology chapters", () => {
     const batch = verifiedQuestions.filter((question) =>
       question.id.startsWith("verified-bio3-ch")
     );
@@ -2971,7 +2971,7 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     const chapterOne = newBatch.filter((question) => question.chapter === "مولکول‌های اطلاعاتی");
     expect(chapterOne).toHaveLength(4);
     expect(chapterOne.every((question) =>
-      !/\\d/.test(question.prompt)
+      !/\d/.test(question.prompt)
     )).toBe(true);
   });
 
