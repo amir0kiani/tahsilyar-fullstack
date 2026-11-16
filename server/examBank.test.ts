@@ -2862,16 +2862,14 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     )).toBe(false);
   });
 
-  it("omits non-assessment Grade 12 Humanities courses from the assessment catalog", () => {
-    const catalog = buildGradeSpecificCatalog(verifiedQuestions.map((question) => ({
-      track: question.track,
-      grade: question.grade,
-      subject: question.subject,
-      chapter: question.chapter,
-      sourceStatus: question.sourceStatus,
-    })));
-    expect(catalog.some((book) =>
-      book.grade === "دوازدهم" && book.subject === "تحلیل فرهنگی"
+  it("rejects out-of-scope Grade 12 Humanities questions from the bundled bank", () => {
+    expect(isGrade12AssessmentQuestionEligible({
+      grade: "دوازدهم",
+      track: "انسانی",
+      subject: "تحلیل فرهنگی",
+    })).toBe(false);
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "دوازدهم" && question.track === "انسانی" && question.subject === "تحلیل فرهنگی"
     )).toBe(false);
   });
 
