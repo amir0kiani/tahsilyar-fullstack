@@ -2913,4 +2913,61 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(new Set(chapterQuestions.map((question) => question.id)).size).toBe(5);
   });
 
+
+  it("reaches the five-question target in all eight Grade 12 Biology chapters", () => {
+    const chapters = [
+      "مولکول‌های اطلاعاتی",
+      "جریان اطلاعات در یاخته",
+      "انتقال اطلاعات در نسل‌ها",
+      "تغییر در اطلاعات وراثتی",
+      "از ماده به انرژی",
+      "از انرژی به ماده",
+      "فناوری‌های نوین زیستی",
+      "رفتارهای جانوران",
+    ];
+    const biology = verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" &&
+      question.track === "تجربی" &&
+      question.subject === "زیست‌شناسی"
+    );
+    for (const chapter of chapters) {
+      const chapterQuestions = biology.filter((question) => question.chapter === chapter);
+      expect(chapterQuestions, chapter).toHaveLength(5);
+      expect(chapterQuestions.every((question) =>
+        question.sourceStatus === "curriculum-verified" ||
+        question.sourceStatus === "official-exam-adapted"
+      )).toBe(true);
+      expect(chapterQuestions.every((question) =>
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < question.options.length &&
+        question.explanation.length > 0 &&
+        question.sourceUrl?.includes("1757923687_") &&
+        question.verifiedAt instanceof Date
+      )).toBe(true);
+    }
+    expect(biology).toHaveLength(40);
+    expect(new Set(biology.map((question) => question.id)).size).toBe(40);
+  });
+
+  it("registers exactly 30 original textbook-grounded questions for the seven remaining Biology chapters", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("verified-bio3-ch")
+    );
+    const newBatch = batch.filter((question) =>
+      !question.id.includes("ch4-")
+    );
+    expect(newBatch).toHaveLength(30);
+    expect(newBatch.every((question) =>
+      question.sourceStatus === "curriculum-verified" &&
+      question.reviewerNote?.includes("سؤال تألیفی") &&
+      question.sourceTitle?.includes("112216")
+    )).toBe(true);
+    const chapterOne = newBatch.filter((question) => question.chapter === "مولکول‌های اطلاعاتی");
+    expect(chapterOne).toHaveLength(4);
+    expect(chapterOne.every((question) =>
+      !/\\d/.test(question.prompt)
+    )).toBe(true);
+  });
+
 });
