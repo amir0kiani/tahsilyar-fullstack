@@ -17,7 +17,7 @@ export const verifiedGrade11MathGeometryTransformations: ExamQuestion[] = [
     correctIndex: 0,
     explanation: "در انتقال، مؤلفه‌های بردار انتقال به مختصات نقطه افزوده می‌شوند: (−۲+۴، ۳−۱) = (۲، ۲).",
     sourceStatus: "reviewed", sourceTitle, sourceUrl, sourceYear: "۱۴۰۵", verifiedAt,
-    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس اول، مبحث انتقال؛ صفحات ۳۳ تا ۳۶."
+    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس اول، مبحث انتقال؛ صفحات ۳۳ تا ۴۶."
   },
   {
     id: "authored-grade11-geometry-transformations-lesson1-02",
@@ -30,7 +30,7 @@ export const verifiedGrade11MathGeometryTransformations: ExamQuestion[] = [
     correctIndex: 0,
     explanation: "دوران ۹۰ درجه پادساعت‌گرد حول مبدأ، هر نقطهٔ (x،y) را به (−y،x) می‌برد؛ بنابراین تصویر P برابر (۲،۳) است.",
     sourceStatus: "reviewed", sourceTitle, sourceUrl, sourceYear: "۱۴۰۵", verifiedAt,
-    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس اول، مبحث دوران؛ صفحات ۳۷ تا ۴۰."
+    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس اول، مبحث دوران؛ صفحات ۳۳ تا ۴۶."
   },
   {
     id: "authored-grade11-geometry-transformations-lesson1-03",
@@ -43,7 +43,7 @@ export const verifiedGrade11MathGeometryTransformations: ExamQuestion[] = [
     correctIndex: 1,
     explanation: "در تجانس با مرکز مبدأ، بردار مکان نقطه در نسبت تجانس ضرب می‌شود: −۳(۲،−۱) = (−۶،۳). علامت منفی تصویر را در سوی مقابل مرکز قرار می‌دهد.",
     sourceStatus: "reviewed", sourceTitle, sourceUrl, sourceYear: "۱۴۰۵", verifiedAt,
-    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس اول، مبحث تجانس؛ صفحات ۴۱ تا ۴۳."
+    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس اول، مبحث تجانس؛ صفحات ۳۳ تا ۴۶."
   },
   {
     id: "authored-grade11-geometry-transformations-lesson1-04",
@@ -56,7 +56,7 @@ export const verifiedGrade11MathGeometryTransformations: ExamQuestion[] = [
     correctIndex: 0,
     explanation: "انتقال، دوران و بازتاب از تبدیل‌های هم‌نهشتی‌اند؛ بنابراین فاصله‌ها و اندازهٔ زاویه‌ها را حفظ می‌کنند. جهت‌گیری در بازتاب الزاماً حفظ نمی‌شود.",
     sourceStatus: "reviewed", sourceTitle, sourceUrl, sourceYear: "۱۴۰۵", verifiedAt,
-    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس اول، ویژگی‌های تبدیل‌های هندسی؛ صفحات ۳۳ تا ۴۳."
+    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس اول، ویژگی‌های تبدیل‌های هندسی؛ صفحات ۳۳ تا ۴۶."
   },
   {
     id: "authored-grade11-geometry-transformations-lesson1-05",
@@ -69,7 +69,7 @@ export const verifiedGrade11MathGeometryTransformations: ExamQuestion[] = [
     correctIndex: 1,
     explanation: "ترکیب دو انتقال، انتقالی با بردار مجموع آن‌هاست: (۳،−۲)+(−۵،۴)=(−۲،۲).",
     sourceStatus: "reviewed", sourceTitle, sourceUrl, sourceYear: "۱۴۰۵", verifiedAt,
-    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس اول، ترکیب و اجرای تبدیل‌ها؛ صفحات ۳۳ تا ۴۳."
+    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس اول، ترکیب و اجرای تبدیل‌ها؛ صفحات ۳۳ تا ۴۶."
   },
   {
     id: "authored-grade11-geometry-transformations-lesson2-01",
@@ -82,7 +82,7 @@ export const verifiedGrade11MathGeometryTransformations: ExamQuestion[] = [
     correctIndex: 0,
     explanation: "در بازتاب نسبت به محور y، مؤلفهٔ x قرینه و مؤلفهٔ y ثابت می‌ماند؛ پس تصویر (۴،۳) است.",
     sourceStatus: "reviewed", sourceTitle, sourceUrl, sourceYear: "۱۴۰۵", verifiedAt,
-    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس دوم، کاربرد تقارن محوری؛ صفحات ۴۶ تا ۵۰."
+    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس دوم، کاربرد تقارن محوری؛ صفحات ۴۷ تا ۵۸."
   },
   {
     id: "authored-grade11-geometry-transformations-lesson2-02",
@@ -95,7 +95,7 @@ export const verifiedGrade11MathGeometryTransformations: ExamQuestion[] = [
     correctIndex: 0,
     explanation: "تقارن مرکزی با مرکز مبدأ معادل دوران ۱۸۰ درجه است؛ بنابراین هر دو مؤلفهٔ مختصات تغییر علامت می‌دهند.",
     sourceStatus: "reviewed", sourceTitle, sourceUrl, sourceYear: "۱۴۰۵", verifiedAt,
-    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس دوم، تقارن مرکزی و دوران نیم‌دور؛ صفحات ۴۶ تا ۵۰."
+    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس دوم، تقارن مرکزی و دوران نیم‌دور؛ صفحات ۴۷ تا ۵۸."
   },
   {
     id: "authored-grade11-geometry-transformations-lesson2-03",
@@ -108,7 +108,7 @@ export const verifiedGrade11MathGeometryTransformations: ExamQuestion[] = [
     correctIndex: 2,
     explanation: "مربع چهار تقارن دورانی هم‌فاصله در یک دور کامل دارد؛ کوچک‌ترین زاویهٔ مثبت برابر ۳۶۰÷۴=۹۰ درجه است.",
     sourceStatus: "reviewed", sourceTitle, sourceUrl, sourceYear: "۱۴۰۵", verifiedAt,
-    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس دوم، تقارن‌های دورانی چندضلعی‌ها؛ صفحات ۵۱ تا ۵۴."
+    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس دوم، تقارن‌های دورانی چندضلعی‌ها؛ صفحات ۴۷ تا ۵۸."
   },
   {
     id: "authored-grade11-geometry-transformations-lesson2-04",
@@ -121,7 +121,7 @@ export const verifiedGrade11MathGeometryTransformations: ExamQuestion[] = [
     correctIndex: 2,
     explanation: "شش‌ضلعی منتظم شش تقارن دورانی هم‌فاصله دارد؛ پس کوچک‌ترین زاویهٔ مثبت ۳۶۰÷۶=۶۰ درجه است.",
     sourceStatus: "reviewed", sourceTitle, sourceUrl, sourceYear: "۱۴۰۵", verifiedAt,
-    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس دوم، تقارن دورانی چندضلعی منتظم؛ صفحات ۵۱ تا ۵۴."
+    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس دوم، تقارن دورانی چندضلعی منتظم؛ صفحات ۴۷ تا ۵۸."
   },
   {
     id: "authored-grade11-geometry-transformations-lesson2-05",
@@ -134,6 +134,6 @@ export const verifiedGrade11MathGeometryTransformations: ExamQuestion[] = [
     correctIndex: 0,
     explanation: "مستطیل غیرمربع دو محور تقارن از وسط ضلع‌های روبه‌رو دارد. همچنین با دوران صفر و ۱۸۰ درجه بر خودش منطبق می‌شود؛ بنابراین دو تقارن دورانی دارد.",
     sourceStatus: "reviewed", sourceTitle, sourceUrl, sourceYear: "۱۴۰۵", verifiedAt,
-    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس دوم، تقارن‌های محوری و دورانی مستطیل؛ صفحات ۵۱ تا ۵۸."
+    reviewerNote: reviewerNote + " ارجاع محتوایی: فصل دوم، درس دوم، تقارن‌های محوری و دورانی مستطیل؛ صفحات ۴۷ تا ۵۸."
   }
 ];
