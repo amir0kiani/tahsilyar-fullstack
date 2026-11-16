@@ -416,7 +416,7 @@ describe("curriculum and assessment question bank", () => {
 
   it("keeps every curriculum catalogue entry grade- and track-specific", () => {
     expect(curriculumCatalog.every((book) => ["دهم", "یازدهم", "دوازدهم"].includes(book.grade))).toBe(true);
-    expect(curriculumCatalog.every((book) => ["عمومی", "تجربی", "ریاضی", "انسانی"].includes(book.track))).toBe(true);
+    expect(curriculumCatalog.every((book) => ["عمومی", "تجربی", "ریاضی", "انسانی", "ریاضی و تجربی"].includes(book.track))).toBe(true);
   });
   it("reaches five reviewed questions in every Grade 11 biology chapter", () => {
     const chapters = [
