@@ -19,8 +19,18 @@ import { examQuestions as starterQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
 import { canonicalizeGrade11AssessmentChapter, canonicalizeGrade11AssessmentQuestion, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
+import { canonicalizeGrade12AssessmentQuestion, isGrade12AssessmentQuestionEligible, isGrade12AssessmentSubjectEligible } from "./grade12AssessmentEligibility";
 
-const allStarterQuestions = [...starterQuestions, ...verifiedQuestions].map(canonicalizeGrade11AssessmentQuestion).filter(isGrade11AssessmentQuestionEligible);
+const allStarterQuestions = [...starterQuestions, ...verifiedQuestions]
+  .map(canonicalizeGrade11AssessmentQuestion)
+  .filter(isGrade11AssessmentQuestionEligible)
+  .map(canonicalizeGrade12AssessmentQuestion)
+  .filter(isGrade12AssessmentQuestionEligible);
+
+const eligibleAssessmentCurriculumCatalog = curriculumCatalog.filter((book) =>
+  (book.grade !== "یازدهم" || isGrade11AssessmentSubjectEligible(book.track, book.subject)) &&
+  (book.grade !== "دوازدهم" || isGrade12AssessmentSubjectEligible(book.track, book.subject))
+);
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -232,13 +242,22 @@ async function ensureAssessmentBankSeeded(db: NonNullable<Awaited<ReturnType<typ
         }).from(examQuestionRows),
         db.select({ id: curriculumChapterRows.id, track: curriculumChapterRows.track, grade: curriculumChapterRows.grade, subject: curriculumChapterRows.subject, chapter: curriculumChapterRows.chapter }).from(curriculumChapterRows),
       ]);
-      const ineligibleGrade11Rows = existingQuestionRows.filter((row) =>
-        row.grade === "یازدهم" && !isGrade11AssessmentQuestionEligible(row)
+      const ineligibleAssessmentRows = existingQuestionRows.filter((row) =>
+        (row.grade === "یازدهم" && !isGrade11AssessmentQuestionEligible(row)) ||
+        (row.grade === "دوازدهم" && !isGrade12AssessmentQuestionEligible(row))
       );
-      for (const row of ineligibleGrade11Rows) {
+      for (const row of ineligibleAssessmentRows) {
         await db.update(examQuestionRows)
           .set({ isActive: 0 })
           .where(eq(examQuestionRows.id, row.id));
+      }
+      const ineligibleGrade12ChapterRows = existingChapterRows.filter((row) =>
+        row.grade === "دوازدهم" && !isGrade12AssessmentSubjectEligible(row.track, row.subject)
+      );
+      for (const row of ineligibleGrade12ChapterRows) {
+        await db.update(curriculumChapterRows)
+          .set({ isActive: 0 })
+          .where(eq(curriculumChapterRows.id, row.id));
       }
       const existingIds = new Set(existingQuestionRows.map((row) => row.id));
       const missingQuestions = allStarterQuestions.filter((question) => !existingIds.has(question.id));
@@ -249,7 +268,7 @@ async function ensureAssessmentBankSeeded(db: NonNullable<Awaited<ReturnType<typ
         })));
       }
       const chapterKeys = new Set(existingChapterRows.map((row) => [row.track, row.grade, row.subject, row.chapter].join("::")));
-      const missingChapters = curriculumCatalog.flatMap((item) => item.chapters
+      const missingChapters = eligibleAssessmentCurriculumCatalog.flatMap((item) => item.chapters
         .filter((chapter) => !chapterKeys.has([item.track, item.grade, item.subject, chapter].join("::")))
         .map((chapter) => ({ track: item.track, grade: item.grade, subject: item.subject, chapter, isActive: 1 })));
       for (let offset = 0; offset < missingChapters.length; offset += 100) {
@@ -313,8 +332,10 @@ export async function getAssessmentQuestions(filters: AssessmentFilters = {}) {
     const rows = await db.select().from(examQuestionRows).where(eq(examQuestionRows.isActive, 1));
     return rows
       .map((question) => canonicalizeGrade11AssessmentQuestion(question as typeof allStarterQuestions[number]))
+      .filter(isGrade11AssessmentQuestionEligible)
+      .map(canonicalizeGrade12AssessmentQuestion)
       .filter((question) =>
-        isGrade11AssessmentQuestionEligible(question) &&
+        isGrade12AssessmentQuestionEligible(question) &&
         matchesAssessmentQuestion(question, filters)
       ).slice(0, filters.limit ?? 20);
   } catch (error) {
@@ -333,11 +354,12 @@ function questionMatchesBookTrack(questionTrack: string, bookTrack: string, subj
 
 export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: string; subject: string; chapter: string; sourceStatus?: string }>) {
   const isVerified = (status?: string) => Boolean(status && status !== "sample-authored" && status !== "pending-review");
-  const assessmentQuestionRows = questionRows.map(canonicalizeGrade11AssessmentQuestion).filter(isGrade11AssessmentQuestionEligible);
-  const assessmentCurriculumCatalog = curriculumCatalog.filter((book) =>
-    book.grade !== "یازدهم" || isGrade11AssessmentSubjectEligible(book.track, book.subject)
-  );
-  const catalog = assessmentCurriculumCatalog.map((book) => {
+  const assessmentQuestionRows = questionRows
+    .map(canonicalizeGrade11AssessmentQuestion)
+    .filter(isGrade11AssessmentQuestionEligible)
+    .map(canonicalizeGrade12AssessmentQuestion)
+    .filter(isGrade12AssessmentQuestionEligible);
+  const catalog = eligibleAssessmentCurriculumCatalog.map((book) => {
     const bookQuestions = assessmentQuestionRows.filter((question) =>
       question.grade === book.grade &&
       question.subject === book.subject &&
