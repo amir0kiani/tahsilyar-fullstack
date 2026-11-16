@@ -2860,10 +2860,8 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(batch.every((question) =>
       question.sourceStatus === "curriculum-verified" &&
       question.reviewerNote?.includes("سؤال تألیفی") &&
-      question.sourceTitle?.includes("112216") ||
-      question.id.startsWith("verified-bio3-ch4-") &&
-      question.sourceStatus === "curriculum-verified" &&
-      question.sourceUrl?.includes("1757923687_")
+      question.sourceUrl?.includes("1757923687_") &&
+      (question.id.startsWith("verified-bio3-ch4-") || question.sourceTitle?.includes("112216"))
     )).toBe(true);
     const chapterOne = batch.filter((question) => question.chapter === "مولکول‌های اطلاعاتی");
     expect(chapterOne).toHaveLength(4);
