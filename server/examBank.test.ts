@@ -2892,4 +2892,25 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(hovi?.questionCount).toBe(2);
   });
 
+
+  it("adds five textbook-verified questions for Grade 12 Biology chapter 4", () => {
+    const chapterQuestions = verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" &&
+      question.track === "تجربی" &&
+      question.subject === "زیست‌شناسی" &&
+      question.chapter === "تغییر در اطلاعات وراثتی"
+    );
+    expect(chapterQuestions).toHaveLength(5);
+    expect(chapterQuestions.every((question) =>
+      question.sourceStatus === "curriculum-verified" &&
+      question.sourceUrl?.includes("1757923687_") &&
+      question.verifiedAt instanceof Date &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < question.options.length &&
+      question.explanation.length > 0
+    )).toBe(true);
+    expect(new Set(chapterQuestions.map((question) => question.id)).size).toBe(5);
+  });
+
 });
