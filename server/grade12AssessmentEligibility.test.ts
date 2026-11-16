@@ -50,7 +50,12 @@ describe("Grade 12 assessment eligibility", () => {
     expect(isGrade12AssessmentSubjectEligible("تجربی", "علوم اجتماعی")).toBe(true);
   });
 
-  it("does not change eligibility decisions for questions from other grades", () => {
+  it("rejects out-of-scope Grade 12 questions and does not alter other grades", () => {
+    expect(isGrade12AssessmentQuestionEligible({
+      grade: "دوازدهم",
+      track: "انسانی",
+      subject: "تحلیل فرهنگی",
+    })).toBe(false);
     expect(isGrade12AssessmentQuestionEligible({
       grade: "یازدهم",
       track: "انسانی",
