@@ -1,3 +1,4 @@
+import { grade12English3Chapters, grade12HumanitiesArabicChapters, grade12MathScienceArabicChapters, grade12SocialIdentityChapters } from "./grade12AssessmentEligibility";
 export type CurriculumSection = { title: string; lessons: string[] };
 export type CurriculumBook = { track: string; grade: string; subject: string; chapters: string[]; sections?: CurriculumSection[]; assessmentExcludedChapters?: string[]; questionCount?: number; verifiedQuestionCount?: number; targetQuestionsPerLesson?: number; bookCode?: string };
 
@@ -80,8 +81,14 @@ export const curriculumCatalog: CurriculumBook[] = [
   add("ریاضی", "یازدهم", "تاریخ معاصر ایران", grade11ContemporaryHistoryChapters, 5, "111220"),
   add("عمومی", "یازدهم", "انسان و محیط زیست", ["آب، سرچشمه زندگی", "خاک، بستر زندگی", "هوا، نفس زندگی", "انرژی، حرکت، زندگی", "زباله، فاجعه محیط زیست", "تنوع زیستی، تابلوی زیبای آفرینش", "محیط زیست، بستر گردشگری مسئولانه"]),
   ...[
-    ["فارسی", "نگارش", "عربی", "دین و زندگی", "زبان انگلیسی", "هویت اجتماعی", "سلامت و بهداشت", "مدیریت خانواده و سبک زندگی"],
+    ["فارسی", "نگارش", "دین و زندگی", "سلامت و بهداشت", "مدیریت خانواده و سبک زندگی"],
   ].flatMap((subjects) => subjects.map((subject) => add("عمومی", "دوازدهم", subject))),
+  add("عمومی", "دوازدهم", "زبان انگلیسی", [...grade12English3Chapters], 5),
+  add("انسانی", "دوازدهم", "عربی", [...grade12HumanitiesArabicChapters], 5),
+  add("ریاضی", "دوازدهم", "عربی", [...grade12MathScienceArabicChapters], 5),
+  add("تجربی", "دوازدهم", "عربی", [...grade12MathScienceArabicChapters], 5),
+  add("ریاضی", "دوازدهم", "هویت اجتماعی", [...grade12SocialIdentityChapters], 5, "112220"),
+  add("تجربی", "دوازدهم", "هویت اجتماعی", [...grade12SocialIdentityChapters], 5, "112220"),
 
   // Experimental track.
   add("تجربی", "دهم", "زیست‌شناسی", ["زیست‌شناسی، دیروز، امروز و فردا", "گوارش و جذب مواد", "تبادلات گازی", "گردش مواد در بدن", "تنظیم اسمزی و دفع مواد زائد", "از یاخته تا گیاه", "جذب و انتقال مواد در گیاهان"]),
