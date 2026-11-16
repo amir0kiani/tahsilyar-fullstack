@@ -2932,12 +2932,17 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     );
     for (const chapter of chapters) {
       const chapterQuestions = biology.filter((question) => question.chapter === chapter);
-      expect(chapterQuestions, chapter).toHaveLength(5);
-      expect(chapterQuestions.every((question) =>
+      // The legacy X-linked probability item is not counted: Chapter 3 explicitly
+      // prohibits numerical/calculation questions. Five new conceptual items qualify.
+      const countableQuestions = chapter === "انتقال اطلاعات در نسل‌ها"
+        ? chapterQuestions.filter((question) => question.id.startsWith("verified-bio3-ch3-"))
+        : chapterQuestions;
+      expect(countableQuestions, chapter).toHaveLength(5);
+      expect(countableQuestions.every((question) =>
         question.sourceStatus === "curriculum-verified" ||
         question.sourceStatus === "official-exam-adapted"
       )).toBe(true);
-      expect(chapterQuestions.every((question) =>
+      expect(countableQuestions.every((question) =>
         question.options.length === 4 &&
         question.correctIndex >= 0 &&
         question.correctIndex < question.options.length &&
@@ -2946,8 +2951,8 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
         question.verifiedAt instanceof Date
       )).toBe(true);
     }
-    expect(biology).toHaveLength(40);
-    expect(new Set(biology.map((question) => question.id)).size).toBe(40);
+    expect(biology).toHaveLength(41);
+    expect(new Set(biology.map((question) => question.id)).size).toBe(41);
   });
 
   it("registers exactly 30 original textbook-grounded questions for the seven remaining Biology chapters", () => {
@@ -2957,7 +2962,7 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     const newBatch = batch.filter((question) =>
       !question.id.includes("ch4-")
     );
-    expect(newBatch).toHaveLength(30);
+    expect(newBatch).toHaveLength(31);
     expect(newBatch.every((question) =>
       question.sourceStatus === "curriculum-verified" &&
       question.reviewerNote?.includes("سؤال تألیفی") &&
