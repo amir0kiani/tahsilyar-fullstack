@@ -10,6 +10,7 @@ import { verifiedGrade11HumanitiesDiniLesson13 } from "./verifiedGrade11Humaniti
 import { verifiedGrade11HumanitiesDiniLesson15 } from "./verifiedGrade11HumanitiesDiniLesson15";
 import { verifiedGrade11HumanitiesDiniLesson17 } from "./verifiedGrade11HumanitiesDiniLesson17";
 import { verifiedGrade11English2 } from "./verifiedGrade11English2";
+import { verifiedGrade11MathGeometryTransformations } from "./verifiedGrade11MathGeometryTransformations";
 import { verifiedGrade11PersianLesson17 } from "./verifiedGrade11PersianLesson17";
 import { verifiedGrade11PersianLesson18 } from "./verifiedGrade11PersianLesson18";
 import { buildGradeSpecificCatalog } from "./db";
@@ -2852,6 +2853,32 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(verifiedQuestions.some((question) =>
       question.track === "انسانی" && question.grade === "دوازدهم" && question.subject === "روان‌شناسی"
     )).toBe(false);
+  });
+
+
+  it("covers both Grade 11 Geometry 2 transformation lessons with five reviewed authored questions each", () => {
+    expect(verifiedGrade11MathGeometryTransformations).toHaveLength(10);
+    for (const lesson of ["درس اول: تبدیل‌های هندسی", "درس دوم: کاربرد تبدیل‌ها"]) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" &&
+        question.track === "ریاضی" &&
+        question.subject === "هندسه" &&
+        question.chapter === "تبدیل‌های هندسی و کاربردها" &&
+        question.topic.startsWith(lesson)
+      );
+      expect(questions, lesson).toHaveLength(5);
+      expect(questions.every((question) =>
+        question.sourceStatus === "reviewed" &&
+        question.sourceTitle?.includes("تألیفی تحصیل‌یار") &&
+        question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Hendese-Riazi-11_Daneshchi.iR.pdf" &&
+        question.sourceYear === "۱۴۰۵" &&
+        question.verifiedAt instanceof Date &&
+        question.reviewerNote?.includes("سؤال تألیفی") &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4
+      )).toBe(true);
+    }
   });
 
 });
