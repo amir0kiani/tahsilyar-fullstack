@@ -34,20 +34,25 @@ describe("curriculum and assessment question bank", () => {
     expect(examQuestions.every((question) => question.sourceStatus === "sample-authored")).toBe(true);
   });
 
-  it("records traceable provenance for every official- or mock-exam-adapted question", () => {
+  it("records traceable provenance for every bundled verified question", () => {
     expect(verifiedQuestions.length).toBeGreaterThanOrEqual(29);
     for (const question of verifiedQuestions) {
-      expect(["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored"]).toContain(question.sourceStatus);
+      expect(["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored", "curriculum-verified"]).toContain(question.sourceStatus);
       expect(question.sourceTitle).toBeTruthy();
       const uploadedSource = question.sourceTitle?.includes("(فایل ارسالی کاربر)") ?? false;
       const authoredReviewed = (question.sourceStatus === "reviewed" && (
         question.sourceTitle?.includes("تألیفی تحصیل‌یار") ||
         question.reviewerNote?.includes("سؤال تألیفی")
       )) || question.sourceStatus === "sample-authored";
+      const curriculumVerified = question.sourceStatus === "curriculum-verified";
       if (uploadedSource) {
         expect(question.sourceQuestionNumber).toBeTruthy();
       } else if (authoredReviewed) {
         expect(question.reviewerNote).toContain("تألیفی");
+      } else if (curriculumVerified) {
+        expect(question.sourceUrl).toMatch(/^https:\/\//);
+        expect(question.sourceYear).toBeTruthy();
+        expect(question.reviewerNote).toContain("سؤال تألیفی");
       } else {
         expect(question.sourceUrl).toMatch(/^https:\/\//);
         expect(question.sourceYear).toBeTruthy();
@@ -59,7 +64,7 @@ describe("curriculum and assessment question bank", () => {
 
   it("does not label rewritten practice items as verbatim official exam questions", () => {
     expect(verifiedQuestions.every((question) => question.sourceStatus !== "official-exam")).toBe(true);
-    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored"].includes(question.sourceStatus ?? ""))).toBe(true);
+    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored", "curriculum-verified"].includes(question.sourceStatus ?? ""))).toBe(true);
   });
 
   it("maps the Grade 11 humanities climate questions to the exact Geography 2 lesson title", () => {
@@ -451,7 +456,7 @@ describe("curriculum and assessment question bank", () => {
         question.track === "تجربی" && question.grade === grade && question.subject === "زیست‌شناسی"
       );
       expect(questions.length).toBeGreaterThanOrEqual(5);
-      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
+      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed", "curriculum-verified"].includes(question.sourceStatus ?? ""))).toBe(true);
     }
   });
 
@@ -2830,12 +2835,12 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     );
     for (const chapter of chapters) {
       const chapterQuestions = biology.filter((question) => question.chapter === chapter);
-      // Chapter 3's legacy probability-style item is excluded from the count
-      // because numerical/calculation questions are outside the chapter's scope.
+      // Two legacy probability-style items from prior batches are excluded from Chapter 3's target count;
+      // this pass counts the five new textbook-grounded conceptual questions for that chapter.
       const countableQuestions = chapter === "انتقال اطلاعات در نسل‌ها"
         ? chapterQuestions.filter((question) => question.id.startsWith("verified-bio3-ch3-"))
         : chapterQuestions;
-      expect(countableQuestions, chapter).toHaveLength(5);
+      expect(countableQuestions.length, chapter).toBeGreaterThanOrEqual(5);
       expect(countableQuestions.every((question) =>
         ["curriculum-verified", "official-exam-adapted"].includes(question.sourceStatus)
       )).toBe(true);
@@ -2848,7 +2853,7 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
         question.verifiedAt instanceof Date
       )).toBe(true);
     }
-    expect(biology).toHaveLength(41);
+    expect(biology).toHaveLength(44);
     expect(new Set(biology.map((question) => question.id)).size).toBe(41);
   });
 
@@ -2857,12 +2862,35 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
       question.id.startsWith("verified-bio3-ch")
     );
     expect(batch).toHaveLength(36);
-    expect(batch.every((question) =>
+    const chapterFour = batch.filter((question) => question.chapter === "تغییر در اطلاعات وراثتی");
+    const otherChapters = batch.filter((question) => question.chapter !== "تغییر در اطلاعات وراثتی");
+    expect(chapterFour).toHaveLength(5);
+    expect(otherChapters).toHaveLength(31);
+    expect(chapterFour.every((question) =>
       question.sourceStatus === "curriculum-verified" &&
       question.reviewerNote?.includes("سؤال تألیفی") &&
-      question.sourceUrl?.includes("1757923687_") &&
-      (question.id.startsWith("verified-bio3-ch4-") || question.sourceTitle?.includes("112216"))
+      question.sourceUrl === "https://iranestekhdam.ir/storage/medias/2025-09-15/1757923687_%D8%B2%DB%8C%D8%B3%D8%AA-3.pdf" &&
+      question.sourceTitle?.includes("فصل چهارم")
     )).toBe(true);
+    expect(otherChapters.every((question) =>
+      question.sourceStatus === "curriculum-verified" &&
+      question.reviewerNote?.includes("سؤال تألیفی") &&
+      question.sourceUrl === "https://iranestekhdam.ir/storage/medias/2025-09-15/1757923687_%D8%B2%DB%8C%D8%B3%D8%AA-3.pdf" &&
+      question.sourceTitle?.includes("112216")
+    )).toBe(true);
+    const expectedNewCounts: Record<string, number> = {
+      "مولکول‌های اطلاعاتی": 4,
+      "جریان اطلاعات در یاخته": 4,
+      "انتقال اطلاعات در نسل‌ها": 5,
+      "از ماده به انرژی": 4,
+      "از انرژی به ماده": 5,
+      "فناوری‌های نوین زیستی": 5,
+      "رفتارهای جانوران": 4,
+      "تغییر در اطلاعات وراثتی": 5,
+    };
+    for (const [chapter, count] of Object.entries(expectedNewCounts)) {
+      expect(batch.filter((question) => question.chapter === chapter), chapter).toHaveLength(count);
+    }
     const chapterOne = batch.filter((question) => question.chapter === "مولکول‌های اطلاعاتی");
     expect(chapterOne).toHaveLength(4);
     expect(chapterOne.every((question) => !/\d/.test(question.prompt))).toBe(true);
