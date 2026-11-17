@@ -292,6 +292,21 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("records the official shared Grade 11 Chemistry 2 code and chapter map for both math and experimental tracks", () => {
+    const expectedChapters = [
+      "قدر هدایای زمینی را بدانیم",
+      "در پی غذای سالم",
+      "پوشاک، نیازی پایان‌ناپذیر",
+    ];
+    for (const track of ["ریاضی", "تجربی"]) {
+      const book = curriculumCatalog.find((item) =>
+        item.grade === "یازدهم" && item.track === track && item.subject === "شیمی"
+      );
+      expect(book?.bookCode, track).toBe("111210");
+      expect(book?.chapters, track).toEqual(expectedChapters);
+    }
+  });
+
   it("assigns Grade 11 Contemporary History only to mathematics and experimental-sciences tracks", () => {
     for (const track of ["ریاضی", "تجربی"]) {
       const book = curriculumCatalog.find((item) =>
