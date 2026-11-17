@@ -4,7 +4,9 @@ import type { ExamQuestion } from "./examBank";
 // and its official marking guide. The source exam is descriptive; MCQ options are authored.
 const verifiedAt = new Date("2026-11-10T00:00:00.000Z");
 const sourceTitle = "آزمون نهایی شیمی (۲) یازدهم تجربی – ۳ مرداد ۱۴۰۵";
-const sourceUrl = "https://azmoon.medu.ir/";
+// Exact public posts carrying the exam booklet and official marking-guide file (mirror copies).
+const sourceUrl = "https://t.me/chemclass/28241";
+const sourceAnswerUrl = "https://t.me/chemclass/28248";
 
 function adapted(
   id: string,
@@ -31,10 +33,11 @@ function adapted(
     sourceStatus: "official-exam-adapted",
     sourceTitle,
     sourceUrl,
+    sourceAnswerUrl,
     sourceYear: "۱۴۰۵",
     sourceQuestionNumber,
     verifiedAt,
-    reviewerNote: "مفهوم و پاسخ این تمرین از آزمون رسمی و راهنمای نمره‌گذاری آن اقتباس شده است؛ صورت سؤال بازنویسی و گزینه‌های انحرافی تألیف شده‌اند. سؤال منبع تشریحی بوده و این مورد عین سؤال رسمی چهارگزینه‌ای نیست."
+    reviewerNote: "مفهوم و پاسخ این تمرین از آزمون رسمی و راهنمای نمره‌گذاری آن اقتباس شده است؛ صورت سؤال بازنویسی و گزینه‌های انحرافی تألیف شده‌اند. سؤال منبع تشریحی بوده و این مورد عین سؤال رسمی چهارگزینه‌ای نیست. لینک‌ها به پست‌های بازنشرکنندهٔ فایل دفترچه و راهنمای رسمی اشاره دارند؛ مرجع برگزاری آزمون azmoon.medu.ir است."
   };
 }
 
