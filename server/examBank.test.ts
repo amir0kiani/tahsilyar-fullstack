@@ -2835,14 +2835,18 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     );
     for (const chapter of chapters) {
       const chapterQuestions = biology.filter((question) => question.chapter === chapter);
-      // Two legacy probability-style items from prior batches are excluded from Chapter 3's target count;
-      // this pass counts the five new textbook-grounded conceptual questions for that chapter.
+      // Mock-exam-adapted questions without a direct answer-key URL remain in the bank
+      // but are not counted toward the five-question target. Chapter 3 also excludes
+      // its two legacy probability-style items and counts the five new conceptual questions.
+      const verifiedForTarget = chapterQuestions.filter((question) =>
+        ["curriculum-verified", "official-exam-adapted"].includes(question.sourceStatus)
+      );
       const countableQuestions = chapter === "انتقال اطلاعات در نسل‌ها"
-        ? chapterQuestions.filter((question) => question.id.startsWith("verified-bio3-ch3-"))
-        : chapterQuestions;
-      expect(countableQuestions.length, chapter).toBeGreaterThanOrEqual(5);
+        ? verifiedForTarget.filter((question) => question.id.startsWith("verified-bio3-ch3-"))
+        : verifiedForTarget;
+      expect(countableQuestions, chapter).toHaveLength(5);
       expect(countableQuestions.every((question) =>
-        ["curriculum-verified", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus)
+        ["curriculum-verified", "official-exam-adapted"].includes(question.sourceStatus)
       )).toBe(true);
       expect(countableQuestions.every((question) =>
         question.options.length === 4 &&
