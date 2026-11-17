@@ -20,7 +20,7 @@ export const verifiedGrade12BiologyChapter4: ExamQuestion[] = [
     explanation: "در جهش جانشینی، یک نوکلئوتید جایگزین نوکلئوتید دیگری می‌شود. حذف و اضافه به‌ترتیب از دست رفتن یا واردشدن نوکلئوتید و وارونگی، تغییر در آرایش بخشی از فام‌تن است.",
     sourceStatus: "curriculum-verified", sourceTitle, sourceUrl, sourceYear: "۱۴۰۴",
     verifiedAt,
-    reviewerNote: "راستی‌آزمایی با متن فصل ۴، صفحهٔ ۴۸؛ سؤال تألیفی و مبتنی بر کتاب درسی است، نه سؤال رسمی کنکور."
+    reviewerNote: "سؤال تألیفی؛ راستی‌آزمایی با متن فصل ۴، صفحهٔ ۴۸؛ سؤال تألیفی و مبتنی بر کتاب درسی است، نه سؤال رسمی کنکور."
   },
   {
     id: "verified-bio3-ch4-silent-mutation-textbook-002",
@@ -33,7 +33,7 @@ export const verifiedGrade12BiologyChapter4: ExamQuestion[] = [
     explanation: "در جهش خاموش، با وجود تغییر در رمز، آمینواسید حاصل تغییر نمی‌کند؛ بنابراین توالی آمینواسیدهای زنجیرهٔ پلی‌پپتیدی ثابت می‌ماند.",
     sourceStatus: "curriculum-verified", sourceTitle, sourceUrl, sourceYear: "۱۴۰۴",
     verifiedAt,
-    reviewerNote: "راستی‌آزمایی با متن فصل ۴، صفحهٔ ۴۹؛ تمایز جهش خاموش از جهش دگرمعنا."
+    reviewerNote: "سؤال تألیفی؛ راستی‌آزمایی با متن فصل ۴، صفحهٔ ۴۹؛ تمایز جهش خاموش از جهش دگرمعنا."
   },
   {
     id: "verified-bio3-ch4-frameshift-textbook-003",
@@ -46,7 +46,7 @@ export const verifiedGrade12BiologyChapter4: ExamQuestion[] = [
     explanation: "حذف یا اضافهٔ تعداد نوکلئوتیدهایی که مضرب سه نیست، می‌تواند چارچوب خواندن را تغییر دهد؛ در این مثال حذف دو نوکلئوتید، گروه‌بندی سه‌تایی رمزها را از محل حذف به بعد جابه‌جا می‌کند.",
     sourceStatus: "curriculum-verified", sourceTitle, sourceUrl, sourceYear: "۱۴۰۴",
     verifiedAt,
-    reviewerNote: "راستی‌آزمایی با متن فصل ۴، صفحهٔ ۴۹؛ کتاب تصریح می‌کند که حذف/اضافهٔ غیرمضرب سه می‌تواند چارچوب خواندن را تغییر دهد."
+    reviewerNote: "سؤال تألیفی؛ راستی‌آزمایی با متن فصل ۴، صفحهٔ ۴۹؛ کتاب تصریح می‌کند که حذف/اضافهٔ غیرمضرب سه می‌تواند چارچوب خواندن را تغییر دهد."
   },
   {
     id: "verified-bio3-ch4-drift-textbook-004",
@@ -59,7 +59,7 @@ export const verifiedGrade12BiologyChapter4: ExamQuestion[] = [
     explanation: "رانش دگره‌ای تغییر تصادفی فراوانی دگره‌ها بر اثر رویدادهای اتفاقی است و برخلاف انتخاب طبیعی لزوماً به سازش بیشتر منجر نمی‌شود. اثر آن در جمعیت‌های کوچک بیشتر است.",
     sourceStatus: "curriculum-verified", sourceTitle, sourceUrl, sourceYear: "۱۴۰۴",
     verifiedAt,
-    reviewerNote: "راستی‌آزمایی با متن فصل ۴، صفحه‌های ۵۴ و ۵۵؛ مثال کاهش شدید اندازهٔ جمعیت و پیامد آن."
+    reviewerNote: "سؤال تألیفی؛ راستی‌آزمایی با متن فصل ۴، صفحه‌های ۵۴ و ۵۵؛ مثال کاهش شدید اندازهٔ جمعیت و پیامد آن."
   },
   {
     id: "verified-bio3-ch4-allopatric-textbook-005",
@@ -72,6 +72,6 @@ export const verifiedGrade12BiologyChapter4: ExamQuestion[] = [
     explanation: "در گونه‌زایی دگرمیهنی، جدایی جغرافیایی ارتباط و شارش ژن میان بخش‌های جمعیت را قطع می‌کند. تفاوت‌های ژنتیکی می‌توانند در گذر زمان افزایش یابند و به جدایی تولیدمثلی بینجامند.",
     sourceStatus: "curriculum-verified", sourceTitle, sourceUrl, sourceYear: "۱۴۰۴",
     verifiedAt,
-    reviewerNote: "راستی‌آزمایی با متن فصل ۴، صفحهٔ ۶۰؛ تعریف گونه‌زایی دگرمیهنی و نقش قطع شارش ژن."
+    reviewerNote: "سؤال تألیفی؛ راستی‌آزمایی با متن فصل ۴، صفحهٔ ۶۰؛ تعریف گونه‌زایی دگرمیهنی و نقش قطع شارش ژن."
   }
 ];
