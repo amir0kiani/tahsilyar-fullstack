@@ -13,6 +13,7 @@ import { verifiedGrade11English2 } from "./verifiedGrade11English2";
 import { verifiedGrade11PersianLesson17 } from "./verifiedGrade11PersianLesson17";
 import { verifiedGrade11PersianLesson18 } from "./verifiedGrade11PersianLesson18";
 import { verifiedGrade12PersianLessons1to9 } from "./verifiedGrade12PersianLessons1to9";
+import { verifiedGrade12PersianLessons10to18 } from "./verifiedGrade12PersianLessons10to18";
 import { buildGradeSpecificCatalog } from "./db";
 import { canonicalizeGrade11AssessmentChapter, grade11AssessmentYear, grade11DiniSharedChapters, grade11HumanitiesDiniExclusiveChapters, grade11FinalExamSubjectsByTrack, grade11EntranceExamSubjectsByTrack, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
@@ -162,6 +163,40 @@ describe("curriculum and assessment question bank", () => {
       ["درس آزاد (۱)", "درس آزاد (۲)"].includes(question.chapter)
     )).toBe(false);
     expect(verifiedGrade12PersianLessons1to9.every((question) =>
+      question.grade === "دوازدهم" && question.track === "عمومی" &&
+      question.subject === "فارسی" && question.options.length === 4 &&
+      question.correctIndex >= 0 && question.correctIndex < 4
+    )).toBe(true);
+  });
+
+
+  it("adds five verified questions for every assessable Grade 12 Persian lesson in the second half", () => {
+    expect(verifiedGrade12PersianLessons10to18).toHaveLength(40);
+    expect(new Set(verifiedGrade12PersianLessons10to18.map((question) => question.id)).size).toBe(40);
+
+    const expected = [
+      "فصل شکوفایی", "آن شب عزیز", "گذر سیاوش از آتش", "خوان هشتم",
+      "سی مرغ و سیمرغ", "کباب غاز", "خندهٔ تو", "عشق جاودانی",
+    ];
+    for (const chapter of expected) {
+      const matching = verifiedQuestions.filter((question) =>
+        question.grade === "دوازدهم" && question.track === "عمومی" &&
+        question.subject === "فارسی" && question.chapter === chapter
+      );
+      expect(matching, chapter).toHaveLength(5);
+      expect(matching.every((question) =>
+        question.sourceStatus === "curriculum-verified" &&
+        question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Farsi-12_Daneshchi.iR.pdf" &&
+        question.sourceTitle === "فارسی (۳) ـ پایه دوازدهم، کد ۱۱۲۲۰۱، چاپ هشتم ۱۴۰۴، سازمان پژوهش و برنامه‌ریزی آموزشی" &&
+        question.sourceYear === "۱۴۰۴" &&
+        question.reviewerNote?.includes("صفحه چاپی")
+      )).toBe(true);
+    }
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "دوازدهم" && question.subject === "فارسی" &&
+      question.chapter === "درس آزاد (۲)"
+    )).toBe(false);
+    expect(verifiedGrade12PersianLessons10to18.every((question) =>
       question.grade === "دوازدهم" && question.track === "عمومی" &&
       question.subject === "فارسی" && question.options.length === 4 &&
       question.correctIndex >= 0 && question.correctIndex < 4
