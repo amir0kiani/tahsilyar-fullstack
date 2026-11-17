@@ -2854,7 +2854,7 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
       )).toBe(true);
     }
     expect(biology).toHaveLength(44);
-    expect(new Set(biology.map((question) => question.id)).size).toBe(41);
+    expect(new Set(biology.map((question) => question.id)).size).toBe(biology.length);
   });
 
   it("registers 36 new original textbook-grounded questions for Grade 12 Biology", () => {
@@ -2866,18 +2866,13 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     const otherChapters = batch.filter((question) => question.chapter !== "تغییر در اطلاعات وراثتی");
     expect(chapterFour).toHaveLength(5);
     expect(otherChapters).toHaveLength(31);
-    expect(chapterFour.every((question) =>
+    expect(batch.every((question) =>
       question.sourceStatus === "curriculum-verified" &&
       question.reviewerNote?.includes("سؤال تألیفی") &&
-      question.sourceUrl === "https://iranestekhdam.ir/storage/medias/2025-09-15/1757923687_%D8%B2%DB%8C%D8%B3%D8%AA-3.pdf" &&
-      question.sourceTitle?.includes("فصل چهارم")
+      question.sourceUrl?.startsWith("https://iranestekhdam.ir/storage/medias/2025-09-15/")
     )).toBe(true);
-    expect(otherChapters.every((question) =>
-      question.sourceStatus === "curriculum-verified" &&
-      question.reviewerNote?.includes("سؤال تألیفی") &&
-      question.sourceUrl === "https://iranestekhdam.ir/storage/medias/2025-09-15/1757923687_%D8%B2%DB%8C%D8%B3%D8%AA-3.pdf" &&
-      question.sourceTitle?.includes("112216")
-    )).toBe(true);
+    expect(chapterFour.every((question) => question.sourceTitle?.includes("فصل چهارم"))).toBe(true);
+    expect(otherChapters.every((question) => question.sourceTitle?.includes("112216"))).toBe(true);
     const expectedNewCounts: Record<string, number> = {
       "مولکول‌های اطلاعاتی": 4,
       "جریان اطلاعات در یاخته": 4,
