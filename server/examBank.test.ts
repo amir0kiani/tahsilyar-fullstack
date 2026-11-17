@@ -34,20 +34,25 @@ describe("curriculum and assessment question bank", () => {
     expect(examQuestions.every((question) => question.sourceStatus === "sample-authored")).toBe(true);
   });
 
-  it("records traceable provenance for every official- or mock-exam-adapted question", () => {
+  it("records traceable provenance for every bundled verified question", () => {
     expect(verifiedQuestions.length).toBeGreaterThanOrEqual(29);
     for (const question of verifiedQuestions) {
-      expect(["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored"]).toContain(question.sourceStatus);
+      expect(["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored", "curriculum-verified"]).toContain(question.sourceStatus);
       expect(question.sourceTitle).toBeTruthy();
       const uploadedSource = question.sourceTitle?.includes("(فایل ارسالی کاربر)") ?? false;
       const authoredReviewed = (question.sourceStatus === "reviewed" && (
         question.sourceTitle?.includes("تألیفی تحصیل‌یار") ||
         question.reviewerNote?.includes("سؤال تألیفی")
       )) || question.sourceStatus === "sample-authored";
+      const curriculumVerified = question.sourceStatus === "curriculum-verified";
       if (uploadedSource) {
         expect(question.sourceQuestionNumber).toBeTruthy();
       } else if (authoredReviewed) {
         expect(question.reviewerNote).toContain("تألیفی");
+      } else if (curriculumVerified) {
+        expect(question.sourceUrl).toMatch(/^https:\/\//);
+        expect(question.sourceYear).toBeTruthy();
+        expect(question.reviewerNote).toContain("سؤال تألیفی");
       } else {
         expect(question.sourceUrl).toMatch(/^https:\/\//);
         expect(question.sourceYear).toBeTruthy();
@@ -59,7 +64,7 @@ describe("curriculum and assessment question bank", () => {
 
   it("does not label rewritten practice items as verbatim official exam questions", () => {
     expect(verifiedQuestions.every((question) => question.sourceStatus !== "official-exam")).toBe(true);
-    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored"].includes(question.sourceStatus ?? ""))).toBe(true);
+    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored", "curriculum-verified"].includes(question.sourceStatus ?? ""))).toBe(true);
   });
 
   it("maps the Grade 11 humanities climate questions to the exact Geography 2 lesson title", () => {
