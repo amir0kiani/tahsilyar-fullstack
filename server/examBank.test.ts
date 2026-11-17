@@ -38,10 +38,10 @@ describe("curriculum and assessment question bank", () => {
   it("records traceable provenance for every official- or mock-exam-adapted question", () => {
     expect(verifiedQuestions.length).toBeGreaterThanOrEqual(29);
     for (const question of verifiedQuestions) {
-      expect(["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored"]).toContain(question.sourceStatus);
+      expect(["official-exam-adapted", "mock-exam-adapted", "reviewed", "curriculum-verified", "sample-authored"]).toContain(question.sourceStatus);
       expect(question.sourceTitle).toBeTruthy();
       const uploadedSource = question.sourceTitle?.includes("(فایل ارسالی کاربر)") ?? false;
-      const authoredReviewed = (question.sourceStatus === "reviewed" && (
+      const authoredReviewed = (["reviewed", "curriculum-verified"].includes(question.sourceStatus ?? "") && (
         question.sourceTitle?.includes("تألیفی تحصیل‌یار") ||
         question.reviewerNote?.includes("سؤال تألیفی")
       )) || question.sourceStatus === "sample-authored";
@@ -60,7 +60,7 @@ describe("curriculum and assessment question bank", () => {
 
   it("does not label rewritten practice items as verbatim official exam questions", () => {
     expect(verifiedQuestions.every((question) => question.sourceStatus !== "official-exam")).toBe(true);
-    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed", "sample-authored"].includes(question.sourceStatus ?? ""))).toBe(true);
+    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed", "curriculum-verified", "sample-authored"].includes(question.sourceStatus ?? ""))).toBe(true);
   });
 
   it("maps the Grade 11 humanities climate questions to the exact Geography 2 lesson title", () => {
