@@ -455,7 +455,8 @@ describe("curriculum and assessment question bank", () => {
     expect(officialBatch).toHaveLength(38);
     expect(officialBatch.every((question) =>
       question.sourceStatus === "official-exam-adapted" &&
-      question.sourceUrl === "https://azmoon.medu.ir/" &&
+      question.sourceUrl === "https://t.me/chemclass/28241" &&
+      question.sourceAnswerUrl === "https://t.me/chemclass/28248" &&
       question.reviewerNote?.includes("گزینه‌های انحرافی تألیفی‌اند")
     )).toBe(true);
   });
