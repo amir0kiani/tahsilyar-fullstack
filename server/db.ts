@@ -323,9 +323,9 @@ export async function getAssessmentQuestions(filters: AssessmentFilters = {}) {
   }
 }
 
-function questionMatchesBookTrack(questionTrack: string, bookTrack: string, subject: string) {
+export function questionMatchesBookTrack(questionTrack: string, bookTrack: string, subject: string) {
   if (bookTrack === "عمومی") return questionTrack === "عمومی";
-  if (questionTrack === "عمومی" && ["فارسی", "زبان انگلیسی", "دین و زندگی"].includes(subject)) return true;
+  if (questionTrack === "عمومی" && ["فارسی", "زبان انگلیسی", "دین و زندگی", "سلامت و بهداشت"].includes(subject)) return true;
   if (bookTrack === "تجربی") return questionTrack === "تجربی" || questionTrack === "ریاضی و تجربی";
   if (bookTrack === "ریاضی") return questionTrack === "ریاضی" || questionTrack === "ریاضی و تجربی";
   return questionTrack === bookTrack;
