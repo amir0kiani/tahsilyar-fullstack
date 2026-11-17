@@ -572,8 +572,8 @@ const items: Item[] = [
 ];
 
 export const verifiedGrade12HealthLessons2to8: ExamQuestion[] = items.map(
-  ([lesson, chapter, topic, difficulty, prompt, options, correctIndex, explanation, page]) => ({
-    id: `verified-health12-lesson${lesson}-authored-${String(items.indexOf([lesson, chapter, topic, difficulty, prompt, options, correctIndex, explanation, page]) + 1).padStart(3, "0")}`,
+  ([lesson, chapter, topic, difficulty, prompt, options, correctIndex, explanation, page], index) => ({
+    id: `verified-health12-lesson${lesson}-authored-${String(index + 1).padStart(3, "0")}`,
     grade: "دوازدهم",
     track: "عمومی",
     subject: "سلامت و بهداشت",
