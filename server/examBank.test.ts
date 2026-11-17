@@ -13,6 +13,7 @@ import { verifiedGrade11English2 } from "./verifiedGrade11English2";
 import { verifiedGrade11PersianLesson17 } from "./verifiedGrade11PersianLesson17";
 import { verifiedGrade11PersianLesson18 } from "./verifiedGrade11PersianLesson18";
 import { verifiedGrade12HealthLessons2to8 } from "./verifiedGrade12HealthLessons2to8";
+import { verifiedGrade12HealthLessons9to14 } from "./verifiedGrade12HealthLessons9to14";
 import { buildGradeSpecificCatalog, questionMatchesBookTrack } from "./db";
 import { canonicalizeGrade11AssessmentChapter, grade11AssessmentYear, grade11DiniSharedChapters, grade11HumanitiesDiniExclusiveChapters, grade11FinalExamSubjectsByTrack, grade11EntranceExamSubjectsByTrack, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
@@ -550,6 +551,35 @@ describe("curriculum and assessment question bank", () => {
         question.sourceStatus === "curriculum-verified" &&
         question.sourceUrl === "https://iranestekhdam.ir/storage/medias/2025-06-16/1750060793_%D8%B3%D9%84%D8%A7%D9%85%D8%AA-%D9%88-%D8%A8%D9%87%D8%AF%D8%A7%D8%B4%D8%AA.pdf" &&
         question.sourceYear === "۱۴۰۲" &&
+        question.reviewerNote?.includes("صفحه")
+      )).toBe(true);
+      for (const track of ["انسانی", "ریاضی", "تجربی"]) {
+        expect(questionMatchesBookTrack("عمومی", track, "سلامت و بهداشت")).toBe(true);
+      }
+    }
+  });
+
+  it("adds five source-traceable questions for each Grade 12 Health and Hygiene lesson 9–14 and shares them across all three tracks", () => {
+    expect(verifiedGrade12HealthLessons9to14).toHaveLength(30);
+    expect(new Set(verifiedGrade12HealthLessons9to14.map((question) => question.id)).size).toBe(30);
+    for (const lesson of [
+      "بهداشت ازدواج و فرزندآوری",
+      "بهداشت روان",
+      "مصرف دخانیات و الکل",
+      "اعتیاد به مواد مخدر و عوارض آن",
+      "پیشگیری از اختلالات اسکلتی ـ عضلانی (کمر درد)",
+      "پیشگیری از حوادث خانگی",
+    ]) {
+      const matching = verifiedQuestions.filter((question) =>
+        question.grade === "دوازدهم" && question.track === "عمومی" &&
+        question.subject === "سلامت و بهداشت" && question.chapter === lesson
+      );
+      expect(matching, lesson).toHaveLength(5);
+      expect(matching.every((question) =>
+        question.sourceStatus === "curriculum-verified" &&
+        question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Salamat-12_Daneshchi.iR.pdf" &&
+        question.sourceTitle === "سلامت و بهداشت ـ پایه دوازدهم، کد ۱۱۲۲۶۸، چاپ هشتم ۱۴۰۴، سازمان پژوهش و برنامه‌ریزی آموزشی" &&
+        question.sourceYear === "۱۴۰۴" &&
         question.reviewerNote?.includes("صفحه")
       )).toBe(true);
       for (const track of ["انسانی", "ریاضی", "تجربی"]) {
