@@ -499,6 +499,24 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
+  it("completes all three Grade 12 Humanities Math and Statistics chapters to five countable questions", () => {
+    const chapters = ["آمار و احتمال", "الگوهای خطی", "الگوهای غیرخطی"];
+    for (const chapter of chapters) {
+      const matching = verifiedQuestions.filter((question) =>
+        question.grade === "دوازدهم" && question.track === "انسانی" &&
+        question.subject === "ریاضی و آمار" && question.chapter === chapter &&
+        ["official-exam-adapted", "curriculum-verified"].includes(question.sourceStatus)
+      );
+      expect(matching, chapter).toHaveLength(5);
+    }
+    const supplement = verifiedQuestions.find((question) =>
+      question.id === "verified-human12-math3-curriculum-statistical-cycle-001"
+    );
+    expect(supplement?.sourceStatus).toBe("curriculum-verified");
+    expect(supplement?.sourceUrl).toBe("https://dl.daneshchi.ir/file/chap-school/Amar-EM-12_Daneshchi.iR.pdf");
+    expect(supplement?.reviewerNote).toContain("صفحات چاپی ۳۱ و ۳۲");
+  });
+
   it("maps the common Grade 12 Health and Hygiene course to all specialized tracks", () => {
     for (const track of ["انسانی", "ریاضی", "تجربی"]) {
       expect(questionMatchesBookTrack("عمومی", track, "سلامت و بهداشت")).toBe(true);
