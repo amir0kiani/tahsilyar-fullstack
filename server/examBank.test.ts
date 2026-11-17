@@ -128,7 +128,12 @@ describe("curriculum and assessment question bank", () => {
       item.track === "عمومی" && item.grade === "دوازدهم" && item.subject === "فارسی"
     );
     expect(book?.bookCode).toBe("112201");
-    expect(book?.chapters).toHaveLength(18);
+    expect(book?.chapters).toEqual([
+      "شکر نعمت", "مست و هشیار", "آزادی", "درس آزاد (۱)", "دماوندیه",
+      "نی‌نامه", "در حقیقت عشق", "از پاریز تا پاریس", "کویر",
+      "فصل شکوفایی", "آن شب عزیز", "گذر سیاوش از آتش", "خوان هشتم",
+      "سی مرغ و سیمرغ", "درس آزاد (۲)", "کباب غاز", "خندهٔ تو", "عشق جاودانی",
+    ]);
     expect(book?.sections).toHaveLength(8);
     expect(book?.assessmentExcludedChapters).toEqual(["درس آزاد (۱)", "درس آزاد (۲)"]);
     expect(verifiedGrade12PersianLessons1to9).toHaveLength(40);
