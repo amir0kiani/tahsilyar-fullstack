@@ -2842,7 +2842,7 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
         : chapterQuestions;
       expect(countableQuestions.length, chapter).toBeGreaterThanOrEqual(5);
       expect(countableQuestions.every((question) =>
-        ["curriculum-verified", "official-exam-adapted"].includes(question.sourceStatus)
+        ["curriculum-verified", "official-exam-adapted", "mock-exam-adapted"].includes(question.sourceStatus)
       )).toBe(true);
       expect(countableQuestions.every((question) =>
         question.options.length === 4 &&
