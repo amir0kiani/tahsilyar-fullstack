@@ -12,7 +12,7 @@ import { verifiedGrade11HumanitiesDiniLesson17 } from "./verifiedGrade11Humaniti
 import { verifiedGrade11English2 } from "./verifiedGrade11English2";
 import { verifiedGrade11PersianLesson17 } from "./verifiedGrade11PersianLesson17";
 import { verifiedGrade11PersianLesson18 } from "./verifiedGrade11PersianLesson18";
-import { buildGradeSpecificCatalog } from "./db";
+import { buildGradeSpecificCatalog, questionMatchesBookTrack } from "./db";
 import { canonicalizeGrade11AssessmentChapter, grade11AssessmentYear, grade11DiniSharedChapters, grade11HumanitiesDiniExclusiveChapters, grade11FinalExamSubjectsByTrack, grade11EntranceExamSubjectsByTrack, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
 const allQuestions = [...examQuestions, ...verifiedQuestions];
@@ -493,6 +493,35 @@ describe("curriculum and assessment question bank", () => {
     expect(physicsBatch.filter((question) => question.sourceUrl?.includes("sanjesh.org")).length).toBeGreaterThanOrEqual(5);
   });
 
+
+  it("maps the common Grade 12 Health and Hygiene course to all specialized tracks", () => {
+    for (const track of ["انسانی", "ریاضی", "تجربی"]) {
+      expect(questionMatchesBookTrack("عمومی", track, "سلامت و بهداشت")).toBe(true);
+    }
+    expect(questionMatchesBookTrack("عمومی", "انسانی", "هویت اجتماعی")).toBe(false);
+  });
+
+  it("adds five curriculum-verified questions for the first Grade 12 Health and Hygiene lesson", () => {
+    const book = curriculumCatalog.find((item) =>
+      item.track === "عمومی" && item.grade === "دوازدهم" && item.subject === "سلامت و بهداشت"
+    );
+    expect(book?.bookCode).toBe("112268");
+    expect(book?.chapters).toHaveLength(14);
+    expect(book?.chapters[0]).toBe("سلامت چیست؟");
+
+    const matching = verifiedQuestions.filter((question) =>
+      question.track === "عمومی" && question.grade === "دوازدهم" &&
+      question.subject === "سلامت و بهداشت" && question.chapter === "سلامت چیست؟"
+    );
+    expect(matching).toHaveLength(5);
+    expect(new Set(matching.map((question) => question.id)).size).toBe(5);
+    expect(matching.every((question) =>
+      question.sourceStatus === "curriculum-verified" &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Salamat-12_Daneshchi.iR.pdf" &&
+      question.sourceTitle === "سلامت و بهداشت ـ پایه دوازدهم، کد ۱۱۲۲۶۸، چاپ هشتم ۱۴۰۴، سازمان پژوهش و برنامه‌ریزی آموزشی" &&
+      question.reviewerNote?.includes("صفحه")
+    )).toBe(true);
+  });
 
   it("provides at least five lesson-linked questions for each uploaded Grade 12 book", () => {
     const covers = [
