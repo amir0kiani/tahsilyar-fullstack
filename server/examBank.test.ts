@@ -5,7 +5,6 @@ import { verifiedGrade12HealthLessons2to8 } from "./verifiedGrade12HealthLessons
 import { verifiedGrade12HealthLesson1 } from "./verifiedGrade12HealthLesson1";
 import { verifiedHumanitiesArabic12Batch1 } from "./verifiedHumanitiesArabic12Batch1";
 import { verifiedHumanitiesDini12Lesson1 } from "./verifiedHumanitiesDini12Lesson1";
-import { verifiedHumanitiesDini12Lesson2 } from "./verifiedHumanitiesDini12Lesson2";
 import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
@@ -764,7 +763,18 @@ describe("curriculum and assessment question bank", () => {
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       expect(batch.some((question) => question.grade === grade), grade).toBe(true);
     }
-    expect(batch.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+    const authoredPhysics = batch.filter((question) => question.id === "upload-math11-physics-electrostatics-16");
+    expect(authoredPhysics).toHaveLength(1);
+    expect(authoredPhysics[0]).toMatchObject({
+      sourceStatus: "reviewed",
+      sourceTitle: "سؤال تألیفی تحصیل‌یار بر اساس کتاب رسمی فیزیک (۲) یازدهم رشته ریاضی و فیزیک، کد 111209",
+      sourceUrl: "https://dl.heyvagroup.com/admin/Files/upload/yazdahom-reshte-riazifizik-fizik%282%29-1405.pdf",
+      sourceYear: "۱۴۰۵-۱۴۰۶",
+    });
+    expect(authoredPhysics[0].sourceQuestionNumber).toBeUndefined();
+    expect(authoredPhysics[0].reviewerNote).toContain("سؤال تألیفی");
+    expect(batch.filter((question) => question.id !== "upload-math11-physics-electrostatics-16")
+      .every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
     expect(batch.every((question) => question.explanation.length > 15)).toBe(true);
   });
 
@@ -1395,7 +1405,9 @@ describe("curriculum and assessment question bank", () => {
     }
     expect(batch.every((question) =>
       question.sourceStatus === "reviewed" &&
-      question.sourceTitle === "تألیفی تحصیل‌یار بر اساس محتوای فیزیک (۲) یازدهم" &&
+      question.sourceTitle === "سؤال تألیفی تحصیل‌یار بر اساس کتاب رسمی فیزیک (۲) یازدهم رشته علوم تجربی، کد 111244" &&
+      question.sourceUrl === "https://dl.heyvagroup.com/admin/Files/upload/yazdahom-reshte-olomtajrobi-fizik%282%29-1405.pdf" &&
+      question.sourceYear === "۱۴۰۵-۱۴۰۶" &&
       question.options.length === 4 &&
       question.reviewerNote?.includes("به آزمون رسمی نسبت داده نشده")
     )).toBe(true);
@@ -1527,6 +1539,8 @@ describe("curriculum and assessment question bank", () => {
       question.subject === "فیزیک" &&
       question.sourceStatus === "official-exam-adapted" &&
       question.sourceTitle === "آزمون نهایی فیزیک (۲) یازدهم رشته ریاضی، ۳ مرداد ۱۴۰۵؛ مرکز ارزشیابی و تضمین کیفیت نظام آموزش و پرورش" &&
+      question.sourceUrl === "https://dl.novinkonkor.com/nahaye/11/ryazi/1405/tir/soal-fizik-11-r-1405.pdf" &&
+      question.sourceAnswerUrl === "https://dl.novinkonkor.com/nahaye/11/ryazi/1405/tir/javab-fizik-11-r-1405.pdf" &&
       question.reviewerNote?.includes("گزینه‌های انحرافی تألیفی‌اند") &&
       question.options.length === 4 &&
       question.correctIndex >= 0 &&
@@ -2783,31 +2797,6 @@ describe("curriculum and assessment question bank", () => {
   });
 
 
-it("adds five original, curriculum-verified questions for Grade 12 Humanities Dini Lesson 2", () => {
-    expect(verifiedHumanitiesDini12Lesson2).toHaveLength(5);
-    expect(new Set(verifiedHumanitiesDini12Lesson2.map((question) => question.id)).size).toBe(5);
-
-    const lessonQuestions = verifiedQuestions.filter((question) =>
-      question.grade === "دوازدهم" &&
-      question.track === "انسانی" &&
-      question.subject === "دین و زندگی" &&
-      question.chapter === "یگانۀ بی‌همتا"
-    );
-    expect(lessonQuestions).toHaveLength(5);
-    expect(lessonQuestions.every((question) =>
-      question.sourceStatus === "curriculum-verified" &&
-      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/DinOZendegi-E-12_Daneshchi.iR.pdf" &&
-      question.sourceAnswerUrl === "https://www.scribd.com/document/1034512358/%D8%AF%DB%8C%D9%86%DB%8C-%D8%AF%D9%88%D8%A7%D8%B2%D8%AF%D9%87%D9%85-%D8%A7%D9%86%D8%B3%D8%A7%D9%86%DB%8C" &&
-      question.sourceYear === "۱۴۰۵" &&
-      question.options.length === 4 &&
-      question.correctIndex >= 0 &&
-      question.correctIndex < 4 &&
-      question.explanation.length > 20 &&
-      question.reviewerNote?.includes("سؤال تألیفی")
-    )).toBe(true);
-    expect(verifiedHumanitiesDini12Lesson2.every(isGrade12AssessmentQuestionEligible)).toBe(true);
-  });
-
 it("adds five original, curriculum-verified questions for Grade 12 Humanities Dini Lesson 1", () => {
     const book = curriculumCatalog.find((item) =>
       item.grade === "دوازدهم" && item.track === "انسانی" && item.subject === "دین و زندگی"
@@ -2838,6 +2827,12 @@ it("adds five original, curriculum-verified questions for Grade 12 Humanities Di
       question.reviewerNote?.includes("سؤال تألیفی")
     )).toBe(true);
 
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "دوازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "دین و زندگی" &&
+      question.chapter !== "هستی بخش"
+    )).toBe(false);
   });
 
 it("reaches the five-question target for every Grade 12 humanities Math & Statistics lesson", () => {
@@ -3057,6 +3052,166 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(questionMatchesBookTrack("عمومی", "انسانی", "زبان انگلیسی")).toBe(true);
     expect(questionMatchesBookTrack("عمومی", "ریاضی", "زبان انگلیسی")).toBe(true);
     expect(questionMatchesBookTrack("عمومی", "تجربی", "زبان انگلیسی")).toBe(true);
+  });
+
+  it("records the official Grade 11 Physics 2 book codes and distinct chapter maps", () => {
+    const experimental = curriculumCatalog.find((book) =>
+      book.track === "تجربی" && book.grade === "یازدهم" && book.subject === "فیزیک"
+    );
+    const mathematics = curriculumCatalog.find((book) =>
+      book.track === "ریاضی" && book.grade === "یازدهم" && book.subject === "فیزیک"
+    );
+    expect(experimental?.bookCode).toBe("111244");
+    expect(experimental?.chapters).toEqual([
+      "الکتریسیتهٔ ساکن",
+      "جریان الکتریکی و مدارهای جریان مستقیم",
+      "مغناطیس و القای الکترومغناطیسی",
+    ]);
+    expect(mathematics?.bookCode).toBe("111209");
+    expect(mathematics?.chapters).toEqual([
+      "الکتریسیتهٔ ساکن",
+      "جریان الکتریکی و مدارهای جریان مستقیم",
+      "مغناطیس",
+      "القای الکترومغناطیسی و جریان متناوب",
+    ]);
+  });
+
+  it("records four source-traceable Kānun adaptations for Grade 11 math Physics 2 electrostatics", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("mock-adapted-grade11-math-physics-kanoon-1400-")
+    );
+    expect(batch).toHaveLength(4);
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.track === "ریاضی" &&
+      question.subject === "فیزیک" &&
+      question.chapter === "الکتریسیتهٔ ساکن" &&
+      question.sourceStatus === "mock-exam-adapted" &&
+      question.sourceTitle === "آزمون آزمایشی قلم‌چی پایه یازدهم ریاضی، ۲۱ آبان ۱۴۰۰" &&
+      question.sourceUrl === "https://abadgaranedu.ir/wp-content/uploads/2021/11/kanoon-Sal11-Riazi-21Aban1400-konkur.in_.pdf" &&
+      question.sourceAnswerUrl === question.sourceUrl &&
+      question.sourceYear === "۱۴۰۰" &&
+      question.reviewerNote?.includes("پاسخ تشریحی") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "mock-adapted-grade11-math-physics-kanoon-1400-quantized-charge-91": 1,
+      "mock-adapted-grade11-math-physics-kanoon-1400-charge-transfer-coulomb-92": 1,
+      "mock-adapted-grade11-math-physics-kanoon-1400-electric-force-acceleration-96": 1,
+      "mock-adapted-grade11-math-physics-kanoon-1400-field-lines-potential-97": 1,
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+    const electrostatics = verifiedQuestions.filter((question) =>
+      question.grade === "یازدهم" && question.track === "ریاضی" &&
+      question.subject === "فیزیک" && question.chapter === "الکتریسیتهٔ ساکن" &&
+      ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? "")
+    );
+    expect(electrostatics.length).toBeGreaterThanOrEqual(10);
+  });
+
+  it("keeps the five uploaded Grade 11 experimental physics exercises explicitly authored and reviewed", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("uploaded-physics11-electrostatics-")
+    );
+    expect(batch).toHaveLength(5);
+    expect(batch.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle === "سؤال تألیفی تحصیل‌یار بر اساس کتاب رسمی فیزیک (۲) یازدهم رشته علوم تجربی، کد 111244" &&
+      question.sourceUrl === "https://dl.heyvagroup.com/admin/Files/upload/yazdahom-reshte-olomtajrobi-fizik%282%29-1405.pdf" &&
+      question.sourceYear === "۱۴۰۵-۱۴۰۶" &&
+      question.sourceQuestionNumber === undefined &&
+      question.reviewerNote?.includes("سؤال تألیفی") &&
+      question.reviewerNote?.includes("صورت سؤال از آن استخراج نشده")
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "uploaded-physics11-electrostatics-001": 2,
+      "uploaded-physics11-electrostatics-002": 2,
+      "uploaded-physics11-electrostatics-003": 3,
+      "uploaded-physics11-electrostatics-004": 2,
+      "uploaded-physics11-electrostatics-005": 0,
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+  });
+
+  it("keeps the 15 Aban Grade 11 mathematics-track Physics question authored rather than falsely attributed to Maz", () => {
+    const question = verifiedQuestions.find((item) =>
+      item.id === "upload-math11-physics-electrostatics-16"
+    );
+    expect(question).toBeDefined();
+    expect(question?.sourceStatus).toBe("reviewed");
+    expect(question?.sourceTitle).toContain("سؤال تألیفی تحصیل‌یار");
+    expect(question?.sourceQuestionNumber).toBeUndefined();
+    expect(question?.reviewerNote).toContain("از آزمون ماز ۱۵ آبان ۱۴۰۵ استخراج نشده");
+  });
+
+  it("adds five verified Konkur 1402 physics adaptations to each Grade 11 track", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("official-adapted-grade11-") &&
+      question.id.includes("-physics-1402-")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.filter((question) => question.track === "ریاضی")).toHaveLength(5);
+    expect(batch.filter((question) => question.track === "تجربی")).toHaveLength(5);
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.subject === "فیزیک" &&
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceTitle === "کنکور سراسری ۱۴۰۲ نوبت دوم، گروه آزمایشی علوم تجربی، دفترچه اختصاصی فیزیک" &&
+      question.sourceUrl === "https://dl.aligebra.com/PACKAGES/26/445/5.pdf" &&
+      question.sourceAnswerUrl === "https://dl.aligebra.com/PACKAGES/26/445/7.pdf" &&
+      question.sourceYear === "۱۴۰۲" &&
+      question.sourceQuestionNumber?.includes("PDF فیزیک") &&
+      question.reviewerNote?.includes("کلید رسمی سازمان سنجش") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "official-adapted-grade11-math-physics-1402-circuit-power-series-parallel-65": 1,
+      "official-adapted-grade11-experimental-physics-1402-circuit-power-series-parallel-65": 1,
+      "official-adapted-grade11-math-physics-1402-ideal-meter-swap-66": 0,
+      "official-adapted-grade11-experimental-physics-1402-ideal-meter-swap-66": 0,
+      "official-adapted-grade11-math-physics-1402-faraday-coil-exit-67": 1,
+      "official-adapted-grade11-experimental-physics-1402-faraday-coil-exit-67": 1,
+      "official-adapted-grade11-math-physics-1402-lenz-two-loops-wire-68": 0,
+      "official-adapted-grade11-experimental-physics-1402-lenz-two-loops-wire-68": 0,
+      "official-adapted-grade11-math-physics-1402-magnetic-force-electron-direction-75": 0,
+      "official-adapted-grade11-experimental-physics-1402-magnetic-force-electron-direction-75": 0,
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+    const mathCounts: Record<string, number> = {
+      "جریان الکتریکی و مدارهای جریان مستقیم": 7,
+      "مغناطیس": 6,
+      "القای الکترومغناطیسی و جریان متناوب": 7,
+    };
+    for (const [chapter, minimum] of Object.entries(mathCounts)) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "ریاضی" &&
+        question.subject === "فیزیک" && question.chapter === chapter &&
+        ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(minimum);
+    }
+    const experimentalCounts: Record<string, number> = {
+      "جریان الکتریکی و مدارهای جریان مستقیم": 8,
+      "مغناطیس و القای الکترومغناطیسی": 9,
+    };
+    for (const [chapter, minimum] of Object.entries(experimentalCounts)) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "تجربی" &&
+        question.subject === "فیزیک" && question.chapter === chapter &&
+        ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(minimum);
+    }
   });
 
 });
