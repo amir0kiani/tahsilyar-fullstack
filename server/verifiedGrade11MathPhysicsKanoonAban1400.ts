@@ -1,8 +1,8 @@
 import type { ExamQuestion } from "./examBank";
 
 // Adapted from the Kānun Grade 11 Mathematics mock exam dated 21 Aban 1400.
-// Stems/options are rewritten for Tahsilyar; answer values were checked against
-// the explanatory key printed in the same PDF (pages 16–17).
+// Q91 adapts only the quantization concept; its new numeric answer is calculated independently.
+// Q92, Q96 and Q97 are checked against the printed explanatory key on page 17.
 const verifiedAt = new Date("2026-11-18T00:00:00.000Z");
 const sourceTitle = "آزمون آزمایشی قلم‌چی پایه یازدهم ریاضی، ۲۱ آبان ۱۴۰۰";
 const sourceUrl = "https://abadgaranedu.ir/wp-content/uploads/2021/11/kanoon-Sal11-Riazi-21Aban1400-konkur.in_.pdf";
