@@ -394,9 +394,10 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
             targetMet: verifiedQuestionCount >= book.targetQuestionsPerLesson,
           };
         });
-      const hasPhysicsLessonMap = book.grade === "یازدهم" && book.subject === "فیزیک" && Boolean(book.sections?.length);
+      const bookSections = "sections" in book ? book.sections : undefined;
+      const hasPhysicsLessonMap = book.grade === "یازدهم" && book.subject === "فیزیک" && Boolean(bookSections?.length);
       const sectionCoverage = hasPhysicsLessonMap
-        ? (book.sections ?? []).flatMap((section) => section.lessons.map((lesson) => {
+        ? (bookSections ?? []).flatMap((section) => section.lessons.map((lesson) => {
             const lessonQuestions = bookQuestions.filter((question) =>
               canonicalizeGrade11PhysicsLesson(book.track, question.chapter, question.topic) === lesson
             );
