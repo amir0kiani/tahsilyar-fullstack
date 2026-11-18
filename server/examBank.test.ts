@@ -2783,6 +2783,13 @@ describe("curriculum and assessment question bank", () => {
 
 
 it("adds five original, curriculum-verified questions for Grade 12 Humanities Dini Lesson 1", () => {
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "دوازدهم" && item.track === "انسانی" && item.subject === "دین و زندگی"
+    );
+    expect(book?.bookCode).toBe("112204");
+    expect(book?.chapters).toHaveLength(13);
+    expect(book?.chapters[0]).toBe("هستی بخش");
+    expect(verifiedHumanitiesDini12Lesson1.every(isGrade12AssessmentQuestionEligible)).toBe(true);
     expect(verifiedHumanitiesDini12Lesson1).toHaveLength(5);
     expect(new Set(verifiedHumanitiesDini12Lesson1.map((question) => question.id)).size).toBe(5);
 

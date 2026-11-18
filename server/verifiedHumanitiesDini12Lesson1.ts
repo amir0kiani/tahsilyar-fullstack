@@ -2,6 +2,7 @@ import type { ExamQuestion } from "./examBank";
 
 // Five original, textbook-grounded questions for Grade 12 Humanities Dini, Lesson 1.
 // They are not copied from an official examination or from the supplementary question pack.
+// The supplementary pack has a conflicting Grade 11 label in its preface; only its pages explicitly marked Grade 12 Humanities are used as a secondary answer-key check.
 // The current Humanities book is code 112204 and contains 13 lessons.
 const verifiedAt = new Date("2026-11-18T00:00:00.000Z");
 const sourceTitle = "دین و زندگی (۳) ـ پایه دوازدهم رشته ادبیات و علوم انسانی، کد ۱۱۲۲۰۴، سال تحصیلی ۱۴۰۵–۱۴۰۶، سازمان پژوهش و برنامه‌ریزی آموزشی";
@@ -25,7 +26,7 @@ export const verifiedHumanitiesDini12Lesson1: ExamQuestion[] = [
     explanation: "مقدمه نخست، پدیده‌بودن و نداشتن وجود مستقلِ ما و جهان است؛ مقدمه دوم، نیاز پدیده به پدیدآورنده‌ای است که خود پدیده نباشد. نتیجه، نیاز جهان به سرچشمه هستی است.",
     sourceStatus: "curriculum-verified", sourceTitle, sourceUrl, sourceAnswerUrl, sourceYear: "۱۴۰۵",
     verifiedAt,
-    reviewerNote: "سؤال تألیفی و مستقل؛ ساختار دو مقدمه و نتیجه با متن آموزشی درس اول و پاسخ تشریحی پرسش مربوط به استدلال نیازمندی جهان تطبیق شد."
+    reviewerNote: "سؤال تألیفی و مستقل؛ بستهٔ پاسخ مکمل در پیشگفتار یک اشاره ناسازگار به پایه یازدهم دارد؛ برای کنترل ثانویه فقط صفحه‌های صریحاً برچسب‌خوردهٔ دوازدهم انسانی استفاده شدند؛ ساختار دو مقدمه و نتیجه با متن آموزشی درس اول و پاسخ تشریحی پرسش مربوط به استدلال نیازمندی جهان تطبیق شد."
   },
   {
     id: "verified-human12-dini-lesson1-builder-002",
@@ -43,7 +44,7 @@ export const verifiedHumanitiesDini12Lesson1: ExamQuestion[] = [
     explanation: "بنّا مواد و ویژگی‌های آن‌ها را به وجود نمی‌آورد و فقط آن‌ها را چینش می‌کند؛ اما خداوند خالق مواد، خواص و خود بنّاست و وابستگی جهان به او پس از پیدایش نیز ادامه دارد.",
     sourceStatus: "curriculum-verified", sourceTitle, sourceUrl, sourceAnswerUrl, sourceYear: "۱۴۰۵",
     verifiedAt,
-    reviewerNote: "سؤال تألیفی و مستقل؛ تمایز مثال بنّا و مسجد و نیازمندی جهان در بقا با توضیح درس اول و پاسخ تشریحی پرسش مربوط به این مثال تطبیق شد."
+    reviewerNote: "سؤال تألیفی و مستقل؛ بستهٔ پاسخ مکمل در پیشگفتار یک اشاره ناسازگار به پایه یازدهم دارد؛ برای کنترل ثانویه فقط صفحه‌های صریحاً برچسب‌خوردهٔ دوازدهم انسانی استفاده شدند؛ تمایز مثال بنّا و مسجد و نیازمندی جهان در بقا با توضیح درس اول و پاسخ تشریحی پرسش مربوط به این مثال تطبیق شد."
   },
   {
     id: "verified-human12-dini-lesson1-necessary-existence-003",
@@ -61,7 +62,7 @@ export const verifiedHumanitiesDini12Lesson1: ExamQuestion[] = [
     explanation: "استدلال نمی‌گوید هر موجودی به آفریننده نیاز دارد؛ موضوع آن پدیده‌هایی است که وجودشان از خودشان نیست. وجودی که ذاتاً قائم‌به‌خود است، پدیده و نیازمند پدیدآورنده نیست.",
     sourceStatus: "curriculum-verified", sourceTitle, sourceUrl, sourceAnswerUrl, sourceYear: "۱۴۰۵",
     verifiedAt,
-    reviewerNote: "سؤال تألیفی و مستقل؛ تمایز پدیده از وجود قائم‌به‌ذات با توضیح درس اول درباره نیازمندی جهان و تسلسل علت‌ها تطبیق شد."
+    reviewerNote: "سؤال تألیفی و مستقل؛ بستهٔ پاسخ مکمل در پیشگفتار یک اشاره ناسازگار به پایه یازدهم دارد؛ برای کنترل ثانویه فقط صفحه‌های صریحاً برچسب‌خوردهٔ دوازدهم انسانی استفاده شدند؛ تمایز پدیده از وجود قائم‌به‌ذات با توضیح درس اول درباره نیازمندی جهان و تسلسل علت‌ها تطبیق شد."
   },
   {
     id: "verified-human12-dini-lesson1-faqr-004",
@@ -79,7 +80,7 @@ export const verifiedHumanitiesDini12Lesson1: ExamQuestion[] = [
     explanation: "آیه، فقر و نیاز همیشگی انسان به خدا و غنای ذاتی او را بیان می‌کند؛ این وابستگی به زمان دشواری یا یک نیاز خاص محدود نیست.",
     sourceStatus: "curriculum-verified", sourceTitle, sourceUrl, sourceAnswerUrl, sourceYear: "۱۴۰۵",
     verifiedAt,
-    reviewerNote: "سؤال تألیفی و مستقل؛ ترجمه و برداشت آیه با متن آموزشی درس اول و پاسخ مربوط به آیه فاطر، صفحه چاپی ۱۰، تطبیق شد."
+    reviewerNote: "سؤال تألیفی و مستقل؛ بستهٔ پاسخ مکمل در پیشگفتار یک اشاره ناسازگار به پایه یازدهم دارد؛ برای کنترل ثانویه فقط صفحه‌های صریحاً برچسب‌خوردهٔ دوازدهم انسانی استفاده شدند؛ ترجمه و برداشت آیه با متن آموزشی درس اول و پاسخ مربوط به آیه فاطر، صفحه چاپی ۱۰، تطبیق شد."
   },
   {
     id: "verified-human12-dini-lesson1-ongoing-governance-005",
@@ -97,6 +98,6 @@ export const verifiedHumanitiesDini12Lesson1: ExamQuestion[] = [
     explanation: "درس، درخواست پیوسته موجودات را نشانه نیاز دائمی آنان و عبارت «کُلَّ يَوْمٍ هُوَ فِي شَأْنٍ» را بیانگر فیض و تدبیر مستمر خداوند می‌داند.",
     sourceStatus: "curriculum-verified", sourceTitle, sourceUrl, sourceAnswerUrl, sourceYear: "۱۴۰۵",
     verifiedAt,
-    reviewerNote: "سؤال تألیفی و مستقل؛ مفهوم آیه الرحمن ۲۹ با توضیح درس اول درباره نیاز دائمی مخلوقات و تدبیر مستمر الهی تطبیق شد."
+    reviewerNote: "سؤال تألیفی و مستقل؛ بستهٔ پاسخ مکمل در پیشگفتار یک اشاره ناسازگار به پایه یازدهم دارد؛ برای کنترل ثانویه فقط صفحه‌های صریحاً برچسب‌خوردهٔ دوازدهم انسانی استفاده شدند؛ مفهوم آیه الرحمن ۲۹ با توضیح درس اول درباره نیاز دائمی مخلوقات و تدبیر مستمر الهی تطبیق شد."
   }
 ];
