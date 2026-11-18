@@ -4,6 +4,7 @@ import { verifiedGrade12HealthLessons9to14 } from "./verifiedGrade12HealthLesson
 import { verifiedGrade12HealthLessons2to8 } from "./verifiedGrade12HealthLessons2to8";
 import { verifiedGrade12HealthLesson1 } from "./verifiedGrade12HealthLesson1";
 import { verifiedHumanitiesArabic12Batch1 } from "./verifiedHumanitiesArabic12Batch1";
+import { verifiedHumanitiesDini12Lesson1 } from "./verifiedHumanitiesDini12Lesson1";
 import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
@@ -2780,6 +2781,44 @@ describe("curriculum and assessment question bank", () => {
     )).toBe(false);
   });
 
+
+it("adds five original, curriculum-verified questions for Grade 12 Humanities Dini Lesson 1", () => {
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "دوازدهم" && item.track === "انسانی" && item.subject === "دین و زندگی"
+    );
+    expect(book?.bookCode).toBe("112204");
+    expect(book?.chapters).toHaveLength(13);
+    expect(book?.chapters[0]).toBe("هستی بخش");
+    expect(verifiedHumanitiesDini12Lesson1.every(isGrade12AssessmentQuestionEligible)).toBe(true);
+    expect(verifiedHumanitiesDini12Lesson1).toHaveLength(5);
+    expect(new Set(verifiedHumanitiesDini12Lesson1.map((question) => question.id)).size).toBe(5);
+
+    const lessonQuestions = verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "دین و زندگی" &&
+      question.chapter === "هستی بخش"
+    );
+    expect(lessonQuestions).toHaveLength(5);
+    expect(lessonQuestions.every((question) =>
+      question.sourceStatus === "curriculum-verified" &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/DinOZendegi-E-12_Daneshchi.iR.pdf" &&
+      question.sourceAnswerUrl === "https://www.scribd.com/document/1034512358/%D8%AF%DB%8C%D9%86%DB%8C-%D8%AF%D9%88%D8%A7%D8%B2%D8%AF%D9%87%D9%85-%D8%A7%D9%86%D8%B3%D8%A7%D9%86%DB%8C" &&
+      question.sourceYear === "۱۴۰۵" &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4 &&
+      question.explanation.length > 20 &&
+      question.reviewerNote?.includes("سؤال تألیفی")
+    )).toBe(true);
+
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "دوازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "دین و زندگی" &&
+      question.chapter !== "هستی بخش"
+    )).toBe(false);
+  });
 
 it("reaches the five-question target for every Grade 12 humanities Math & Statistics lesson", () => {
     const questions = verifiedQuestions.filter((question) =>
