@@ -390,7 +390,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
             chapter,
             questionCount: chapterQuestions.length,
             verifiedQuestionCount,
-            targetQuestionsPerLesson: book.targetQuestionsPerLesson,
+            targetQuestionsPerLesson: book.targetQuestionsPerLesson ?? 5,
             targetMet: verifiedQuestionCount >= book.targetQuestionsPerLesson,
           };
         });
@@ -409,7 +409,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
               section: section.title,
               questionCount: lessonQuestions.length,
               verifiedQuestionCount,
-              targetQuestionsPerLesson: book.targetQuestionsPerLesson,
+              targetQuestionsPerLesson: book.targetQuestionsPerLesson ?? 5,
               targetMet: verifiedQuestionCount >= book.targetQuestionsPerLesson,
             };
           }))
@@ -417,7 +417,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
       const unmappedPhysicsQuestions = hasPhysicsLessonMap
         ? bookQuestions.filter((question) => isVerified(question.sourceStatus) && !canonicalizeGrade11PhysicsLesson(book.track, question.chapter, question.topic))
         : [];
-      const lessonCoverage: Array<{ chapter: string; section?: string; questionCount: number; verifiedQuestionCount: number; targetQuestionsPerLesson?: number; targetMet: boolean }> = sectionCoverage ?? chapterCoverage;
+      const lessonCoverage: Array<{ chapter: string; section?: string; questionCount: number; verifiedQuestionCount: number; targetQuestionsPerLesson: number; targetMet: boolean }> = sectionCoverage ?? chapterCoverage;
       return {
         ...book,
         chapterCoverage,
