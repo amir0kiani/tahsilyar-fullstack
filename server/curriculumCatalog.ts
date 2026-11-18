@@ -3,6 +3,9 @@ export type CurriculumBook = { track: string; grade: string; subject: string; ch
 
 const wholeBook = ["کل کتاب"];
 
+// Official chapter/sub-lesson lists from Roshd for the two distinct Grade 11 Physics 2 books:
+// Experimental: https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-علوم-تجربی
+// Mathematics: https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-ریاضی-و-فیزیک
 const grade11ExperimentalPhysics2Sections: CurriculumSection[] = [
   { title: "فصل اول: الکتریسیتهٔ ساکن", lessons: ["بار الکتریکی", "پایستگی و کوانتیده بودن بار الکتریکی", "قانون کولن", "میدان الکتریکی", "میدان الکتریکی حاصل از یک ذرهٔ باردار", "خطوط میدان الکتریکی", "انرژی پتانسیل الکتریکی", "پتانسیل الکتریکی", "توزیع بار الکتریکی در اجسام رسانا", "خازن", "انرژی خازن"] },
   { title: "فصل دوم: جریان الکتریکی و مدارهای جریان مستقیم", lessons: ["جریان الکتریکی", "مقاومت الکتریکی و قانون اهم", "عوامل مؤثر بر مقاومت الکتریکی", "نیروی محرکهٔ الکتریکی و مدارها", "توان در مدارهای الکتریکی", "ترکیب مقاومت‌ها"] },
