@@ -6,15 +6,19 @@ const reviewNote = "بر اساس مبحث و الگوی پرسش‌های دف�
 function item(input: {
   id: string; grade: string; track: string; subject: string; chapter: string; topic: string;
   prompt: string; options: [string, string, string, string]; correctIndex: number;
-  explanation: string; sourceTitle: string; sourceQuestionNumber: string;
+  explanation: string; sourceTitle: string; sourceQuestionNumber?: string;
   difficulty?: "آسان" | "متوسط" | "سخت";
+  sourceStatus?: ExamQuestion["sourceStatus"]; sourceUrl?: string; sourceYear?: string; reviewerNote?: string;
 }): ExamQuestion {
+  const { sourceStatus, sourceUrl, sourceYear, reviewerNote, ...question } = input;
   return {
-    ...input,
+    ...question,
     difficulty: input.difficulty ?? "متوسط",
-    sourceStatus: "mock-exam-adapted",
+    ...(sourceUrl ? { sourceUrl } : {}),
+    sourceStatus: sourceStatus ?? "mock-exam-adapted",
+    sourceYear: sourceYear ?? "۱۴۰۵",
     verifiedAt,
-    reviewerNote: reviewNote,
+    reviewerNote: reviewerNote ?? reviewNote,
   };
 }
 
@@ -152,7 +156,9 @@ export const verifiedScienceMathBatch2: ExamQuestion[] = [
     prompt:"اگر فاصلهٔ دو بار نقطه‌ای در خلأ دو برابر شود و اندازهٔ بارها ثابت بماند، نیروی الکتریکی بین آن‌ها چه تغییری می‌کند؟",
     options:["دو برابر می‌شود","چهار برابر می‌شود","نصف می‌شود","یک‌چهارم می‌شود"], correctIndex:3,
     explanation:"طبق قانون کولن نیرو با مجذور فاصله نسبت وارون دارد؛ با دو برابرشدن فاصله، نیرو به یک‌چهارم مقدار اولیه می‌رسد.",
-    sourceTitle:m11, sourceQuestionNumber:"ریاضیات، مبحث الکتریسیته ساکن"
+    sourceTitle:"سؤال تألیفی تحصیل‌یار بر اساس کتاب رسمی فیزیک (۲) یازدهم رشته ریاضی و فیزیک، کد 111209",
+    sourceStatus:"reviewed", sourceUrl:"https://dl.heyvagroup.com/admin/Files/upload/yazdahom-reshte-riazifizik-fizik%282%29-1405.pdf", sourceYear:"۱۴۰۵-۱۴۰۶",
+    reviewerNote:"این سؤال تألیفی است و از آزمون ماز ۱۵ آبان ۱۴۰۵ استخراج نشده؛ فایل آزمون فقط برای شناسایی محدودهٔ موضوع استفاده شده است. پاسخ با فصل اول کتاب رسمی فیزیک (۲) یازدهم ریاضی، کد 111209، مبحث قانون کولن و وابستگی نیرو به مجذور فاصله تطبیق داده شده است."
   }),
   item({
     id:"upload-math12-calculus-derivative-17", grade:"دوازدهم", track:"ریاضی", subject:"حسابان",
