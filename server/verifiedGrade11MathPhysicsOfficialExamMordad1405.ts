@@ -5,7 +5,8 @@ import type { ExamQuestion } from "./examBank";
 // Correct answers were checked against the official marking guide in the supplied PDF.
 const verifiedAt = new Date("2026-11-10T00:00:00.000Z");
 const sourceTitle = "آزمون نهایی فیزیک (۲) یازدهم رشته ریاضی، ۳ مرداد ۱۴۰۵؛ مرکز ارزشیابی و تضمین کیفیت نظام آموزش و پرورش";
-const sourceUrl = "https://azmoon.medu.ir";
+const sourceUrl = "https://dl.novinkonkor.com/nahaye/11/ryazi/1405/tir/soal-fizik-11-r-1405.pdf";
+const sourceAnswerUrl = "https://dl.novinkonkor.com/nahaye/11/ryazi/1405/tir/javab-fizik-11-r-1405.pdf";
 const reviewerNote = "صورت سؤال برای قالب چهارگزینه‌ای بازنویسی شده و گزینه‌های انحرافی تألیفی‌اند؛ پاسخ با راهنمای نمره‌گذاری رسمی آزمون ۳ مرداد ۱۴۰۵ تطبیق داده شده است.";
 
 function adapted(
@@ -19,7 +20,7 @@ function adapted(
     grade: "یازدهم", track: "ریاضی", subject: "فیزیک", chapter, topic,
     difficulty, prompt, options, correctIndex, explanation,
     sourceStatus: "official-exam-adapted",
-    sourceTitle, sourceUrl, sourceYear: "۱۴۰۵", sourceQuestionNumber,
+    sourceTitle, sourceUrl, sourceAnswerUrl, sourceYear: "۱۴۰۵", sourceQuestionNumber,
     verifiedAt, reviewerNote
   };
 }
