@@ -1389,6 +1389,8 @@ describe("curriculum and assessment question bank", () => {
     expect(batch.every((question) =>
       question.sourceStatus === "reviewed" &&
       question.sourceTitle === "تألیفی تحصیل‌یار بر اساس محتوای فیزیک (۲) یازدهم" &&
+      question.sourceUrl === "https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-علوم-تجربی" &&
+      question.sourceYear === "۱۴۰۵–۱۴۰۶" &&
       question.options.length === 4 &&
       question.reviewerNote?.includes("به آزمون رسمی نسبت داده نشده")
     )).toBe(true);
@@ -1414,6 +1416,50 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+
+  it("maps Grade 11 Physics 2 to official sub-lessons and reports sub-lesson gaps separately from chapter totals", () => {
+    const mathBookMap = curriculumCatalog.find((book) =>
+      book.grade === "یازدهم" && book.track === "ریاضی" && book.subject === "فیزیک"
+    );
+    const experimentalBookMap = curriculumCatalog.find((book) =>
+      book.grade === "یازدهم" && book.track === "تجربی" && book.subject === "فیزیک"
+    );
+    expect(mathBookMap?.sections?.map((section) => section.lessons.length)).toEqual([12, 6, 6, 5]);
+    expect(experimentalBookMap?.sections?.map((section) => section.lessons.length)).toEqual([11, 6, 11]);
+
+    const catalog = buildGradeSpecificCatalog(verifiedQuestions.map(({ track, grade, subject, chapter, topic, sourceStatus }) => ({
+      track, grade, subject, chapter, topic, sourceStatus,
+    })));
+    const math = catalog.find((book) => book.grade === "یازدهم" && book.track === "ریاضی" && book.subject === "فیزیک");
+    const experimental = catalog.find((book) => book.grade === "یازدهم" && book.track === "تجربی" && book.subject === "فیزیک");
+
+    expect(math?.chapterCoverage?.map((item) => item.verifiedQuestionCount)).toEqual([5, 5, 5, 5]);
+    expect(math?.lessonCoverage).toHaveLength(29);
+    expect(math?.lessonsMeetingTarget).toBe(0);
+    expect(math?.lessonCoverage.reduce((sum, item) => sum + item.verifiedQuestionCount, 0)).toBe(18);
+    expect(math?.unmappedQuestionCount).toBe(2);
+    expect(math?.unmappedQuestionTopics).toEqual(expect.arrayContaining(["مقاومت نوری", "محاسبهٔ میدان از شار مغناطیسی"]));
+
+    expect(experimental?.chapterCoverage?.map((item) => item.verifiedQuestionCount)).toEqual([10, 5, 6]);
+    expect(experimental?.lessonCoverage).toHaveLength(28);
+    expect(experimental?.lessonsMeetingTarget).toBe(0);
+    expect(experimental?.lessonCoverage.reduce((sum, item) => sum + item.verifiedQuestionCount, 0)).toBe(20);
+    expect(experimental?.unmappedQuestionCount).toBe(1);
+    expect(experimental?.unmappedQuestionTopics).toContain("اختلاف پتانسیل و انرژی پتانسیل");
+  });
+
+  it("labels the five uploaded Grade 11 experimental physics practice items as reviewed authored questions, not mock-exam adaptations", () => {
+    const uploadedPhysics = verifiedQuestions.filter((question) => question.id.startsWith("uploaded-physics11-electrostatics-"));
+    expect(uploadedPhysics).toHaveLength(5);
+    expect(uploadedPhysics.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle === "تألیفی تحصیل‌یار بر اساس سرفصل‌های رسمی فیزیک (۲) یازدهم" &&
+      question.sourceUrl === "https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-علوم-تجربی" &&
+      question.sourceYear === "۱۴۰۵–۱۴۰۶" &&
+      question.sourceQuestionNumber === undefined &&
+      question.reviewerNote?.includes("از آزمون ماز استخراج نشده است")
+    )).toBe(true);
+  });
 
   it("provides at least five reviewed questions in every Grade 11 experimental mathematics chapter", () => {
     const chapters = [
