@@ -564,3 +564,262 @@ html.dark .home-screen .empty-state { background: #1b293f; border-color: #34445e
   .home-screen .dashboard-grid { grid-template-columns: 1fr; }
   .home-screen .today-card, .home-screen .exam-card { min-height: 160px; }
 }
+
+
+/* Tahsilyar editorial design system — shared application screens */
+.app-frame {
+  --deep: #25344f;
+  --deep-2: #344968;
+  --ink: #25344f;
+  --ink-soft: #667181;
+  --turquoise: #d9aa62;
+  --turquoise-dark: #a43d48;
+  --mint: #f0e5d2;
+  --aqua: #f8f0e3;
+  --sky: #ececf0;
+  --cream: #f6efdf;
+  --line: #e6dcc9;
+  --white: #fffaf0;
+  --shadow: 0 16px 38px rgba(37,52,79,.07);
+  --shadow-small: 0 7px 22px rgba(37,52,79,.045);
+  background: var(--ty-cream, #f6efdf);
+  color: var(--ty-navy, #25344f);
+  font-family: "Sahel", "Vazirmatn", sans-serif;
+}
+.app-frame .sidebar {
+  background: #f1e8d8;
+  border-left: 1px solid #e1d5c1;
+  color: var(--ty-navy, #25344f);
+}
+.app-frame .sidebar-logo { border-bottom-color: #e1d5c1; }
+.app-frame .brand-copy strong { color: #25344f; }
+.app-frame .sidebar-greeting > span,
+.app-frame .sidebar-greeting strong { color: #667181; }
+.app-frame .nav-label { color: #92908b; }
+.app-frame .nav-item { color: #6f7884; border-radius: 13px; transition: background .18s ease, color .18s ease, transform .18s ease; }
+.app-frame .nav-item:hover { background: #e9dfcd; color: #25344f; transform: translateX(-2px); }
+.app-frame .nav-item.active { background: #25344f; color: #fffaf0; box-shadow: 0 7px 16px rgba(37,52,79,.14); }
+.app-frame .nav-item.active .material-symbols-rounded { color: #f0cc91; }
+.app-frame .mini-support { background: #fffaf0; border: 1px solid #e6dcc9; border-radius: 15px; color: #25344f; }
+.app-frame .mini-support strong { color: #25344f; }
+.app-frame .mini-support span { color: #7b8188; }
+.app-frame .profile-mini { background: #e9dfcd; color: #25344f; border: 1px solid transparent; border-radius: 14px; }
+.app-frame .profile-mini:hover { background: #e2d5bf; }
+.app-frame .profile-mini strong { color: #25344f; }
+.app-frame .profile-mini small { color: #747d88; }
+.app-frame .main-area { background: #f6efdf; }
+.app-frame .topbar { background: rgba(255,250,240,.94); border-bottom-color: #e6dcc9; }
+.app-frame .breadcrumbs { color: #858993; }
+.app-frame .breadcrumbs strong { color: #25344f; }
+.app-frame .icon-button { color: #667181; }
+.app-frame .icon-button:hover { background: #f0e5d2; color: #a43d48; }
+.app-frame .page-content { color: #25344f; }
+.app-frame .screen:not(.home-screen) { font-family: "Sahel", "Vazirmatn", sans-serif; }
+.app-frame .screen:not(.home-screen) .eyebrow { color: #a43d48; letter-spacing: 0; font-size: 11px; }
+.app-frame .screen:not(.home-screen) h1,
+.app-frame .screen:not(.home-screen) h2,
+.app-frame .screen:not(.home-screen) h3 { color: #25344f; letter-spacing: 0; }
+.app-frame .screen:not(.home-screen) .section-subtitle { color: #727985; line-height: 2; }
+.app-frame .screen:not(.home-screen) .card,
+.app-frame .screen:not(.home-screen) .planner-card,
+.app-frame .screen:not(.home-screen) .chat-card,
+.app-frame .screen:not(.home-screen) .dna-card,
+.app-frame .screen:not(.home-screen) .profile-summary,
+.app-frame .screen:not(.home-screen) .profile-settings,
+.app-frame .screen:not(.home-screen) .completed-list,
+.app-frame .screen:not(.home-screen) .exam-center,
+.app-frame .screen:not(.home-screen) .learning-guide-card {
+  background: #fffaf0;
+  border-color: #e6dcc9;
+  box-shadow: 0 7px 22px rgba(37,52,79,.045);
+  border-radius: 19px;
+}
+.app-frame .screen:not(.home-screen) .primary-button,
+.app-frame .screen:not(.home-screen) .send-button { background: #25344f; color: #fffaf0; box-shadow: 0 8px 18px rgba(37,52,79,.15); }
+.app-frame .screen:not(.home-screen) .primary-button:hover,
+.app-frame .screen:not(.home-screen) .send-button:hover { background: #344968; }
+.app-frame .screen:not(.home-screen) .text-button,
+.app-frame .screen:not(.home-screen) em { color: #a43d48; }
+.app-frame .screen:not(.home-screen) .soft-icon.mint { background: #f0e5d2; color: #25344f; }
+.app-frame .screen:not(.home-screen) .soft-icon.blue { background: #ececf0; color: #a43d48; }
+.app-frame .screen:not(.home-screen) .count-badge,
+.app-frame .screen:not(.home-screen) .academic-hub-badge { background: #f0e5d2; border-color: #e6dcc9; color: #765a31; }
+.app-frame .screen:not(.home-screen) .planner-card { overflow: hidden; }
+.app-frame .screen:not(.home-screen) .planner-card-side { background: linear-gradient(145deg,#25344f,#344968); }
+.app-frame .screen:not(.home-screen) .planner-card-side > p { color: #e0e3e8; }
+.app-frame .screen:not(.home-screen) .planner-side-icon { color: #a43d48; background: #fffaf0; }
+.app-frame .screen:not(.home-screen) .planner-side-tip { color: #e8d8bd; }
+.app-frame .screen:not(.home-screen) .option-item { background: #fbf6eb; border-color: #e6dcc9; color: #4f5d70; border-radius: 13px; }
+.app-frame .screen:not(.home-screen) .option-item:hover { border-color: #d9aa62; background: #f7efdf; }
+.app-frame .screen:not(.home-screen) .option-item.selected { border-color: #a43d48; background: #f5e9e5; color: #25344f; }
+.app-frame .screen:not(.home-screen) .option-radio { border-color: #b8ad9c; }
+.app-frame .screen:not(.home-screen) .option-item.selected .option-radio { border-color: #a43d48; }
+.app-frame .screen:not(.home-screen) .wizard-progress .wizard-dot.current span { background: #25344f; color: #fffaf0; }
+.app-frame .screen:not(.home-screen) .wizard-progress .wizard-dot.done span { background: #d9aa62; color: #25344f; }
+.app-frame .screen:not(.home-screen) .chat-top { border-bottom-color: #e6dcc9; background: #fffaf0; }
+.app-frame .screen:not(.home-screen) .bot-avatar { background: #f0e5d2; color: #a43d48; }
+.app-frame .screen:not(.home-screen) .chat-top strong { color: #25344f; }
+.app-frame .screen:not(.home-screen) .chat-body { background: #fffaf0; }
+.app-frame .screen:not(.home-screen) .empty-chat-state { color: #727985; }
+.app-frame .screen:not(.home-screen) .chat-composer { background: #fbf6eb; border-top-color: #e6dcc9; }
+.app-frame .screen:not(.home-screen) .chat-composer textarea,
+.app-frame .screen:not(.home-screen) .new-plan-fields input,
+.app-frame .screen:not(.home-screen) .profile-edit-card input,
+.app-frame .screen:not(.home-screen) .learning-bank-controls input,
+.app-frame .screen:not(.home-screen) .learning-bank-controls select,
+.app-frame .screen:not(.home-screen) .exam-controls select {
+  background: #fffdf8; color: #25344f; border-color: #e1d5c1; border-radius: 12px;
+}
+.app-frame .screen:not(.home-screen) .chat-composer textarea:focus,
+.app-frame .screen:not(.home-screen) .learning-bank-controls input:focus,
+.app-frame .screen:not(.home-screen) .learning-bank-controls select:focus { border-color: #d9aa62; box-shadow: 0 0 0 3px rgba(217,170,98,.15); }
+.app-frame .screen:not(.home-screen) .range-picker button { background: #fbf6eb; border-color: #e6dcc9; color: #344968; border-radius: 13px; }
+.app-frame .screen:not(.home-screen) .range-picker button.selected { background: #f5e9e5; border-color: #a43d48; color: #a43d48; }
+.app-frame .screen:not(.home-screen) .secondary-button { background: #f0e5d2; border-color: #e6dcc9; color: #344968; }
+.app-frame .screen:not(.home-screen) .danger-button { background: #f8ece8; border-color: #ecd5ce; color: #a43d48; }
+.app-frame .screen:not(.home-screen) .message-bubble,
+.app-frame .screen:not(.home-screen) .bot-message span { background: #f0e5d2; color: #344968; }
+.app-frame .screen:not(.home-screen) .user-message span { background: #25344f; color: #fffaf0; }
+.app-frame .screen:not(.home-screen) .progress-track { background: #e9dfce; }
+.app-frame .screen:not(.home-screen) .progress-track span,
+.app-frame .screen:not(.home-screen) .academic-mini-track i { background: linear-gradient(90deg,#d9aa62,#a43d48); }
+.app-frame .screen:not(.home-screen) .donut-chart { background-color: #e9dfce; }
+.app-frame .screen:not(.home-screen) .donut-chart::before { background: #fffaf0; }
+.app-frame .screen:not(.home-screen) .donut-chart strong { color: #25344f; }
+.app-frame .screen:not(.home-screen) .big-progress-card,
+.app-frame .screen:not(.home-screen) .dna-progress-card { border: 1px solid #e6dcc9; background: #fffaf0; border-radius: 19px; }
+.app-frame .screen:not(.home-screen) .big-progress-copy > strong { color: #25344f; }
+.app-frame .screen:not(.home-screen) .completed-row { border-bottom-color: #eee4d4; }
+.app-frame .screen:not(.home-screen) .completed-check { background: #f0e5d2; color: #a43d48; }
+.app-frame .screen:not(.home-screen) .week-strip button { background: #fffaf0; border-color: #e6dcc9; color: #727985; }
+.app-frame .screen:not(.home-screen) .week-strip button.today { background: #25344f; border-color: #25344f; color: #fffaf0; }
+.app-frame .screen:not(.home-screen) .week-strip button.current-day:not(.today) { border-color: #d9aa62; }
+.app-frame .screen:not(.home-screen) .schedule-note { background: #f0e5d2; border-color: #e6dcc9; color: #344968; }
+.app-frame .screen:not(.home-screen) .schedule-note strong { color: #25344f; }
+.app-frame .screen:not(.home-screen) .schedule-session { background: #fffaf0; border-color: #e6dcc9; }
+.app-frame .screen:not(.home-screen) .schedule-session.active-card { border-color: #d9aa62; box-shadow: 0 8px 24px rgba(217,170,98,.12); }
+.app-frame .screen:not(.home-screen) .timeline-line.active i { background: #a43d48; }
+.app-frame .screen:not(.home-screen) .profile-hero { padding: 25px 28px; border: 1px solid #e6dcc9; border-radius: 20px; background: linear-gradient(120deg,#25344f,#344968); color: #fffaf0; }
+.app-frame .screen:not(.home-screen) .profile-hero h1,
+.app-frame .screen:not(.home-screen) .profile-hero p:not(.eyebrow) { color: #fffaf0; }
+.app-frame .screen:not(.home-screen) .profile-hero .eyebrow { color: #e8c68f; }
+.app-frame .screen:not(.home-screen) .profile-avatar-large { background: #f0e5d2; color: #25344f; }
+.app-frame .screen:not(.home-screen) .edit-profile { background: #fffaf0; color: #25344f; border-radius: 11px; }
+.app-frame .screen:not(.home-screen) .profile-summary,
+.app-frame .screen:not(.home-screen) .profile-settings { padding: 22px; }
+.app-frame .screen:not(.home-screen) .profile-answer-list > div { border-bottom-color: #eee4d4; }
+.app-frame .screen:not(.home-screen) .profile-answer-list span,
+.app-frame .screen:not(.home-screen) .profile-settings small { color: #7b818a; }
+.app-frame .screen:not(.home-screen) .setting-row { border-bottom-color: #eee4d4; }
+.app-frame .screen:not(.home-screen) .setting-icon { background: #f0e5d2; color: #a43d48; }
+.app-frame .screen:not(.home-screen) .logout-button { background: #f8ece8; color: #a43d48; border-radius: 12px; }
+.app-frame .screen:not(.home-screen) .exam-score { background: #f0e5d2; color: #25344f; }
+.app-frame .screen:not(.home-screen) .exam-score strong { color: #a43d48; }
+.app-frame .screen:not(.home-screen) .exam-options button { background: #fbf6eb; border-color: #e6dcc9; color: #344968; border-radius: 11px; }
+.app-frame .screen:not(.home-screen) .exam-options button.selected { border-color: #a43d48; background: #f5e9e5; }
+.app-frame .screen:not(.home-screen) .learning-guide-warning { background: #f6edda; color: #765a31; }
+.app-frame .bottom-nav { background: rgba(255,250,240,.97); border-top-color: #e6dcc9; }
+.app-frame .bottom-nav button { color: #92939a; }
+.app-frame .bottom-nav button.active { color: #a43d48; }
+.app-frame .bottom-nav button.active::after { content:""; width:28px; height:3px; border-radius:4px; background:#a43d48; position:absolute; bottom:2px; }
+.app-frame .bottom-nav button { position:relative; }
+
+/* Dark editorial palette for every application screen */
+html.dark .app-frame {
+  --deep: #f1e8d8; --deep-2: #e5d5b8; --ink: #f1e8d8; --ink-soft: #b7bdc8;
+  --mint: #29364b; --aqua: #202d42; --sky: #354052; --cream: #111c2c;
+  --line: #3a465a; --white: #1b293f;
+  background: #111c2c; color: #f1e8d8;
+}
+html.dark .app-frame .sidebar { background: #17243a; border-left-color: #34445e; }
+html.dark .app-frame .sidebar-logo { border-bottom-color: #34445e; }
+html.dark .app-frame .brand-copy strong,
+html.dark .app-frame .sidebar-greeting strong,
+html.dark .app-frame .breadcrumbs strong { color: #f1e8d8; }
+html.dark .app-frame .nav-item { color: #b6bdc8; }
+html.dark .app-frame .nav-item:hover { background: #24344d; color: #f1e8d8; }
+html.dark .app-frame .nav-item.active { background: #d9aa62; color: #1b293f; }
+html.dark .app-frame .nav-item.active .material-symbols-rounded { color: #1b293f; }
+html.dark .app-frame .mini-support { background: #1b293f; border-color: #34445e; }
+html.dark .app-frame .mini-support strong,
+html.dark .app-frame .profile-mini strong { color: #f1e8d8; }
+html.dark .app-frame .profile-mini { background: #24344d; color: #f1e8d8; }
+html.dark .app-frame .main-area { background: #111c2c; }
+html.dark .app-frame .topbar,
+html.dark .app-frame .bottom-nav { background: rgba(25,36,54,.96); border-color: #34445e; }
+html.dark .app-frame .breadcrumbs { color: #aeb7c4; }
+html.dark .app-frame .icon-button { color: #d7dce3; }
+html.dark .app-frame .screen:not(.home-screen) .card,
+html.dark .app-frame .screen:not(.home-screen) .planner-card,
+html.dark .app-frame .screen:not(.home-screen) .chat-card,
+html.dark .app-frame .screen:not(.home-screen) .dna-card,
+html.dark .app-frame .screen:not(.home-screen) .profile-summary,
+html.dark .app-frame .screen:not(.home-screen) .profile-settings,
+html.dark .app-frame .screen:not(.home-screen) .completed-list,
+html.dark .app-frame .screen:not(.home-screen) .exam-center,
+html.dark .app-frame .screen:not(.home-screen) .learning-guide-card,
+html.dark .app-frame .screen:not(.home-screen) .big-progress-card,
+html.dark .app-frame .screen:not(.home-screen) .dna-progress-card,
+html.dark .app-frame .screen:not(.home-screen) .schedule-session { background: #1b293f; border-color: #34445e; color: #e5eaf0; }
+html.dark .app-frame .screen:not(.home-screen) h1,
+html.dark .app-frame .screen:not(.home-screen) h2,
+html.dark .app-frame .screen:not(.home-screen) h3,
+html.dark .app-frame .screen:not(.home-screen) .card-head strong { color: #f1e8d8; }
+html.dark .app-frame .screen:not(.home-screen) .section-subtitle,
+html.dark .app-frame .screen:not(.home-screen) .academic-hub-heading p:not(.eyebrow),
+html.dark .app-frame .screen:not(.home-screen) .profile-answer-list span { color: #b6bdc8; }
+html.dark .app-frame .screen:not(.home-screen) .planner-card-side { background: linear-gradient(145deg,#101a2a,#24344e); }
+html.dark .app-frame .screen:not(.home-screen) .option-item,
+html.dark .app-frame .screen:not(.home-screen) .range-picker button,
+html.dark .app-frame .screen:not(.home-screen) .exam-options button { background: #202f46; border-color: #3a465a; color: #d8dce3; }
+html.dark .app-frame .screen:not(.home-screen) .option-item.selected,
+html.dark .app-frame .screen:not(.home-screen) .range-picker button.selected,
+html.dark .app-frame .screen:not(.home-screen) .exam-options button.selected { background: #49343d; border-color: #b75a64; color: #f4e8dc; }
+html.dark .app-frame .screen:not(.home-screen) .chat-top,
+html.dark .app-frame .screen:not(.home-screen) .chat-body,
+html.dark .app-frame .screen:not(.home-screen) .chat-composer { background: #1b293f; border-color: #34445e; }
+html.dark .app-frame .screen:not(.home-screen) .chat-composer textarea,
+html.dark .app-frame .screen:not(.home-screen) .new-plan-fields input,
+html.dark .app-frame .screen:not(.home-screen) .profile-edit-card input,
+html.dark .app-frame .screen:not(.home-screen) .learning-bank-controls input,
+html.dark .app-frame .screen:not(.home-screen) .learning-bank-controls select,
+html.dark .app-frame .screen:not(.home-screen) .exam-controls select { background: #17243a; color: #f1e8d8; border-color: #3a465a; }
+html.dark .app-frame .screen:not(.home-screen) .bot-message span,
+html.dark .app-frame .screen:not(.home-screen) .message-bubble { background: #29364b; color: #e5eaf0; }
+html.dark .app-frame .screen:not(.home-screen) .user-message span { background: #344968; color: #fffaf0; }
+html.dark .app-frame .screen:not(.home-screen) .donut-chart::before { background: #1b293f; }
+html.dark .app-frame .screen:not(.home-screen) .week-strip button { background: #1b293f; border-color: #34445e; color: #c5ccd5; }
+html.dark .app-frame .screen:not(.home-screen) .week-strip button.today { background: #d9aa62; border-color: #d9aa62; color: #1b293f; }
+html.dark .app-frame .screen:not(.home-screen) .schedule-note { background: #29364b; border-color: #3a465a; color: #e5eaf0; }
+html.dark .app-frame .screen:not(.home-screen) .profile-hero { background: linear-gradient(120deg,#101a2a,#24344e); border-color: #34445e; }
+html.dark .app-frame .screen:not(.home-screen) .profile-hero h1,
+html.dark .app-frame .screen:not(.home-screen) .profile-hero p:not(.eyebrow) { color: #fffaf0; }
+html.dark .app-frame .screen:not(.home-screen) .edit-profile { background: #d9aa62; color: #1b293f; }
+html.dark .app-frame .screen:not(.home-screen) .setting-row { border-color: #34445e; }
+html.dark .app-frame .screen:not(.home-screen) .setting-icon { background: #29364b; color: #e5bd82; }
+html.dark .app-frame .screen:not(.home-screen) .logout-button { background: #49343d; color: #f0c8c6; }
+html.dark .app-frame .screen:not(.home-screen) .exam-score { background: #29364b; }
+html.dark .app-frame .screen:not(.home-screen) .completed-row { border-color: #34445e; }
+html.dark .app-frame .screen:not(.home-screen) .completed-check { background: #29364b; color: #e5bd82; }
+
+@media (max-width: 720px) {
+  .app-frame .sidebar { display: none; }
+  .app-frame .page-content { padding: 28px 18px 96px; }
+  .app-frame .topbar { height: 66px; padding: 0 17px; }
+  .app-frame .screen:not(.home-screen) .profile-hero { align-items: center; flex-wrap: wrap; padding: 19px 16px; }
+  .app-frame .screen:not(.home-screen) .profile-hero h1 { font-size: 22px; }
+  .app-frame .screen:not(.home-screen) .planner-card { grid-template-columns: 1fr; }
+  .app-frame .screen:not(.home-screen) .planner-card-side { padding: 22px; }
+  .app-frame .screen:not(.home-screen) .planner-side-icon { width: 52px; height: 52px; margin-bottom: 12px; }
+  .app-frame .screen:not(.home-screen) .planner-card-side > p { max-width: none; }
+  .app-frame .screen:not(.home-screen) .chat-card,
+  .app-frame .screen:not(.home-screen) .dna-card { min-height: 0; }
+  .app-frame .screen:not(.home-screen) .chat-body { min-height: 280px; max-height: 390px; padding: 18px 15px; }
+  .app-frame .screen:not(.home-screen) .academic-dna-grid,
+  .app-frame .screen:not(.home-screen) .learning-guide-grid { grid-template-columns: 1fr; }
+  .app-frame .screen:not(.home-screen) .learning-bank-controls,
+  .app-frame .screen:not(.home-screen) .exam-controls { grid-template-columns: 1fr; }
+  .app-frame .screen:not(.home-screen) .week-strip { overflow-x: auto; padding-bottom: 5px; }
+  .app-frame .screen:not(.home-screen) .week-strip button { min-width: 48px; }
+  .app-frame .bottom-nav { display: flex; }
+}
