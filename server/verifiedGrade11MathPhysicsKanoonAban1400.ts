@@ -16,7 +16,8 @@ function adapted(
   options: [string, string, string, string],
   correctIndex: number,
   explanation: string,
-  difficulty: "آسان" | "متوسط" | "دشوار" = "متوسط"
+  difficulty: "آسان" | "متوسط" | "دشوار" = "متوسط",
+  reviewerNoteOverride?: string
 ): ExamQuestion {
   return {
     id: `mock-adapted-grade11-math-physics-kanoon-1400-${id}`,
@@ -37,7 +38,7 @@ function adapted(
     sourceYear: "۱۴۰۰",
     sourceQuestionNumber,
     verifiedAt,
-    reviewerNote,
+    reviewerNote: reviewerNoteOverride ?? reviewerNote,
   };
 }
 
@@ -50,12 +51,13 @@ export const verifiedGrade11MathPhysicsKanoonAban1400: ExamQuestion[] = [
     ["−۴٫۸×۱۰⁻¹⁹ C", "+۴٫۸×۱۰⁻¹⁹ C", "+۱٫۶×۱۰⁻¹⁹ C", "−۱٫۶×۱۰⁻¹⁹ C"],
     1,
     "با از دست دادن الکترون، جسم بار مثبت پیدا می‌کند. اندازهٔ بار برابر ne است: ۳×۱٫۶×۱۰⁻¹⁹=۴٫۸×۱۰⁻¹⁹ کولن؛ پس بار نهایی مثبت است.",
-    "آسان"
+    "آسان",
+    "مبحث و اصل کوانتیده‌بودن بار از سؤال ۹۱ قلم‌چی اقتباس شده، اما صورت و داده‌های عددی این نسخه مستقل بازنویسی شده‌اند؛ پاسخ +۴٫۸×۱۰⁻¹⁹ کولن مستقیماً از رابطهٔ q=ne محاسبه شده و عدد پاسخ سؤال اصلی نقل نشده است. پاسخ تشریحی صفحهٔ ۱۶ برای تطبیق اصل کوانتیده‌بودن بار بررسی شد."
   ),
   adapted(
     "charge-transfer-coulomb-92",
     "قانون کولن و انتقال بار",
-    "۹۲؛ پاسخ تشریحی صفحهٔ ۱۶",
+    "۹۲؛ پاسخ تشریحی صفحهٔ ۱۷",
     "دو بار نقطه‌ای هم‌اندازه و هم‌نام در فاصلهٔ ۳۰ سانتی‌متر، یکدیگر را با نیروی ۰٫۱ نیوتون دفع می‌کنند. اگر ۱٫۲۵×۱۰¹³ الکترون از یکی برداشته و به دیگری منتقل شود، نیروی جدید چه اندازه و از چه نوع است؟ (k=۹×۱۰⁹ و e=۱٫۶×۱۰⁻¹⁹)",
     ["۰٫۱ N جاذبه", "۰٫۳ N جاذبه", "۰٫۱ N دافعه", "۰٫۳ N دافعه"],
     1,
