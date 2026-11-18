@@ -2916,23 +2916,20 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(questionMatchesBookTrack("انسانی", "ریاضی", "عربی")).toBe(false);
   });
 
-  it("reaches five verified Grade 12 humanities Arabic questions in each of its five lessons", () => {
+  it("keeps the Grade 12 humanities Arabic batch pending until its source and answer key can be independently checked", () => {
     expect(verifiedHumanitiesArabic12Batch1).toHaveLength(25);
-    const questions = verifiedQuestions.filter((question) =>
-      question.grade === "دوازدهم" && question.track === "انسانی" && question.subject === "عربی"
-    );
-    expect(questions).toHaveLength(25);
+    expect(new Set(verifiedHumanitiesArabic12Batch1.map((question) => question.id)).size).toBe(25);
     const counts = new Map<string, number>();
-    for (const question of questions) counts.set(question.chapter, (counts.get(question.chapter) ?? 0) + 1);
+    for (const question of verifiedHumanitiesArabic12Batch1) counts.set(question.chapter, (counts.get(question.chapter) ?? 0) + 1);
     expect(counts.size).toBe(5);
     expect([...counts.values()].every((count) => count === 5)).toBe(true);
-    expect(new Set(questions.map((question) => question.id)).size).toBe(25);
-    expect(questions.every((question) =>
-      question.sourceStatus === "official-exam-adapted" &&
-      question.sourceUrl?.startsWith("https://") &&
-      question.sourceAnswerUrl === question.sourceUrl &&
-      Boolean(question.sourceQuestionNumber)
+    expect(verifiedHumanitiesArabic12Batch1.every((question) =>
+      question.sourceStatus === "pending-review" &&
+      question.reviewerNote?.includes("بازبینی مستقل نشده")
     )).toBe(true);
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "دوازدهم" && question.track === "انسانی" && question.subject === "عربی"
+    )).toBe(false);
   });
 
   it("reaches five Grade 12 Health and Hygiene questions in each of the fourteen lessons", () => {

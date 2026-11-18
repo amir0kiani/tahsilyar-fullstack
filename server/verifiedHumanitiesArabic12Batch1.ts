@@ -3,7 +3,7 @@ import type { ExamQuestion } from "./examBank";
 const verifiedAt = new Date("2026-11-16T00:00:00.000Z");
 const sourceUrl = "https://dl.novinkonkor.com/nahaye/12/ensani/1404/khordad/arabi.pdf";
 const sourceTitle = "آزمون نهایی عربی، زبان قرآن (۳) پایه دوازدهم رشته ادبیات و علوم انسانی ـ ۱۳ خرداد ۱۴۰۴؛ مرکز ارزشیابی و تضمین کیفیت نظام آموزش و پرورش";
-const reviewerNote = "صورت سؤال‌ها به تمرین چهارگزینه‌ای مستقل بازنویسی شده و عین متن آزمون نیست. پاسخ هر مورد با راهنمای رسمی نمره‌گذاریِ درج‌شده در صفحات پایانی همان فایل تطبیق داده شده است؛ شماره سؤال و زیر‌بخش برای ردیابی منبع حفظ شده است.";
+const reviewerNote = "منبع ادعاشده: آزمون نهایی عربی انسانی خرداد ۱۴۰۴ و راهنمای تصحیح همراه آن. فایل PDF از نشانی ثبت‌شده در این نوبت مستقل باز نشد؛ بنابراین پاسخ‌ها و تطبیق کلید هنوز بازبینی مستقل نشده‌اند و نباید در شمار تکمیل درس لحاظ شوند."
 
 const questionSeeds: Array<Omit<ExamQuestion,
   "sourceStatus" | "sourceTitle" | "sourceUrl" | "sourceAnswerUrl" | "sourceYear" | "verifiedAt" | "reviewerNote"
@@ -337,7 +337,7 @@ const questionSeeds: Array<Omit<ExamQuestion,
 
 export const verifiedHumanitiesArabic12Batch1: ExamQuestion[] = questionSeeds.map((question) => ({
   ...question,
-  sourceStatus: "official-exam-adapted",
+  sourceStatus: "pending-review",
   sourceTitle,
   sourceUrl,
   sourceAnswerUrl: sourceUrl,
