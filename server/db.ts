@@ -16,7 +16,7 @@ import {
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 import { examQuestions as starterQuestions } from "./examBank";
-import { curriculumCatalog } from "./curriculumCatalog";
+import { curriculumCatalog, type CurriculumSection } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
 import { canonicalizeGrade11AssessmentChapter, canonicalizeGrade11AssessmentQuestion, canonicalizeGrade11PhysicsLesson, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
@@ -394,7 +394,9 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
             targetMet: verifiedQuestionCount >= book.targetQuestionsPerLesson,
           };
         });
-      const bookSections = "sections" in book ? book.sections : undefined;
+      const bookSections: CurriculumSection[] | undefined = "sections" in book
+        ? (book as { sections?: CurriculumSection[] }).sections
+        : undefined;
       const hasPhysicsLessonMap = book.grade === "یازدهم" && book.subject === "فیزیک" && Boolean(bookSections?.length);
       const sectionCoverage = hasPhysicsLessonMap
         ? (bookSections ?? []).flatMap((section) => section.lessons.map((lesson) => {
@@ -415,7 +417,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
       const unmappedPhysicsQuestions = hasPhysicsLessonMap
         ? bookQuestions.filter((question) => isVerified(question.sourceStatus) && !canonicalizeGrade11PhysicsLesson(book.track, question.chapter, question.topic))
         : [];
-      const lessonCoverage = sectionCoverage ?? chapterCoverage;
+      const lessonCoverage: Array<{ chapter: string; section?: string; questionCount: number; verifiedQuestionCount: number; targetQuestionsPerLesson?: number; targetMet: boolean }> = sectionCoverage ?? chapterCoverage;
       return {
         ...book,
         chapterCoverage,
