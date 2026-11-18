@@ -2959,6 +2959,10 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     );
     expect(healthBook?.bookCode).toBe("112268");
     expect(healthBook?.chapters).toHaveLength(14);
+    for (const chapter of healthBook?.chapters ?? []) {
+      expect(counts.get(chapter), chapter).toBe(5);
+    }
+    expect([...counts.keys()].every((chapter) => healthBook?.chapters.includes(chapter))).toBe(true);
   });
 
   it("makes the common Grade 12 Health book available to every assessment track", () => {
