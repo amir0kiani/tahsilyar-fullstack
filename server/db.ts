@@ -450,7 +450,7 @@ export async function getAssessmentCatalog() {
   } catch (error) {
     console.warn("[Assessment] Curriculum unavailable; using bundled grade-specific catalog:", error);
     return buildGradeSpecificCatalog(allStarterQuestions.map((question) => ({
-      track: question.track, grade: question.grade, subject: question.subject, chapter: question.chapter, sourceStatus: question.sourceStatus,
+      track: question.track, grade: question.grade, subject: question.subject, chapter: question.chapter, topic: question.topic, sourceStatus: question.sourceStatus,
     })));
   }
 }
