@@ -412,7 +412,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
           }))
         : undefined;
       const unmappedPhysicsQuestions = hasPhysicsLessonMap
-        ? bookQuestions.filter((question) => !canonicalizeGrade11PhysicsLesson(book.track, question.chapter, question.topic))
+        ? bookQuestions.filter((question) => isVerified(question.sourceStatus) && !canonicalizeGrade11PhysicsLesson(book.track, question.chapter, question.topic))
         : [];
       const lessonCoverage = sectionCoverage ?? chapterCoverage;
       return {
