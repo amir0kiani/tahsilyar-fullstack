@@ -745,7 +745,7 @@ describe("curriculum and assessment question bank", () => {
       expect(batch.some((question) => question.grade === grade), grade).toBe(true);
     }
     expect(batch.every((question) => question.track === "انسانی")).toBe(true);
-    expect(batch.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+    expect(batch.every((question) => question.id === "upload-math11-physics-electrostatics-16" ? question.sourceStatus === "reviewed" : question.sourceStatus === "mock-exam-adapted")).toBe(true);
     expect(batch.every((question) => question.explanation.length > 15)).toBe(true);
   });
 
@@ -1435,6 +1435,7 @@ describe("curriculum and assessment question bank", () => {
 
     expect(math?.chapterCoverage?.map((item) => item.verifiedQuestionCount)).toEqual([6, 5, 5, 5]);
     expect(math?.lessonCoverage).toHaveLength(29);
+    expect(math?.sectionCoverage?.filter((item) => item.section === "الکتریسیتهٔ ساکن")).toHaveLength(12);
     expect(math?.lessonsMeetingTarget).toBe(0);
     expect(math?.lessonCoverage.reduce((sum, item) => sum + item.verifiedQuestionCount, 0)).toBe(19);
     expect(math?.unmappedQuestionCount).toBe(2);
@@ -1442,6 +1443,7 @@ describe("curriculum and assessment question bank", () => {
 
     expect(experimental?.chapterCoverage?.map((item) => item.verifiedQuestionCount)).toEqual([10, 6, 6]);
     expect(experimental?.lessonCoverage).toHaveLength(28);
+    expect(experimental?.sectionCoverage?.filter((item) => item.section === "الکتریسیتهٔ ساکن")).toHaveLength(11);
     expect(experimental?.lessonsMeetingTarget).toBe(0);
     expect(experimental?.lessonCoverage.reduce((sum, item) => sum + item.verifiedQuestionCount, 0)).toBe(21);
     expect(experimental?.unmappedQuestionCount).toBe(1);
@@ -2799,23 +2801,27 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
-  it("audits every eligible Grade 11 book and confirms all lessons meet target", () => {
+  it("audits every eligible Grade 11 book and exposes Physics sub-lesson gaps", () => {
     const rows = verifiedQuestions
       .filter((question) => question.grade === "یازدهم")
-      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
+      .map(({ track, grade, subject, chapter, topic, sourceStatus }) => ({ track, grade, subject, chapter, topic, sourceStatus }));
     const catalog = buildGradeSpecificCatalog(rows);
     const eligibleBooks = catalog.filter((book) =>
       book.grade === "یازدهم" && isGrade11AssessmentSubjectEligible(book.track, book.subject)
     );
 
     expect(eligibleBooks).toHaveLength(25);
-    expect(eligibleBooks.reduce((total, book) => total + (book.lessonCoverage?.length ?? 0), 0)).toBe(216);
+    expect(eligibleBooks.reduce((total, book) => total + (book.lessonCoverage?.length ?? 0), 0)).toBe(266);
     const gaps = eligibleBooks.flatMap((book) =>
       (book.lessonCoverage ?? [])
         .filter((lesson) => !lesson.targetMet)
         .map((lesson) => ({ book: `${book.track}::${book.subject}`, chapter: lesson.chapter, count: lesson.verifiedQuestionCount }))
     );
-    expect(gaps).toHaveLength(0);
+    expect(gaps).toHaveLength(57);
+    expect(gaps.every((gap) => gap.book.endsWith("::فیزیک"))).toBe(true);
+    expect(gaps.filter((gap) => gap.book === "ریاضی::فیزیک")).toHaveLength(29);
+    expect(gaps.filter((gap) => gap.book === "تجربی::فیزیک")).toHaveLength(28);
+    expect(gaps.every((gap) => gap.count < 5)).toBe(true);
 
     for (const chapter of ["حملهٔ حیدری", "کبوتر طوق‌دار", "قصهٔ عینکم"]) {
       const authored = verifiedQuestions.filter((question) =>
