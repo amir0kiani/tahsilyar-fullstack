@@ -409,13 +409,13 @@ em { color: var(--turquoise-dark); font-style: normal; }
   --cream: var(--ty-cream);
   --line: var(--ty-line);
   color: var(--ty-navy);
-  font-family: "Yekan Bakh", "YekanBakh", "Vazirmatn", sans-serif;
+  font-family: "Sahel", "Vazirmatn", sans-serif;
 }
 .home-screen .eyebrow { color: var(--ty-burgundy); letter-spacing: 0; font-size: 11px; }
 .home-screen .welcome-row { align-items: flex-start; margin-bottom: 4px; }
 .home-screen .welcome-row h1 {
   color: var(--ty-navy); font-size: clamp(28px, 3.2vw, 39px);
-  font-weight: 800; line-height: 1.55; letter-spacing: 0;
+  font-weight: 900; line-height: 1.55; letter-spacing: 0;
 }
 .home-screen .welcome-row h1 em { color: var(--ty-burgundy); }
 .home-screen .section-subtitle { color: var(--ty-muted); font-size: 13px; line-height: 2; }
@@ -437,7 +437,7 @@ em { color: var(--turquoise-dark); font-style: normal; }
 .home-screen .hero-kicker { color: #e7c99b; font-size: 12px; }
 .home-screen .hero-card h2 {
   color: #fffaf0; font-size: clamp(23px, 2.5vw, 30px);
-  font-weight: 800; line-height: 1.65; letter-spacing: 0;
+  font-weight: 900; line-height: 1.65; letter-spacing: 0;
 }
 .home-screen .hero-card h2 em { color: #f0cc91; }
 .home-screen .hero-card p:not(.hero-kicker) {
@@ -462,7 +462,7 @@ em { color: var(--turquoise-dark); font-style: normal; }
   transform: rotate(-7deg);
 }
 .home-screen .section-heading { margin-bottom: 18px; }
-.home-screen .section-heading h2 { color: var(--ty-navy); font-size: 20px; font-weight: 800; }
+.home-screen .section-heading h2 { color: var(--ty-navy); font-size: 20px; font-weight: 700; }
 .home-screen .text-button { color: var(--ty-burgundy); font-size: 12px; }
 .home-screen .dashboard-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
 .home-screen .today-card,
