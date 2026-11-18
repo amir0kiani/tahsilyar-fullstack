@@ -18,7 +18,7 @@ import { ENV } from "./_core/env";
 import { examQuestions as starterQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
-import { canonicalizeGrade11AssessmentChapter, canonicalizeGrade11AssessmentQuestion, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
+import { canonicalizeGrade11AssessmentChapter, canonicalizeGrade11AssessmentQuestion, canonicalizeGrade11PhysicsLesson, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
 const allStarterQuestions = [...starterQuestions, ...verifiedQuestions].map(canonicalizeGrade11AssessmentQuestion).filter(isGrade11AssessmentQuestionEligible);
 
@@ -331,7 +331,7 @@ function questionMatchesBookTrack(questionTrack: string, bookTrack: string, subj
   return questionTrack === bookTrack;
 }
 
-export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: string; subject: string; chapter: string; sourceStatus?: string }>) {
+export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: string; subject: string; chapter: string; topic?: string; sourceStatus?: string }>) {
   const isVerified = (status?: string) => Boolean(status && status !== "sample-authored" && status !== "pending-review");
   const assessmentQuestionRows = questionRows.map(canonicalizeGrade11AssessmentQuestion).filter(isGrade11AssessmentQuestionEligible);
   const assessmentCurriculumCatalog = curriculumCatalog.filter((book) =>
@@ -381,21 +381,48 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
         question.subject === book.subject &&
         questionMatchesBookTrack(question.track, book.track, book.subject)
       );
-      const lessonCoverage = book.chapters
+      const chapterCoverage = book.chapters
         .filter((chapter) => chapter !== "کل کتاب" && !(book.assessmentExcludedChapters ?? []).includes(chapter))
         .map((chapter) => {
-          const lessonQuestions = bookQuestions.filter((question) => book.grade === "یازدهم" && book.subject === "دین و زندگی" ? canonicalizeGrade11AssessmentChapter(question.track, question.subject, question.chapter) === canonicalizeGrade11AssessmentChapter(book.track, book.subject, chapter) : question.chapter === chapter);
-          const verifiedQuestionCount = lessonQuestions.filter((question) => isVerified(question.sourceStatus)).length;
+          const chapterQuestions = bookQuestions.filter((question) => book.grade === "یازدهم" && book.subject === "دین و زندگی" ? canonicalizeGrade11AssessmentChapter(question.track, question.subject, question.chapter) === canonicalizeGrade11AssessmentChapter(book.track, book.subject, chapter) : question.chapter === chapter);
+          const verifiedQuestionCount = chapterQuestions.filter((question) => isVerified(question.sourceStatus)).length;
           return {
             chapter,
-            questionCount: lessonQuestions.length,
+            questionCount: chapterQuestions.length,
             verifiedQuestionCount,
             targetQuestionsPerLesson: book.targetQuestionsPerLesson,
             targetMet: verifiedQuestionCount >= book.targetQuestionsPerLesson,
           };
         });
+      const hasPhysicsLessonMap = book.grade === "یازدهم" && book.subject === "فیزیک" && Boolean(book.sections?.length);
+      const sectionCoverage = hasPhysicsLessonMap
+        ? (book.sections ?? []).flatMap((section) => section.lessons.map((lesson) => {
+            const lessonQuestions = bookQuestions.filter((question) =>
+              canonicalizeGrade11PhysicsLesson(book.track, question.chapter, question.topic) === lesson
+            );
+            const verifiedQuestionCount = lessonQuestions.filter((question) => isVerified(question.sourceStatus)).length;
+            return {
+              chapter: lesson,
+              section: section.title,
+              questionCount: lessonQuestions.length,
+              verifiedQuestionCount,
+              targetQuestionsPerLesson: book.targetQuestionsPerLesson,
+              targetMet: verifiedQuestionCount >= book.targetQuestionsPerLesson,
+            };
+          }))
+        : undefined;
+      const unmappedPhysicsQuestions = hasPhysicsLessonMap
+        ? bookQuestions.filter((question) => !canonicalizeGrade11PhysicsLesson(book.track, question.chapter, question.topic))
+        : [];
+      const lessonCoverage = sectionCoverage ?? chapterCoverage;
       return {
         ...book,
+        chapterCoverage,
+        ...(sectionCoverage ? {
+          sectionCoverage,
+          unmappedQuestionCount: unmappedPhysicsQuestions.length,
+          unmappedQuestionTopics: Array.from(new Set(unmappedPhysicsQuestions.map((question) => question.topic).filter((topic): topic is string => Boolean(topic)))),
+        } : {}),
         lessonCoverage,
         lessonsMeetingTarget: lessonCoverage.filter((lesson) => lesson.targetMet).length,
         lessonCount: lessonCoverage.length,
@@ -410,14 +437,14 @@ export async function getAssessmentCatalog() {
   const db = await getDb();
   if (!db) {
     return buildGradeSpecificCatalog(allStarterQuestions.map((question) => ({
-      track: question.track, grade: question.grade, subject: question.subject, chapter: question.chapter, sourceStatus: question.sourceStatus,
+      track: question.track, grade: question.grade, subject: question.subject, chapter: question.chapter, topic: question.topic, sourceStatus: question.sourceStatus,
     })));
   }
   try {
     await ensureAssessmentBankSeeded(db);
     const questionRows = await db.select({
       track: examQuestionRows.track, grade: examQuestionRows.grade, subject: examQuestionRows.subject,
-      chapter: examQuestionRows.chapter, sourceStatus: examQuestionRows.sourceStatus,
+      chapter: examQuestionRows.chapter, topic: examQuestionRows.topic, sourceStatus: examQuestionRows.sourceStatus,
     }).from(examQuestionRows).where(eq(examQuestionRows.isActive, 1));
     return buildGradeSpecificCatalog(questionRows);
   } catch (error) {
