@@ -1,5 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,500,0,0');
+/* Sahel 3.4.0 — locally bundled Farsi-digit webfonts (SIL OFL 1.1) */
+@font-face {
+  font-family: "Sahel";
+  src: url("/fonts/sahel/Sahel-Light-FD.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sahel";
+  src: url("/fonts/sahel/Sahel-FD.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sahel";
+  src: url("/fonts/sahel/Sahel-SemiBold-FD.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sahel";
+  src: url("/fonts/sahel/Sahel-Bold-FD.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sahel";
+  src: url("/fonts/sahel/Sahel-Black-FD.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
