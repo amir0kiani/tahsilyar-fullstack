@@ -750,7 +750,7 @@ describe("curriculum and assessment question bank", () => {
       expect(batch.some((question) => question.grade === grade), grade).toBe(true);
     }
     expect(batch.every((question) => question.track === "انسانی")).toBe(true);
-    expect(batch.every((question) => question.id === "upload-math11-physics-electrostatics-16" ? question.sourceStatus === "reviewed" : question.sourceStatus === "mock-exam-adapted")).toBe(true);
+    expect(batch.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
     expect(batch.every((question) => question.explanation.length > 15)).toBe(true);
   });
 
@@ -762,7 +762,7 @@ describe("curriculum and assessment question bank", () => {
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       expect(batch.some((question) => question.grade === grade), grade).toBe(true);
     }
-    expect(batch.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+    expect(batch.every((question) => question.id === "upload-math11-physics-electrostatics-16" ? question.sourceStatus === "reviewed" : question.sourceStatus === "mock-exam-adapted")).toBe(true);
     expect(batch.every((question) => question.explanation.length > 15)).toBe(true);
   });
 
