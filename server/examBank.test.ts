@@ -2993,7 +2993,8 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(questionMatchesBookTrack("انسانی", "انسانی", "دین و زندگی")).toBe(true);
     expect(questionMatchesBookTrack("ریاضی و تجربی", "ریاضی و تجربی", "دین و زندگی")).toBe(true);
     expect(questionMatchesBookTrack("انسانی", "ریاضی و تجربی", "دین و زندگی")).toBe(false);
-    expect(questionMatchesBookTrack("عمومی", "انسانی", "دین و زندگی")).toBe(false);
+    expect(questionMatchesBookTrack("عمومی", "انسانی", "دین و زندگی", "دوازدهم")).toBe(false);
+    expect(questionMatchesBookTrack("عمومی", "انسانی", "دین و زندگی", "یازدهم")).toBe(true);
     expect(questionMatchesBookTrack("عمومی", "انسانی", "زبان انگلیسی")).toBe(true);
     expect(questionMatchesBookTrack("عمومی", "ریاضی", "زبان انگلیسی")).toBe(true);
     expect(questionMatchesBookTrack("عمومی", "تجربی", "زبان انگلیسی")).toBe(true);
