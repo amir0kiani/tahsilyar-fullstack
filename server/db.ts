@@ -346,7 +346,7 @@ export async function getAssessmentQuestions(filters: AssessmentFilters = {}) {
 
 export function questionMatchesBookTrack(questionTrack: string, bookTrack: string, subject: string) {
   if (bookTrack === "عمومی") return questionTrack === "عمومی";
-  if (questionTrack === "عمومی" && ["فارسی", "زبان انگلیسی", "دین و زندگی", "سلامت و بهداشت"].includes(subject)) return true;
+  if (questionTrack === "عمومی" && ["فارسی", "زبان انگلیسی", "سلامت و بهداشت"].includes(subject)) return true;
   if (bookTrack === "ریاضی و تجربی") {
     return ["ریاضی", "تجربی", "ریاضی و تجربی"].includes(questionTrack);
   }

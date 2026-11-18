@@ -20,6 +20,41 @@ const grade12HealthLessons = [
   "پیشگیری از حوادث خانگی",
 ];
 
+const grade12HumanitiesDiniLessons = [
+  "هستی بخش",
+  "یگانۀ بی‌همتا",
+  "توحید و سبک زندگی",
+  "فقط برای او",
+  "قدرت پرواز",
+  "سنت‌های خداوند در زندگی",
+  "در گرو کار خویش",
+  "بازگشت",
+  "زندگی در دنیای امروز و عمل به احکام الهی",
+  "پایه‌های استوار",
+  "عصر شکوفایی",
+  "نگاهی به تمدن جدید",
+  "مسئولیت بزرگ ما",
+];
+
+const grade12MathScienceDiniLessons = [
+  "هستی بخش",
+  "یگانۀ بی‌همتا",
+  "توحید و سبک زندگی",
+  "فقط برای او",
+  "قدرت پرواز",
+  "سنت‌های خداوند در زندگی",
+  "بازگشت",
+  "زندگی در دنیای امروز و عمل به احکام الهی",
+  "پایه‌های استوار",
+  "تمدن جدید و مسئولیت ما",
+];
+
+const grade12EnglishLessons = [
+  "Sense of Appreciation",
+  "Look it Up!",
+  "Renewable Energy",
+];
+
 const add = (track: string, grade: string, subject: string, chapters: string[] = wholeBook, targetQuestionsPerLesson = 5, bookCode?: string): CurriculumBook =>
   ({ track, grade, subject, chapters, targetQuestionsPerLesson, ...(bookCode ? { bookCode } : {}) });
 
@@ -97,7 +132,7 @@ export const curriculumCatalog: CurriculumBook[] = [
   add("ریاضی", "یازدهم", "تاریخ معاصر ایران", grade11ContemporaryHistoryChapters, 5, "111220"),
   add("عمومی", "یازدهم", "انسان و محیط زیست", ["آب، سرچشمه زندگی", "خاک، بستر زندگی", "هوا، نفس زندگی", "انرژی، حرکت، زندگی", "زباله، فاجعه محیط زیست", "تنوع زیستی، تابلوی زیبای آفرینش", "محیط زیست، بستر گردشگری مسئولانه"]),
   ...[
-    ["نگارش", "دین و زندگی", "زبان انگلیسی", "مدیریت خانواده و سبک زندگی"],
+    ["نگارش", "مدیریت خانواده و سبک زندگی"],
   ].flatMap((subjects) => subjects.map((subject) => add("عمومی", "دوازدهم", subject))),
 
   // Persian 3, code 112201: 18 numbered lessons across eight official chapters.
@@ -152,6 +187,11 @@ export const curriculumCatalog: CurriculumBook[] = [
     "نظام الطبيعة",
     "يا إلهي",
   ], 5, "112207"),
+
+
+  add("عمومی", "دوازدهم", "زبان انگلیسی", grade12EnglishLessons, 5, "112230"),
+  add("انسانی", "دوازدهم", "دین و زندگی", grade12HumanitiesDiniLessons, 5, "112204"),
+  add("ریاضی و تجربی", "دوازدهم", "دین و زندگی", grade12MathScienceDiniLessons, 5, "112204"),
 
   // Experimental track.
   add("تجربی", "دهم", "زیست‌شناسی", ["زیست‌شناسی، دیروز، امروز و فردا", "گوارش و جذب مواد", "تبادلات گازی", "گردش مواد در بدن", "تنظیم اسمزی و دفع مواد زائد", "از یاخته تا گیاه", "جذب و انتقال مواد در گیاهان"]),

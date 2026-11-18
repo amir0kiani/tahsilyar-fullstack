@@ -2968,4 +2968,35 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(questionMatchesBookTrack("عمومی", "تجربی", "سلامت و بهداشت")).toBe(true);
   });
 
+
+  it("maps Grade 12 Dini editions separately and keeps Vision 3 common", () => {
+    const humanitiesDini = curriculumCatalog.find((book) =>
+      book.grade === "دوازدهم" && book.track === "انسانی" && book.subject === "دین و زندگی"
+    );
+    const mathScienceDini = curriculumCatalog.find((book) =>
+      book.grade === "دوازدهم" && book.track === "ریاضی و تجربی" && book.subject === "دین و زندگی"
+    );
+    const english = curriculumCatalog.find((book) =>
+      book.grade === "دوازدهم" && book.track === "عمومی" && book.subject === "زبان انگلیسی"
+    );
+
+    expect(humanitiesDini?.bookCode).toBe("112204");
+    expect(humanitiesDini?.chapters).toHaveLength(13);
+    expect(mathScienceDini?.bookCode).toBe("112204");
+    expect(mathScienceDini?.chapters).toHaveLength(10);
+    expect(english?.bookCode).toBe("112230");
+    expect(english?.chapters).toEqual(["Sense of Appreciation", "Look it Up!", "Renewable Energy"]);
+    expect(curriculumCatalog.some((book) =>
+      book.grade === "دوازدهم" && book.track === "عمومی" && book.subject === "دین و زندگی"
+    )).toBe(false);
+
+    expect(questionMatchesBookTrack("انسانی", "انسانی", "دین و زندگی")).toBe(true);
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "ریاضی و تجربی", "دین و زندگی")).toBe(true);
+    expect(questionMatchesBookTrack("انسانی", "ریاضی و تجربی", "دین و زندگی")).toBe(false);
+    expect(questionMatchesBookTrack("عمومی", "انسانی", "دین و زندگی")).toBe(false);
+    expect(questionMatchesBookTrack("عمومی", "انسانی", "زبان انگلیسی")).toBe(true);
+    expect(questionMatchesBookTrack("عمومی", "ریاضی", "زبان انگلیسی")).toBe(true);
+    expect(questionMatchesBookTrack("عمومی", "تجربی", "زبان انگلیسی")).toBe(true);
+  });
+
 });
