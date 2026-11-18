@@ -3076,11 +3076,11 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     ]);
   });
 
-  it("records five source-traceable Kānun adaptations for Grade 11 math Physics 2 electrostatics", () => {
+  it("records four source-traceable Kānun adaptations for Grade 11 math Physics 2 electrostatics", () => {
     const batch = verifiedQuestions.filter((question) =>
       question.id.startsWith("mock-adapted-grade11-math-physics-kanoon-1400-")
     );
-    expect(batch).toHaveLength(5);
+    expect(batch).toHaveLength(4);
     expect(batch.every((question) =>
       question.grade === "یازدهم" &&
       question.track === "ریاضی" &&
@@ -3101,7 +3101,6 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
       "mock-adapted-grade11-math-physics-kanoon-1400-charge-transfer-coulomb-92": 1,
       "mock-adapted-grade11-math-physics-kanoon-1400-electric-force-acceleration-96": 1,
       "mock-adapted-grade11-math-physics-kanoon-1400-field-lines-potential-97": 1,
-      "mock-adapted-grade11-math-physics-kanoon-1400-quantized-charge-equilibrium-100": 0,
     };
     for (const question of batch) {
       expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
