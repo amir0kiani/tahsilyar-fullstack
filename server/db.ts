@@ -399,14 +399,15 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
         : undefined;
       const hasPhysicsLessonMap = book.grade === "یازدهم" && book.subject === "فیزیک" && Boolean(bookSections?.length);
       const sectionCoverage = hasPhysicsLessonMap
-        ? (bookSections ?? []).flatMap((section) => section.lessons.map((lesson) => {
+        ? (bookSections ?? []).flatMap((section, sectionIndex) => section.lessons.map((lesson) => {
             const lessonQuestions = bookQuestions.filter((question) =>
               canonicalizeGrade11PhysicsLesson(book.track, question.chapter, question.topic) === lesson
             );
             const verifiedQuestionCount = lessonQuestions.filter((question) => isVerified(question.sourceStatus)).length;
             return {
               chapter: lesson,
-              section: section.title,
+              section: book.chapters[sectionIndex] ?? section.title,
+              sectionTitle: section.title,
               questionCount: lessonQuestions.length,
               verifiedQuestionCount,
               targetQuestionsPerLesson: book.targetQuestionsPerLesson ?? 5,
@@ -417,7 +418,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
       const unmappedPhysicsQuestions = hasPhysicsLessonMap
         ? bookQuestions.filter((question) => isVerified(question.sourceStatus) && !canonicalizeGrade11PhysicsLesson(book.track, question.chapter, question.topic))
         : [];
-      const lessonCoverage: Array<{ chapter: string; section?: string; questionCount: number; verifiedQuestionCount: number; targetQuestionsPerLesson: number; targetMet: boolean }> = sectionCoverage ?? chapterCoverage;
+      const lessonCoverage: Array<{ chapter: string; section?: string; sectionTitle?: string; questionCount: number; verifiedQuestionCount: number; targetQuestionsPerLesson: number; targetMet: boolean }> = sectionCoverage ?? chapterCoverage;
       return {
         ...book,
         chapterCoverage,
