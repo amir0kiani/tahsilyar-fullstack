@@ -3127,6 +3127,16 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
       question.reviewerNote?.includes("سؤال تألیفی") &&
       question.reviewerNote?.includes("صورت سؤال از آن استخراج نشده")
     )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "uploaded-physics11-electrostatics-001": 2,
+      "uploaded-physics11-electrostatics-002": 2,
+      "uploaded-physics11-electrostatics-003": 3,
+      "uploaded-physics11-electrostatics-004": 2,
+      "uploaded-physics11-electrostatics-005": 0,
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
   });
 
   it("keeps the 15 Aban Grade 11 mathematics-track Physics question authored rather than falsely attributed to Maz", () => {
@@ -3138,6 +3148,70 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(question?.sourceTitle).toContain("سؤال تألیفی تحصیل‌یار");
     expect(question?.sourceQuestionNumber).toBeUndefined();
     expect(question?.reviewerNote).toContain("از آزمون ماز ۱۵ آبان ۱۴۰۵ استخراج نشده");
+  });
+
+  it("adds five verified Konkur 1402 physics adaptations to each Grade 11 track", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("official-adapted-grade11-") &&
+      question.id.includes("-physics-1402-")
+    );
+    expect(batch).toHaveLength(10);
+    expect(batch.filter((question) => question.track === "ریاضی")).toHaveLength(5);
+    expect(batch.filter((question) => question.track === "تجربی")).toHaveLength(5);
+    expect(batch.every((question) =>
+      question.grade === "یازدهم" &&
+      question.subject === "فیزیک" &&
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceTitle === "کنکور سراسری ۱۴۰۲ نوبت دوم، گروه آزمایشی علوم تجربی، دفترچه اختصاصی فیزیک" &&
+      question.sourceUrl === "https://dl.aligebra.com/PACKAGES/26/445/5.pdf" &&
+      question.sourceAnswerUrl === "https://dl.aligebra.com/PACKAGES/26/445/7.pdf" &&
+      question.sourceYear === "۱۴۰۲" &&
+      question.sourceQuestionNumber?.includes("PDF فیزیک") &&
+      question.reviewerNote?.includes("کلید رسمی سازمان سنجش") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4
+    )).toBe(true);
+    const expectedKeys: Record<string, number> = {
+      "official-adapted-grade11-math-physics-1402-circuit-power-series-parallel-65": 1,
+      "official-adapted-grade11-experimental-physics-1402-circuit-power-series-parallel-65": 1,
+      "official-adapted-grade11-math-physics-1402-ideal-meter-swap-66": 0,
+      "official-adapted-grade11-experimental-physics-1402-ideal-meter-swap-66": 0,
+      "official-adapted-grade11-math-physics-1402-faraday-coil-exit-67": 1,
+      "official-adapted-grade11-experimental-physics-1402-faraday-coil-exit-67": 1,
+      "official-adapted-grade11-math-physics-1402-lenz-two-loops-wire-68": 0,
+      "official-adapted-grade11-experimental-physics-1402-lenz-two-loops-wire-68": 0,
+      "official-adapted-grade11-math-physics-1402-magnetic-force-electron-direction-75": 0,
+      "official-adapted-grade11-experimental-physics-1402-magnetic-force-electron-direction-75": 0,
+    };
+    for (const question of batch) {
+      expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
+    }
+    const mathCounts: Record<string, number> = {
+      "جریان الکتریکی و مدارهای جریان مستقیم": 7,
+      "مغناطیس": 6,
+      "القای الکترومغناطیسی و جریان متناوب": 7,
+    };
+    for (const [chapter, minimum] of Object.entries(mathCounts)) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "ریاضی" &&
+        question.subject === "فیزیک" && question.chapter === chapter &&
+        ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(minimum);
+    }
+    const experimentalCounts: Record<string, number> = {
+      "جریان الکتریکی و مدارهای جریان مستقیم": 8,
+      "مغناطیس و القای الکترومغناطیسی": 9,
+    };
+    for (const [chapter, minimum] of Object.entries(experimentalCounts)) {
+      const count = verifiedQuestions.filter((question) =>
+        question.grade === "یازدهم" && question.track === "تجربی" &&
+        question.subject === "فیزیک" && question.chapter === chapter &&
+        ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? "")
+      ).length;
+      expect(count, chapter).toBeGreaterThanOrEqual(minimum);
+    }
   });
 
 });
