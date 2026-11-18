@@ -1433,19 +1433,30 @@ describe("curriculum and assessment question bank", () => {
     const math = catalog.find((book) => book.grade === "یازدهم" && book.track === "ریاضی" && book.subject === "فیزیک");
     const experimental = catalog.find((book) => book.grade === "یازدهم" && book.track === "تجربی" && book.subject === "فیزیک");
 
-    expect(math?.chapterCoverage?.map((item) => item.verifiedQuestionCount)).toEqual([5, 5, 5, 5]);
+    expect(math?.chapterCoverage?.map((item) => item.verifiedQuestionCount)).toEqual([6, 5, 5, 5]);
     expect(math?.lessonCoverage).toHaveLength(29);
     expect(math?.lessonsMeetingTarget).toBe(0);
-    expect(math?.lessonCoverage.reduce((sum, item) => sum + item.verifiedQuestionCount, 0)).toBe(18);
+    expect(math?.lessonCoverage.reduce((sum, item) => sum + item.verifiedQuestionCount, 0)).toBe(19);
     expect(math?.unmappedQuestionCount).toBe(2);
     expect(math?.unmappedQuestionTopics).toEqual(expect.arrayContaining(["مقاومت نوری", "محاسبهٔ میدان از شار مغناطیسی"]));
 
-    expect(experimental?.chapterCoverage?.map((item) => item.verifiedQuestionCount)).toEqual([10, 5, 6]);
+    expect(experimental?.chapterCoverage?.map((item) => item.verifiedQuestionCount)).toEqual([10, 6, 6]);
     expect(experimental?.lessonCoverage).toHaveLength(28);
     expect(experimental?.lessonsMeetingTarget).toBe(0);
-    expect(experimental?.lessonCoverage.reduce((sum, item) => sum + item.verifiedQuestionCount, 0)).toBe(20);
+    expect(experimental?.lessonCoverage.reduce((sum, item) => sum + item.verifiedQuestionCount, 0)).toBe(21);
     expect(experimental?.unmappedQuestionCount).toBe(1);
     expect(experimental?.unmappedQuestionTopics).toContain("اختلاف پتانسیل و انرژی پتانسیل");
+  });
+
+  it("labels the Grade 11 math Physics Coulomb practice item as authored rather than a Maz-extracted question", () => {
+    const question = verifiedQuestions.find((item) => item.id === "upload-math11-physics-electrostatics-16");
+    expect(question).toBeDefined();
+    expect(question?.sourceStatus).toBe("reviewed");
+    expect(question?.sourceTitle).toBe("سؤال تألیفی تحصیل‌یار بر اساس قانون کولن در فیزیک (۲) یازدهم رشته ریاضی و فیزیک");
+    expect(question?.sourceUrl).toBe("https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-ریاضی-و-فیزیک");
+    expect(question?.sourceYear).toBe("۱۴۰۵–۱۴۰۶");
+    expect(question?.sourceQuestionNumber).toBeUndefined();
+    expect(question?.reviewerNote).toContain("از آن استخراج نشده‌اند");
   });
 
   it("labels the five uploaded Grade 11 experimental physics practice items as reviewed authored questions, not mock-exam adaptations", () => {
