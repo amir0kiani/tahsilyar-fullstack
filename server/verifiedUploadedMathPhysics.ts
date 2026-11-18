@@ -4,7 +4,8 @@ import type { ExamQuestion } from "./examBank";
 // user-provided 15 Aban 1405 Maz booklets for Grades 11 and 12.
 const verifiedAt = new Date("2026-11-06T00:00:00.000Z");
 const source12R = "آزمون ماز پایه دوازدهم ریاضی و فنی، ۱۵ آبان ۱۴۰۵ (فایل ارسالی کاربر)";
-const source11T = "آزمون ماز پایه یازدهم تجربی، ۱۵ آبان ۱۴۰۵ (فایل ارسالی کاربر)";
+const authoredPhysicsSourceTitle = "سؤال تألیفی تحصیل‌یار بر اساس کتاب رسمی فیزیک (۲) یازدهم رشته علوم تجربی، کد 111244";
+const authoredPhysicsSourceUrl = "https://dl.heyvagroup.com/admin/Files/upload/yazdahom-reshte-olomtajrobi-fizik%282%29-1405.pdf";
 
 export const verifiedUploadedMathPhysics: ExamQuestion[] = [
   {
@@ -167,8 +168,8 @@ export const verifiedUploadedMathPhysics: ExamQuestion[] = [
     options: ["دو برابر می‌شود", "نصف می‌شود", "یک‌چهارم می‌شود", "چهار برابر می‌شود"],
     correctIndex: 2,
     explanation: "طبق قانون کولن، نیرو با مجذور فاصله نسبت وارون دارد؛ دو برابر شدن فاصله، نیرو را به یک‌چهارم کاهش می‌دهد.",
-    sourceStatus: "mock-exam-adapted", sourceTitle: source11T, sourceQuestionNumber: "بخش فیزیک، الکتریسیتهٔ ساکن", verifiedAt,
-    reviewerNote: "سؤال تألیفی بر اساس محدودهٔ الکتریسیتهٔ ساکن در بودجه‌بندی فایل؛ قانون کولن کنترل شده است."
+    sourceStatus: "reviewed", sourceTitle: authoredPhysicsSourceTitle, sourceUrl: authoredPhysicsSourceUrl, sourceYear: "۱۴۰۵-۱۴۰۶", verifiedAt,
+    reviewerNote: "سؤال تألیفی و مستقل است؛ پاسخ با مبحث قانون کولن از فصل «الکتریسیتهٔ ساکن» کتاب رسمی فیزیک (۲) یازدهم تجربی، کد 111244، نسخهٔ ۱۴۰۵–۱۴۰۶ بازبینی شده است. فایل آزمون ماز ۱۵ آبان فقط برای شناسایی دامنهٔ مبحث استفاده شده و صورت سؤال از آن استخراج نشده است."
   },
   {
     id: "uploaded-physics11-electrostatics-002", grade: "یازدهم", track: "تجربی", subject: "فیزیک",
@@ -177,8 +178,8 @@ export const verifiedUploadedMathPhysics: ExamQuestion[] = [
     options: ["بار مثبت", "بار منفی", "بار خنثی", "هر باری با جرم بیشتر"],
     correctIndex: 0,
     explanation: "جهت میدان الکتریکی، جهت نیروی وارد بر یک بار آزمایشی مثبت در آن نقطه تعریف می‌شود.",
-    sourceStatus: "mock-exam-adapted", sourceTitle: source11T, sourceQuestionNumber: "بخش فیزیک، الکتریسیتهٔ ساکن", verifiedAt,
-    reviewerNote: "تمرین مفهومی مستقل دربارهٔ تعریف جهت میدان الکتریکی."
+    sourceStatus: "reviewed", sourceTitle: authoredPhysicsSourceTitle, sourceUrl: authoredPhysicsSourceUrl, sourceYear: "۱۴۰۵-۱۴۰۶", verifiedAt,
+    reviewerNote: "سؤال تألیفی و مستقل است؛ پاسخ با تعریف جهت میدان الکتریکی در فصل «الکتریسیتهٔ ساکن» کتاب رسمی فیزیک (۲) یازدهم تجربی، کد 111244، نسخهٔ ۱۴۰۵–۱۴۰۶ بازبینی شده است. فایل آزمون ماز ۱۵ آبان فقط راهنمای دامنه بوده و منبع صورت سؤال نیست."
   },
   {
     id: "uploaded-physics11-electrostatics-003", grade: "یازدهم", track: "تجربی", subject: "فیزیک",
@@ -187,8 +188,8 @@ export const verifiedUploadedMathPhysics: ExamQuestion[] = [
     options: ["r", "r²", "۱/r", "۱/r²"],
     correctIndex: 3,
     explanation: "میدان بار نقطه‌ای از رابطهٔ E=k|q|/r² به دست می‌آید؛ بنابراین با مجذور فاصله نسبت وارون دارد.",
-    sourceStatus: "mock-exam-adapted", sourceTitle: source11T, sourceQuestionNumber: "بخش فیزیک، الکتریسیتهٔ ساکن", verifiedAt,
-    reviewerNote: "سؤال تألیفی برای سنجش وابستگی میدان به فاصله؛ رابطهٔ میدان بار نقطه‌ای بررسی شده است."
+    sourceStatus: "reviewed", sourceTitle: authoredPhysicsSourceTitle, sourceUrl: authoredPhysicsSourceUrl, sourceYear: "۱۴۰۵-۱۴۰۶", verifiedAt,
+    reviewerNote: "سؤال تألیفی و مستقل است؛ رابطهٔ میدان بار نقطه‌ای با مجذور فاصله در فصل «الکتریسیتهٔ ساکن» کتاب رسمی فیزیک (۲) یازدهم تجربی، کد 111244، نسخهٔ ۱۴۰۵–۱۴۰۶ کنترل شده است. فایل آزمون ماز ۱۵ آبان فقط برای تعیین محدودهٔ موضوع استفاده شده است."
   },
   {
     id: "uploaded-physics11-electrostatics-004", grade: "یازدهم", track: "تجربی", subject: "فیزیک",
@@ -197,8 +198,8 @@ export const verifiedUploadedMathPhysics: ExamQuestion[] = [
     options: ["مثبت می‌شود", "منفی می‌شود", "همچنان صفر می‌ماند", "به مقدار جرم اجسام بستگی دارد"],
     correctIndex: 2,
     explanation: "در فرایند انتقال الکترون، بار از یک جسم به جسم دیگر منتقل می‌شود و بار کل یک دستگاه منزوی پایسته می‌ماند؛ پس مجموع بار دو جسم صفر است.",
-    sourceStatus: "mock-exam-adapted", sourceTitle: source11T, sourceQuestionNumber: "بخش فیزیک، الکتریسیتهٔ ساکن", verifiedAt,
-    reviewerNote: "تمرین مستقل دربارهٔ پایستگی بار؛ فرض منزوی‌بودن دستگاه در متن مشخص شده است."
+    sourceStatus: "reviewed", sourceTitle: authoredPhysicsSourceTitle, sourceUrl: authoredPhysicsSourceUrl, sourceYear: "۱۴۰۵-۱۴۰۶", verifiedAt,
+    reviewerNote: "سؤال تألیفی و مستقل است؛ پاسخ با اصل پایستگی بار در فصل «الکتریسیتهٔ ساکن» کتاب رسمی فیزیک (۲) یازدهم تجربی، کد 111244، نسخهٔ ۱۴۰۵–۱۴۰۶ تطبیق داده شده است. صورت سؤال از فایل آزمون ماز استخراج نشده است."
   },
   {
     id: "uploaded-physics11-electrostatics-005", grade: "یازدهم", track: "تجربی", subject: "فیزیک",
@@ -207,7 +208,7 @@ export const verifiedUploadedMathPhysics: ExamQuestion[] = [
     options: ["انرژی پتانسیل به ازای واحد بار", "نیرو به ازای واحد جرم", "بار الکتریکی به ازای واحد زمان", "انرژی جنبشی به ازای واحد حجم"],
     correctIndex: 0,
     explanation: "اختلاف پتانسیل برابر تغییر انرژی پتانسیل الکتریکی به ازای واحد بار است؛ یکای آن ولت یا ژول بر کولن است.",
-    sourceStatus: "mock-exam-adapted", sourceTitle: source11T, sourceQuestionNumber: "بخش فیزیک، الکتریسیتهٔ ساکن", verifiedAt,
-    reviewerNote: "سؤال مستقل از ابتدای مبحث پتانسیل الکتریکی که در بودجه‌بندی فایل آمده است."
+    sourceStatus: "reviewed", sourceTitle: authoredPhysicsSourceTitle, sourceUrl: authoredPhysicsSourceUrl, sourceYear: "۱۴۰۵-۱۴۰۶", verifiedAt,
+    reviewerNote: "سؤال تألیفی و مستقل است؛ تعریف اختلاف پتانسیل و نسبت آن با انرژی پتانسیل در فصل «الکتریسیتهٔ ساکن» کتاب رسمی فیزیک (۲) یازدهم تجربی، کد 111244، نسخهٔ ۱۴۰۵–۱۴۰۶ بازبینی شده است. فایل آزمون ماز فقط سرنخ پوشش بوده و منبع صورت سؤال نیست."
   }
 ];
