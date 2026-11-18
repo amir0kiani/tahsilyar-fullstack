@@ -1,0 +1,9 @@
+Copyright (c) 2016, Saber Rastikerdar (saber.rastikerdar@gmail.com)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+
+The OFL allows the fonts to be used, studied, modified and redistributed freely as long as they are not sold by themselves. Fonts may be bundled, embedded, redistributed and/or sold with software, provided each copy contains this copyright notice and the license.
+
+Full license text: https://github.com/rastikerdar/sahel-font/blob/master/LICENSE
+Font source: https://github.com/rastikerdar/sahel-font
+Version referenced by Tahsilyar: 3.4.0
