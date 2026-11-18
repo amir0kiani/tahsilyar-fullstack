@@ -1,4 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { isGrade12AssessmentQuestionEligible } from "./grade12AssessmentEligibility";
+import { verifiedGrade12HealthLessons9to14 } from "./verifiedGrade12HealthLessons9to14";
+import { verifiedGrade12HealthLessons2to8 } from "./verifiedGrade12HealthLessons2to8";
+import { verifiedGrade12HealthLesson1 } from "./verifiedGrade12HealthLesson1";
+import { verifiedHumanitiesArabic12Batch1 } from "./verifiedHumanitiesArabic12Batch1";
 import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
@@ -14,7 +19,7 @@ import { verifiedGrade11PersianLesson17 } from "./verifiedGrade11PersianLesson17
 import { verifiedGrade11PersianLesson18 } from "./verifiedGrade11PersianLesson18";
 import { verifiedGrade12PersianLessons1to9 } from "./verifiedGrade12PersianLessons1to9";
 import { verifiedGrade12PersianLessons10to18 } from "./verifiedGrade12PersianLessons10to18";
-import { buildGradeSpecificCatalog } from "./db";
+import { buildGradeSpecificCatalog, questionMatchesBookTrack } from "./db";
 import { canonicalizeGrade11AssessmentChapter, grade11AssessmentYear, grade11DiniSharedChapters, grade11HumanitiesDiniExclusiveChapters, grade11FinalExamSubjectsByTrack, grade11EntranceExamSubjectsByTrack, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
 const allQuestions = [...examQuestions, ...verifiedQuestions];
@@ -495,7 +500,7 @@ describe("curriculum and assessment question bank", () => {
 
   it("keeps every curriculum catalogue entry grade- and track-specific", () => {
     expect(curriculumCatalog.every((book) => ["دهم", "یازدهم", "دوازدهم"].includes(book.grade))).toBe(true);
-    expect(curriculumCatalog.every((book) => ["عمومی", "تجربی", "ریاضی", "انسانی"].includes(book.track))).toBe(true);
+    expect(curriculumCatalog.every((book) => ["عمومی", "تجربی", "ریاضی", "انسانی", "ریاضی و تجربی"].includes(book.track))).toBe(true);
   });
   it("reaches five reviewed questions in every Grade 11 biology chapter", () => {
     const chapters = [
@@ -2890,6 +2895,76 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(verifiedQuestions.some((question) =>
       question.track === "انسانی" && question.grade === "دوازدهم" && question.subject === "روان‌شناسی"
     )).toBe(false);
+  });
+
+
+  it("keeps Grade 12 assessment subjects within the final-exam and entrance-exam allowlist", () => {
+    const grade12Questions = verifiedQuestions.filter((question) => question.grade === "دوازدهم");
+    expect(grade12Questions.every(isGrade12AssessmentQuestionEligible)).toBe(true);
+    expect(isGrade12AssessmentQuestionEligible({ grade: "دوازدهم", track: "انسانی", subject: "تحلیل فرهنگی" })).toBe(false);
+    expect(isGrade12AssessmentQuestionEligible({ grade: "دوازدهم", track: "عمومی", subject: "نگارش" })).toBe(false);
+    expect(isGrade12AssessmentQuestionEligible({ grade: "دوازدهم", track: "عمومی", subject: "مدیریت خانواده و سبک زندگی" })).toBe(false);
+  });
+
+  it("keeps Grade 12 Arabic and Hoviat editions track-specific", () => {
+    expect(curriculumCatalog.some((book) => book.grade === "دوازدهم" && book.track === "عمومی" && book.subject === "عربی")).toBe(false);
+    expect(curriculumCatalog.some((book) => book.grade === "دوازدهم" && book.track === "انسانی" && book.subject === "عربی" && book.bookCode === "112207")).toBe(true);
+    expect(curriculumCatalog.some((book) => book.grade === "دوازدهم" && book.track === "ریاضی و تجربی" && book.subject === "عربی" && book.bookCode === "112206")).toBe(true);
+    expect(questionMatchesBookTrack("انسانی", "انسانی", "عربی")).toBe(true);
+    expect(questionMatchesBookTrack("ریاضی", "ریاضی", "عربی")).toBe(true);
+    expect(questionMatchesBookTrack("تجربی", "تجربی", "عربی")).toBe(true);
+    expect(questionMatchesBookTrack("انسانی", "ریاضی", "عربی")).toBe(false);
+  });
+
+  it("reaches five verified Grade 12 humanities Arabic questions in each of its five lessons", () => {
+    expect(verifiedHumanitiesArabic12Batch1).toHaveLength(25);
+    const questions = verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" && question.track === "انسانی" && question.subject === "عربی"
+    );
+    expect(questions).toHaveLength(25);
+    const counts = new Map<string, number>();
+    for (const question of questions) counts.set(question.chapter, (counts.get(question.chapter) ?? 0) + 1);
+    expect(counts.size).toBe(5);
+    expect([...counts.values()].every((count) => count === 5)).toBe(true);
+    expect(new Set(questions.map((question) => question.id)).size).toBe(25);
+    expect(questions.every((question) =>
+      question.sourceStatus === "official-exam-adapted" &&
+      question.sourceUrl?.startsWith("https://") &&
+      question.sourceAnswerUrl === question.sourceUrl &&
+      Boolean(question.sourceQuestionNumber)
+    )).toBe(true);
+  });
+
+  it("reaches five Grade 12 Health and Hygiene questions in each of the fourteen lessons", () => {
+    expect(verifiedGrade12HealthLesson1).toHaveLength(5);
+    expect(verifiedGrade12HealthLessons2to8).toHaveLength(35);
+    expect(verifiedGrade12HealthLessons9to14).toHaveLength(30);
+    const questions = verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" && question.subject === "سلامت و بهداشت"
+    );
+    expect(questions).toHaveLength(70);
+    const counts = new Map<string, number>();
+    for (const question of questions) counts.set(question.chapter, (counts.get(question.chapter) ?? 0) + 1);
+    expect(counts.size).toBe(14);
+    expect([...counts.values()].every((count) => count === 5)).toBe(true);
+    expect(new Set(questions.map((question) => question.id)).size).toBe(70);
+    expect(questions.every((question) =>
+      question.sourceStatus === "curriculum-verified" &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Salamat-12_Daneshchi.iR.pdf" &&
+      question.sourceYear === "۱۴۰۵" &&
+      question.reviewerNote?.includes("سؤال تألیفی")
+    )).toBe(true);
+    const healthBook = curriculumCatalog.find((book) =>
+      book.grade === "دوازدهم" && book.track === "عمومی" && book.subject === "سلامت و بهداشت"
+    );
+    expect(healthBook?.bookCode).toBe("112268");
+    expect(healthBook?.chapters).toHaveLength(14);
+  });
+
+  it("makes the common Grade 12 Health book available to every assessment track", () => {
+    expect(questionMatchesBookTrack("عمومی", "انسانی", "سلامت و بهداشت")).toBe(true);
+    expect(questionMatchesBookTrack("عمومی", "ریاضی", "سلامت و بهداشت")).toBe(true);
+    expect(questionMatchesBookTrack("عمومی", "تجربی", "سلامت و بهداشت")).toBe(true);
   });
 
 });
