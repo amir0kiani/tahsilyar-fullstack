@@ -5,7 +5,8 @@ import type { ExamQuestion } from "./examBank";
 // but the matching question booklet was not present. Therefore these items are NOT
 // labelled as official-exam adaptations; all stems and distractors below are authored.
 const verifiedAt = new Date("2026-11-10T00:00:00.000Z");
-const sourceTitle = "تألیفی تحصیل‌یار بر اساس محتوای فیزیک (۲) یازدهم";
+const sourceTitle = "سؤال تألیفی تحصیل‌یار بر اساس کتاب رسمی فیزیک (۲) یازدهم رشته علوم تجربی، کد 111244";
+const sourceUrl = "https://dl.heyvagroup.com/admin/Files/upload/yazdahom-reshte-olomtajrobi-fizik%282%29-1405.pdf";
 
 function authored(
   id: string,
@@ -31,8 +32,10 @@ function authored(
     explanation,
     sourceStatus: "reviewed",
     sourceTitle,
+    sourceUrl,
+    sourceYear: "۱۴۰۵-۱۴۰۶",
     verifiedAt,
-    reviewerNote: "سؤال تألیفی و مستقل است؛ پاسخ با روابط و مفاهیم کتاب فیزیک (۲) یازدهم بازبینی شده است. فایل موجود از آزمون نهایی خرداد ۱۴۰۳ فقط راهنمای تصحیح بود و دفترچهٔ سؤال در آرشیو نبود؛ بنابراین این سؤال به آزمون رسمی نسبت داده نشده است."
+    reviewerNote: `سؤال تألیفی و مستقل است؛ پاسخ با مبحث «${topic}» در فصل «${chapter}» از کتاب رسمی فیزیک (۲) یازدهم تجربی، کد 111244، نسخهٔ ۱۴۰۵–۱۴۰۶ بازبینی شده است. فایل موجود از آزمون نهایی خرداد ۱۴۰۳ فقط راهنمای تصحیح بود و دفترچهٔ سؤال در آرشیو نبود؛ بنابراین این سؤال به آزمون رسمی نسبت داده نشده است.`
   };
 }
 
