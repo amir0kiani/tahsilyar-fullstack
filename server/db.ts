@@ -344,9 +344,10 @@ export async function getAssessmentQuestions(filters: AssessmentFilters = {}) {
   }
 }
 
-export function questionMatchesBookTrack(questionTrack: string, bookTrack: string, subject: string) {
+export function questionMatchesBookTrack(questionTrack: string, bookTrack: string, subject: string, grade?: string) {
   if (bookTrack === "عمومی") return questionTrack === "عمومی";
-  if (questionTrack === "عمومی" && ["فارسی", "زبان انگلیسی", "دین و زندگی", "سلامت و بهداشت"].includes(subject)) return true;
+  if (questionTrack === "عمومی" && ["فارسی", "زبان انگلیسی", "سلامت و بهداشت"].includes(subject)) return true;
+  if (questionTrack === "عمومی" && subject === "دین و زندگی" && grade !== "دوازدهم") return true;
   if (bookTrack === "ریاضی و تجربی") {
     return ["ریاضی", "تجربی", "ریاضی و تجربی"].includes(questionTrack);
   }
@@ -366,7 +367,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
     const bookQuestions = assessmentQuestionRows.filter((question) =>
       question.grade === book.grade &&
       question.subject === book.subject &&
-      questionMatchesBookTrack(question.track, book.track, book.subject)
+      questionMatchesBookTrack(question.track, book.track, book.subject, book.grade)
     );
     // For every Grade 11 eligible book, the official curriculum map is authoritative.
     // Question-source labels must never create synthetic lessons; map any legacy/broad label
@@ -404,7 +405,7 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
       const bookQuestions = assessmentQuestionRows.filter((question) =>
         question.grade === book.grade &&
         question.subject === book.subject &&
-        questionMatchesBookTrack(question.track, book.track, book.subject)
+        questionMatchesBookTrack(question.track, book.track, book.subject, book.grade)
       );
       const lessonCoverage = book.chapters
         .filter((chapter) => chapter !== "کل کتاب" && !(book.assessmentExcludedChapters ?? []).includes(chapter))

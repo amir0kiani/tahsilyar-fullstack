@@ -34,7 +34,9 @@ describe("Grade 12 assessment eligibility", () => {
 
   it("keeps common and track-specific Grade 12 textbook editions separate", () => {
     expect(isGrade12AssessmentSubjectEligible("عمومی", "فارسی")).toBe(true);
-    expect(isGrade12AssessmentSubjectEligible("عمومی", "دین و زندگی")).toBe(true);
+    expect(isGrade12AssessmentSubjectEligible("عمومی", "دین و زندگی")).toBe(false);
+    expect(isGrade12AssessmentSubjectEligible("انسانی", "دین و زندگی")).toBe(true);
+    expect(isGrade12AssessmentSubjectEligible("ریاضی و تجربی", "دین و زندگی")).toBe(true);
     expect(isGrade12AssessmentSubjectEligible("عمومی", "عربی")).toBe(false);
     expect(isGrade12AssessmentSubjectEligible("انسانی", "عربی")).toBe(true);
     expect(isGrade12AssessmentSubjectEligible("ریاضی و تجربی", "عربی")).toBe(true);

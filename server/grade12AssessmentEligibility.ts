@@ -13,9 +13,10 @@
  * - 1406 entrance-exam textbook sources:
  *   https://www.sanjesh.org/_sanjesh/documents/فهرست%20دروس%20آزمون%20سراسری%20سال%2014061406.pdf
  *
- * Track-specific editions are kept separate: Humanities Arabic is not the
- * same Grade 12 book as Math/Experimental Arabic; Hoviat Ejtemaei is shared
- * by Math/Experimental and is not the Humanities Sociology 3 textbook.
+ * Track-specific editions are kept separate: Humanities Dini 3 has 13 lessons,
+ * while Math/Experimental Dini 3 is a shared 10-lesson edition. Humanities Arabic
+ * is not the same Grade 12 book as Math/Experimental Arabic; Hoviat Ejtemaei is
+ * shared by Math/Experimental and is not the Humanities Sociology 3 textbook.
  */
 
 export const grade12AssessmentYear = "۱۴۰۶";
@@ -88,7 +89,6 @@ export const grade12EntranceExamSubjectsByTrack = {
 
 const commonFinalExamSubjects = [
   "فارسی",
-  "دین و زندگی",
   "زبان انگلیسی",
   "سلامت و بهداشت",
 ] as const;
@@ -97,6 +97,7 @@ const commonFinalExamSubjects = [
 // Physics and Mathematics are intentionally not shared because their textbook
 // editions and chapter maps differ between Math and Experimental.
 const sharedMathScienceSubjects = [
+  "دین و زندگی",
   "عربی",
   "هویت اجتماعی",
   "شیمی",
