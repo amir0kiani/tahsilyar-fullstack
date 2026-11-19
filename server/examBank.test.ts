@@ -3107,7 +3107,7 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     }
     const expectedSourceNumbers: Record<string, string> = {
       "mock-adapted-grade11-math-physics-kanoon-1400-quantized-charge-91": "۹۱؛ پاسخ تشریحی صفحهٔ ۱۶",
-      "mock-adapted-grade11-math-physics-kanoon-1400-charge-transfer-coulomb-92": "۹۲؛ پاسخ تشریحی صفحهٔ ۱۷",
+      "mock-adapted-grade11-math-physics-kanoon-1400-charge-transfer-coulomb-92": "۹۲؛ پاسخ تشریحی صفحهٔ ۱۶",
       "mock-adapted-grade11-math-physics-kanoon-1400-electric-force-acceleration-96": "۹۶؛ پاسخ تشریحی صفحهٔ ۱۷",
       "mock-adapted-grade11-math-physics-kanoon-1400-field-lines-potential-97": "۹۷؛ پاسخ تشریحی صفحهٔ ۱۷",
     };
