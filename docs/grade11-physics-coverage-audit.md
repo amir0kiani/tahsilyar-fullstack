@@ -26,7 +26,7 @@ Source PDF: https://abadgaranedu.ir/wp-content/uploads/2021/11/kanoon-Sal11-Riaz
 
 The ten questions attributed to Konkur 1402 in the earlier source PR were not imported here because the referenced PDFs could not be independently opened in this review. They remain outside the verified count until booklet and key are checked.
 
-## Known topic mappings resolved
+## Provenance corrections\n\nSix earlier practice items that had been labeled as Maz-adapted without an exact matching Maz question were corrected to original authored content, with the official Roshd curriculum page as the supporting content reference. They now use `reviewed` and explicitly state that they were not extracted from the Maz exam.\n\n## Known topic mappings resolved
 
 - Math: photoresistor -> factors affecting electrical resistance.
 - Math: magnetic field from flux -> electromagnetic induction.
