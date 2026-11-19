@@ -755,7 +755,11 @@ describe("curriculum and assessment question bank", () => {
       expect(batch.some((question) => question.grade === grade), grade).toBe(true);
     }
     expect(batch.every((question) => question.track === "انسانی")).toBe(true);
-    expect(batch.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+    const authoredPhysics = batch.filter((question) => question.id === "upload-math11-physics-electrostatics-16");
+    expect(authoredPhysics).toHaveLength(1);
+    expect(authoredPhysics[0].sourceStatus).toBe("reviewed");
+    expect(authoredPhysics[0].reviewerNote).toContain("از آن استخراج نشده‌اند");
+    expect(batch.filter((question) => question.id !== "upload-math11-physics-electrostatics-16").every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
     expect(batch.every((question) => question.explanation.length > 15)).toBe(true);
   });
 
