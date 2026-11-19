@@ -3120,4 +3120,26 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
   });
 
 
+  it("labels uploaded Grade 11 physics practice as original authored content, not Maz-extracted questions", () => {
+    const uploaded = verifiedQuestions.filter((question) =>
+      question.id.startsWith("uploaded-physics11-electrostatics-")
+    );
+    expect(uploaded).toHaveLength(5);
+    expect(uploaded.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle === "تألیفی تحصیل‌یار بر اساس سرفصل‌های رسمی فیزیک (۲) یازدهم" &&
+      question.sourceUrl === "https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-علوم-تجربی" &&
+      question.sourceYear === "۱۴۰۵–۱۴۰۶" &&
+      question.sourceQuestionNumber === undefined &&
+      question.reviewerNote?.includes("از آزمون ماز استخراج نشده است")
+    )).toBe(true);
+
+    const mathItem = verifiedQuestions.find((question) => question.id === "upload-math11-physics-electrostatics-16");
+    expect(mathItem?.sourceStatus).toBe("reviewed");
+    expect(mathItem?.sourceTitle).toBe("سؤال تألیفی تحصیل‌یار بر اساس قانون کولن در فیزیک (۲) یازدهم رشته ریاضی و فیزیک");
+    expect(mathItem?.sourceUrl).toBe("https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-ریاضی-و-فیزیک");
+    expect(mathItem?.reviewerNote).toContain("از آن استخراج نشده‌اند");
+  });
+
+
 });
