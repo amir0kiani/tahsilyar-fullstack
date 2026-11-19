@@ -39,23 +39,29 @@ export default function ExamCenter() {
   const books=visibleCatalog.filter(item=>item.subject===subject);
   const uniqueBooks=Array.from(new Map(books.map(book=>[`${book.grade}::${book.track}::${book.subject}`,book])).values());
   if(!uniqueBooks.length) return null;
-  const knownLessonCount=uniqueBooks.reduce((sum,book)=>sum+book.chapters.filter((chapter:string)=>chapter!=="کل کتاب").length,0);
+  const lessonCounts=uniqueBooks.map(book=>book.lessonCoverage?.length??book.chapters.filter((chapter:string)=>chapter!=="کل کتاب").length);
   return {
    questionCount:uniqueBooks.reduce((sum,item)=>sum+(item.questionCount??0),0),
    verifiedQuestionCount:uniqueBooks.reduce((sum,item)=>sum+(item.verifiedQuestionCount??0),0),
-   lessonCount:knownLessonCount,
-   targetQuestionCount:knownLessonCount*5,
+   lessonCount:lessonCounts.reduce((sum,count)=>sum+count,0),
+   targetQuestionCount:uniqueBooks.reduce((sum,book,index)=>sum+lessonCounts[index]*(book.targetQuestionsPerLesson??5),0),
   };
  },[visibleCatalog,subject]);
  const selectedLessonCoverage=useMemo(()=>{
   if(!lessonSelected) return null;
   const books=visibleCatalog.filter(item=>item.subject===subject&&item.grade===grade);
-  const entries=books.flatMap(item=>item.lessonCoverage??[]).filter((item:{chapter:string})=>item.chapter===chapter);
+  const entries=books.flatMap(item=>{
+   if(item.sectionCoverage?.length) return item.sectionCoverage.filter((entry:{section:string})=>entry.section===chapter);
+   return (item.chapterCoverage??item.lessonCoverage??[]).filter((entry:{chapter:string})=>entry.chapter===chapter);
+  });
   if(!entries.length) return null;
+  const targetQuestionsPerLesson=Math.max(...entries.map(item=>item.targetQuestionsPerLesson??5));
   return {
    questionCount:entries.reduce((sum,item)=>sum+item.questionCount,0),
    verifiedQuestionCount:entries.reduce((sum,item)=>sum+item.verifiedQuestionCount,0),
-   targetQuestionsPerLesson:Math.max(...entries.map(item=>item.targetQuestionsPerLesson)),
+   targetQuestionsPerLesson,
+   targetQuestionCount:entries.length*targetQuestionsPerLesson,
+   lessonCount:entries.length,
    targetMet:entries.every(item=>item.targetMet),
   };
  },[visibleCatalog,subject,grade,chapter,lessonSelected]);
@@ -90,8 +96,8 @@ export default function ExamCenter() {
    <label>دشواری<select value={difficulty} onChange={e=>{setDifficulty(e.target.value);start();}}>{difficulties.map(d=><option key={d}>{d}</option>)}</select></label>
   </div>
   {bookCoverage&&<p className="exam-book-coverage">پوشش کتاب‌های انتخاب‌شده: {bookCoverage.questionCount} سؤال ثبت‌شده، {bookCoverage.verifiedQuestionCount} سؤال مستند؛ هدف اولیهٔ {bookCoverage.targetQuestionCount} سؤال برای {bookCoverage.lessonCount} درس/فصل</p>}
-  {selectedLessonCoverage&&<p className="exam-book-coverage">پوشش این فصل: {selectedLessonCoverage.verifiedQuestionCount} سؤال مستند از {selectedLessonCoverage.targetQuestionsPerLesson} سؤال هدف ({selectedLessonCoverage.questionCount} سؤال در مجموع).</p>}
-  {!lessonSelected?<p className="learning-empty">برای ارزیابی یک درس، پایه و رشته را مشخص کن و سپس یکی از درس‌های همان کتاب را انتخاب کن.</p>:progress.isLoading?<p className="learning-empty">در حال بررسی وضعیت مطالعهٔ این درس…</p>:!progress.data?<div className="lesson-quiz-gate"><p>آزمون این درس هنوز قفل است. ابتدا درس را مطالعه کن و وقتی برای ارزیابی آماده شدی، مطالعه را تأیید کن.</p><button className="primary-button" disabled={markLessonStudied.isPending} onClick={()=>markLessonStudied.mutate({grade,track,subject,chapter})}>{markLessonStudied.isPending?"در حال ثبت…":"مطالعهٔ این درس را تکمیل کردم"}</button></div>:!selectedLessonCoverage||selectedLessonCoverage.verifiedQuestionCount<selectedLessonCoverage.targetQuestionsPerLesson?<div className="lesson-quiz-gate"><p>آزمون این فصل هنوز آماده نیست؛ برای فعال‌شدن آن باید دست‌کم {selectedLessonCoverage?.targetQuestionsPerLesson??5} سؤال مستند و بازبینی‌شده ثبت شود. در حال حاضر {selectedLessonCoverage?.verifiedQuestionCount??0} سؤال مستند در دسترس است.</p></div>:questions.isLoading?<p className="learning-empty">در حال بارگذاری سؤال‌ها…</p>:!questions.data?.length?<p className="learning-empty">برای این درس هنوز سؤال مستند ثبت نشده است. می‌توانی درس دیگری را انتخاب کنی؛ وضعیت منبع هر سؤال جداگانه مشخص شده است.</p>:!result?<div className="exam-question-list">
+  {selectedLessonCoverage&&<p className="exam-book-coverage">پوشش این فصل: {selectedLessonCoverage.verifiedQuestionCount} سؤال مستند از {selectedLessonCoverage.targetQuestionCount} سؤال هدف در {selectedLessonCoverage.lessonCount} واحد آموزشی ({selectedLessonCoverage.questionCount} سؤال در مجموع).</p>}
+  {!lessonSelected?<p className="learning-empty">برای ارزیابی یک درس، پایه و رشته را مشخص کن و سپس یکی از درس‌های همان کتاب را انتخاب کن.</p>:progress.isLoading?<p className="learning-empty">در حال بررسی وضعیت مطالعهٔ این درس…</p>:!progress.data?<div className="lesson-quiz-gate"><p>آزمون این درس هنوز قفل است. ابتدا درس را مطالعه کن و وقتی برای ارزیابی آماده شدی، مطالعه را تأیید کن.</p><button className="primary-button" disabled={markLessonStudied.isPending} onClick={()=>markLessonStudied.mutate({grade,track,subject,chapter})}>{markLessonStudied.isPending?"در حال ثبت…":"مطالعهٔ این درس را تکمیل کردم"}</button></div>:!selectedLessonCoverage||!selectedLessonCoverage.targetMet?<div className="lesson-quiz-gate"><p>آزمون این فصل هنوز آماده نیست؛ برای فعال‌شدن آزمون این فصل، هر یک از {selectedLessonCoverage?.lessonCount??0} واحد آموزشی آن باید دست‌کم {selectedLessonCoverage?.targetQuestionsPerLesson??5} سؤال مستند و بازبینی‌شده داشته باشد. اکنون {selectedLessonCoverage?.verifiedQuestionCount??0} سؤال مستند از {selectedLessonCoverage?.targetQuestionCount??5} سؤال هدف ثبت شده است.</p></div>:questions.isLoading?<p className="learning-empty">در حال بارگذاری سؤال‌ها…</p>:!questions.data?.length?<p className="learning-empty">برای این درس هنوز سؤال مستند ثبت نشده است. می‌توانی درس دیگری را انتخاب کنی؛ وضعیت منبع هر سؤال جداگانه مشخص شده است.</p>:!result?<div className="exam-question-list">
    <p className="eyebrow">{questions.data.length} سؤال در این آزمون</p>
    {questions.data.map((q:Question,index:number)=><article className="exam-question" key={q.id}><span className="eyebrow">سؤال {index+1} · {q.grade} · {q.difficulty} · {sourceLabel(q.sourceStatus)}</span><h3>{q.prompt}</h3>{q.sourceTitle&&<p className="exam-source-note">{q.sourceTitle}{q.sourceYear?` · ${q.sourceYear}`:""}{q.sourceQuestionNumber?` · سؤال ${q.sourceQuestionNumber}`:""}{q.sourceUrl&&<> · <a href={q.sourceUrl} target="_blank" rel="noreferrer">مشاهدهٔ منبع</a></>}</p>}<div className="exam-options">{q.options.map((option,i)=><button type="button" key={option} className={answers[q.id]===i?"selected":""} aria-pressed={answers[q.id]===i} onClick={()=>setAnswers(old=>({...old,[q.id]:i}))}><span>{["الف","ب","ج","د"][i]}</span>{option}</button>)}</div></article>)}
    <button className="primary-button" disabled={submit.isPending||Object.keys(answers).length!==questions.data.length} onClick={()=>submit.mutate({subject,chapter,grade,track,answers:questions.data.map((q:Question)=>({questionId:q.id,selectedIndex:answers[q.id]}))})}>{submit.isPending?"در حال بررسی…":"ثبت پاسخ‌ها و مشاهدهٔ تحلیل"}</button>
