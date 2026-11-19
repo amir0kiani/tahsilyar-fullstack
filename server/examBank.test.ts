@@ -7,6 +7,7 @@ import { verifiedHumanitiesArabic12Batch1 } from "./verifiedHumanitiesArabic12Ba
 import { verifiedHumanitiesDini12Lesson1 } from "./verifiedHumanitiesDini12Lesson1";
 import { verifiedHumanitiesDini12Lesson2 } from "./verifiedHumanitiesDini12Lesson2";
 import { verifiedHumanitiesDini12Lesson3 } from "./verifiedHumanitiesDini12Lesson3";
+import { verifiedHumanitiesDini12Lessons4to13 } from "./verifiedHumanitiesDini12Lessons4to13";
 import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
@@ -2841,6 +2842,8 @@ it("adds five original, curriculum-verified questions for Grade 12 Humanities Di
   expect(verifiedHumanitiesDini12Lesson3.every(isGrade12AssessmentQuestionEligible)).toBe(true);
 });
 
+
+
 it("adds five original, curriculum-verified questions for Grade 12 Humanities Dini Lesson 1", () => {
     const book = curriculumCatalog.find((item) =>
       item.grade === "دوازدهم" && item.track === "انسانی" && item.subject === "دین و زندگی"
@@ -3091,5 +3094,36 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(questionMatchesBookTrack("عمومی", "ریاضی", "زبان انگلیسی")).toBe(true);
     expect(questionMatchesBookTrack("عمومی", "تجربی", "زبان انگلیسی")).toBe(true);
   });
+
+
+it("completes all 13 Grade 12 Humanities Dini lessons with five curriculum-verified questions each", () => {
+  const book = curriculumCatalog.find((item) =>
+    item.grade === "دوازدهم" && item.track === "انسانی" && item.subject === "دین و زندگی"
+  );
+  expect(book?.bookCode).toBe("112205");
+  expect(book?.chapters).toHaveLength(13);
+  expect(book?.chapters[3]).toBe("فقط برای تو");
+  expect(verifiedHumanitiesDini12Lessons4to13).toHaveLength(50);
+  expect(new Set(verifiedHumanitiesDini12Lessons4to13.map((question) => question.id)).size).toBe(50);
+  expect(verifiedHumanitiesDini12Lessons4to13.every(isGrade12AssessmentQuestionEligible)).toBe(true);
+
+  const questions = verifiedQuestions.filter((question) =>
+    question.grade === "دوازدهم" && question.track === "انسانی" && question.subject === "دین و زندگی"
+  );
+  expect(questions).toHaveLength(65);
+  for (const chapter of book?.chapters ?? []) {
+    const lessonQuestions = questions.filter((question) => question.chapter === chapter);
+    expect(lessonQuestions, chapter).toHaveLength(5);
+    expect(lessonQuestions.every((question) =>
+      question.sourceStatus === "curriculum-verified" &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/DinOZendegi-E-12_Daneshchi.iR.pdf" &&
+      question.sourceYear === "۱۴۰۵" &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 && question.correctIndex < 4 &&
+      question.explanation.length > 20 &&
+      question.reviewerNote?.includes("سؤال تألیفی")
+    )).toBe(true);
+  }
+});
 
 });
