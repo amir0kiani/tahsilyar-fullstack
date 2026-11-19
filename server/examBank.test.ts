@@ -3162,4 +3162,25 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
   expect(allGrade12English).toHaveLength(15);
 });
 
+  it("keeps Grade 11 physics chapter minimum separate from sub-lesson representation", () => {
+    const catalog = buildGradeSpecificCatalog(verifiedQuestions.map(({ track, grade, subject, chapter, topic, sourceStatus }) => ({
+      track, grade, subject, chapter, topic, sourceStatus,
+    })));
+    for (const track of ["ریاضی", "تجربی"]) {
+      const book = catalog.find((item) =>
+        item.grade === "یازدهم" && item.track === track && item.subject === "فیزیک"
+      );
+      expect(book?.chapterCoverage?.length).toBe(track === "ریاضی" ? 4 : 3);
+      expect(book?.chapterCoverage?.every((chapter) =>
+        chapter.verifiedQuestionCount >= 5 && chapter.targetQuestionsPerLesson === 5 && chapter.targetMet
+      )).toBe(true);
+      expect(book?.lessonCoverage?.length).toBe(track === "ریاضی" ? 29 : 28);
+      expect(book?.lessonCoverage?.every((lesson) =>
+        lesson.targetQuestionsPerLesson === 1 &&
+        lesson.targetMet === (lesson.verifiedQuestionCount >= 1)
+      )).toBe(true);
+    }
+  });
+
+
 });
