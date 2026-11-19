@@ -3101,7 +3101,15 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
     );
     expect(batch).toHaveLength(4);
     expect(batch.map((question) => question.correctIndex)).toEqual([1, 1, 1, 1]);
-    expect(batch.every((question) =>
+    const original = batch.find((question) => question.id.endsWith("quantized-charge-91"));
+    expect(original?.sourceStatus).toBe("reviewed");
+    expect(original?.sourceTitle).toContain("سؤال تألیفی تحصیل‌یار");
+    expect(original?.sourceUrl).toBe("https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-ریاضی-و-فیزیک");
+    expect(original?.sourceQuestionNumber).toBeUndefined();
+    expect(original?.reviewerNote).toContain("از دفترچه قلم‌چی استخراج نشده است");
+    const adapted = batch.filter((question) => !question.id.endsWith("quantized-charge-91"));
+    expect(adapted).toHaveLength(3);
+    expect(adapted.every((question) =>
       question.sourceStatus === "mock-exam-adapted" &&
       question.sourceUrl === "https://abadgaranedu.ir/wp-content/uploads/2021/11/kanoon-Sal11-Riazi-21Aban1400-konkur.in_.pdf" &&
       question.sourceAnswerUrl === question.sourceUrl &&
