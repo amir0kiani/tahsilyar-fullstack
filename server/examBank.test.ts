@@ -3183,4 +3183,33 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
   });
 
 
+  it("records the four Kanoon physics adaptations with exact source references and checked answer keys", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("mock-adapted-grade11-math-physics-kanoon-1400-")
+    );
+    expect(batch).toHaveLength(4);
+    expect(batch.map((question) => question.correctIndex)).toEqual([1, 1, 1, 1]);
+    expect(batch.every((question) =>
+      question.sourceStatus === "mock-exam-adapted" &&
+      question.sourceUrl === "https://abadgaranedu.ir/wp-content/uploads/2021/11/kanoon-Sal11-Riazi-21Aban1400-konkur.in_.pdf" &&
+      question.sourceAnswerUrl === question.sourceUrl &&
+      question.sourceYear === "۱۴۰۰" &&
+      Boolean(question.sourceQuestionNumber) &&
+      question.reviewerNote?.includes("پاسخ")
+    )).toBe(true);
+  });
+
+  it("maps every reviewed Grade 11 physics question to an official sub-lesson or reports it explicitly", () => {
+    const catalog = buildGradeSpecificCatalog(verifiedQuestions.map(({ track, grade, subject, chapter, topic, sourceStatus }) => ({
+      track, grade, subject, chapter, topic, sourceStatus,
+    })));
+    for (const track of ["ریاضی", "تجربی"]) {
+      const book = catalog.find((item) =>
+        item.grade === "یازدهم" && item.track === track && item.subject === "فیزیک"
+      );
+      expect(book?.unmappedQuestionCount, track).toBe(0);
+    }
+  });
+
+
 });
