@@ -2524,7 +2524,7 @@ describe("curriculum and assessment question bank", () => {
   it("reports complete Dini lesson coverage in all three tracks without cross-track leakage", () => {
     const diniRows = verifiedQuestions
       .filter((question) => question.grade === "یازدهم" && question.subject === "دین و زندگی")
-      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
+      .map(({ track, grade, subject, chapter, topic, sourceStatus }) => ({ track, grade, subject, chapter, topic, sourceStatus }));
     const catalog = buildGradeSpecificCatalog(diniRows);
 
     for (const track of ["انسانی", "ریاضی", "تجربی"]) {
@@ -2762,7 +2762,7 @@ describe("curriculum and assessment question bank", () => {
     );
 
     expect(eligibleBooks).toHaveLength(25);
-    expect(eligibleBooks.reduce((total, book) => total + (book.lessonCoverage?.length ?? 0), 0)).toBe(216);
+    expect(eligibleBooks.reduce((total, book) => total + (book.lessonCoverage?.length ?? 0), 0)).toBe(266);
     const gaps = eligibleBooks.flatMap((book) =>
       (book.lessonCoverage ?? [])
         .filter((lesson) => !lesson.targetMet)
