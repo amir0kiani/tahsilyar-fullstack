@@ -190,7 +190,7 @@ export const curriculumCatalog: CurriculumBook[] = [
 
 
   add("عمومی", "دوازدهم", "زبان انگلیسی", grade12EnglishLessons, 5, "112230"),
-  add("انسانی", "دوازدهم", "دین و زندگی", grade12HumanitiesDiniLessons, 5, "112204"),
+  add("انسانی", "دوازدهم", "دین و زندگی", grade12HumanitiesDiniLessons, 5, "112205"),
   add("ریاضی و تجربی", "دوازدهم", "دین و زندگی", grade12MathScienceDiniLessons, 5, "112204"),
 
   // Experimental track.
