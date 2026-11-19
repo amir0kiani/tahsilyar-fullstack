@@ -357,7 +357,7 @@ export function questionMatchesBookTrack(questionTrack: string, bookTrack: strin
 }
 
 export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: string; subject: string; chapter: string; topic?: string; sourceStatus?: string }>) {
-  const isVerified = (status?: string) => Boolean(status && status !== "sample-authored" && status !== "pending-review");
+  const isVerified = (status?: string) => ["reviewed", "official-exam-adapted", "mock-exam-adapted", "curriculum-verified"].includes(status ?? "");
   const assessmentQuestionRows = questionRows
     .map(canonicalizeGrade11AssessmentQuestion)
     .filter(isGrade11AssessmentQuestionEligible)
