@@ -3,9 +3,9 @@ import type { ExamQuestion } from "./examBank";
 // Five original, textbook-grounded questions for Grade 12 Humanities Dini, Lesson 1.
 // They are not copied from an official examination or from the supplementary question pack.
 // The supplementary pack has a conflicting Grade 11 label in its preface; only its pages explicitly marked Grade 12 Humanities are used as a secondary answer-key check.
-// The current Humanities book is code 112204 and contains 13 lessons.
+// The current Humanities book is code 112205 and contains 13 lessons.
 const verifiedAt = new Date("2026-11-18T00:00:00.000Z");
-const sourceTitle = "دین و زندگی (۳) ـ پایه دوازدهم رشته ادبیات و علوم انسانی، کد ۱۱۲۲۰۴، سال تحصیلی ۱۴۰۵–۱۴۰۶، سازمان پژوهش و برنامه‌ریزی آموزشی";
+const sourceTitle = "دین و زندگی (۳) ـ پایه دوازدهم رشته ادبیات و علوم انسانی، کد ۱۱۲۲۰۵، سال تحصیلی ۱۴۰۵–۱۴۰۶، سازمان پژوهش و برنامه‌ریزی آموزشی";
 const sourceUrl = "https://dl.daneshchi.ir/file/chap-school/DinOZendegi-E-12_Daneshchi.iR.pdf";
 const sourceAnswerUrl = "https://www.scribd.com/document/1034512358/%D8%AF%DB%8C%D9%86%DB%8C-%D8%AF%D9%88%D8%A7%D8%B2%D8%AF%D9%87%D9%85-%D8%A7%D9%86%D8%B3%D8%A7%D9%86%DB%8C";
 

@@ -6,6 +6,7 @@ import { verifiedGrade12HealthLesson1 } from "./verifiedGrade12HealthLesson1";
 import { verifiedHumanitiesArabic12Batch1 } from "./verifiedHumanitiesArabic12Batch1";
 import { verifiedHumanitiesDini12Lesson1 } from "./verifiedHumanitiesDini12Lesson1";
 import { verifiedHumanitiesDini12Lesson2 } from "./verifiedHumanitiesDini12Lesson2";
+import { verifiedHumanitiesDini12Lesson3 } from "./verifiedHumanitiesDini12Lesson3";
 import { examQuestions } from "./examBank";
 import { curriculumCatalog } from "./curriculumCatalog";
 import { verifiedQuestions } from "./verifiedQuestionBank";
@@ -2808,11 +2809,43 @@ it("adds five original, curriculum-verified questions for Grade 12 Humanities Di
     expect(verifiedHumanitiesDini12Lesson2.every(isGrade12AssessmentQuestionEligible)).toBe(true);
   });
 
+
+it("adds five original, curriculum-verified questions for Grade 12 Humanities Dini Lesson 3", () => {
+  const book = curriculumCatalog.find((item) =>
+    item.grade === "دوازدهم" && item.track === "انسانی" && item.subject === "دین و زندگی"
+  );
+  expect(book?.bookCode).toBe("112205");
+  expect(book?.chapters).toHaveLength(13);
+  expect(book?.chapters[2]).toBe("توحید و سبک زندگی");
+  expect(verifiedHumanitiesDini12Lesson3).toHaveLength(5);
+  expect(new Set(verifiedHumanitiesDini12Lesson3.map((question) => question.id)).size).toBe(5);
+
+  const lessonQuestions = verifiedQuestions.filter((question) =>
+    question.grade === "دوازدهم" &&
+    question.track === "انسانی" &&
+    question.subject === "دین و زندگی" &&
+    question.chapter === "توحید و سبک زندگی"
+  );
+  expect(lessonQuestions).toHaveLength(5);
+  expect(lessonQuestions.every((question) =>
+    question.sourceStatus === "curriculum-verified" &&
+    question.sourceTitle?.includes("کد ۱۱۲۲۰۵") &&
+    question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/DinOZendegi-E-12_Daneshchi.iR.pdf" &&
+    question.sourceYear === "۱۴۰۵" &&
+    question.options.length === 4 &&
+    question.correctIndex >= 0 &&
+    question.correctIndex < 4 &&
+    question.explanation.length > 20 &&
+    question.reviewerNote?.includes("سؤال تألیفی")
+  )).toBe(true);
+  expect(verifiedHumanitiesDini12Lesson3.every(isGrade12AssessmentQuestionEligible)).toBe(true);
+});
+
 it("adds five original, curriculum-verified questions for Grade 12 Humanities Dini Lesson 1", () => {
     const book = curriculumCatalog.find((item) =>
       item.grade === "دوازدهم" && item.track === "انسانی" && item.subject === "دین و زندگی"
     );
-    expect(book?.bookCode).toBe("112204");
+    expect(book?.bookCode).toBe("112205");
     expect(book?.chapters).toHaveLength(13);
     expect(book?.chapters[0]).toBe("هستی بخش");
     expect(verifiedHumanitiesDini12Lesson1.every(isGrade12AssessmentQuestionEligible)).toBe(true);
@@ -3039,7 +3072,7 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
       book.grade === "دوازدهم" && book.track === "عمومی" && book.subject === "زبان انگلیسی"
     );
 
-    expect(humanitiesDini?.bookCode).toBe("112204");
+    expect(humanitiesDini?.bookCode).toBe("112205");
     expect(humanitiesDini?.chapters).toHaveLength(13);
     expect(mathScienceDini?.bookCode).toBe("112204");
     expect(mathScienceDini?.chapters).toHaveLength(10);
