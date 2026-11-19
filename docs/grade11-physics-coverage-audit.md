@@ -17,10 +17,10 @@ These are separate editions and must not share one chapter map.
 ## Source review completed in this change
 
 Four items adapted from the Kānun Grade 11 Mathematics mock exam dated 21 Aban 1400 were checked against the linked booklet and its explanatory answer pages:
-- Q91: quantization of charge; the new numerical item is independently authored from the concept.
-- Q92: Coulomb force; explanatory answer page 16.
-- Q96: acceleration of a charged particle in an electric field; explanatory answer page 17.
-- Q97: field-line density and electric potential; explanatory answer page 17.
+- Q91: an original authored item on charge quantization, inspired by the topic only; it is explicitly not represented as an extracted/adapted exam question.
+- Q92: adapted Coulomb-force item; explanatory answer page 16.
+- Q96: adapted acceleration item; explanatory answer page 17.
+- Q97: adapted field-line-density and potential item; explanatory answer page 17.
 
 Source PDF: https://abadgaranedu.ir/wp-content/uploads/2021/11/kanoon-Sal11-Riazi-21Aban1400-konkur.in_.pdf
 
