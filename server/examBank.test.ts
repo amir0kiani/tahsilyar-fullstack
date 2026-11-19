@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { isGrade12AssessmentQuestionEligible } from "./grade12AssessmentEligibility";
 import { verifiedGrade12HealthLessons9to14 } from "./verifiedGrade12HealthLessons9to14";
+import { verifiedGrade12SharedEnglishVision3 } from "./verifiedGrade12SharedEnglishVision3";
 import { verifiedGrade12HealthLessons2to8 } from "./verifiedGrade12HealthLessons2to8";
 import { verifiedGrade12HealthLesson1 } from "./verifiedGrade12HealthLesson1";
 import { verifiedHumanitiesArabic12Batch1 } from "./verifiedHumanitiesArabic12Batch1";
@@ -3124,6 +3125,41 @@ it("completes all 13 Grade 12 Humanities Dini lessons with five curriculum-verif
       question.reviewerNote?.includes("سؤال تألیفی")
     )).toBe(true);
   }
+});
+
+
+
+it("completes all three shared Grade 12 Vision 3 lessons with five verified questions each for every track", () => {
+  const book = curriculumCatalog.find((item) =>
+    item.grade === "دوازدهم" && item.track === "عمومی" && item.subject === "زبان انگلیسی"
+  );
+  expect(book?.bookCode).toBe("112230");
+  expect(book?.chapters).toEqual(["Sense of Appreciation", "Look it Up!", "Renewable Energy"]);
+  expect(verifiedGrade12SharedEnglishVision3).toHaveLength(15);
+  expect(new Set(verifiedGrade12SharedEnglishVision3.map((question) => question.id)).size).toBe(15);
+  expect(verifiedGrade12SharedEnglishVision3.every(isGrade12AssessmentQuestionEligible)).toBe(true);
+  expect(verifiedGrade12SharedEnglishVision3.every((question) =>
+    question.grade === "دوازدهم" &&
+    question.track === "عمومی" &&
+    question.subject === "زبان انگلیسی" &&
+    question.sourceStatus === "curriculum-verified" &&
+    question.sourceUrl === "https://iranestekhdam.ir/storage/medias/2025-09-15/1757934304_%D8%A7%D9%86%DA%AF%D9%84%DB%8C%D8%B3%DB%8C-3.pdf" &&
+    question.sourceYear === "۱۴۰۳" &&
+    question.options.length === 4 &&
+    question.correctIndex >= 0 && question.correctIndex < 4 &&
+    question.explanation.length > 20 &&
+    question.reviewerNote?.includes("سؤال تألیفی")
+  )).toBe(true);
+  for (const chapter of book?.chapters ?? []) {
+    expect(verifiedGrade12SharedEnglishVision3.filter((question) => question.chapter === chapter), chapter).toHaveLength(5);
+  }
+  for (const track of ["انسانی", "ریاضی", "تجربی"]) {
+    expect(questionMatchesBookTrack("عمومی", track, "زبان انگلیسی", "دوازدهم")).toBe(true);
+  }
+  const allGrade12English = verifiedQuestions.filter((question) =>
+    question.grade === "دوازدهم" && question.subject === "زبان انگلیسی"
+  );
+  expect(allGrade12English).toHaveLength(15);
 });
 
 });
