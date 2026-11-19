@@ -431,14 +431,17 @@ export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; g
               canonicalizeGrade11PhysicsLesson(book.track, question.chapter, question.topic) === lesson
             );
             const verifiedQuestionCount = lessonQuestions.filter((question) => isVerified(question.sourceStatus)).length;
+            // A sub-lesson must be represented by at least one reviewed question;
+            // the five-question minimum applies to the official chapter, not every sub-lesson.
+            const targetQuestionsPerSubLesson = 1;
             return {
               chapter: lesson,
               section: book.chapters[sectionIndex] ?? section.title,
               sectionTitle: section.title,
               questionCount: lessonQuestions.length,
               verifiedQuestionCount,
-              targetQuestionsPerLesson,
-              targetMet: verifiedQuestionCount >= targetQuestionsPerLesson,
+              targetQuestionsPerLesson: targetQuestionsPerSubLesson,
+              targetMet: verifiedQuestionCount >= targetQuestionsPerSubLesson,
             };
           }))
         : undefined;
