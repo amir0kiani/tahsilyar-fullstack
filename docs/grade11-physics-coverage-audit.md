@@ -40,7 +40,7 @@ Six earlier practice items that had been labeled as Maz-adapted without an exact
 
 Before this batch, the verified bank contained 24 Mathematics-track and 20 Experimental-Sciences-track Physics 2 questions. Chapter thresholds were already met, but 24 of the 57 official sub-lessons had no mapped reviewed question: 12 in each edition.
 
-This change adds 12 original, independently checked questions for each track. Every new item is labelled `reviewed`, carries the correct track-specific book code and Roshd source URL, and explicitly states that it is authored rather than extracted from an exam.
+This change adds 12 original questions for each track. Every new item is labelled `reviewed`, carries the correct track-specific book code and Roshd source URL, and explicitly states that it is authored rather than extracted from an exam. The answer calculations and keys were checked independently. As a supplementary curriculum cross-check, the chapter-by-chapter 1xAi lesson summaries (explicitly labelled AI-generated and carrying textbook page references) were consulted; they were not treated as exam sources or as verbatim question sources. The full official PDF was not directly extracted in this run, so no new item is attributed to a published exam.
 
 After the batch, the chapter counts are:
 - Mathematics (36 total): electrostatics 15; direct-current circuits 9; magnetism 7; electromagnetic induction and alternating current 5.
