@@ -48,3 +48,6 @@ After the batch, the chapter counts are:
 
 The 29 Mathematics sub-lessons and 28 Experimental Sciences sub-lessons are now each represented by at least one reviewed question. The regression test requires zero remaining physics sub-lesson gaps, zero unmapped reviewed physics questions, and at least five reviewed questions in every official chapter. It does not require five questions for every sub-lesson.
 
+Supplementary lesson-level cross-checks (AI-generated summaries explicitly marked as such; not used as exam-source attribution):
+- Mathematics: https://mergedrop.1xai.ir/darsnameh/fizik-riazi-yazdahom/fasl-1 ; https://mergedrop.1xai.ir/darsnameh/fizik-riazi-yazdahom/fasl-2 ; https://mergedrop.1xai.ir/darsnameh/fizik-riazi-yazdahom/fasl-3
+- Experimental Sciences: https://1xai.ir/darsnameh/fizik-yazdahom/fasl-1 ; https://1xai.ir/darsnameh/fizik-yazdahom/fasl-2 ; https://1xai.ir/darsnameh/fizik-yazdahom/fasl-3
