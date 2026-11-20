@@ -3012,20 +3012,43 @@ it("reaches the five-question target for every Grade 12 humanities Math & Statis
     expect(questionMatchesBookTrack("انسانی", "ریاضی", "عربی")).toBe(false);
   });
 
-  it("keeps the Grade 12 humanities Arabic batch pending until its source and answer key can be independently checked", () => {
+  it("includes 25 Grade 12 humanities Arabic adaptations verified against the official exam and marking guide", () => {
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "دوازدهم" && item.track === "انسانی" && item.subject === "عربی"
+    );
+    expect(book?.bookCode).toBe("112207");
+    const lessons = book?.chapters ?? [];
+    expect(lessons).toHaveLength(5);
     expect(verifiedHumanitiesArabic12Batch1).toHaveLength(25);
-    expect(new Set(verifiedHumanitiesArabic12Batch1.map((question) => question.id)).size).toBe(25);
-    const counts = new Map<string, number>();
-    for (const question of verifiedHumanitiesArabic12Batch1) counts.set(question.chapter, (counts.get(question.chapter) ?? 0) + 1);
-    expect(counts.size).toBe(5);
-    expect([...counts.values()].every((count) => count === 5)).toBe(true);
-    expect(verifiedHumanitiesArabic12Batch1.every((question) =>
-      question.sourceStatus === "pending-review" &&
-      question.reviewerNote?.includes("بازبینی مستقل نشده")
+    const questions = verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" &&
+      question.track === "انسانی" &&
+      question.subject === "عربی"
+    );
+    expect(questions).toHaveLength(25);
+    expect(new Set(questions.map((question) => question.id)).size).toBe(25);
+    for (const lesson of lessons) {
+      const lessonQuestions = questions.filter((question) => question.chapter === lesson);
+      expect(lessonQuestions).toHaveLength(5);
+      expect(lessonQuestions.every((question) =>
+        question.sourceStatus === "official-exam-adapted"
+      )).toBe(true);
+    }
+    expect(questions.every((question) =>
+      question.options.length === 4 &&
+      Number.isInteger(question.correctIndex) &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < question.options.length &&
+      Boolean(question.explanation) &&
+      Boolean(question.sourceQuestionNumber) &&
+      question.sourceUrl === "https://dl.novinkonkor.com/nahaye/12/ensani/1404/khordad/arabi.pdf" &&
+      question.sourceAnswerUrl === question.sourceUrl &&
+      question.sourceTitle?.includes("۱۳ خرداد ۱۴۰۴") &&
+      question.reviewerNote?.includes("صفحات ۴ و ۵")
     )).toBe(true);
-    expect(verifiedQuestions.some((question) =>
-      question.grade === "دوازدهم" && question.track === "انسانی" && question.subject === "عربی"
-    )).toBe(false);
+    expect(questions.every(isGrade12AssessmentQuestionEligible)).toBe(true);
+    expect(questions.find((question) => question.id === "verified-human12-arabi1404-l5-ilahi-vocative-04")?.explanation)
+      .toContain("حرف ندای «يا»");
   });
 
   it("reaches five Grade 12 Health and Hygiene questions in each of the fourteen lessons", () => {
