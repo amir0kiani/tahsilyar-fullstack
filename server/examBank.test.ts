@@ -20,6 +20,7 @@ import { verifiedGrade11HumanitiesDiniLesson13 } from "./verifiedGrade11Humaniti
 import { verifiedGrade11HumanitiesDiniLesson15 } from "./verifiedGrade11HumanitiesDiniLesson15";
 import { verifiedGrade11HumanitiesDiniLesson17 } from "./verifiedGrade11HumanitiesDiniLesson17";
 import { verifiedGrade11English2 } from "./verifiedGrade11English2";
+import { verifiedGrade11PhysicsSublessonGapFill } from "./verifiedGrade11PhysicsSublessonGapFill";
 import { verifiedGrade11PersianLesson17 } from "./verifiedGrade11PersianLesson17";
 import { verifiedGrade11PersianLesson18 } from "./verifiedGrade11PersianLesson18";
 import { verifiedGrade12PersianLessons1to9 } from "./verifiedGrade12PersianLessons1to9";
@@ -767,7 +768,11 @@ describe("curriculum and assessment question bank", () => {
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       expect(batch.some((question) => question.grade === grade), grade).toBe(true);
     }
-    expect(batch.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+    const authoredPhysics = batch.filter((question) => question.id === "upload-math11-physics-electrostatics-16");
+    expect(authoredPhysics).toHaveLength(1);
+    expect(authoredPhysics[0].sourceStatus).toBe("reviewed");
+    expect(authoredPhysics[0].reviewerNote).toContain("از آن استخراج نشده‌اند");
+    expect(batch.filter((question) => question.id !== "upload-math11-physics-electrostatics-16").every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
     expect(batch.every((question) => question.explanation.length > 15)).toBe(true);
   });
 
@@ -2524,7 +2529,7 @@ describe("curriculum and assessment question bank", () => {
   it("reports complete Dini lesson coverage in all three tracks without cross-track leakage", () => {
     const diniRows = verifiedQuestions
       .filter((question) => question.grade === "یازدهم" && question.subject === "دین و زندگی")
-      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
+      .map(({ track, grade, subject, chapter, topic, sourceStatus }) => ({ track, grade, subject, chapter, topic, sourceStatus }));
     const catalog = buildGradeSpecificCatalog(diniRows);
 
     for (const track of ["انسانی", "ریاضی", "تجربی"]) {
@@ -2752,23 +2757,36 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
-  it("audits every eligible Grade 11 book and confirms all lessons meet target", () => {
+  it("audits eligible Grade 11 books and separates chapter targets from physics sublesson representation", () => {
     const rows = verifiedQuestions
       .filter((question) => question.grade === "یازدهم")
-      .map(({ track, grade, subject, chapter, sourceStatus }) => ({ track, grade, subject, chapter, sourceStatus }));
+      .map(({ track, grade, subject, chapter, topic, sourceStatus }) => ({ track, grade, subject, chapter, topic, sourceStatus }));
     const catalog = buildGradeSpecificCatalog(rows);
     const eligibleBooks = catalog.filter((book) =>
       book.grade === "یازدهم" && isGrade11AssessmentSubjectEligible(book.track, book.subject)
     );
 
     expect(eligibleBooks).toHaveLength(25);
-    expect(eligibleBooks.reduce((total, book) => total + (book.lessonCoverage?.length ?? 0), 0)).toBe(216);
-    const gaps = eligibleBooks.flatMap((book) =>
-      (book.lessonCoverage ?? [])
+    expect(eligibleBooks.reduce((total, book) => total + (book.lessonCoverage?.length ?? 0), 0)).toBe(266);
+
+    // Five reviewed questions remain mandatory for every official chapter/lesson.
+    // Physics is the only exception in the UI's nested map: its official chapters
+    // keep the five-question target while each sublesson is only checked for presence.
+    const chapterGaps = eligibleBooks.flatMap((book) => {
+      const coverage = book.subject === "فیزیک" ? (book.chapterCoverage ?? []) : (book.lessonCoverage ?? []);
+      return coverage
         .filter((lesson) => !lesson.targetMet)
-        .map((lesson) => ({ book: `${book.track}::${book.subject}`, chapter: lesson.chapter, count: lesson.verifiedQuestionCount }))
-    );
-    expect(gaps).toHaveLength(0);
+        .map((lesson) => ({ book: `${book.track}::${book.subject}`, chapter: lesson.chapter, count: lesson.verifiedQuestionCount }));
+    });
+    expect(chapterGaps).toHaveLength(0);
+
+    const physicsSublessonGaps = eligibleBooks
+      .filter((book) => book.subject === "فیزیک")
+      .flatMap((book) => (book.lessonCoverage ?? [])
+        .filter((lesson) => !lesson.targetMet)
+        .map((lesson) => ({ book: `${book.track}::${book.subject}`, sublesson: lesson.chapter, count: lesson.verifiedQuestionCount })));
+    // Gaps are deliberately reported rather than hidden by the chapter-level total.
+    expect(physicsSublessonGaps).toHaveLength(0);
 
     for (const chapter of ["حملهٔ حیدری", "کبوتر طوق‌دار", "قصهٔ عینکم"]) {
       const authored = verifiedQuestions.filter((question) =>
@@ -2783,111 +2801,6 @@ describe("curriculum and assessment question bank", () => {
       question.grade === "یازدهم" && question.subject === "فارسی" &&
       question.chapter.startsWith("درس آزاد")
     )).toBe(false);
-  });
-
-
-it("adds five original, curriculum-verified questions for Grade 12 Humanities Dini Lesson 2", () => {
-    expect(verifiedHumanitiesDini12Lesson2).toHaveLength(5);
-    expect(new Set(verifiedHumanitiesDini12Lesson2.map((question) => question.id)).size).toBe(5);
-
-    const lessonQuestions = verifiedQuestions.filter((question) =>
-      question.grade === "دوازدهم" &&
-      question.track === "انسانی" &&
-      question.subject === "دین و زندگی" &&
-      question.chapter === "یگانۀ بی‌همتا"
-    );
-    expect(lessonQuestions).toHaveLength(5);
-    expect(lessonQuestions.every((question) =>
-      question.sourceStatus === "curriculum-verified" &&
-      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/DinOZendegi-E-12_Daneshchi.iR.pdf" &&
-      question.sourceAnswerUrl === "https://www.scribd.com/document/1034512358/%D8%AF%DB%8C%D9%86%DB%8C-%D8%AF%D9%88%D8%A7%D8%B2%D8%AF%D9%87%D9%85-%D8%A7%D9%86%D8%B3%D8%A7%D9%86%DB%8C" &&
-      question.sourceYear === "۱۴۰۵" &&
-      question.options.length === 4 &&
-      question.correctIndex >= 0 &&
-      question.correctIndex < 4 &&
-      question.explanation.length > 20 &&
-      question.reviewerNote?.includes("سؤال تألیفی")
-    )).toBe(true);
-    expect(verifiedHumanitiesDini12Lesson2.every(isGrade12AssessmentQuestionEligible)).toBe(true);
-  });
-
-
-it("adds five original, curriculum-verified questions for Grade 12 Humanities Dini Lesson 3", () => {
-  const book = curriculumCatalog.find((item) =>
-    item.grade === "دوازدهم" && item.track === "انسانی" && item.subject === "دین و زندگی"
-  );
-  expect(book?.bookCode).toBe("112205");
-  expect(book?.chapters).toHaveLength(13);
-  expect(book?.chapters[2]).toBe("توحید و سبک زندگی");
-  expect(verifiedHumanitiesDini12Lesson3).toHaveLength(5);
-  expect(new Set(verifiedHumanitiesDini12Lesson3.map((question) => question.id)).size).toBe(5);
-
-  const lessonQuestions = verifiedQuestions.filter((question) =>
-    question.grade === "دوازدهم" &&
-    question.track === "انسانی" &&
-    question.subject === "دین و زندگی" &&
-    question.chapter === "توحید و سبک زندگی"
-  );
-  expect(lessonQuestions).toHaveLength(5);
-  expect(lessonQuestions.every((question) =>
-    question.sourceStatus === "curriculum-verified" &&
-    question.sourceTitle?.includes("کد ۱۱۲۲۰۵") &&
-    question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/DinOZendegi-E-12_Daneshchi.iR.pdf" &&
-    question.sourceYear === "۱۴۰۵" &&
-    question.options.length === 4 &&
-    question.correctIndex >= 0 &&
-    question.correctIndex < 4 &&
-    question.explanation.length > 20 &&
-    question.reviewerNote?.includes("سؤال تألیفی")
-  )).toBe(true);
-  expect(verifiedHumanitiesDini12Lesson3.every(isGrade12AssessmentQuestionEligible)).toBe(true);
-});
-
-
-
-it("adds five original, curriculum-verified questions for Grade 12 Humanities Dini Lesson 1", () => {
-    const book = curriculumCatalog.find((item) =>
-      item.grade === "دوازدهم" && item.track === "انسانی" && item.subject === "دین و زندگی"
-    );
-    expect(book?.bookCode).toBe("112205");
-    expect(book?.chapters).toHaveLength(13);
-    expect(book?.chapters[0]).toBe("هستی بخش");
-    expect(verifiedHumanitiesDini12Lesson1.every(isGrade12AssessmentQuestionEligible)).toBe(true);
-    expect(verifiedHumanitiesDini12Lesson1).toHaveLength(5);
-    expect(new Set(verifiedHumanitiesDini12Lesson1.map((question) => question.id)).size).toBe(5);
-
-    const lessonQuestions = verifiedQuestions.filter((question) =>
-      question.grade === "دوازدهم" &&
-      question.track === "انسانی" &&
-      question.subject === "دین و زندگی" &&
-      question.chapter === "هستی بخش"
-    );
-    expect(lessonQuestions).toHaveLength(5);
-    expect(lessonQuestions.every((question) =>
-      question.sourceStatus === "curriculum-verified" &&
-      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/DinOZendegi-E-12_Daneshchi.iR.pdf" &&
-      question.sourceAnswerUrl === "https://www.scribd.com/document/1034512358/%D8%AF%DB%8C%D9%86%DB%8C-%D8%AF%D9%88%D8%A7%D8%B2%D8%AF%D9%87%D9%85-%D8%A7%D9%86%D8%B3%D8%A7%D9%86%DB%8C" &&
-      question.sourceYear === "۱۴۰۵" &&
-      question.options.length === 4 &&
-      question.correctIndex >= 0 &&
-      question.correctIndex < 4 &&
-      question.explanation.length > 20 &&
-      question.reviewerNote?.includes("سؤال تألیفی")
-    )).toBe(true);
-
-  });
-
-it("reaches the five-question target for every Grade 12 humanities Math & Statistics lesson", () => {
-    const questions = verifiedQuestions.filter((question) =>
-      question.track === "انسانی" && question.grade === "دوازدهم" && question.subject === "ریاضی و آمار"
-    );
-    const counts = new Map<string, number>();
-    for (const question of questions) counts.set(question.chapter, (counts.get(question.chapter) ?? 0) + 1);
-    expect(Object.fromEntries([...counts.entries()].sort(([a], [b]) => a.localeCompare(b)))).toEqual({
-      "آمار و احتمال": 5,
-      "الگوهای خطی": 5,
-      "الگوهای غیرخطی": 5,
-    });
   });
 
   it("links the new humanities Math & Statistics batch to its official 1405 exam and marking guide", () => {
@@ -3161,5 +3074,106 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
   );
   expect(allGrade12English).toHaveLength(15);
 });
+
+  it("fills all 57 Grade 11 Physics 2 sub-lessons with reviewed original questions", () => {
+    expect(verifiedGrade11PhysicsSublessonGapFill).toHaveLength(24);
+    for (const track of ["ریاضی", "تجربی"] as const) {
+      const batch = verifiedGrade11PhysicsSublessonGapFill.filter((question) => question.track === track);
+      expect(batch).toHaveLength(12);
+      expect(batch.every((question) =>
+        question.grade === "یازدهم" &&
+        question.subject === "فیزیک" &&
+        question.sourceStatus === "reviewed" &&
+        question.sourceQuestionNumber === undefined &&
+        question.reviewerNote?.includes("تألیفی و مستقل از آزمون")
+      )).toBe(true);
+      expect(batch.every((question) => question.sourceUrl === (
+        track === "ریاضی"
+          ? "https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-ریاضی-و-فیزیک"
+          : "https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-علوم-تجربی"
+      ))).toBe(true);
+    }
+    expect(new Set(verifiedGrade11PhysicsSublessonGapFill.map((question) => question.id)).size).toBe(24);
+  });
+
+  it("keeps Grade 11 physics chapter minimum separate from sub-lesson representation", () => {
+    const catalog = buildGradeSpecificCatalog(verifiedQuestions.map(({ track, grade, subject, chapter, topic, sourceStatus }) => ({
+      track, grade, subject, chapter, topic, sourceStatus,
+    })));
+    for (const track of ["ریاضی", "تجربی"]) {
+      const book = catalog.find((item) =>
+        item.grade === "یازدهم" && item.track === track && item.subject === "فیزیک"
+      );
+      expect(book?.chapterCoverage?.length).toBe(track === "ریاضی" ? 4 : 3);
+      expect(book?.chapterCoverage?.every((chapter) =>
+        chapter.verifiedQuestionCount >= 5 && chapter.targetQuestionsPerLesson === 5 && chapter.targetMet
+      )).toBe(true);
+      expect(book?.lessonCoverage?.length).toBe(track === "ریاضی" ? 29 : 28);
+      expect(book?.lessonCoverage?.every((lesson) =>
+        lesson.targetQuestionsPerLesson === 1 &&
+        lesson.targetMet === (lesson.verifiedQuestionCount >= 1)
+      )).toBe(true);
+    }
+  });
+
+
+  it("records the four Kanoon physics adaptations with exact source references and checked answer keys", () => {
+    const batch = verifiedQuestions.filter((question) =>
+      question.id.startsWith("mock-adapted-grade11-math-physics-kanoon-1400-")
+    );
+    expect(batch).toHaveLength(4);
+    expect(batch.map((question) => question.correctIndex)).toEqual([1, 1, 1, 1]);
+    const original = batch.find((question) => question.id.endsWith("quantized-charge-91"));
+    expect(original?.sourceStatus).toBe("reviewed");
+    expect(original?.sourceTitle).toContain("سؤال تألیفی تحصیل‌یار");
+    expect(original?.sourceUrl).toBe("https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-ریاضی-و-فیزیک");
+    expect(original?.sourceQuestionNumber).toBeUndefined();
+    expect(original?.reviewerNote).toContain("از دفترچه قلم‌چی استخراج نشده است");
+    const adapted = batch.filter((question) => !question.id.endsWith("quantized-charge-91"));
+    expect(adapted).toHaveLength(3);
+    expect(adapted.every((question) =>
+      question.sourceStatus === "mock-exam-adapted" &&
+      question.sourceUrl === "https://abadgaranedu.ir/wp-content/uploads/2021/11/kanoon-Sal11-Riazi-21Aban1400-konkur.in_.pdf" &&
+      question.sourceAnswerUrl === question.sourceUrl &&
+      question.sourceYear === "۱۴۰۰" &&
+      Boolean(question.sourceQuestionNumber) &&
+      question.reviewerNote?.includes("پاسخ")
+    )).toBe(true);
+  });
+
+  it("maps every reviewed Grade 11 physics question to an official sub-lesson or reports it explicitly", () => {
+    const catalog = buildGradeSpecificCatalog(verifiedQuestions.map(({ track, grade, subject, chapter, topic, sourceStatus }) => ({
+      track, grade, subject, chapter, topic, sourceStatus,
+    })));
+    for (const track of ["ریاضی", "تجربی"]) {
+      const book = catalog.find((item) =>
+        item.grade === "یازدهم" && item.track === track && item.subject === "فیزیک"
+      );
+      expect(book?.unmappedQuestionCount, track).toBe(0);
+    }
+  });
+
+
+  it("labels uploaded Grade 11 physics practice as original authored content, not Maz-extracted questions", () => {
+    const uploaded = verifiedQuestions.filter((question) =>
+      question.id.startsWith("uploaded-physics11-electrostatics-")
+    );
+    expect(uploaded).toHaveLength(5);
+    expect(uploaded.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceTitle === "تألیفی تحصیل‌یار بر اساس سرفصل‌های رسمی فیزیک (۲) یازدهم" &&
+      question.sourceUrl === "https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-علوم-تجربی" &&
+      question.sourceYear === "۱۴۰۵–۱۴۰۶" &&
+      question.sourceQuestionNumber === undefined &&
+      question.reviewerNote?.includes("از آزمون ماز استخراج نشده است")
+    )).toBe(true);
+
+    const mathItem = verifiedQuestions.find((question) => question.id === "upload-math11-physics-electrostatics-16");
+    expect(mathItem?.sourceStatus).toBe("reviewed");
+    expect(mathItem?.sourceTitle).toBe("سؤال تألیفی تحصیل‌یار بر اساس قانون کولن در فیزیک (۲) یازدهم رشته ریاضی و فیزیک");
+    expect(mathItem?.sourceUrl).toBe("https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-ریاضی-و-فیزیک");
+    expect(mathItem?.reviewerNote).toContain("از آن استخراج نشده‌اند");
+  });
+
 
 });

@@ -6,6 +6,7 @@ import type { ExamQuestion } from "./examBank";
 // labelled as official-exam adaptations; all stems and distractors below are authored.
 const verifiedAt = new Date("2026-11-10T00:00:00.000Z");
 const sourceTitle = "تألیفی تحصیل‌یار بر اساس محتوای فیزیک (۲) یازدهم";
+const sourceUrl = "https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-علوم-تجربی";
 
 function authored(
   id: string,
@@ -31,6 +32,8 @@ function authored(
     explanation,
     sourceStatus: "reviewed",
     sourceTitle,
+    sourceUrl,
+    sourceYear: "۱۴۰۵–۱۴۰۶",
     verifiedAt,
     reviewerNote: "سؤال تألیفی و مستقل است؛ پاسخ با روابط و مفاهیم کتاب فیزیک (۲) یازدهم بازبینی شده است. فایل موجود از آزمون نهایی خرداد ۱۴۰۳ فقط راهنمای تصحیح بود و دفترچهٔ سؤال در آرشیو نبود؛ بنابراین این سؤال به آزمون رسمی نسبت داده نشده است."
   };

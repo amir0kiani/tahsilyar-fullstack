@@ -6,15 +6,16 @@ const reviewNote = "بر اساس مبحث و الگوی پرسش‌های دف�
 function item(input: {
   id: string; grade: string; track: string; subject: string; chapter: string; topic: string;
   prompt: string; options: [string, string, string, string]; correctIndex: number;
-  explanation: string; sourceTitle: string; sourceQuestionNumber: string;
+  explanation: string; sourceTitle: string; sourceQuestionNumber?: string;
+  sourceStatus?: ExamQuestion["sourceStatus"]; sourceUrl?: string; sourceYear?: string; reviewerNote?: string;
   difficulty?: "آسان" | "متوسط" | "سخت";
 }): ExamQuestion {
   return {
     ...input,
     difficulty: input.difficulty ?? "متوسط",
-    sourceStatus: "mock-exam-adapted",
+    sourceStatus: input.sourceStatus ?? "mock-exam-adapted",
     verifiedAt,
-    reviewerNote: reviewNote,
+    reviewerNote: input.reviewerNote ?? reviewNote,
   };
 }
 
@@ -152,7 +153,11 @@ export const verifiedScienceMathBatch2: ExamQuestion[] = [
     prompt:"اگر فاصلهٔ دو بار نقطه‌ای در خلأ دو برابر شود و اندازهٔ بارها ثابت بماند، نیروی الکتریکی بین آن‌ها چه تغییری می‌کند؟",
     options:["دو برابر می‌شود","چهار برابر می‌شود","نصف می‌شود","یک‌چهارم می‌شود"], correctIndex:3,
     explanation:"طبق قانون کولن نیرو با مجذور فاصله نسبت وارون دارد؛ با دو برابرشدن فاصله، نیرو به یک‌چهارم مقدار اولیه می‌رسد.",
-    sourceTitle:m11, sourceQuestionNumber:"ریاضیات، مبحث الکتریسیته ساکن"
+    sourceTitle:"سؤال تألیفی تحصیل‌یار بر اساس قانون کولن در فیزیک (۲) یازدهم رشته ریاضی و فیزیک",
+    sourceStatus:"reviewed",
+    sourceUrl:"https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-ریاضی-و-فیزیک",
+    sourceYear:"۱۴۰۵–۱۴۰۶",
+    reviewerNote:"سؤال تألیفی مستقل؛ موضوع آزمون ماز ۱۵ آبان فقط منبع تکمیلی برای شناسایی مبحث بوده و متن و گزینه‌ها از آن استخراج نشده‌اند. محتوای قانون کولن با سرفصل رسمی رشد تطبیق داده شده است."
   }),
   item({
     id:"upload-math12-calculus-derivative-17", grade:"دوازدهم", track:"ریاضی", subject:"حسابان",
