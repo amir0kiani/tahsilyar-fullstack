@@ -3,7 +3,7 @@
 ## Independent coverage thresholds
 
 - Each official textbook chapter must contain at least five eligible, reviewed questions.
-- Each mapped sub-lesson must be represented by at least one eligible, reviewed question.
+- Each official mapped sub-lesson must be represented by at least one eligible, reviewed question.
 - The five-question chapter threshold is not repeated for every sub-lesson.
 - Only `reviewed`, `official-exam-adapted`, `mock-exam-adapted`, and `curriculum-verified` count as reviewed coverage.
 - `sample-authored` and `pending-review` never count toward either threshold.
@@ -14,7 +14,15 @@ The Mathematics edition (book code 111209) contains 4 chapters and 29 mapped sub
 The Experimental Sciences edition (book code 111244) contains 3 chapters and 28 mapped sub-lessons.
 These are separate editions and must not share one chapter map.
 
-## Source review completed in this change
+Current 1405–1406 contents indexes:
+- Mathematics: https://www.daneshchi.ir/physic-11-riazi/
+- Experimental Sciences: https://www.daneshchi.ir/physic-tajrobi-11/
+- Official Roshd Mathematics record: https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-ریاضی-و-فیزیک
+- Official Roshd Experimental Sciences record: https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-علوم-تجربی
+
+The 1405–1406 contents indexes identify the Mathematics edition as four chapters and the Experimental Sciences edition as three chapters. Their section maps are tracked independently.
+
+## Source review completed before the gap-fill batch
 
 Four items adapted from the Kānun Grade 11 Mathematics mock exam dated 21 Aban 1400 were checked against the linked booklet and its explanatory answer pages:
 - Q91: an original authored item on charge quantization, inspired by the topic only; it is explicitly not represented as an extracted/adapted exam question.
@@ -24,12 +32,19 @@ Four items adapted from the Kānun Grade 11 Mathematics mock exam dated 21 Aban 
 
 Source PDF: https://abadgaranedu.ir/wp-content/uploads/2021/11/kanoon-Sal11-Riazi-21Aban1400-konkur.in_.pdf
 
-The ten questions attributed to Konkur 1402 in the earlier source PR were not imported here because the referenced PDFs could not be independently opened in this review. They remain outside the verified count until booklet and key are checked.
+The ten questions attributed to Konkur 1402 in the earlier source PR were not imported because the referenced PDFs could not be independently opened in that review. They remain outside the verified count until the booklet and answer key are checked.
 
-## Provenance corrections\n\nSix earlier practice items that had been labeled as Maz-adapted without an exact matching Maz question were corrected to original authored content, with the official Roshd curriculum page as the supporting content reference. They now use `reviewed` and explicitly state that they were not extracted from the Maz exam.\n\n## Known topic mappings resolved
+Six earlier practice items that had been labeled as Maz-adapted without an exact matching Maz question were corrected to original authored content, with the official Roshd curriculum page as the supporting content reference. They use `reviewed` and explicitly state that they were not extracted from the Maz exam.
 
-- Math: photoresistor -> factors affecting electrical resistance.
-- Math: magnetic field from flux -> electromagnetic induction.
-- Experimental: potential difference and potential energy -> electric potential.
+## Gap-fill batch — 20 November 2026
 
-The runtime catalog reports unmapped reviewed physics questions separately; this document does not assert that any other book in Grade 11 has completed its independent textbook/source audit.
+Before this batch, the verified bank contained 24 Mathematics-track and 20 Experimental-Sciences-track Physics 2 questions. Chapter thresholds were already met, but 24 of the 57 official sub-lessons had no mapped reviewed question: 12 in each edition.
+
+This change adds 12 original, independently checked questions for each track. Every new item is labelled `reviewed`, carries the correct track-specific book code and Roshd source URL, and explicitly states that it is authored rather than extracted from an exam.
+
+After the batch, the chapter counts are:
+- Mathematics (36 total): electrostatics 15; direct-current circuits 9; magnetism 7; electromagnetic induction and alternating current 5.
+- Experimental Sciences (32 total): electrostatics 14; direct-current circuits 7; magnetism and electromagnetic induction 11.
+
+The 29 Mathematics sub-lessons and 28 Experimental Sciences sub-lessons are now each represented by at least one reviewed question. The regression test requires zero remaining physics sub-lesson gaps, zero unmapped reviewed physics questions, and at least five reviewed questions in every official chapter. It does not require five questions for every sub-lesson.
+

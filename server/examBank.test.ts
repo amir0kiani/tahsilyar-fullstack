@@ -20,6 +20,7 @@ import { verifiedGrade11HumanitiesDiniLesson13 } from "./verifiedGrade11Humaniti
 import { verifiedGrade11HumanitiesDiniLesson15 } from "./verifiedGrade11HumanitiesDiniLesson15";
 import { verifiedGrade11HumanitiesDiniLesson17 } from "./verifiedGrade11HumanitiesDiniLesson17";
 import { verifiedGrade11English2 } from "./verifiedGrade11English2";
+import { verifiedGrade11PhysicsSublessonGapFill } from "./verifiedGrade11PhysicsSublessonGapFill";
 import { verifiedGrade11PersianLesson17 } from "./verifiedGrade11PersianLesson17";
 import { verifiedGrade11PersianLesson18 } from "./verifiedGrade11PersianLesson18";
 import { verifiedGrade12PersianLessons1to9 } from "./verifiedGrade12PersianLessons1to9";
@@ -2785,7 +2786,7 @@ describe("curriculum and assessment question bank", () => {
         .filter((lesson) => !lesson.targetMet)
         .map((lesson) => ({ book: `${book.track}::${book.subject}`, sublesson: lesson.chapter, count: lesson.verifiedQuestionCount })));
     // Gaps are deliberately reported rather than hidden by the chapter-level total.
-    expect(physicsSublessonGaps.every((gap) => gap.count === 0)).toBe(true);
+    expect(physicsSublessonGaps).toHaveLength(0);
 
     for (const chapter of ["حملهٔ حیدری", "کبوتر طوق‌دار", "قصهٔ عینکم"]) {
       const authored = verifiedQuestions.filter((question) =>
@@ -3073,6 +3074,27 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
   );
   expect(allGrade12English).toHaveLength(15);
 });
+
+  it("fills all 57 Grade 11 Physics 2 sub-lessons with reviewed original questions", () => {
+    expect(verifiedGrade11PhysicsSublessonGapFill).toHaveLength(24);
+    for (const track of ["ریاضی", "تجربی"] as const) {
+      const batch = verifiedGrade11PhysicsSublessonGapFill.filter((question) => question.track === track);
+      expect(batch).toHaveLength(12);
+      expect(batch.every((question) =>
+        question.grade === "یازدهم" &&
+        question.subject === "فیزیک" &&
+        question.sourceStatus === "reviewed" &&
+        question.sourceQuestionNumber === undefined &&
+        question.reviewerNote?.includes("تألیفی و مستقل از آزمون")
+      )).toBe(true);
+      expect(batch.every((question) => question.sourceUrl === (
+        track === "ریاضی"
+          ? "https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-ریاضی-و-فیزیک"
+          : "https://www.roshd.ir/olum/Content/کتاب-فیزیک-2-پایه-یازدهم-رشته-علوم-تجربی"
+      ))).toBe(true);
+    }
+    expect(new Set(verifiedGrade11PhysicsSublessonGapFill.map((question) => question.id)).size).toBe(24);
+  });
 
   it("keeps Grade 11 physics chapter minimum separate from sub-lesson representation", () => {
     const catalog = buildGradeSpecificCatalog(verifiedQuestions.map(({ track, grade, subject, chapter, topic, sourceStatus }) => ({
