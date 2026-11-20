@@ -1,9 +1,9 @@
 import type { ExamQuestion } from "./examBank";
 
-const verifiedAt = new Date("2026-11-16T00:00:00.000Z");
+const verifiedAt = new Date("2026-11-20T00:00:00.000Z");
 const sourceUrl = "https://dl.novinkonkor.com/nahaye/12/ensani/1404/khordad/arabi.pdf";
 const sourceTitle = "آزمون نهایی عربی، زبان قرآن (۳) پایه دوازدهم رشته ادبیات و علوم انسانی ـ ۱۳ خرداد ۱۴۰۴؛ مرکز ارزشیابی و تضمین کیفیت نظام آموزش و پرورش";
-const reviewerNote = "منبع ادعاشده: آزمون نهایی عربی انسانی خرداد ۱۴۰۴ و راهنمای تصحیح همراه آن. فایل PDF از نشانی ثبت‌شده در این نوبت مستقل باز نشد؛ بنابراین پاسخ‌ها و تطبیق کلید هنوز بازبینی مستقل نشده‌اند و نباید در شمار تکمیل درس لحاظ شوند."
+const reviewerNote = "منبع اولیه و پاسخ‌نامه در یک PDF پنج‌صفحه‌ای مستقل بازبینی شد: صفحات ۱ تا ۳ دفترچه آزمون نهایی عربی ۳ انسانی مورخ ۱۳ خرداد ۱۴۰۴ و صفحات ۴ و ۵ راهنمای رسمی نمره‌گذاری مرکز ارزشیابی و تضمین کیفیت نظام آموزش و پرورش است. هر ۲۵ مورد با متن سؤال و کلید رسمی تطبیق داده شد و سپس به‌صورت چهارگزینه‌ای بازنویسی شد. شماره درس و صفحه با کتاب رسمی عربی، زبان قرآن (۳) انسانی، کد ۱۱۲۲۰۷، چاپ نهم ۱۴۰۵ تطبیق داده شد. در پرسش «إلهي» حرف ندای «يا» در عبارت حذف شده است؛ نقش منادى مطابق ساخت اسلوب ندا و کلید رسمی ثبت شده است."
 
 const questionSeeds: Array<Omit<ExamQuestion,
   "sourceStatus" | "sourceTitle" | "sourceUrl" | "sourceAnswerUrl" | "sourceYear" | "verifiedAt" | "reviewerNote"
@@ -319,7 +319,7 @@ const questionSeeds: Array<Omit<ExamQuestion,
     prompt: "در عبارت «إلهي، اجعل التوفيق حظي»، واژهٔ «إلهي» چه نقش دستوری دارد؟",
     options: ["منادى", "مفعول مطلق", "حال", "مستثنى"],
     correctIndex: 0,
-    explanation: "«إلهي» پس از حرف ندا آمده و منادا است؛ راهنمای رسمی این مورد را در درس پنجم، صفحهٔ ۷۲ تأیید کرده است.",
+    explanation: "«إلهي» در این کاربرد مناداست و حرف ندای «يا» از عبارت حذف شده است؛ این ساخت در درس پنجم ذیل اسلوب ندا بررسی می‌شود و راهنمای رسمی سؤال ۹ نقش منادى را تأیید می‌کند (صفحهٔ ۷۲).",
     sourceQuestionNumber: "۹-الف",
   },
   {
@@ -337,7 +337,7 @@ const questionSeeds: Array<Omit<ExamQuestion,
 
 export const verifiedHumanitiesArabic12Batch1: ExamQuestion[] = questionSeeds.map((question) => ({
   ...question,
-  sourceStatus: "pending-review",
+  sourceStatus: "official-exam-adapted",
   sourceTitle,
   sourceUrl,
   sourceAnswerUrl: sourceUrl,
