@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { isGrade12AssessmentQuestionEligible } from "./grade12AssessmentEligibility";
 import { verifiedGrade12HealthLessons9to14 } from "./verifiedGrade12HealthLessons9to14";
 import { verifiedGrade12SharedEnglishVision3 } from "./verifiedGrade12SharedEnglishVision3";
+import { verifiedGrade12MathScienceDini } from "./verifiedGrade12MathScienceDini";
 import { verifiedGrade12HealthLessons2to8 } from "./verifiedGrade12HealthLessons2to8";
 import { verifiedGrade12HealthLesson1 } from "./verifiedGrade12HealthLesson1";
 import { verifiedGrade12BiologyChapter4 } from "./verifiedGrade12BiologyChapter4";
@@ -3280,5 +3281,67 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
     }
   });
 
+
+
+  it("provides five verified questions for every lesson of the shared Grade 12 Math/Experimental Dini book", () => {
+    const book = curriculumCatalog.find((item) =>
+      item.track === "ریاضی و تجربی" && item.grade === "دوازدهم" && item.subject === "دین و زندگی"
+    );
+    const chapters = [
+      "هستی بخش",
+      "یگانۀ بی‌همتا",
+      "توحید و سبک زندگی",
+      "فقط برای تو",
+      "قدرت پرواز",
+      "سنت‌های خداوند در زندگی",
+      "بازگشت",
+      "زندگی در دنیای امروز و عمل به احکام الهی",
+      "پایه‌های استوار",
+      "تمدن جدید و مسئولیت ما",
+    ];
+    expect(book?.bookCode).toBe("112204");
+    expect(book?.chapters).toEqual(chapters);
+    expect(book?.targetQuestionsPerLesson).toBe(5);
+    expect(verifiedGrade12MathScienceDini).toHaveLength(50);
+    expect(new Set(verifiedGrade12MathScienceDini.map((question) => question.id)).size).toBe(50);
+    const lessonSixTopics = verifiedGrade12MathScienceDini
+      .filter((question) => question.chapter === "سنت‌های خداوند در زندگی")
+      .map((question) => question.topic);
+    expect(lessonSixTopics).toContain("امداد خاص و توفیق الهی");
+    expect(lessonSixTopics).toContain("املا و استدراج");
+
+    for (const chapter of chapters) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.grade === "دوازدهم" &&
+        question.track === "ریاضی و تجربی" &&
+        question.subject === "دین و زندگی" &&
+        question.chapter === chapter &&
+        question.sourceStatus === "curriculum-verified"
+      );
+      expect(questions, chapter).toHaveLength(5);
+      expect(questions.every((question) =>
+        question.sourceTitle === "دین و زندگی (۳) ـ پایه دوازدهم رشته‌های ریاضی و علوم تجربی، کد ۱۱۲۲۰۴، چاپ هشتم ۱۴۰۴، سازمان پژوهش و برنامه‌ریزی آموزشی"
+      )).toBe(true);
+      expect(questions.every((question) =>
+        question.sourceUrl === "https://iranestekhdam.ir/storage/medias/2025-11-23/1763899910_%D8%AF%DB%8C%D9%86-%D9%88-%D8%B2%D9%86%D8%AF%DA%AF%DB%8C-%D8%AF%D9%88%D8%A7%D8%B2%D8%AF%D9%87%D9%85.pdf" &&
+        question.sourceYear === "۱۴۰۴" &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4 &&
+        question.reviewerNote?.includes("صفحات چاپی")
+      )).toBe(true);
+      expect(questions.every((question) => isGrade12AssessmentQuestionEligible(question))).toBe(true);
+    }
+
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "ریاضی و تجربی", "دین و زندگی", "دوازدهم")).toBe(true);
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "ریاضی", "دین و زندگی", "دوازدهم")).toBe(true);
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "تجربی", "دین و زندگی", "دوازدهم")).toBe(true);
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "انسانی", "دین و زندگی", "دوازدهم")).toBe(false);
+    expect(verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" &&
+      question.track === "ریاضی و تجربی" &&
+      question.subject === "دین و زندگی"
+    )).toHaveLength(50);
+  });
 
 });
