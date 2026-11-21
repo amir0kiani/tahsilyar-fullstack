@@ -18,7 +18,7 @@ export const verifiedBiologyBatch2: ExamQuestion[] = [
     options: ["تغییر فشار تورژسانس آن‌ها", "تغییر تعداد کروموزوم‌ها", "ساخت دیوارهٔ ثانویه در همهٔ آن‌ها", "تبدیل‌شدن آن‌ها به آوند چوبی"],
     correctIndex: 0,
     explanation: "ورود و خروج آب از یاخته‌های نگهبان فشار تورژسانس آن‌ها را تغییر می‌دهد و در نتیجه روزنه باز یا بسته می‌شود.",
-    sourceStatus: "official-exam-adapted", sourceTitle, sourceUrl: officialSanjeshExamUrl, sourceYear: "۱۴۰۵",
+    sourceStatus: "pending-review", sourceTitle, sourceUrl: officialSanjeshExamUrl, sourceYear: "۱۴۰۵",
     sourceQuestionNumber: "۳", verifiedAt,
     reviewerNote: "تمرین مستقل از مبحث ساختار برگ خرزهره در سؤال مرجع؛ متن و گزینه‌ها عین دفترچه نیستند."
   },
@@ -92,7 +92,7 @@ export const verifiedBiologyBatch2: ExamQuestion[] = [
     explanation: "پسر کروموزوم X خود را از مادر می‌گیرد. مادر ناقل در نیمی از تخمک‌هایش آلل نهفته را دارد؛ بنابراین احتمال ابتلای یک پسر ۵۰ درصد است.",
     sourceStatus: "official-exam-adapted", sourceTitle, sourceUrl: officialSanjeshExamUrl, sourceYear: "۱۴۰۵",
     sourceQuestionNumber: "۱۱", verifiedAt,
-    reviewerNote: "تمرین مستقل از مبحث صفات وابسته به X در سؤال مرجع؛ سناریو ساده‌سازی و بازنویسی شده است."
+    reviewerNote: "pending-review: این پرسش احتمال‌محور است؛ پیشگفتار کتاب رسمی زیست‌شناسی (۳)، چاپ ۱۴۰۵، طراحی سؤال‌های عددی و محاسباتی از محتوای کتاب را در همه آزمون‌ها از جمله کنکور ممنوع کرده است. تا تعیین تکلیف آموزشی، از آزمون دانش‌آموزی و حدنصاب فصل کنار گذاشته شد."
   },
   {
     id: "verified-bio3-transcription-1405-017",
