@@ -3080,6 +3080,11 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
     for (const track of ["ریاضی", "تجربی"] as const) {
       const batch = verifiedGrade11PhysicsSublessonGapFill.filter((question) => question.track === track);
       expect(batch).toHaveLength(12);
+      expect(batch.map((question) => question.correctIndex)).toEqual(
+        track === "ریاضی"
+          ? [0, 1, 0, 0, 1, 2, 2, 2, 2, 2, 1, 0]
+          : [0, 0, 1, 2, 2, 0, 0, 0, 1, 0, 2, 0]
+      );
       expect(batch.every((question) =>
         question.grade === "یازدهم" &&
         question.subject === "فیزیک" &&
