@@ -544,7 +544,7 @@ describe("curriculum and assessment question bank", () => {
         question.track === "تجربی" && question.grade === grade && question.subject === "زیست‌شناسی"
       ).filter((question) => question.sourceStatus !== "pending-review");
       expect(questions.length).toBeGreaterThanOrEqual(5);
-      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
+      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed", "curriculum-verified"].includes(question.sourceStatus ?? ""))).toBe(true);
     }
   });
 
