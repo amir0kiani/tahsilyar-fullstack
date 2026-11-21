@@ -4,6 +4,8 @@ import { verifiedGrade12HealthLessons9to14 } from "./verifiedGrade12HealthLesson
 import { verifiedGrade12SharedEnglishVision3 } from "./verifiedGrade12SharedEnglishVision3";
 import { verifiedGrade12HealthLessons2to8 } from "./verifiedGrade12HealthLessons2to8";
 import { verifiedGrade12HealthLesson1 } from "./verifiedGrade12HealthLesson1";
+import { verifiedGrade12BiologyChapter4 } from "./verifiedGrade12BiologyChapter4";
+import { verifiedGrade12BiologyChapters1to3and5to8 } from "./verifiedGrade12BiologyChapters1to3and5to8";
 import { verifiedHumanitiesArabic12Batch1 } from "./verifiedHumanitiesArabic12Batch1";
 import { verifiedHumanitiesDini12Lesson1 } from "./verifiedHumanitiesDini12Lesson1";
 import { verifiedHumanitiesDini12Lesson2 } from "./verifiedHumanitiesDini12Lesson2";
@@ -24,7 +26,7 @@ import { verifiedGrade11PersianLesson17 } from "./verifiedGrade11PersianLesson17
 import { verifiedGrade11PersianLesson18 } from "./verifiedGrade11PersianLesson18";
 import { verifiedGrade12PersianLessons1to9 } from "./verifiedGrade12PersianLessons1to9";
 import { verifiedGrade12PersianLessons10to18 } from "./verifiedGrade12PersianLessons10to18";
-import { buildGradeSpecificCatalog, questionMatchesBookTrack } from "./db";
+import { buildGradeSpecificCatalog, isStudentAssessmentQuestionVisible, questionMatchesBookTrack } from "./db";
 import { canonicalizeGrade11AssessmentChapter, grade11AssessmentYear, grade11DiniSharedChapters, grade11HumanitiesDiniExclusiveChapters, grade11FinalExamSubjectsByTrack, grade11EntranceExamSubjectsByTrack, isGrade11AssessmentQuestionEligible, isGrade11AssessmentSubjectEligible } from "./grade11AssessmentEligibility";
 
 const allQuestions = [...examQuestions, ...verifiedQuestions];
@@ -46,10 +48,10 @@ describe("curriculum and assessment question bank", () => {
     expect(examQuestions.every((question) => question.sourceStatus === "sample-authored")).toBe(true);
   });
 
-  it("records traceable provenance for every official- or mock-exam-adapted question", () => {
+  it("records traceable provenance and review state for every bundled question", () => {
     expect(verifiedQuestions.length).toBeGreaterThanOrEqual(29);
     for (const question of verifiedQuestions) {
-      expect(["official-exam-adapted", "mock-exam-adapted", "reviewed", "curriculum-verified", "sample-authored"]).toContain(question.sourceStatus);
+      expect(["official-exam-adapted", "mock-exam-adapted", "reviewed", "curriculum-verified", "sample-authored", "pending-review"]).toContain(question.sourceStatus);
       expect(question.sourceTitle).toBeTruthy();
       const uploadedSource = question.sourceTitle?.includes("(فایل ارسالی کاربر)") ?? false;
       const authoredReviewed = (["reviewed", "curriculum-verified"].includes(question.sourceStatus ?? "") && (
@@ -65,6 +67,9 @@ describe("curriculum and assessment question bank", () => {
         expect(question.sourceYear).toBeTruthy();
       }
       expect(question.verifiedAt).toBeInstanceOf(Date);
+      if (question.sourceStatus === "pending-review") {
+        expect(question.reviewerNote).toContain("pending-review");
+      }
       expect(question.reviewerNote).toBeTruthy();
     }
   });
@@ -3184,5 +3189,91 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
   );
   expect(allGrade12English).toHaveLength(15);
 });
+
+  it("covers all eight Grade 12 Biology chapters with five verified, 1405-textbook-aligned questions each", () => {
+    const chapters = [
+      "مولکول‌های اطلاعاتی",
+      "جریان اطلاعات در یاخته",
+      "انتقال اطلاعات در نسل‌ها",
+      "تغییر در اطلاعات وراثتی",
+      "از ماده به انرژی",
+      "از انرژی به ماده",
+      "فناوری‌های نوین زیستی",
+      "رفتارهای جانوران",
+    ];
+    const book = curriculumCatalog.find((item) =>
+      item.grade === "دوازدهم" && item.track === "تجربی" && item.subject === "زیست‌شناسی"
+    );
+    expect(book?.bookCode).toBe("112216");
+    expect(book?.chapters).toEqual(chapters);
+    const biology = verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" && question.track === "تجربی" && question.subject === "زیست‌شناسی"
+    );
+    expect(biology).toHaveLength(44);
+    expect(new Set(biology.map((question) => question.id)).size).toBe(44);
+    expect(biology.every(isGrade12AssessmentQuestionEligible)).toBe(true);
+    expect(verifiedGrade12BiologyChapter4).toHaveLength(5);
+    expect(verifiedGrade12BiologyChapters1to3and5to8).toHaveLength(31);
+    const newBatch = biology.filter((question) => question.id.startsWith("verified-bio3-ch"));
+    expect(newBatch).toHaveLength(36);
+    expect(newBatch.every((question) =>
+      question.sourceStatus === "curriculum-verified" &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Zist-Tajrobi-12_Daneshchi.iR.pdf" &&
+      question.sourceYear === "۱۴۰۵" &&
+      question.reviewerNote?.includes("سؤال تألیفی") &&
+      question.options.length === 4 &&
+      question.correctIndex >= 0 &&
+      question.correctIndex < 4
+    )).toBe(true);
+    expect(verifiedGrade12BiologyChapter4.every((question) => question.sourceTitle?.includes("فصل چهارم"))).toBe(true);
+    expect(verifiedGrade12BiologyChapters1to3and5to8.every((question) => question.sourceTitle?.includes("112216"))).toBe(true);
+    for (const chapter of chapters) {
+      const countable = biology.filter((question) =>
+        question.chapter === chapter &&
+        ["curriculum-verified", "official-exam-adapted"].includes(question.sourceStatus ?? "")
+      );
+      expect(countable, chapter).toHaveLength(5);
+      expect(countable.every((question) =>
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4 &&
+        question.explanation.length > 20 &&
+        question.sourceTitle
+      )).toBe(true);
+    }
+    const chapterOne = newBatch.filter((question) => question.chapter === "مولکول‌های اطلاعاتی");
+    expect(chapterOne).toHaveLength(4);
+    expect(chapterOne.every((question) => !/\d/.test(question.prompt))).toBe(true);
+    const coverage = buildGradeSpecificCatalog(verifiedQuestions).find((item) =>
+      item.grade === "دوازدهم" && item.track === "تجربی" && item.subject === "زیست‌شناسی"
+    );
+    expect(coverage?.lessonCoverage).toHaveLength(8);
+    for (const lesson of coverage?.lessonCoverage ?? []) {
+      expect(lesson.verifiedQuestionCount, lesson.chapter).toBe(5);
+      expect(lesson.targetMet, lesson.chapter).toBe(true);
+    }
+  });
+
+  it("keeps four unverified or assessment-prohibited Grade 12 Biology records out of the target and student exams", () => {
+    const pendingIds = [
+      "verified-bio3-xlinked-1405-011",
+      "upload-exp12-bio-transcription-08",
+      "upload-exp12-bio-genetics-09",
+      "upload-exp12-bio-energy-10",
+    ];
+    const pending = verifiedQuestions.filter((question) => pendingIds.includes(question.id));
+    expect(pending).toHaveLength(4);
+    expect(pending.every((question) => question.sourceStatus === "pending-review")).toBe(true);
+    expect(pending.every((question) => question.reviewerNote?.includes("pending-review"))).toBe(true);
+    expect(pending.every((question) => !isStudentAssessmentQuestionVisible(question))).toBe(true);
+    expect(isStudentAssessmentQuestionVisible({ sourceStatus: "curriculum-verified" })).toBe(true);
+    const coverage = buildGradeSpecificCatalog(verifiedQuestions).find((item) =>
+      item.grade === "دوازدهم" && item.track === "تجربی" && item.subject === "زیست‌شناسی"
+    );
+    for (const lesson of coverage?.lessonCoverage ?? []) {
+      expect(lesson.verifiedQuestionCount, lesson.chapter).toBe(5);
+    }
+  });
+
 
 });
