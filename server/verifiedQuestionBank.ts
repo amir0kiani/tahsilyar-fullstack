@@ -533,7 +533,7 @@ const initialVerifiedQuestions: ExamQuestion[] = [
     explanation: "یاخته‌های کناری غدد معده اسید کلریدریک ترشح می‌کنند. فرورفتگی‌های غشای آن‌ها سطح لازم برای فعالیت ترشحی را فراهم می‌کند.",
     sourceStatus: "official-exam-adapted",
     sourceTitle: "کنکور سراسری ۱۴۰۵ – گروه علوم تجربی، زیست‌شناسی",
-    sourceUrl: "https://1xai.ir/konkoor/soalat/tajrobi-1405/zist",
+    sourceUrl: "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13759/Staging",
     sourceYear: "۱۴۰۵",
     sourceQuestionNumber: "۱۳",
     verifiedAt,
