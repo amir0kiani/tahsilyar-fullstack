@@ -3315,7 +3315,6 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
       );
       expect(questions, chapter).toHaveLength(5);
       expect(questions.every((question) =>
-        question.sourceTitle === "دین و زندگی (۳) ـ پایه دوازدهم رشته‌های ریاضی و علوم تجربی، کد ۱۱۲۲۰۴، چاپ هشتم ۱۴۰۴، سازمان پژوهش و برنامه‌ریزی آموزشی" ||
         question.sourceTitle === "دین و زندگی (۳) ـ پایه دوازدهم رشته‌های ریاضی و علوم تجربی، کد ۱۱۲۲۰۴، چاپ هشتم ۱۴۰۴، سازمان پژوهش و برنامه‌ریزی آموزشی"
       )).toBe(true);
       expect(questions.every((question) =>
