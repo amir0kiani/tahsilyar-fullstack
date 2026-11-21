@@ -3304,6 +3304,11 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
     expect(book?.targetQuestionsPerLesson).toBe(5);
     expect(verifiedGrade12MathScienceDini).toHaveLength(50);
     expect(new Set(verifiedGrade12MathScienceDini.map((question) => question.id)).size).toBe(50);
+    const lessonSixTopics = verifiedGrade12MathScienceDini
+      .filter((question) => question.chapter === "سنت‌های خداوند در زندگی")
+      .map((question) => question.topic);
+    expect(lessonSixTopics).toContain("امداد خاص و توفیق الهی");
+    expect(lessonSixTopics).toContain("املا و استدراج");
 
     for (const chapter of chapters) {
       const questions = verifiedQuestions.filter((question) =>
