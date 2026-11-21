@@ -7,14 +7,14 @@ function item(input: {
   id: string; grade: string; track: string; subject: string; chapter: string; topic: string;
   prompt: string; options: [string, string, string, string]; correctIndex: number;
   explanation: string; sourceTitle: string; sourceQuestionNumber: string;
-  difficulty?: "آسان" | "متوسط" | "سخت";
+  difficulty?: "آسان" | "متوسط" | "سخت"; sourceStatus?: ExamQuestion["sourceStatus"]; reviewerNote?: string;
 }): ExamQuestion {
   return {
     ...input,
     difficulty: input.difficulty ?? "متوسط",
-    sourceStatus: "mock-exam-adapted",
+    sourceStatus: input.sourceStatus ?? "mock-exam-adapted",
     verifiedAt,
-    reviewerNote: reviewNote,
+    reviewerNote: input.reviewerNote ?? reviewNote,
   };
 }
 
@@ -88,7 +88,8 @@ export const verifiedScienceMathBatch2: ExamQuestion[] = [
     prompt:"در فرایند رونویسی، رشتهٔ RNA تازه‌ساخته‌شده از نظر توالی بازها با کدام رشتهٔ DNA شباهت دارد، با این تفاوت که به‌جای تیمین دارای یوراسیل است؟",
     options:["رشته الگو","رشته مکمل الگو یا رشته رمزگذار","هر دو رشته DNA به‌طور کامل","هیچ‌یک از رشته‌های DNA"], correctIndex:1,
     explanation:"توالی RNA با رشتهٔ رمزگذار DNA یکسان است، با این تفاوت که در RNA باز U جایگزین T می‌شود؛ RNA در برابر رشتهٔ الگو ساخته می‌شود.",
-    sourceTitle:e12, sourceQuestionNumber:"زیست‌شناسی ۳، مبحث رونویسی"
+    sourceTitle:e12, sourceQuestionNumber:"زیست‌شناسی ۳، مبحث رونویسی",
+    sourceStatus:"pending-review", reviewerNote:"pending-review: پاسخ‌نامهٔ مستقیم و قابل‌ارجاع برای این سؤال در فایل ارسالی موجود نبود؛ پاسخ قبلی مستقل حل شده است. تا یافتن کلید قابل‌تأیید، در آزمون دانش‌آموزی و حدنصاب فصل شمرده نمی‌شود."
   }),
   item({
     id:"upload-exp12-bio-genetics-09", grade:"دوازدهم", track:"تجربی", subject:"زیست‌شناسی",
@@ -96,7 +97,8 @@ export const verifiedScienceMathBatch2: ExamQuestion[] = [
     prompt:"در تلاقی دو فرد هتروزیگوت Aa×Aa با غالبیت کامل، احتمال ظهور فنوتیپ مغلوب در فرزندان چقدر است؟",
     options:["۰","۱/۴","۱/۲","۳/۴"], correctIndex:1,
     explanation:"ژنوتیپ‌های حاصل AA، Aa، Aa و aa هستند؛ فقط یک حالت از چهار حالت ژنوتیپ مغلوب aa دارد، پس احتمال ۱/۴ است.",
-    sourceTitle:e12, sourceQuestionNumber:"زیست‌شناسی، مبحث وراثت و تلاقی"
+    sourceTitle:e12, sourceQuestionNumber:"زیست‌شناسی، مبحث وراثت و تلاقی",
+    sourceStatus:"pending-review", reviewerNote:"pending-review: پاسخ‌نامهٔ مستقیم و قابل‌ارجاع برای این سؤال در فایل ارسالی موجود نبود؛ افزون بر آن، صورت سؤال محاسبهٔ احتمال است و با محدودیت صریح کتاب رسمی زیست‌شناسی (۳)، چاپ ۱۴۰۵، دربارهٔ سؤال‌های عددی و محاسباتی سازگار نیست. در آزمون دانش‌آموزی و حدنصاب فصل شمرده نمی‌شود."
   }),
   item({
     id:"upload-exp12-bio-energy-10", grade:"دوازدهم", track:"تجربی", subject:"زیست‌شناسی",
@@ -104,7 +106,8 @@ export const verifiedScienceMathBatch2: ExamQuestion[] = [
     prompt:"در تنفس هوازی یاخته‌های یوکاریوتی، زنجیره انتقال الکترون و بخش عمدهٔ تولید ATP در کدام ساختار انجام می‌شود؟",
     options:["غشای خارجی هسته","غشای داخلی میتوکندری","دستگاه گلژی","شبکه آندوپلاسمی زبر"], correctIndex:1,
     explanation:"زنجیرهٔ انتقال الکترون و ATPساز در غشای داخلی میتوکندری قرار دارند و شیب پروتونی ایجادشده انرژی لازم برای ساخت بخش عمده ATP را فراهم می‌کند.",
-    sourceTitle:e12, sourceQuestionNumber:"زیست‌شناسی، مبحث تنفس یاخته‌ای"
+    sourceTitle:e12, sourceQuestionNumber:"زیست‌شناسی، مبحث تنفس یاخته‌ای",
+    sourceStatus:"pending-review", reviewerNote:"pending-review: پاسخ‌نامهٔ مستقیم و قابل‌ارجاع برای این سؤال در فایل ارسالی موجود نبود؛ پاسخ قبلی مستقل حل شده است. تا یافتن کلید قابل‌تأیید، در آزمون دانش‌آموزی و حدنصاب فصل شمرده نمی‌شود."
   }),
   item({
     id:"upload-math10-geometry-similarity-11", grade:"دهم", track:"ریاضی", subject:"هندسه",
