@@ -90,9 +90,9 @@ export const verifiedBiologyBatch2: ExamQuestion[] = [
     options: ["صفر", "۲۵ درصد", "۵۰ درصد", "۱۰۰ درصد"],
     correctIndex: 2,
     explanation: "پسر کروموزوم X خود را از مادر می‌گیرد. مادر ناقل در نیمی از تخمک‌هایش آلل نهفته را دارد؛ بنابراین احتمال ابتلای یک پسر ۵۰ درصد است.",
-    sourceStatus: "official-exam-adapted", sourceTitle, sourceUrl: officialSanjeshExamUrl, sourceYear: "۱۴۰۵",
+    sourceStatus: "pending-review", sourceTitle, sourceUrl: officialSanjeshExamUrl, sourceYear: "۱۴۰۵",
     sourceQuestionNumber: "۱۱", verifiedAt,
-    reviewerNote: "تمرین مستقل از مبحث صفات وابسته به X در سؤال مرجع؛ سناریو ساده‌سازی و بازنویسی شده است."
+    reviewerNote: "pending-review: این پرسش احتمال‌محور است؛ پیشگفتار کتاب رسمی زیست‌شناسی (۳)، چاپ ۱۴۰۵، طراحی سؤال‌های عددی و محاسباتی از محتوای کتاب را در همه آزمون‌ها از جمله کنکور ممنوع کرده است. تا تعیین تکلیف آموزشی، از آزمون دانش‌آموزی و حدنصاب فصل کنار گذاشته شد."
   },
   {
     id: "verified-bio3-transcription-1405-017",

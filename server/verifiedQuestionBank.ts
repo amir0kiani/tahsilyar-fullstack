@@ -17,6 +17,8 @@ import { verifiedHumanitiesLiterature12Batch2 } from "./verifiedHumanitiesLitera
 import { verifiedHumanitiesLiterature12Batch3 } from "./verifiedHumanitiesLiterature12Batch3";
 import { verifiedHumanitiesLiterature12Batch4 } from "./verifiedHumanitiesLiterature12Batch4";
 import { verifiedBiologyBatch2 } from "./verifiedQuestionBankBiologyBatch2";
+import { verifiedGrade12BiologyChapter4 } from "./verifiedGrade12BiologyChapter4";
+import { verifiedGrade12BiologyChapters1to3and5to8 } from "./verifiedGrade12BiologyChapters1to3and5to8";
 import { verifiedChemistryBatch1 } from "./verifiedQuestionBankChemistryBatch1";
 import { verifiedPhysicsBatch1 } from "./verifiedQuestionBankPhysicsBatch1";
 import { verifiedFinalExamBatch1 } from "./verifiedFinalExamBatch1";
@@ -531,7 +533,7 @@ const initialVerifiedQuestions: ExamQuestion[] = [
     explanation: "یاخته‌های کناری غدد معده اسید کلریدریک ترشح می‌کنند. فرورفتگی‌های غشای آن‌ها سطح لازم برای فعالیت ترشحی را فراهم می‌کند.",
     sourceStatus: "official-exam-adapted",
     sourceTitle: "کنکور سراسری ۱۴۰۵ – گروه علوم تجربی، زیست‌شناسی",
-    sourceUrl: "https://1xai.ir/konkoor/soalat/tajrobi-1405/zist",
+    sourceUrl: "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13759/Staging",
     sourceYear: "۱۴۰۵",
     sourceQuestionNumber: "۱۳",
     verifiedAt,
@@ -552,7 +554,7 @@ const initialVerifiedQuestions: ExamQuestion[] = [
     explanation: "در نگرش سامانه‌ای، برهم‌کنش اجزا می‌تواند ویژگی‌هایی ایجاد کند که از بررسی جداگانهٔ هر جزء به‌تنهایی به دست نمی‌آید.",
     sourceStatus: "official-exam-adapted",
     sourceTitle: "کنکور سراسری ۱۴۰۵ – گروه علوم تجربی، زیست‌شناسی",
-    sourceUrl: "https://1xai.ir/konkoor/soalat/tajrobi-1405/zist",
+    sourceUrl: "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13759/Staging",
     sourceYear: "۱۴۰۵",
     sourceQuestionNumber: "۴۳",
     verifiedAt,
@@ -573,7 +575,7 @@ const initialVerifiedQuestions: ExamQuestion[] = [
     explanation: "یاختهٔ چربی معمولاً قطرهٔ بزرگ چربی دارد که بخش زیادی از حجم یاخته را اشغال می‌کند و هسته را به حاشیه می‌راند.",
     sourceStatus: "official-exam-adapted",
     sourceTitle: "کنکور سراسری ۱۴۰۵ – گروه علوم تجربی، زیست‌شناسی",
-    sourceUrl: "https://1xai.ir/konkoor/soalat/tajrobi-1405/zist",
+    sourceUrl: "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13759/Staging",
     sourceYear: "۱۴۰۵",
     sourceQuestionNumber: "۳۴",
     verifiedAt,
@@ -589,7 +591,7 @@ const initialVerifiedQuestions: ExamQuestion[] = [
     explanation: "در گودی مرکزی لکهٔ زرد، تراکم یاخته‌های مخروطی بسیار زیاد است و این ناحیه در دید دقیق و تشخیص رنگ نقش مهمی دارد.",
     sourceStatus: "official-exam-adapted",
     sourceTitle: "کنکور سراسری ۱۴۰۵ – گروه علوم تجربی، زیست‌شناسی",
-    sourceUrl: "https://1xai.ir/konkoor/soalat/tajrobi-1405/zist",
+    sourceUrl: "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13759/Staging",
     sourceYear: "۱۴۰۵",
     sourceQuestionNumber: "۲",
     verifiedAt,
@@ -605,7 +607,7 @@ const initialVerifiedQuestions: ExamQuestion[] = [
     explanation: "وقتی پیامد خوشایند پس از یک رفتار احتمال تکرار آن را افزایش دهد، با تقویت مثبت در شرطی‌شدن کنشگر روبه‌رو هستیم.",
     sourceStatus: "official-exam-adapted",
     sourceTitle: "کنکور سراسری ۱۴۰۵ – گروه علوم تجربی، زیست‌شناسی",
-    sourceUrl: "https://1xai.ir/konkoor/soalat/tajrobi-1405/zist",
+    sourceUrl: "https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13759/Staging",
     sourceYear: "۱۴۰۵",
     sourceQuestionNumber: "۱",
     verifiedAt,
@@ -613,7 +615,7 @@ const initialVerifiedQuestions: ExamQuestion[] = [
   },
 ];
 
-export const verifiedQuestions: ExamQuestion[] = [...initialVerifiedQuestions, ...verifiedGrade12SharedEnglishVision3, ...verifiedGrade11English2, ...verifiedGrade11PersianLesson1, ...verifiedGrade11PersianLesson2, ...verifiedGrade11PersianLesson3, ...verifiedGrade11PersianLesson5, ...verifiedGrade11PersianLesson6, ...verifiedGrade11PersianLesson7, ...verifiedGrade11PersianLesson8, ...verifiedGrade11PersianLesson9, ...verifiedGrade11PersianLesson10, ...verifiedGrade11PersianLesson11, ...verifiedGrade11PersianLesson12, ...verifiedGrade11PersianLesson14, ...verifiedGrade11PersianLesson15, ...verifiedGrade11PersianLesson16, ...verifiedGrade11PersianLesson17, ...verifiedGrade11PersianLesson18, ...verifiedGrade12PersianLessons1to9, ...verifiedGrade12PersianLessons10to18, ...verifiedHumanitiesDini12Lesson1, ...verifiedHumanitiesDini12Lesson2, ...verifiedHumanitiesDini12Lesson3, ...verifiedHumanitiesDini12Lessons4to13, ...verifiedHumanitiesArabic12Batch1, ...verifiedGrade11DiniSharedLesson1, ...verifiedGrade11DiniSharedLesson2, ...verifiedGrade11DiniSharedLesson3, ...verifiedGrade11DiniSharedLesson4, ...verifiedGrade11DiniSharedLesson5, ...verifiedGrade11DiniSharedLesson6, ...verifiedGrade11DiniSharedLesson7, ...verifiedGrade11DiniSharedLesson8, ...verifiedGrade11DiniSharedLesson9, ...verifiedGrade11DiniSharedLesson10, ...verifiedGrade11DiniSharedLesson11, ...verifiedGrade11DiniSharedLesson12, ...verifiedGrade11HumanitiesDiniLesson3, ...verifiedGrade11HumanitiesDiniLesson8, ...verifiedGrade11HumanitiesDiniLesson11, ...verifiedGrade11HumanitiesDiniLesson13, ...verifiedGrade11HumanitiesDiniLesson15, ...verifiedGrade11HumanitiesDiniLesson17, ...verifiedBiologyBatch2, ...verifiedGrade11BiologyOfficialExamTir1405, ...verifiedChemistryBatch1, ...verifiedGrade11ChemistryOfficialExamMordad1405, ...verifiedGrade11MathTrackChemistryAuthored, ...verifiedGrade11ExperimentalPhysicsAuthored, ...verifiedGrade11ExperimentalMathAuthored, ...verifiedGrade11ExperimentalMathGapBatch2, ...verifiedGrade11MathPhysicsOfficialExamMordad1405, ...verifiedPhysicsBatch1, ...verifiedFinalExamBatch1, ...verifiedUploadedGeography12, ...verifiedUploadedHistory12, ...verifiedUploadedSociology12, ...verifiedUploadedPhilosophy12,
+export const verifiedQuestions: ExamQuestion[] = [...initialVerifiedQuestions, ...verifiedGrade12SharedEnglishVision3, ...verifiedGrade11English2, ...verifiedGrade11PersianLesson1, ...verifiedGrade11PersianLesson2, ...verifiedGrade11PersianLesson3, ...verifiedGrade11PersianLesson5, ...verifiedGrade11PersianLesson6, ...verifiedGrade11PersianLesson7, ...verifiedGrade11PersianLesson8, ...verifiedGrade11PersianLesson9, ...verifiedGrade11PersianLesson10, ...verifiedGrade11PersianLesson11, ...verifiedGrade11PersianLesson12, ...verifiedGrade11PersianLesson14, ...verifiedGrade11PersianLesson15, ...verifiedGrade11PersianLesson16, ...verifiedGrade11PersianLesson17, ...verifiedGrade11PersianLesson18, ...verifiedGrade12PersianLessons1to9, ...verifiedGrade12PersianLessons10to18, ...verifiedHumanitiesDini12Lesson1, ...verifiedHumanitiesDini12Lesson2, ...verifiedHumanitiesDini12Lesson3, ...verifiedHumanitiesDini12Lessons4to13, ...verifiedHumanitiesArabic12Batch1, ...verifiedGrade11DiniSharedLesson1, ...verifiedGrade11DiniSharedLesson2, ...verifiedGrade11DiniSharedLesson3, ...verifiedGrade11DiniSharedLesson4, ...verifiedGrade11DiniSharedLesson5, ...verifiedGrade11DiniSharedLesson6, ...verifiedGrade11DiniSharedLesson7, ...verifiedGrade11DiniSharedLesson8, ...verifiedGrade11DiniSharedLesson9, ...verifiedGrade11DiniSharedLesson10, ...verifiedGrade11DiniSharedLesson11, ...verifiedGrade11DiniSharedLesson12, ...verifiedGrade11HumanitiesDiniLesson3, ...verifiedGrade11HumanitiesDiniLesson8, ...verifiedGrade11HumanitiesDiniLesson11, ...verifiedGrade11HumanitiesDiniLesson13, ...verifiedGrade11HumanitiesDiniLesson15, ...verifiedGrade11HumanitiesDiniLesson17, ...verifiedBiologyBatch2, ...verifiedGrade12BiologyChapter4, ...verifiedGrade12BiologyChapters1to3and5to8, ...verifiedGrade11BiologyOfficialExamTir1405, ...verifiedChemistryBatch1, ...verifiedGrade11ChemistryOfficialExamMordad1405, ...verifiedGrade11MathTrackChemistryAuthored, ...verifiedGrade11ExperimentalPhysicsAuthored, ...verifiedGrade11ExperimentalMathAuthored, ...verifiedGrade11ExperimentalMathGapBatch2, ...verifiedGrade11MathPhysicsOfficialExamMordad1405, ...verifiedPhysicsBatch1, ...verifiedFinalExamBatch1, ...verifiedUploadedGeography12, ...verifiedUploadedHistory12, ...verifiedUploadedSociology12, ...verifiedUploadedPhilosophy12,
   ...verifiedGrade12HealthLesson1,
   ...verifiedGrade12HealthLessons2to8,
   ...verifiedGrade12HealthLessons9to14, ...verifiedUploadedChemistry12, ...verifiedUploadedGeology11, ...verifiedGrade11GeologyOfficialExamMordad1405, ...verifiedUploadedMathPhysics, ...verifiedHumanitiesBatch2, ...verifiedGrade11HumanitiesKankchiBatch1, ...verifiedGrade11HumanitiesGapFill, ...verifiedGrade11HumanitiesPhilosophyGapFill, ...verifiedGrade11HumanitiesGeographyGapFill, ...verifiedGrade11HumanitiesHistoryGapFill, ...verifiedGrade11HumanitiesMathStatisticsAuthored, ...verifiedGrade11MathCalculusAuthored, ...verifiedGrade11MathGeometryAuthored, ...verifiedGrade11HumanitiesKankchiBatch2, ...verifiedGrade11HumanitiesKankchiHistoryBatch, ...verifiedGrade11HumanitiesFinalHistoryBatch1, ...verifiedGrade11HumanitiesKankchiGeographyBatch, ...verifiedGrade11HumanitiesKankchiGeographyBatch2, ...verifiedGrade11HumanitiesKankchiSociologyBatch, ...verifiedGrade11HumanitiesKankchiPsychologyBatch, ...verifiedGrade11HumanitiesKankchiArabicBatch, ...verifiedGrade11HumanitiesArabicOfficialExamTir1405, ...verifiedGrade11MathScienceArabicOfficialExamMordad1405, ...verifiedGrade11HumanitiesKankchiLiteratureBatch, ...verifiedGrade11HumanitiesKankchiLiteratureBatch2, ...verifiedGrade11HumanitiesKankchiLiteratureBatch3, ...verifiedGrade11HumanitiesSociologyGapFill, ...verifiedGrade11HumanitiesLiteratureGapFill, ...verifiedGrade11MathMaazBatch1, ...verifiedGrade11MathStatisticsAuthored, ...verifiedGrade11MathProbabilityAuthored, ...verifiedGrade11MathRemainingStatisticsAuthored, ...verifiedGrade11ExperimentalGapBatch1, ...verifiedScienceMathBatch2, ...verifiedUploaded15AbanReview, ...verifiedHumanitiesMath12Batch1, ...verifiedHumanitiesLiterature12Batch1, ...verifiedHumanitiesLiterature12Batch2, ...verifiedHumanitiesLiterature12Batch3, ...verifiedHumanitiesLiterature12Batch4].map(canonicalizeGrade11AssessmentQuestion).filter(isGrade11AssessmentQuestionEligible);

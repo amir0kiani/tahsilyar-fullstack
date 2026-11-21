@@ -264,7 +264,7 @@ async function ensureAssessmentBankSeeded(db: NonNullable<Awaited<ReturnType<typ
       for (let offset = 0; offset < missingQuestions.length; offset += 100) {
         const chunk = missingQuestions.slice(offset, offset + 100);
         await db.insert(examQuestionRows).values(chunk.map((question) => ({
-          ...question, sourceStatus: question.sourceStatus ?? "sample-authored", isActive: 1,
+          ...question, sourceStatus: question.sourceStatus ?? "sample-authored", isActive: question.sourceStatus === "pending-review" ? 0 : 1,
         })));
       }
       const chapterKeys = new Set(existingChapterRows.map((row) => [row.track, row.grade, row.subject, row.chapter].join("::")));
@@ -280,8 +280,13 @@ async function ensureAssessmentBankSeeded(db: NonNullable<Awaited<ReturnType<typ
   catch (error) { assessmentSeedPromise = null; throw error; }
 }
 
+export function isStudentAssessmentQuestionVisible(question: { sourceStatus?: string }) {
+  return question.sourceStatus !== "pending-review";
+}
+
 function filterBundledQuestions(filters: AssessmentFilters) {
-  return allStarterQuestions.filter((question) => matchesAssessmentQuestion(question, filters))
+  return allStarterQuestions.filter(isStudentAssessmentQuestionVisible)
+    .filter((question) => matchesAssessmentQuestion(question, filters))
     .slice(0, filters.limit ?? 20);
 }
 
@@ -334,6 +339,7 @@ export async function getAssessmentQuestions(filters: AssessmentFilters = {}) {
       .map((question) => canonicalizeGrade11AssessmentQuestion(question as typeof allStarterQuestions[number]))
       .filter(isGrade11AssessmentQuestionEligible)
       .map(canonicalizeGrade12AssessmentQuestion)
+      .filter(isStudentAssessmentQuestionVisible)
       .filter((question) =>
         isGrade12AssessmentQuestionEligible(question) &&
         matchesAssessmentQuestion(question, filters)
