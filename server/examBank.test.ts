@@ -757,10 +757,7 @@ describe("curriculum and assessment question bank", () => {
       expect(batch.some((question) => question.grade === grade), grade).toBe(true);
     }
     expect(batch.every((question) => question.track === "انسانی")).toBe(true);
-    expect(batch.every((question) => ["mock-exam-adapted", "pending-review"].includes(question.sourceStatus ?? ""))).toBe(true);
-    expect(batch.filter((question) => question.sourceStatus === "pending-review").map((question) => question.id).sort()).toEqual([
-      "upload-exp12-bio-energy-10", "upload-exp12-bio-genetics-09", "upload-exp12-bio-transcription-08",
-    ]);
+    expect(batch.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
     expect(batch.every((question) => question.explanation.length > 15)).toBe(true);
   });
 
@@ -772,7 +769,10 @@ describe("curriculum and assessment question bank", () => {
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       expect(batch.some((question) => question.grade === grade), grade).toBe(true);
     }
-    expect(batch.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+    expect(batch.every((question) => ["mock-exam-adapted", "pending-review"].includes(question.sourceStatus ?? ""))).toBe(true);
+    expect(batch.filter((question) => question.sourceStatus === "pending-review").map((question) => question.id).sort()).toEqual([
+      "upload-exp12-bio-energy-10", "upload-exp12-bio-genetics-09", "upload-exp12-bio-transcription-08",
+    ]);
     expect(batch.every((question) => question.explanation.length > 15)).toBe(true);
   });
 
