@@ -3094,6 +3094,14 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
       ))).toBe(true);
     }
     expect(new Set(verifiedGrade11PhysicsSublessonGapFill.map((question) => question.id)).size).toBe(24);
+
+    const magneticFieldDirection = verifiedGrade11PhysicsSublessonGapFill.find((question) =>
+      question.track === "تجربی" &&
+      question.topic === "میدان مغناطیسی" &&
+      question.prompt.includes("جهت بردار میدان چگونه تعیین می‌شود")
+    );
+    expect(magneticFieldDirection?.correctIndex).toBe(0);
+    expect(magneticFieldDirection?.options[magneticFieldDirection.correctIndex]).toContain("مماس بر خط");
   });
 
   it("keeps Grade 11 physics chapter minimum separate from sub-lesson representation", () => {
