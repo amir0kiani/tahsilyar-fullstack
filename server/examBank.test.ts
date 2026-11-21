@@ -383,6 +383,21 @@ describe("curriculum and assessment question bank", () => {
     }
   });
 
+  it("records the official shared Grade 11 Chemistry 2 code and chapter map for both math and experimental tracks", () => {
+    const expectedChapters = [
+      "قدر هدایای زمینی را بدانیم",
+      "در پی غذای سالم",
+      "پوشاک، نیازی پایان‌ناپذیر",
+    ];
+    for (const track of ["ریاضی", "تجربی"]) {
+      const book = curriculumCatalog.find((item) =>
+        item.grade === "یازدهم" && item.track === track && item.subject === "شیمی"
+      );
+      expect(book?.bookCode, track).toBe("111210");
+      expect(book?.chapters, track).toEqual(expectedChapters);
+    }
+  });
+
   it("assigns Grade 11 Contemporary History only to mathematics and experimental-sciences tracks", () => {
     for (const track of ["ریاضی", "تجربی"]) {
       const book = curriculumCatalog.find((item) =>
@@ -1373,7 +1388,8 @@ describe("curriculum and assessment question bank", () => {
     expect(officialBatch.every((question) =>
       question.sourceStatus === "official-exam-adapted" &&
       question.sourceTitle === "آزمون نهایی شیمی (۲) یازدهم تجربی – ۳ مرداد ۱۴۰۵" &&
-      question.sourceUrl === "https://azmoon.medu.ir/" &&
+      question.sourceUrl === "https://t.me/chemclass/28241" &&
+      question.sourceAnswerUrl === "https://t.me/chemclass/28248" &&
       question.reviewerNote?.includes("گزینه‌های انحرافی تألیف شده‌اند") &&
       question.correctIndex === expectedKeys[question.sourceQuestionNumber ?? ""]
     )).toBe(true);
