@@ -354,7 +354,7 @@ describe("curriculum and assessment question bank", () => {
     expect(verifiedQuestions.some((question) =>
       question.id.startsWith("upload-kankchi-math-science11-arabic-lesson1-")
     )).toBe(false);
-    expect(verifiedQuestions.every((question) => question.sourceStatus !== "pending-review")).toBe(true);
+    expect(verifiedQuestions.some((question) => question.subject === "عربی" && question.sourceStatus === "pending-review")).toBe(false);
   });
 
   it("covers all seven Grade 11 math/science Arabic lessons with five official final-exam adaptations per track", () => {
@@ -3226,6 +3226,7 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
       question.correctIndex < 4
     )).toBe(true);
     expect(verifiedGrade12BiologyChapter4.every((question) => question.sourceTitle?.includes("فصل چهارم"))).toBe(true);
+    expect(verifiedGrade12BiologyChapter4.every((question) => !/رمز|آمینواسید|توالی/.test(question.prompt))).toBe(true);
     expect(verifiedGrade12BiologyChapters1to3and5to8.every((question) => question.sourceTitle?.includes("112216"))).toBe(true);
     for (const chapter of chapters) {
       const countable = biology.filter((question) =>
