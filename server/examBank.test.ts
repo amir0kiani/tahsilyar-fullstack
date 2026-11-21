@@ -3212,6 +3212,9 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
     expect(biology).toHaveLength(44);
     expect(new Set(biology.map((question) => question.id)).size).toBe(44);
     expect(biology.every(isGrade12AssessmentQuestionEligible)).toBe(true);
+    const behaviorQuestion = biology.find((question) => question.id === "verified-bio3-conditioning-1405-001");
+    expect(behaviorQuestion?.sourceUrl).toBe("https://www.sanjesh.org/fa-IR/sanjesh/4936/news/view/14591/13759/Staging");
+    expect(behaviorQuestion?.sourceQuestionNumber).toBe("۱");
     expect(verifiedGrade12BiologyChapter4).toHaveLength(5);
     expect(verifiedGrade12BiologyChapters1to3and5to8).toHaveLength(31);
     const newBatch = biology.filter((question) => question.id.startsWith("verified-bio3-ch"));
@@ -3226,6 +3229,7 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
       question.correctIndex < 4
     )).toBe(true);
     expect(verifiedGrade12BiologyChapter4.every((question) => question.sourceTitle?.includes("فصل چهارم"))).toBe(true);
+    expect(verifiedGrade12BiologyChapter4.every((question) => question.sourceTitle?.includes("112216"))).toBe(true);
     expect(verifiedGrade12BiologyChapter4.every((question) => !/رمز|آمینواسید|توالی/.test(question.prompt))).toBe(true);
     expect(verifiedGrade12BiologyChapters1to3and5to8.every((question) => question.sourceTitle?.includes("112216"))).toBe(true);
     for (const chapter of chapters) {
