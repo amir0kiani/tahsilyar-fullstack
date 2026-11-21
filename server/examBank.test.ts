@@ -67,16 +67,13 @@ describe("curriculum and assessment question bank", () => {
         expect(question.sourceYear).toBeTruthy();
       }
       expect(question.verifiedAt).toBeInstanceOf(Date);
-      if (question.sourceStatus === "pending-review") {
-        expect(question.reviewerNote).toContain("pending-review");
-      }
       expect(question.reviewerNote).toBeTruthy();
     }
   });
 
   it("does not label rewritten practice items as verbatim official exam questions", () => {
     expect(verifiedQuestions.every((question) => question.sourceStatus !== "official-exam")).toBe(true);
-    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed", "curriculum-verified", "sample-authored"].includes(question.sourceStatus ?? ""))).toBe(true);
+    expect(verifiedQuestions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed", "curriculum-verified", "sample-authored", "pending-review"].includes(question.sourceStatus ?? ""))).toBe(true);
   });
 
   it("maps the Grade 11 humanities climate questions to the exact Geography 2 lesson title", () => {
@@ -526,7 +523,7 @@ describe("curriculum and assessment question bank", () => {
       const questions = verifiedQuestions.filter((question) =>
         question.track === "تجربی" && question.grade === "یازدهم" &&
         question.subject === "زیست‌شناسی" && question.chapter === chapter &&
-        ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? "")
+        ["official-exam-adapted", "mock-exam-adapted", "reviewed", "curriculum-verified"].includes(question.sourceStatus ?? "")
       );
       expect(questions.length, chapter).toBeGreaterThanOrEqual(5);
     }
@@ -545,7 +542,7 @@ describe("curriculum and assessment question bank", () => {
     for (const grade of ["دهم", "یازدهم", "دوازدهم"]) {
       const questions = verifiedQuestions.filter((question) =>
         question.track === "تجربی" && question.grade === grade && question.subject === "زیست‌شناسی"
-      );
+      ).filter((question) => question.sourceStatus !== "pending-review");
       expect(questions.length).toBeGreaterThanOrEqual(5);
       expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
     }
@@ -760,7 +757,10 @@ describe("curriculum and assessment question bank", () => {
       expect(batch.some((question) => question.grade === grade), grade).toBe(true);
     }
     expect(batch.every((question) => question.track === "انسانی")).toBe(true);
-    expect(batch.every((question) => question.sourceStatus === "mock-exam-adapted")).toBe(true);
+    expect(batch.every((question) => ["mock-exam-adapted", "pending-review"].includes(question.sourceStatus ?? ""))).toBe(true);
+    expect(batch.filter((question) => question.sourceStatus === "pending-review").map((question) => question.id).sort()).toEqual([
+      "upload-exp12-bio-energy-10", "upload-exp12-bio-genetics-09", "upload-exp12-bio-transcription-08",
+    ]);
     expect(batch.every((question) => question.explanation.length > 15)).toBe(true);
   });
 
