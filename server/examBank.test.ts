@@ -3448,6 +3448,19 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
       expect(questions.every((question) => isGrade12AssessmentQuestionEligible(question))).toBe(true);
     }
 
+    const farazdaqQuestions = verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" &&
+      question.track === "ریاضی و تجربی" &&
+      question.subject === "عربی" &&
+      question.chapter === "الفرزدق" &&
+      question.sourceStatus === "curriculum-verified"
+    );
+    expect(farazdaqQuestions[0]?.prompt).toContain("زندگی کرد");
+    expect(farazdaqQuestions[0]?.correctIndex).toBe(0);
+    expect(farazdaqQuestions[0]?.options[0]).toBe("بصره");
+    expect(farazdaqQuestions[4]?.prompt).toContain("ترجمهٔ مناسب");
+    expect(farazdaqQuestions[4]?.correctIndex).toBe(0);
+
     expect(questionMatchesBookTrack("ریاضی و تجربی", "ریاضی و تجربی", "عربی", "دوازدهم")).toBe(true);
     expect(questionMatchesBookTrack("ریاضی و تجربی", "ریاضی", "عربی", "دوازدهم")).toBe(true);
     expect(questionMatchesBookTrack("ریاضی و تجربی", "تجربی", "عربی", "دوازدهم")).toBe(true);
