@@ -201,7 +201,7 @@ export const verifiedGrade12MathScienceArabic: ExamQuestion[] = [
       answer: 0,
       explanation: "در متن آمده است که عقاد زبان انگلیسی را آموخت و در تحصیل به خود تکیه کرد؛ بنابراین پاسخ، تلاش و اتکای شخصی اوست."
     }
-  ], "۳۴–۴۹"),
+  ], "۳۴–۴۸"),
 
   ...lesson(4, "الفرزدق", [
     {
