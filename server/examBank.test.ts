@@ -4,6 +4,7 @@ import { verifiedGrade12HealthLessons9to14 } from "./verifiedGrade12HealthLesson
 import { verifiedGrade12SharedEnglishVision3 } from "./verifiedGrade12SharedEnglishVision3";
 import { verifiedGrade12MathScienceDini } from "./verifiedGrade12MathScienceDini";
 import { verifiedGrade12MathScienceHoviat } from "./verifiedGrade12MathScienceHoviat";
+import { verifiedGrade12MathScienceArabic } from "./verifiedGrade12MathScienceArabic";
 import { verifiedGrade12HealthLessons2to8 } from "./verifiedGrade12HealthLessons2to8";
 import { verifiedGrade12HealthLesson1 } from "./verifiedGrade12HealthLesson1";
 import { verifiedGrade12BiologyChapter4 } from "./verifiedGrade12BiologyChapter4";
@@ -3405,6 +3406,67 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
       question.track === "ریاضی و تجربی" &&
       question.subject === "هویت اجتماعی"
     )).toHaveLength(50);
+  });
+
+
+  it("has five verified questions for every lesson of the shared Grade 12 Math/Experimental Arabic 3 book", () => {
+    const book = curriculumCatalog.find((item) =>
+      item.track === "ریاضی و تجربی" && item.grade === "دوازدهم" && item.subject === "عربی"
+    );
+    const chapters = [
+      "الدين والتدين",
+      "مكة المكرمة والمدينة المنورة",
+      "الكتب طعام الفكر",
+      "الفرزدق",
+    ];
+    expect(book?.bookCode).toBe("112206");
+    expect(book?.chapters).toEqual(chapters);
+    expect(book?.targetQuestionsPerLesson).toBe(5);
+    expect(verifiedGrade12MathScienceArabic).toHaveLength(20);
+    expect(new Set(verifiedGrade12MathScienceArabic.map((question) => question.id)).size).toBe(20);
+
+    for (const chapter of chapters) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.grade === "دوازدهم" &&
+        question.track === "ریاضی و تجربی" &&
+        question.subject === "عربی" &&
+        question.chapter === chapter &&
+        question.sourceStatus === "curriculum-verified"
+      );
+      expect(questions, chapter).toHaveLength(5);
+      expect(questions.every((question) =>
+        question.sourceTitle === "عربی، زبان قرآن (۳) ـ پایه دوازدهم رشته‌های ریاضی و علوم تجربی، کد ۱۱۲۲۰۶، چاپ نهم ۱۴۰۵، سازمان پژوهش و برنامه‌ریزی آموزشی" &&
+        question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Arabi-12_Daneshchi.iR.pdf" &&
+        question.sourceYear === "۱۴۰۵" &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4 &&
+        question.explanation.length > 20 &&
+        question.reviewerNote?.includes("صفحات چاپی") &&
+        question.reviewerNote?.includes("راهنمای رسمی نمره‌گذاری")
+      )).toBe(true);
+      expect(questions.every((question) => isGrade12AssessmentQuestionEligible(question))).toBe(true);
+    }
+
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "ریاضی و تجربی", "عربی", "دوازدهم")).toBe(true);
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "ریاضی", "عربی", "دوازدهم")).toBe(true);
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "تجربی", "عربی", "دوازدهم")).toBe(true);
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "انسانی", "عربی", "دوازدهم")).toBe(false);
+    expect(isGrade12AssessmentQuestionEligible({
+      grade: "دوازدهم",
+      track: "ریاضی",
+      subject: "عربی",
+    })).toBe(true);
+    expect(isGrade12AssessmentQuestionEligible({
+      grade: "دوازدهم",
+      track: "تجربی",
+      subject: "عربی",
+    })).toBe(true);
+    expect(verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" &&
+      question.track === "ریاضی و تجربی" &&
+      question.subject === "عربی"
+    )).toHaveLength(20);
   });
 
 });
