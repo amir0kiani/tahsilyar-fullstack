@@ -3,6 +3,7 @@ import { isGrade12AssessmentQuestionEligible } from "./grade12AssessmentEligibil
 import { verifiedGrade12HealthLessons9to14 } from "./verifiedGrade12HealthLessons9to14";
 import { verifiedGrade12SharedEnglishVision3 } from "./verifiedGrade12SharedEnglishVision3";
 import { verifiedGrade12MathScienceDini } from "./verifiedGrade12MathScienceDini";
+import { verifiedGrade12MathScienceHoviat } from "./verifiedGrade12MathScienceHoviat";
 import { verifiedGrade12HealthLessons2to8 } from "./verifiedGrade12HealthLessons2to8";
 import { verifiedGrade12HealthLesson1 } from "./verifiedGrade12HealthLesson1";
 import { verifiedGrade12BiologyChapter4 } from "./verifiedGrade12BiologyChapter4";
@@ -3341,6 +3342,68 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
       question.grade === "دوازدهم" &&
       question.track === "ریاضی و تجربی" &&
       question.subject === "دین و زندگی"
+    )).toHaveLength(50);
+  });
+
+
+  it("provides five verified questions for every lesson of the shared Grade 12 Math/Experimental Hoviat book", () => {
+    const book = curriculumCatalog.find((item) =>
+      item.track === "ریاضی و تجربی" && item.grade === "دوازدهم" && item.subject === "هویت اجتماعی"
+    );
+    const chapters = [
+      "کنش‌های ما",
+      "پدیده‌های اجتماعی",
+      "جامعه و فرهنگ (جهان اجتماعی)",
+      "ارزیابی فرهنگ‌ها",
+      "هویت",
+      "بازتولید هویت اجتماعی",
+      "تحولات هویتی جامعه",
+      "بعد فرهنگی هویت ایران",
+      "بعد سیاسی هویت ایران",
+      "ابعاد جمعیتی و اقتصادی هویت ایران",
+    ];
+    expect(book?.bookCode).toBe("112220");
+    expect(book?.chapters).toEqual(chapters);
+    expect(book?.targetQuestionsPerLesson).toBe(5);
+    expect(verifiedGrade12MathScienceHoviat).toHaveLength(50);
+    expect(new Set(verifiedGrade12MathScienceHoviat.map((question) => question.id)).size).toBe(50);
+
+    for (const chapter of chapters) {
+      const questions = verifiedQuestions.filter((question) =>
+        question.grade === "دوازدهم" &&
+        question.track === "ریاضی و تجربی" &&
+        question.subject === "هویت اجتماعی" &&
+        question.chapter === chapter &&
+        question.sourceStatus === "curriculum-verified"
+      );
+      expect(questions, chapter).toHaveLength(5);
+      expect(questions.every((question) =>
+        question.sourceTitle === "هویت اجتماعی (کتاب درسی علوم اجتماعی) ـ پایه دوازدهم، کد ۱۱۲۲۲۰، سازمان پژوهش و برنامه‌ریزی آموزشی" &&
+        question.sourceUrl === "https://nedaedanesh.ir/wp-content/uploads/2024/03/%D9%87%D9%88%DB%8C%D8%AA-%D8%A7%D8%AC%D8%AA%D9%85%D8%A7%D8%B9%DB%8C-1.pdf" &&
+        question.sourceAnswerUrl === "https://dl.novinkonkor.com/nahaye/12/moshtarak/1405/tir/javab-hoviat-12-r-t-1405.pdf" &&
+        question.sourceYear === "۱۴۰۲" &&
+        question.options.length === 4 &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < 4 &&
+        question.explanation.length > 20 &&
+        question.reviewerNote?.includes("صفحات چاپی")
+      )).toBe(true);
+      expect(questions.every((question) => isGrade12AssessmentQuestionEligible(question))).toBe(true);
+    }
+
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "ریاضی و تجربی", "هویت اجتماعی", "دوازدهم")).toBe(true);
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "ریاضی", "هویت اجتماعی", "دوازدهم")).toBe(true);
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "تجربی", "هویت اجتماعی", "دوازدهم")).toBe(true);
+    expect(questionMatchesBookTrack("ریاضی و تجربی", "انسانی", "هویت اجتماعی", "دوازدهم")).toBe(false);
+    expect(isGrade12AssessmentQuestionEligible({
+      grade: "دوازدهم",
+      track: "انسانی",
+      subject: "هویت اجتماعی",
+    })).toBe(false);
+    expect(verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" &&
+      question.track === "ریاضی و تجربی" &&
+      question.subject === "هویت اجتماعی"
     )).toHaveLength(50);
   });
 
