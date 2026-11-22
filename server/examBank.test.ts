@@ -3448,6 +3448,18 @@ it("completes all three shared Grade 12 Vision 3 lessons with five verified ques
       expect(questions.every((question) => isGrade12AssessmentQuestionEligible(question))).toBe(true);
     }
 
+    const firstLessonQuestions = verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" &&
+      question.track === "ریاضی و تجربی" &&
+      question.subject === "عربی" &&
+      question.chapter === "الدين والتدين" &&
+      question.sourceStatus === "curriculum-verified"
+    );
+    expect(firstLessonQuestions[1]?.prompt).toContain("متضاد واژه");
+    expect(firstLessonQuestions[1]?.options[0]).toBe("تَجَنُّب");
+    expect(firstLessonQuestions[1]?.correctIndex).toBe(0);
+    expect(firstLessonQuestions[4]?.options[0]).toContain("رسوم");
+
     const farazdaqQuestions = verifiedQuestions.filter((question) =>
       question.grade === "دوازدهم" &&
       question.track === "ریاضی و تجربی" &&
