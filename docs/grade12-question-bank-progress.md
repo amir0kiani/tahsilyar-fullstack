@@ -13,6 +13,7 @@
 - آزمون رگرسیون جدید، کد کتاب ۱۱۲۲۱۱، تطبیق هفت فصل با کاتالوگ، پنج سؤال معتبر در هر فصل، یکتایی شناسه‌ها، چهارگزینه‌ای بودن، محدودهٔ کلید، توضیح، وضعیت منبع و صلاحیت امتحان نهایی/کنکور را کنترل می‌کند.
 - منبع کتاب: [رکورد رسمی رشد برای ریاضی (۳) پایه دوازدهم تجربی](https://www.roshd.ir/riazi/Content/کتاب-ریاضی-۳-پایه-دوازدهم)؛ [نسخهٔ PDF چاپ ۱۴۰۵–۱۴۰۶](https://dl.daneshchi.ir/file/chap-school/Rizai-Tajrobi-12_Daneshchi.iR.pdf)؛ [فهرست فصل‌ها و درس‌های نسخهٔ جاری](https://www.daneshchi.ir/riazi-tajrobi-12/).
 - منبع صلاحیت آزمون در پروژه: `server/grade12AssessmentEligibility.ts`، فهرست دروس نهایی و کنکور ۱۴۰۶؛ هیچ درس خارج از این فهرست اضافه نشد.
+- تغییرات در [PR شمارهٔ ۷۰](https://github.com/amir0kiani/tahsilyar-fullstack/pull/70) ادغام شد؛ CI شمارهٔ ۵۹۹ شامل Type-check، Run tests و Build همگی موفق بودند: [گزارش CI](https://github.com/amir0kiani/tahsilyar-fullstack/actions/runs/45112392974). ادغام نهایی در commit `35a247d0126a9cbf2baa2b6a8261982e25ae14b8` ثبت شده است.
 
 ## دامنه و قواعد
 
