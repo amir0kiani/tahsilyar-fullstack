@@ -1640,7 +1640,7 @@ describe("curriculum and assessment question bank", () => {
       (!question.id.startsWith("grade11-gap-authored-psych-") ||
         question.id.startsWith("grade11-gap-authored-psych-development-"))
     );
-    expect(batch).toHaveLength(13);
+    expect(batch).toHaveLength(14);
     const expected: Array<[string, string, string, number]> = [
       ["انسانی", "جغرافیا", "نواحی آب و هوایی", 5],
       ["انسانی", "جامعه‌شناسی", "فرهنگ جهانی", 5],
