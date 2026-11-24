@@ -1204,8 +1204,8 @@ describe("curriculum and assessment question bank", () => {
     expect(batch).toHaveLength(10);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
     expect(batch.filter((question) => question.chapter === "ریشه و شاخه‌های فلسفه")).toHaveLength(5);
-    expect(batch.filter((question) => question.chapter === "چیستی انسان (۱)")).toHaveLength(1);
-    expect(batch.filter((question) => question.chapter === "فلسفه و زندگی")).toHaveLength(4);
+    expect(batch.filter((question) => question.chapter === "چیستی انسان (۱)")).toHaveLength(0);
+    expect(batch.filter((question) => question.chapter === "فلسفه و زندگی")).toHaveLength(5);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
       expect(question.correctIndex, number).toBe(expectedKeys[number]);
@@ -1645,7 +1645,7 @@ describe("curriculum and assessment question bank", () => {
       ["انسانی", "جغرافیا", "نواحی آب و هوایی", 5],
       ["انسانی", "جامعه‌شناسی", "فرهنگ جهانی", 5],
       ["انسانی", "روان‌شناسی", "روان‌شناسی رشد", 5],
-      ["انسانی", "فلسفه", "چیستی انسان", 5],
+      ["انسانی", "فلسفه", "چیستی انسان (۱)", 5],
       ["انسانی", "فلسفه", "فلسفه و زندگی", 5],
       ["انسانی", "تاریخ", "منابع پژوهش در تاریخ اسلام و ایران دوران اسلامی", 5],
       ["انسانی", "تاریخ", "روش پژوهش در تاریخ؛ بررسی و سنجش اعتبار شواهد و مدارک", 5],
@@ -2080,6 +2080,21 @@ describe("curriculum and assessment question bank", () => {
       question.correctIndex < 4 &&
       question.explanation.length > 20
     )).toBe(true);
+  });
+
+  it("records five reviewed original questions for Philosophy lesson 9 against the official textbook", () => {
+    const lesson9 = verifiedQuestions.filter((question) =>
+      question.id.startsWith("grade11-gap-authored-philosophy-human-") &&
+      question.chapter === "چیستی انسان (۱)"
+    );
+    expect(lesson9).toHaveLength(5);
+    expect(lesson9.every((question) =>
+      question.sourceStatus === "reviewed" &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Falsafe-EM-11_Daneshchi.iR.pdf" &&
+      question.sourceYear === "۱۴۰۵" &&
+      question.reviewerNote.includes("ارجاع چاپی")
+    )).toBe(true);
+    expect(lesson9.find((question) => question.id.endsWith("philosophy-human-06"))?.correctIndex).toBe(1);
   });
 
   it("completes all eleven official Grade 11 humanities Philosophy lessons with five eligible reviewed questions each", () => {
