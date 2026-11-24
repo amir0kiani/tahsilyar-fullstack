@@ -5,6 +5,7 @@ import { verifiedGrade12SharedEnglishVision3 } from "./verifiedGrade12SharedEngl
 import { verifiedGrade12MathScienceDini } from "./verifiedGrade12MathScienceDini";
 import { verifiedGrade12MathScienceHoviat } from "./verifiedGrade12MathScienceHoviat";
 import { verifiedGrade12MathScienceArabic } from "./verifiedGrade12MathScienceArabic";
+import { verifiedGrade12PhysicsChapterFill } from "./verifiedGrade12PhysicsChapterFill";
 import { verifiedGrade12HealthLessons2to8 } from "./verifiedGrade12HealthLessons2to8";
 import { verifiedGrade12HealthLesson1 } from "./verifiedGrade12HealthLesson1";
 import { verifiedGrade12BiologyChapter4 } from "./verifiedGrade12BiologyChapter4";
@@ -579,7 +580,7 @@ describe("curriculum and assessment question bank", () => {
         question.track === track && question.grade === "دوازدهم" && question.subject === "فیزیک"
       );
       expect(questions.length).toBeGreaterThanOrEqual(5);
-      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed"].includes(question.sourceStatus ?? ""))).toBe(true);
+      expect(questions.every((question) => ["official-exam-adapted", "mock-exam-adapted", "reviewed", "curriculum-verified"].includes(question.sourceStatus ?? ""))).toBe(true);
     }
   });
 
@@ -587,6 +588,70 @@ describe("curriculum and assessment question bank", () => {
     const physicsBatch = verifiedQuestions.filter((question) => question.id.startsWith("verified-physics3-"));
     expect(physicsBatch.length).toBeGreaterThanOrEqual(10);
     expect(physicsBatch.filter((question) => question.sourceUrl?.includes("sanjesh.org")).length).toBeGreaterThanOrEqual(5);
+  });
+
+  it("uses the correct Grade 12 physics textbook chapter maps and validates the new chapter fill", () => {
+    const experimentalBook = curriculumCatalog.find((book) =>
+      book.grade === "دوازدهم" && book.track === "تجربی" && book.subject === "فیزیک"
+    );
+    expect(experimentalBook?.bookCode).toBe("112244");
+    expect(experimentalBook?.chapters).toEqual([
+      "حرکت بر خط راست", "دینامیک", "نوسان و موج", "آشنایی با فیزیک اتمی و هسته‌ای",
+    ]);
+
+    const mathematicsBook = curriculumCatalog.find((book) =>
+      book.grade === "دوازدهم" && book.track === "ریاضی" && book.subject === "فیزیک"
+    );
+    expect(mathematicsBook?.bookCode).toBe("112209");
+    expect(mathematicsBook?.chapters).toEqual([
+      "حرکت بر خط راست", "دینامیک و حرکت دایره‌ای", "نوسان و موج",
+      "برهم‌کنش‌های موج", "آشنایی با فیزیک اتمی", "آشنایی با فیزیک هسته‌ای",
+    ]);
+
+    expect(verifiedGrade12PhysicsChapterFill).toHaveLength(14);
+    const experimentalWave = verifiedGrade12PhysicsChapterFill.filter((question) =>
+      question.track === "تجربی" && question.chapter === "نوسان و موج"
+    );
+    const mathematicsDynamics = verifiedGrade12PhysicsChapterFill.filter((question) =>
+      question.track === "ریاضی" && question.chapter === "دینامیک و حرکت دایره‌ای"
+    );
+    const mathematicsOscillation = verifiedGrade12PhysicsChapterFill.filter((question) =>
+      question.track === "ریاضی" && question.chapter === "نوسان و موج"
+    );
+    expect(experimentalWave).toHaveLength(4);
+    expect(mathematicsDynamics).toHaveLength(5);
+    expect(mathematicsOscillation).toHaveLength(5);
+
+    expect(verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" && question.track === "تجربی" &&
+      question.subject === "فیزیک" && question.chapter === "نوسان و موج"
+    )).toHaveLength(5);
+    expect(verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" && question.track === "ریاضی" &&
+      question.subject === "فیزیک" && question.chapter === "دینامیک و حرکت دایره‌ای"
+    )).toHaveLength(5);
+    expect(verifiedQuestions.filter((question) =>
+      question.grade === "دوازدهم" && question.track === "ریاضی" &&
+      question.subject === "فیزیک" && question.chapter === "نوسان و موج"
+    )).toHaveLength(5);
+    expect(verifiedQuestions.some((question) =>
+      question.grade === "دوازدهم" && question.track === "تجربی" &&
+      question.subject === "فیزیک" && question.chapter === "برهم‌کنش‌های موج"
+    )).toBe(false);
+
+    for (const question of verifiedGrade12PhysicsChapterFill) {
+      expect(question.grade).toBe("دوازدهم");
+      expect(question.subject).toBe("فیزیک");
+      expect(question.sourceStatus).toBe("curriculum-verified");
+      expect(question.sourceTitle).toContain("تألیفی تحصیل‌یار");
+      expect(question.sourceUrl).toMatch(/^https:\/\//);
+      expect(question.sourceYear).toBe("۱۴۰۵–۱۴۰۶");
+      expect(question.reviewerNote).toContain("سؤال تألیفی");
+      expect(isGrade12AssessmentQuestionEligible(question)).toBe(true);
+      expect(question.options).toHaveLength(4);
+      expect(question.correctIndex).toBeGreaterThanOrEqual(0);
+      expect(question.correctIndex).toBeLessThan(4);
+    }
   });
 
 
