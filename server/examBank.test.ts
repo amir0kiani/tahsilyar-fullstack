@@ -52,6 +52,35 @@ describe("curriculum and assessment question bank", () => {
     expect(examQuestions.every((question) => question.sourceStatus === "sample-authored")).toBe(true);
   });
 
+  it("counts only explicitly recognized provenance states toward verified lesson coverage", () => {
+    const statuses = [
+      "official-exam",
+      "official-exam-adapted",
+      "mock-exam-adapted",
+      "reviewed",
+      "curriculum-verified",
+      "sample-authored",
+      "pending-review",
+      "legacy-unknown",
+      undefined,
+    ];
+    const rows = statuses.map((sourceStatus) => ({
+      track: "عمومی",
+      grade: "یازدهم",
+      subject: "زبان انگلیسی",
+      chapter: "Understanding People",
+      sourceStatus,
+    }));
+    const book = buildGradeSpecificCatalog(rows).find((item) =>
+      item.grade === "یازدهم" && item.track === "عمومی" && item.subject === "زبان انگلیسی"
+    );
+    const lesson = book?.lessonCoverage?.find((item) => item.chapter === "Understanding People");
+
+    expect(lesson?.questionCount).toBe(9);
+    expect(lesson?.verifiedQuestionCount).toBe(5);
+    expect(lesson?.targetMet).toBe(true);
+  });
+
   it("records traceable provenance and review state for every bundled question", () => {
     expect(verifiedQuestions.length).toBeGreaterThanOrEqual(29);
     for (const question of verifiedQuestions) {

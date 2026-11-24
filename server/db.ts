@@ -363,7 +363,16 @@ export function questionMatchesBookTrack(questionTrack: string, bookTrack: strin
 }
 
 export function buildGradeSpecificCatalog(questionRows: Array<{ track: string; grade: string; subject: string; chapter: string; sourceStatus?: string }>) {
-  const isVerified = (status?: string) => Boolean(status && status !== "sample-authored" && status !== "pending-review");
+  // Only recognized, provenance-bearing states count toward verified coverage.
+  // Unknown or legacy database values must fail closed rather than inflate the bank.
+  const verifiedSourceStatuses = new Set([
+    "official-exam",
+    "official-exam-adapted",
+    "mock-exam-adapted",
+    "reviewed",
+    "curriculum-verified",
+  ]);
+  const isVerified = (status?: string) => Boolean(status && verifiedSourceStatuses.has(status));
   const assessmentQuestionRows = questionRows
     .map(canonicalizeGrade11AssessmentQuestion)
     .filter(isGrade11AssessmentQuestionEligible)
