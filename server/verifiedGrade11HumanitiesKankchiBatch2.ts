@@ -92,7 +92,7 @@ export const verifiedGrade11HumanitiesKankchiBatch2: ExamQuestion[] = [
   {
     id: "upload-kankchi-human11-philosophy-individual-society-86",
     grade: "یازدهم", track: "انسانی", subject: "فلسفه",
-    chapter: "چیستی انسان", topic: "دیدگاه‌های اصالت فرد و جامعه",
+    chapter: "فلسفه و زندگی", topic: "دیدگاه‌های اصالت فرد و جامعه",
     difficulty: "دشوار",
     prompt: "با استناد به دیدگاه‌های سه‌گانه در فلسفهٔ علوم اجتماعی پیرامون اصالت فرد یا جامعه، کدام گزینه از نظر منطقی نادرست است؟",
     options: [
@@ -104,7 +104,7 @@ export const verifiedGrade11HumanitiesKankchiBatch2: ExamQuestion[] = [
     correctIndex: 1,
     explanation: "در دیدگاه سوم، هم اصالت فرد و هم آثار و منافع جمعی اهمیت دارند؛ بنابراین سیاستی که عدالت جمعی را کاملاً نادیده بگیرد، با این دیدگاه سازگار نیست.",
     sourceStatus: "reviewed", sourceTitle, sourceQuestionNumber: "۸۶", verifiedAt,
-    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۲۳ دفترچهٔ قلم‌چی و کلید گزینهٔ ۲ با صفحهٔ ۱۴ پاسخنامه تطبیق داده شد."
+    reviewerNote: "صورت سؤال و گزینه‌ها با صفحهٔ ۲۳ دفترچهٔ قلم‌چی و کلید گزینهٔ ۲ با صفحهٔ ۱۴ پاسخنامه تطبیق داده شد؛ مبحث اصالت فرد و جامعه با درس «فلسفه و زندگی»، صفحهٔ ۲۱ کتاب رسمی فلسفه (۱)، تطبیق دارد."
   },
   {
     id: "upload-kankchi-human11-philosophy-meaning-life-87",
