@@ -1204,7 +1204,7 @@ describe("curriculum and assessment question bank", () => {
     expect(batch).toHaveLength(10);
     expect(batch.every((question) => question.sourceStatus === "reviewed" && question.options.length === 4)).toBe(true);
     expect(batch.filter((question) => question.chapter === "ریشه و شاخه‌های فلسفه")).toHaveLength(5);
-    expect(batch.filter((question) => question.chapter === "چیستی انسان")).toHaveLength(1);
+    expect(batch.filter((question) => question.chapter === "چیستی انسان (۱)")).toHaveLength(1);
     expect(batch.filter((question) => question.chapter === "فلسفه و زندگی")).toHaveLength(4);
     for (const question of batch) {
       const number = question.sourceQuestionNumber ?? "";
@@ -2082,17 +2082,18 @@ describe("curriculum and assessment question bank", () => {
     )).toBe(true);
   });
 
-  it("completes all ten official Grade 11 humanities Philosophy lessons with five eligible reviewed questions each", () => {
+  it("completes all eleven official Grade 11 humanities Philosophy lessons with five eligible reviewed questions each", () => {
     const lessons = [
       "چیستی فلسفه",
       "ریشه و شاخه‌های فلسفه",
-      "آغاز تاریخی فلسفه",
       "فلسفه و زندگی",
+      "آغاز تاریخی فلسفه",
       "زندگی بر اساس اندیشه",
       "امکان شناخت",
       "ابزارهای شناخت",
       "نگاهی به تاریخچه معرفت",
-      "چیستی انسان",
+      "چیستی انسان (۱)",
+      "چیستی انسان (۲)",
       "انسان، موجود اخلاق‌گرا"
     ];
     const book = curriculumCatalog.find((item) =>
@@ -2100,6 +2101,13 @@ describe("curriculum and assessment question bank", () => {
     );
     expect(book?.bookCode).toBe("111226");
     expect(book?.chapters).toEqual(lessons);
+    expect(book?.sections?.map((section) => section.title)).toEqual([
+      "فصل اول: فلسفه و ابعاد آن",
+      "فصل دوم: معرفت و شناخت",
+      "فصل سوم: انسان",
+    ]);
+    expect(book?.sections?.map((section) => section.lessons.length)).toEqual([5, 3, 3]);
+    expect(book?.sections?.reduce((total, section) => total + section.lessons.length, 0)).toBe(11);
 
     for (const chapter of lessons) {
       const count = verifiedQuestions.filter((question) =>
@@ -2119,7 +2127,7 @@ describe("curriculum and assessment question bank", () => {
     const batch = verifiedQuestions.filter((question) =>
       question.id.startsWith("grade11-philosophy-gap-")
     );
-    expect(batch).toHaveLength(34);
+    expect(batch).toHaveLength(39);
     const addedPerLesson: Record<string, number> = {
       "چیستی فلسفه": 5,
       "آغاز تاریخی فلسفه": 5,
@@ -2127,6 +2135,7 @@ describe("curriculum and assessment question bank", () => {
       "امکان شناخت": 5,
       "ابزارهای شناخت": 4,
       "نگاهی به تاریخچه معرفت": 5,
+      "چیستی انسان (۲)": 5,
       "انسان، موجود اخلاق‌گرا": 5
     };
     for (const [chapter, expected] of Object.entries(addedPerLesson)) {
@@ -2138,7 +2147,7 @@ describe("curriculum and assessment question bank", () => {
       question.subject === "فلسفه" &&
       question.sourceStatus === "reviewed" &&
       question.sourceTitle?.includes("کتاب رسمی فلسفه (۱)") &&
-      question.sourceUrl === "https://abadgaranedu.ir/wp-content/uploads/2019/01/school-book-humanities-11th-philosophy-abadgaranedu.ir_.pdf" &&
+      question.sourceUrl === "https://dl.daneshchi.ir/file/chap-school/Falsafe-EM-11_Daneshchi.iR.pdf" &&
       question.reviewerNote?.includes("سؤال تألیفی") &&
       question.reviewerNote?.includes("ارجاع: صفحه‌های") &&
       question.options.length === 4 &&
@@ -2153,11 +2162,11 @@ describe("curriculum and assessment question bank", () => {
       "grade11-philosophy-gap-lesson1-03": 0,
       "grade11-philosophy-gap-lesson1-04": 2,
       "grade11-philosophy-gap-lesson1-05": 0,
-      "grade11-philosophy-gap-lesson3-01": 1,
-      "grade11-philosophy-gap-lesson3-02": 1,
-      "grade11-philosophy-gap-lesson3-03": 0,
-      "grade11-philosophy-gap-lesson3-04": 1,
-      "grade11-philosophy-gap-lesson3-05": 1,
+      "grade11-philosophy-gap-lesson4-01": 1,
+      "grade11-philosophy-gap-lesson4-02": 1,
+      "grade11-philosophy-gap-lesson4-03": 0,
+      "grade11-philosophy-gap-lesson4-04": 1,
+      "grade11-philosophy-gap-lesson4-05": 1,
       "grade11-philosophy-gap-lesson5-01": 1,
       "grade11-philosophy-gap-lesson5-02": 0,
       "grade11-philosophy-gap-lesson5-03": 1,
@@ -2177,13 +2186,18 @@ describe("curriculum and assessment question bank", () => {
       "grade11-philosophy-gap-lesson8-03": 1,
       "grade11-philosophy-gap-lesson8-04": 1,
       "grade11-philosophy-gap-lesson8-05": 2,
+      "grade11-philosophy-gap-lesson11-01": 1,
+      "grade11-philosophy-gap-lesson11-02": 2,
+      "grade11-philosophy-gap-lesson11-03": 1,
+      "grade11-philosophy-gap-lesson11-04": 1,
+      "grade11-philosophy-gap-lesson11-05": 1,
       "grade11-philosophy-gap-lesson10-01": 1,
       "grade11-philosophy-gap-lesson10-02": 2,
-      "grade11-philosophy-gap-lesson10-03": 1,
+      "grade11-philosophy-gap-lesson10-03": 0,
       "grade11-philosophy-gap-lesson10-04": 1,
-      "grade11-philosophy-gap-lesson10-05": 1
+      "grade11-philosophy-gap-lesson10-05": 2,
     };
-    expect(Object.keys(expectedKeys)).toHaveLength(34);
+    expect(Object.keys(expectedKeys)).toHaveLength(39);
     for (const question of batch) {
       expect(question.correctIndex, question.id).toBe(expectedKeys[question.id]);
     }
@@ -2835,7 +2849,7 @@ describe("curriculum and assessment question bank", () => {
     );
 
     expect(eligibleBooks).toHaveLength(25);
-    expect(eligibleBooks.reduce((total, book) => total + (book.lessonCoverage?.length ?? 0), 0)).toBe(216);
+    expect(eligibleBooks.reduce((total, book) => total + (book.lessonCoverage?.length ?? 0), 0)).toBe(217);
     const gaps = eligibleBooks.flatMap((book) =>
       (book.lessonCoverage ?? [])
         .filter((lesson) => !lesson.targetMet)
