@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { FREE_DAILY_LIMITS, FREE_MONTHLY_CLAIM_LIMIT, getTehranJalaliDate } from "./monetization";
+import { FREE_DAILY_LIMITS, FREE_MONTHLY_CLAIM_LIMIT, PLUS_MONTHLY_LIMITS, getTehranJalaliDate } from "./monetization";
 
 describe("free daily credit policy", () => {
   it("uses Tehran local Jalali date rather than UTC date", () => {
@@ -23,5 +23,15 @@ describe("free daily credit policy", () => {
       plan_update: 2,
       progress_analysis: 1,
     });
+  });
+
+  it("defines finite monthly Plus limits for every metered AI feature", () => {
+    expect(PLUS_MONTHLY_LIMITS).toEqual({
+      chat_message: 600,
+      plan_generate: 30,
+      plan_update: 60,
+      progress_analysis: 30,
+    });
+    expect(Object.values(PLUS_MONTHLY_LIMITS).every((limit) => Number.isInteger(limit) && limit > 0)).toBe(true);
   });
 });
