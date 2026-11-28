@@ -847,3 +847,34 @@ html.dark .app-frame .screen:not(.home-screen) .learning-guide-warning { backgro
   .app-frame .screen:not(.home-screen) .week-strip button { min-width: 48px; }
   .app-frame .bottom-nav { display: flex; }
 }
+
+
+/* Monetization v1 */
+.billing-checkout-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 0 0 22px;
+  padding: 20px 22px;
+  border: 1px solid var(--border, rgba(100, 116, 139, .22));
+  border-radius: 18px;
+  background: var(--card, var(--surface, #fff));
+  color: var(--foreground, inherit);
+}
+.billing-checkout-copy { min-width: 0; }
+.billing-eyebrow { display: inline-block; margin-bottom: 6px; color: var(--primary, #8b2635); font-size: 12px; font-weight: 700; }
+.billing-checkout-copy h2 { margin: 0 0 6px; font-size: 17px; font-weight: 800; }
+.billing-checkout-copy p { margin: 0; color: var(--muted-foreground, #737373); font-size: 13px; line-height: 1.8; }
+.billing-checkout-actions { display: flex; flex-wrap: wrap; gap: 8px; flex-shrink: 0; }
+.billing-checkout-actions button { min-height: 42px; padding: 0 14px; border: 1px solid var(--primary, #8b2635); border-radius: 11px; background: var(--primary, #8b2635); color: #fff; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.billing-checkout-actions button.billing-secondary { background: transparent; color: var(--primary, #8b2635); }
+.billing-checkout-actions button:disabled { opacity: .55; cursor: wait; }
+@media (max-width: 760px) {
+  .billing-checkout-card { align-items: stretch; flex-direction: column; padding: 16px; }
+  .billing-checkout-actions { display: grid; grid-template-columns: 1fr; }
+}
+
+.plus-quota-list { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 10px; }
+.plus-quota-list span { color: var(--muted-foreground, #737373); font-size: 11px; line-height: 1.7; }
+@media (max-width: 760px) { .plus-quota-list { display: grid; grid-template-columns: 1fr 1fr; } }

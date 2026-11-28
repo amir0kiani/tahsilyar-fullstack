@@ -7,6 +7,8 @@ import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getStudyPlanById, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery, getAssessmentCatalog, getAssessmentQuestions, getStudentLessonProgress, setStudentLessonProgress, getAdminOverview, getAdminUsers } from "./db";
+import { claimFreeDailyCredits, consumeQuotaForUser, getFreeDailyCreditStatus, refundQuotaForUser } from "./monetization";
+import { createZarinpalCheckout } from "./zarinpal";
 
 const chatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -243,6 +245,19 @@ export const appRouter = router({
       answers: z.record(z.string(), z.string()).default({}),
     })).mutation(async ({ ctx, input }) => upsertStudentProfile({ userId: ctx.user.id, name: input.name, email: input.email ?? ctx.user.email ?? undefined, answers: input.answers })),
   }),
+  billing: router({
+    freeCreditStatus: protectedProcedure.query(({ ctx }) => getFreeDailyCreditStatus(ctx.user.id)),
+    claimFreeDailyCredits: protectedProcedure.mutation(({ ctx }) => claimFreeDailyCredits(ctx.user.id)),
+    checkout: protectedProcedure.input(z.object({ planCode: z.enum(["plus_monthly", "plus_quarterly"]) }))
+      .mutation(async ({ ctx, input }) => {
+        try {
+          return await createZarinpalCheckout(ctx.user.id, input.planCode);
+        } catch (error) {
+          console.error("[Billing] Checkout creation failed:", error);
+          throw new TRPCError({ code: "PRECONDITION_FAILED", message: error instanceof Error ? error.message : "ساخت درخواست پرداخت ممکن نشد." });
+        }
+      }),
+  }),
   study: router({
     latestPlan: protectedProcedure.query(async ({ ctx }) => (await getLatestStudyPlan(ctx.user.id)) ?? null),
     setSessionCompleted: protectedProcedure.input(z.object({ sessionId: z.number().int().positive(), completed: z.boolean() })).mutation(({ ctx, input }) => setStudySessionCompleted({ userId: ctx.user.id, ...input })),
@@ -284,6 +299,14 @@ export const appRouter = router({
         let updatedPlan: Awaited<ReturnType<typeof getLatestStudyPlan>> = undefined;
 
         const requestsPlanUpdate = isPlanUpdateRequest(input.message, history);
+        const needsAI = !(requestsPlanUpdate && Object.keys(profileAnswers).length < 7);
+        const quotaFeature = requestsPlanUpdate ? "plan_update" : "chat_message";
+        let quotaWasPaid = false;
+        if (needsAI) {
+          const quota = await consumeQuotaForUser(ctx.user.id, quotaFeature);
+          quotaWasPaid = quota.paid;
+          if (!quota.allowed) { const message = quota.paid ? (quota.reason === "monthly_limit" ? "سهمیه ماهانه این قابلیت در اشتراک پلاس به پایان رسیده است." : "سهمیه این قابلیت برای اشتراک فعال تنظیم نشده است؛ لطفاً با پشتیبانی تماس بگیر.") : (quota.reason === "daily_limit" ? "اعتبار امروز این قابلیت تمام شده است." : "اعتبار رایگان امروزت فعال نیست یا هفت نوبت این ماه را استفاده کرده‌ای. برای ادامه، اشتراک پلاس را فعال کن."); throw new TRPCError({ code: "TOO_MANY_REQUESTS", message }); }
+        }
         if (requestsPlanUpdate && Object.keys(profileAnswers).length < 7) {
           assistantText = "برای ساخت یا اصلاح برنامهٔ دقیق، ابتدا باید اطلاعات تحصیلی‌ات را کامل کنی. پایه و رشته، زمان مطالعه، دروس اولویت‌دار، هدف و امتحان پیش‌رو را در بخش برنامه‌ریزی ثبت کن.";
         } else if (requestsPlanUpdate) {
@@ -355,6 +378,7 @@ export const appRouter = router({
             assistantText = formatPlanForChat(savedPlan);
             responseModel = planResponse.model;
           } catch (error) {
+            await refundQuotaForUser(ctx.user.id, "plan_update", quotaWasPaid);
             if (error instanceof TRPCError) throw error;
             console.error("[Study] Could not generate and persist the chat plan:", error);
             throw new TRPCError({
@@ -363,7 +387,9 @@ export const appRouter = router({
             });
           }
         } else {
-          const response = await invokeLLM({
+          let response;
+          try {
+            response = await invokeLLM({
             model: "gemini-3-flash-preview",
             messages: [
               {
@@ -374,7 +400,11 @@ export const appRouter = router({
               { role: "user", content: input.message },
             ],
             maxTokens: 5000,
-          });
+            });
+          } catch (error) {
+            await refundQuotaForUser(ctx.user.id, "chat_message", quotaWasPaid);
+            throw error;
+          }
           const text = extractText(response.choices[0]?.message.content).trim();
           assistantText = text || "برای پاسخ دقیق، اطلاعات بیشتری از خودت ثبت کن.";
           responseModel = response.model;
@@ -392,22 +422,29 @@ export const appRouter = router({
         planRange: z.enum(["today", "tomorrow", "week"]).default("week"),
       }))
       .mutation(async ({ input, ctx }) => {
+        const quota = await consumeQuotaForUser(ctx.user.id, "plan_generate");
+        if (!quota.allowed) { const message = quota.paid ? (quota.reason === "monthly_limit" ? "سهمیه ماهانه تولید برنامه در اشتراک پلاس به پایان رسیده است." : "سهمیه تولید برنامه برای اشتراک فعال تنظیم نشده است؛ لطفاً با پشتیبانی تماس بگیر.") : "اعتبار تولید برنامه امروزت تمام شده یا اعتبار رایگان این ماه در دسترس نیست. برای ادامه، اشتراک پلاس را فعال کن."; throw new TRPCError({ code: "TOO_MANY_REQUESTS", message }); }
         try {
           const existingProfile = await getStudentProfile(ctx.user.id);
           await upsertStudentProfile({ userId: ctx.user.id, name: input.answers["نام"]?.trim() || existingProfile?.name || ctx.user.name || undefined, email: existingProfile?.email ?? ctx.user.email ?? undefined, answers: input.answers });
         } catch (error) {
+          await refundQuotaForUser(ctx.user.id, "plan_generate", quota.paid);
           console.error("[Study] Could not persist profile before planning:", error);
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "ذخیرهٔ اطلاعات تحصیلی انجام نشد؛ لطفاً دوباره تلاش کن." });
         }
         const answers = Object.entries(input.answers).map(([step, answer]) => `${step}: ${answer}`).join("\n");
         const track = Object.values(input.answers).find((answer) => /انسانی|ریاضی|تجربی/.test(answer)) ?? "تجربی";
         const curriculum = curriculumFor(track);
-        const mastery = await getAcademicMastery(ctx.user.id);
+        let mastery: Awaited<ReturnType<typeof getAcademicMastery>>;
+        try { mastery = await getAcademicMastery(ctx.user.id); }
+        catch (error) { await refundQuotaForUser(ctx.user.id, "plan_generate", quota.paid); throw error; }
         const lowMastery = mastery.filter((item) => item.questions >= 3 && item.accuracy < 80).slice(0, 8);
         const assessmentContext = lowMastery.length
           ? lowMastery.map((item) => `${item.subject} / ${item.chapter} / ${item.topic}: ${item.accuracy}% accuracy across ${item.questions} questions (${item.status})`).join("\\n")
           : "دادهٔ آزمون کافی برای تعیین ضعف پایدار وجود ندارد؛ ضعف یا قوت مشخصی را حدس نزن.";
-        const response = await invokeLLM({
+        let response;
+        try {
+          response = await invokeLLM({
           model: "gemini-3-flash-preview",
           messages: [
             {
@@ -426,7 +463,11 @@ export const appRouter = router({
             json_schema: { name: "personal_study_plan", strict: true, schema: planSchema },
           },
           maxTokens: 2200,
-        });
+          });
+        } catch (error) {
+          await refundQuotaForUser(ctx.user.id, "plan_generate", quota.paid);
+          throw error;
+        }
         const raw = extractText(response.choices[0]?.message.content);
         const normalizedRaw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
         let plan: { title: string; summary: string; sessions: Array<{ subject: string; topic: string; day: string; start: string; end: string; duration: string; reason: string }>; focusTip: string };
@@ -441,6 +482,7 @@ export const appRouter = router({
             if (!plan.title.includes("هفت")) plan.title = `برنامهٔ هفتگی · ${plan.title}`;
           }
         } catch {
+          await refundQuotaForUser(ctx.user.id, "plan_generate", quota.paid);
           console.error("[Study] AI returned invalid plan JSON:", raw.slice(0, 500));
           return { title: "", summary: "پاسخ برنامه‌ریز قابل پردازش نبود؛ دوباره تلاش کن.", sessions: [], focusTip: "" };
         }
@@ -450,6 +492,7 @@ export const appRouter = router({
           if (!savedPlan) throw new Error("The generated plan was not readable after persistence");
           return savedPlan;
         } catch (error) {
+          await refundQuotaForUser(ctx.user.id, "plan_generate", quota.paid);
           console.error("[Study] Plan generation or persistence failed:", error);
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "برنامه تولید شد، اما ذخیره‌سازی آن کامل نشد؛ برنامهٔ قبلی دست‌نخورده باقی ماند." });
         }

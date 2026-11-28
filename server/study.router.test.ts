@@ -19,6 +19,12 @@ const dbMocks = vi.hoisted(() => ({
 
 vi.mock("./_core/llm", () => ({ invokeLLM: invokeLLMMock }));
 vi.mock("./db", () => dbMocks);
+vi.mock("./monetization", () => ({
+  claimFreeDailyCredits: vi.fn(),
+  consumeQuotaForUser: vi.fn().mockResolvedValue({ allowed: true, paid: true, remaining: null }),
+  getFreeDailyCreditStatus: vi.fn(),
+  refundQuotaForUser: vi.fn(),
+}));
 
 const authenticatedUser = {
   id: 42,
@@ -123,6 +129,30 @@ describe("study AI procedures", () => {
     expect(dbMocks.addConversationMessage).toHaveBeenCalledTimes(2);
   });
 
+  it("blocks Plus users when the monthly AI allowance is exhausted", async () => {
+    const { consumeQuotaForUser } = await import("./monetization");
+    vi.mocked(consumeQuotaForUser).mockResolvedValueOnce({
+      allowed: false,
+      paid: true,
+      reason: "monthly_limit",
+      remaining: 0,
+      limit: 600,
+      used: 600,
+    });
+    const caller = appRouter.createCaller(createContext());
+    await expect(caller.study.chat({ message: "برای امروز چه برنامه‌ای پیشنهاد می‌کنی؟" }))
+      .rejects.toMatchObject({ code: "TOO_MANY_REQUESTS", message: "سهمیه ماهانه این قابلیت در اشتراک پلاس به پایان رسیده است." });
+    expect(invokeLLMMock).not.toHaveBeenCalled();
+  });
+  it("refunds a Plus monthly reservation when the AI provider fails", async () => {
+    const { consumeQuotaForUser, refundQuotaForUser } = await import("./monetization");
+    vi.mocked(consumeQuotaForUser).mockResolvedValueOnce({ allowed: true, paid: true, remaining: 599, limit: 600, used: 1 });
+    vi.mocked(refundQuotaForUser).mockClear();
+    invokeLLMMock.mockRejectedValueOnce(new Error("LLM unavailable"));
+    const caller = appRouter.createCaller(createContext());
+    await expect(caller.study.chat({ message: "سلام" })).rejects.toThrow("LLM unavailable");
+    expect(refundQuotaForUser).toHaveBeenCalledWith(42, "chat_message", true);
+  });
   it("rejects plan generation until all required user answers exist", async () => {
     const caller = appRouter.createCaller(createContext());
     await expect(caller.study.generatePlan({ answers: { "بازهٔ زمانی": "۲ تا ۴ ساعت" } })).rejects.toThrow();
