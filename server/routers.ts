@@ -8,6 +8,7 @@ import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_
 import { TRPCError } from "@trpc/server";
 import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getStudyPlanById, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery, getAssessmentCatalog, getAssessmentQuestions, getStudentLessonProgress, setStudentLessonProgress, getAdminOverview, getAdminUsers } from "./db";
 import { claimFreeDailyCredits, consumeQuotaForUser, getFreeDailyCreditStatus, refundFreeDailyQuota } from "./monetization";
+import { createZarinpalCheckout } from "./zarinpal";
 
 const chatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -247,6 +248,15 @@ export const appRouter = router({
   billing: router({
     freeCreditStatus: protectedProcedure.query(({ ctx }) => getFreeDailyCreditStatus(ctx.user.id)),
     claimFreeDailyCredits: protectedProcedure.mutation(({ ctx }) => claimFreeDailyCredits(ctx.user.id)),
+    checkout: protectedProcedure.input(z.object({ planCode: z.enum(["plus_monthly", "plus_quarterly"]) }))
+      .mutation(async ({ ctx, input }) => {
+        try {
+          return await createZarinpalCheckout(ctx.user.id, input.planCode);
+        } catch (error) {
+          console.error("[Billing] Checkout creation failed:", error);
+          throw new TRPCError({ code: "PRECONDITION_FAILED", message: error instanceof Error ? error.message : "ساخت درخواست پرداخت ممکن نشد." });
+        }
+      }),
   }),
   study: router({
     latestPlan: protectedProcedure.query(async ({ ctx }) => (await getLatestStudyPlan(ctx.user.id)) ?? null),
