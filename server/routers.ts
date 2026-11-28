@@ -293,7 +293,7 @@ export const appRouter = router({
         const quotaFeature = requestsPlanUpdate ? "plan_update" : "chat_message";
         if (needsAI) {
           const quota = await consumeQuotaForUser(ctx.user.id, quotaFeature);
-          if (!quota.allowed) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: quota.reason === "daily_limit" ? "اعتبار امروز این قابلیت تمام شده است." : "اعتبار رایگان امروزت فعال نیست یا هفت نوبت این ماه را استفاده کرده‌ای. برای ادامه، اشتراک پلاس را فعال کن." });
+          if (!quota.allowed) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: (!quota.paid && quota.reason === "daily_limit") ? "اعتبار امروز این قابلیت تمام شده است." : "اعتبار رایگان امروزت فعال نیست یا هفت نوبت این ماه را استفاده کرده‌ای. برای ادامه، اشتراک پلاس را فعال کن." });
         }
         if (requestsPlanUpdate && Object.keys(profileAnswers).length < 7) {
           assistantText = "برای ساخت یا اصلاح برنامهٔ دقیق، ابتدا باید اطلاعات تحصیلی‌ات را کامل کنی. پایه و رشته، زمان مطالعه، دروس اولویت‌دار، هدف و امتحان پیش‌رو را در بخش برنامه‌ریزی ثبت کن.";
