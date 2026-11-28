@@ -134,7 +134,7 @@ export default function AdminPanel() {
                     {users.isLoading ? <tr><td colSpan={5} className="px-5 py-8 text-center text-[var(--ink-soft)]">در حال دریافت کاربران…</td></tr> :
                       users.data?.length ? users.data.map((user) => <tr key={user.id} className="border-t border-[var(--line)]">
                         <td className="px-5 py-4"><strong className="block">{user.name || user.profileName || "بدون نام"}</strong><span className="text-xs text-[var(--ink-soft)]" dir="ltr">{user.email || "بدون ایمیل"}</span></td>
-                        <td className="px-5 py-4"><span className={\`rounded-full px-2.5 py-1 text-xs font-bold \${user.role === "admin" ? "bg-amber-100 text-amber-800" : "bg-[var(--mint)] text-[var(--deep)]"}\`}>{user.role === "admin" ? "مدیر" : "کاربر"}</span></td>
+                        <td className="px-5 py-4"><span className={`rounded-full px-2.5 py-1 text-xs font-bold ${user.role === "admin" ? "bg-amber-100 text-amber-800" : "bg-[var(--mint)] text-[var(--deep)]"}`}>{user.role === "admin" ? "مدیر" : "کاربر"}</span></td>
                         <td className="px-5 py-4">{user.hasStudentProfile ? "تکمیل‌شده" : "ثبت‌نشده"}</td>
                         <td className="px-5 py-4 text-xs text-[var(--ink-soft)]">{formatDate(user.createdAt)}</td>
                         <td className="px-5 py-4 text-xs text-[var(--ink-soft)]">{formatDate(user.lastSignedIn)}</td>
