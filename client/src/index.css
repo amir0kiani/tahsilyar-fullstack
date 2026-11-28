@@ -319,7 +319,7 @@ em { color: var(--turquoise-dark); font-style: normal; }
 /* Tahsilyar branding and companion range controls */
 .image-logo { overflow: hidden; display: grid; place-items: center; }
 .image-logo.day, .brand-lockup.compact .logo-mark.image-logo.day { background: #17383d; }
-.image-logo.dark, .brand-lockup.compact .logo-mark.image-logo.dark { background: #f6ebd4; }
+.image-logo.dark, .brand-lockup.compact .logo-mark.image-logo.dark { background: #2b3a52; box-shadow: 0 10px 25px rgba(4, 12, 28, .3); }
 .image-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .range-picker { display: grid; gap: 9px; margin: 18px 0; }
 .range-picker button { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #dcebe8; border-radius: 12px; background: #fbfefd; color: var(--deep); padding: 12px 14px; font-family: inherit; font-size: 11px; cursor: pointer; transition: .18s var(--ease); }
@@ -340,7 +340,7 @@ em { color: var(--turquoise-dark); font-style: normal; }
 .bot-message span { background: #f3f7f6; color: var(--deep); border-bottom-left-radius: 4px; }
 
 /* Tahsilyar branding and companion range controls */
-.image-logo { overflow: hidden; background: #fff; display: grid; place-items: center; }
+.image-logo { overflow: hidden; display: grid; place-items: center; }
 .image-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .range-picker { display: grid; gap: 9px; margin: 18px 0; }
 .range-picker button { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #dcebe8; border-radius: 12px; background: #fbfefd; color: var(--deep); padding: 12px 14px; font-family: inherit; font-size: 11px; cursor: pointer; transition: .18s var(--ease); }
@@ -555,6 +555,10 @@ html.dark .home-screen .today-card,
 html.dark .home-screen .exam-card,
 html.dark .home-screen .session-row,
 html.dark .home-screen .empty-state { background: #1b293f; border-color: #34445e; }
+html.dark .home-screen .next-lesson-banner { background: #1b293f; border-color: #34445e; }
+html.dark .home-screen .next-lesson-banner strong { color: #f2eadc; }
+html.dark .home-screen .next-lesson-banner small { color: #b6bdc8; }
+html.dark .home-screen .lesson-code { color: #f0c8c6; background: #49343d; }
 @media (max-width: 720px) {
   .app-frame:has(.home-screen) .page-content { padding: 28px 18px 94px; }
   .home-screen .welcome-row h1 { font-size: 27px; }
@@ -593,7 +597,7 @@ html.dark .home-screen .empty-state { background: #1b293f; border-color: #34445e
   border-left: 1px solid #e1d5c1;
   color: var(--ty-navy, #25344f);
 }
-.app-frame .sidebar-logo { border-bottom-color: #e1d5c1; }
+.app-frame .sidebar-logo { border-bottom: 0; }
 .app-frame .brand-copy strong { color: #25344f; }
 .app-frame .sidebar-greeting > span,
 .app-frame .sidebar-greeting strong { color: #667181; }
@@ -724,7 +728,11 @@ html.dark .home-screen .empty-state { background: #1b293f; border-color: #34445e
 .app-frame .bottom-nav button { color: #92939a; }
 .app-frame .bottom-nav button.active { color: #a43d48; }
 .app-frame .bottom-nav button.active::after { content:""; width:28px; height:3px; border-radius:4px; background:#a43d48; position:absolute; bottom:2px; }
+.app-frame .bottom-nav button.active::after { display: none; }
 .app-frame .bottom-nav button { position:relative; }
+.app-frame .sidebar-bottom { border-top: 0; }
+.app-frame .topbar { border-bottom: 0; }
+.app-frame .bottom-nav { border-top: 0; }
 
 /* Dark editorial palette for every application screen */
 html.dark .app-frame {
@@ -734,7 +742,7 @@ html.dark .app-frame {
   background: #111c2c; color: #f1e8d8;
 }
 html.dark .app-frame .sidebar { background: #17243a; border-left-color: #34445e; }
-html.dark .app-frame .sidebar-logo { border-bottom-color: #34445e; }
+html.dark .app-frame .sidebar-logo { border-bottom: 0; }
 html.dark .app-frame .brand-copy strong,
 html.dark .app-frame .sidebar-greeting strong,
 html.dark .app-frame .breadcrumbs strong { color: #f1e8d8; }
@@ -803,6 +811,20 @@ html.dark .app-frame .screen:not(.home-screen) .logout-button { background: #493
 html.dark .app-frame .screen:not(.home-screen) .exam-score { background: #29364b; }
 html.dark .app-frame .screen:not(.home-screen) .completed-row { border-color: #34445e; }
 html.dark .app-frame .screen:not(.home-screen) .completed-check { background: #29364b; color: #e5bd82; }
+html.dark .app-frame .screen:not(.home-screen) .academic-dna-item,
+html.dark .app-frame .screen:not(.home-screen) .learning-empty { background: #1b293f; border-color: #34445e; color: #e5eaf0; }
+html.dark .app-frame .screen:not(.home-screen) .academic-hub-heading h2,
+html.dark .app-frame .screen:not(.home-screen) .academic-dna-item > strong,
+html.dark .app-frame .screen:not(.home-screen) .learning-guide-card h3 { color: #f1e8d8; }
+html.dark .app-frame .screen:not(.home-screen) .academic-hub-heading p:not(.eyebrow),
+html.dark .app-frame .screen:not(.home-screen) .academic-dna-item > span,
+html.dark .app-frame .screen:not(.home-screen) .academic-dna-item > small,
+html.dark .app-frame .screen:not(.home-screen) .learning-guide-meta span:last-child,
+html.dark .app-frame .screen:not(.home-screen) .learning-guide-card ol,
+html.dark .app-frame .screen:not(.home-screen) .learning-empty { color: #b6bdc8; }
+html.dark .app-frame .screen:not(.home-screen) .academic-hub-badge { background: #29364b; border-color: #3a465a; color: #f0c78e; }
+html.dark .app-frame .screen:not(.home-screen) .academic-mini-track { background: #29364b; }
+html.dark .app-frame .screen:not(.home-screen) .learning-guide-warning { background: #493d32; color: #f0c78e; }
 
 @media (max-width: 720px) {
   .app-frame .sidebar { display: none; }
