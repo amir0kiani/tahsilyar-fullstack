@@ -7,6 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getStudyPlanById, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery, getAssessmentCatalog, getAssessmentQuestions, getStudentLessonProgress, setStudentLessonProgress, getAdminOverview, getAdminUsers } from "./db";
+import { claimFreeDailyCredits, consumeQuotaForUser, getFreeDailyCreditStatus, refundFreeDailyQuota } from "./monetization";
 
 const chatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -243,6 +244,10 @@ export const appRouter = router({
       answers: z.record(z.string(), z.string()).default({}),
     })).mutation(async ({ ctx, input }) => upsertStudentProfile({ userId: ctx.user.id, name: input.name, email: input.email ?? ctx.user.email ?? undefined, answers: input.answers })),
   }),
+  billing: router({
+    freeCreditStatus: protectedProcedure.query(({ ctx }) => getFreeDailyCreditStatus(ctx.user.id)),
+    claimFreeDailyCredits: protectedProcedure.mutation(({ ctx }) => claimFreeDailyCredits(ctx.user.id)),
+  }),
   study: router({
     latestPlan: protectedProcedure.query(async ({ ctx }) => (await getLatestStudyPlan(ctx.user.id)) ?? null),
     setSessionCompleted: protectedProcedure.input(z.object({ sessionId: z.number().int().positive(), completed: z.boolean() })).mutation(({ ctx, input }) => setStudySessionCompleted({ userId: ctx.user.id, ...input })),
@@ -284,6 +289,12 @@ export const appRouter = router({
         let updatedPlan: Awaited<ReturnType<typeof getLatestStudyPlan>> = undefined;
 
         const requestsPlanUpdate = isPlanUpdateRequest(input.message, history);
+        const needsAI = !(requestsPlanUpdate && Object.keys(profileAnswers).length < 7);
+        const quotaFeature = requestsPlanUpdate ? "plan_update" : "chat_message";
+        if (needsAI) {
+          const quota = await consumeQuotaForUser(ctx.user.id, quotaFeature);
+          if (!quota.allowed) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: quota.reason === "daily_limit" ? "اعتبار امروز این قابلیت تمام شده است." : "اعتبار رایگان امروزت فعال نیست یا هفت نوبت این ماه را استفاده کرده‌ای. برای ادامه، اشتراک پلاس را فعال کن." });
+        }
         if (requestsPlanUpdate && Object.keys(profileAnswers).length < 7) {
           assistantText = "برای ساخت یا اصلاح برنامهٔ دقیق، ابتدا باید اطلاعات تحصیلی‌ات را کامل کنی. پایه و رشته، زمان مطالعه، دروس اولویت‌دار، هدف و امتحان پیش‌رو را در بخش برنامه‌ریزی ثبت کن.";
         } else if (requestsPlanUpdate) {
@@ -356,6 +367,7 @@ export const appRouter = router({
             responseModel = planResponse.model;
           } catch (error) {
             if (error instanceof TRPCError) throw error;
+            await refundFreeDailyQuota(ctx.user.id, "plan_update");
             console.error("[Study] Could not generate and persist the chat plan:", error);
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
