@@ -1,4 +1,4 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, gt, sql } from "drizzle-orm";
 import {
   aiUsageDaily,
   freeDailyClaims,
@@ -128,7 +128,7 @@ export async function consumeQuotaForUser(userId: number, featureKey: FreeFeatur
   const db = await getDb();
   if (!db) throw new Error("Database is not configured");
   const [paid] = await db.select({ id: userSubscriptions.id }).from(userSubscriptions)
-    .where(and(eq(userSubscriptions.userId, userId), eq(userSubscriptions.status, "active")))
+    .where(and(eq(userSubscriptions.userId, userId), eq(userSubscriptions.status, "active"), gt(userSubscriptions.endsAt, now)))
     .limit(1);
   if (paid) return { allowed: true, paid: true as const, remaining: null };
   const result = await consumeFreeDailyQuota(userId, featureKey, now);
