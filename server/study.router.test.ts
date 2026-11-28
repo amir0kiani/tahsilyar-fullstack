@@ -19,6 +19,12 @@ const dbMocks = vi.hoisted(() => ({
 
 vi.mock("./_core/llm", () => ({ invokeLLM: invokeLLMMock }));
 vi.mock("./db", () => dbMocks);
+vi.mock("./monetization", () => ({
+  claimFreeDailyCredits: vi.fn(),
+  consumeQuotaForUser: vi.fn().mockResolvedValue({ allowed: true, paid: true, remaining: null }),
+  getFreeDailyCreditStatus: vi.fn(),
+  refundFreeDailyQuota: vi.fn(),
+}));
 
 const authenticatedUser = {
   id: 42,
