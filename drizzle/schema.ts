@@ -175,6 +175,7 @@ export const subscriptionPlans = mysqlTable("subscription_plans", {
   code: varchar("code", { length: 32 }).notNull().unique(),
   title: varchar("title", { length: 100 }).notNull(),
   durationMonths: int("durationMonths").notNull(),
+  monthlyActiveDays: int("monthlyActiveDays"),
   priceRials: int("priceRials").notNull(),
   isActive: int("isActive").default(1).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -185,6 +186,7 @@ export const planEntitlements = mysqlTable("plan_entitlements", {
   id: int("id").autoincrement().primaryKey(),
   planId: int("planId").notNull(),
   featureKey: varchar("featureKey", { length: 80 }).notNull(),
+  dailyLimit: int("dailyLimit"),
   monthlyLimit: int("monthlyLimit"),
   enabled: int("enabled").default(1).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -281,4 +283,46 @@ export const adminAuditLogs = mysqlTable("admin_audit_logs", {
 }, (table) => ({
   adminCreatedIdx: index("admin_audit_admin_created_idx").on(table.adminUserId, table.createdAt),
   targetIdx: index("admin_audit_target_idx").on(table.targetUserId),
+}));
+
+
+// Free-plan daily credit cycles. periodKey is the Jalali month (YYYY-MM).
+// A user can claim on at most 7 distinct Tehran calendar dates per Jalali month.
+export const freeDailyCycles = mysqlTable("free_daily_cycles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  periodKey: varchar("periodKey", { length: 7 }).notNull(),
+  claimedDays: int("claimedDays").default(0).notNull(),
+  status: mysqlEnum("status", ["active", "upgraded"]).default("active").notNull(),
+  upgradedAt: timestamp("upgradedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userPeriodUnique: uniqueIndex("free_daily_cycles_user_period_unique").on(table.userId, table.periodKey),
+  periodIdx: index("free_daily_cycles_period_idx").on(table.periodKey),
+}));
+
+// One claim per user per Tehran calendar date; unique key prevents duplicate daily claims.
+export const freeDailyClaims = mysqlTable("free_daily_claims", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  periodKey: varchar("periodKey", { length: 7 }).notNull(),
+  claimDate: varchar("claimDate", { length: 10 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userDateUnique: uniqueIndex("free_daily_claims_user_date_unique").on(table.userId, table.claimDate),
+  userPeriodIdx: index("free_daily_claims_user_period_idx").on(table.userId, table.periodKey),
+}));
+
+// Per-day counters for daily free quotas. Monthly aggregates remain in ai_usage_monthly.
+export const aiUsageDaily = mysqlTable("ai_usage_daily", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  featureKey: varchar("featureKey", { length: 80 }).notNull(),
+  usageDate: varchar("usageDate", { length: 10 }).notNull(),
+  usedCount: int("usedCount").default(0).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userFeatureDateUnique: uniqueIndex("ai_usage_daily_user_feature_date_unique").on(table.userId, table.featureKey, table.usageDate),
+  dateIdx: index("ai_usage_daily_date_idx").on(table.usageDate),
 }));
