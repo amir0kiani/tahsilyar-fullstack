@@ -174,6 +174,7 @@ function AppShell() {
   const planMutation = trpc.study.generatePlan.useMutation();
   const sessionStatusMutation = trpc.study.setSessionCompleted.useMutation();
   const billingQuery = trpc.billing.freeCreditStatus.useQuery(undefined, { enabled: auth.isAuthenticated, retry: false });
+  const checkoutMutation = trpc.billing.checkout.useMutation();
   const claimCreditsMutation = trpc.billing.claimFreeDailyCredits.useMutation({ onSuccess: () => { void billingQuery.refetch(); } });
   const claimedDateRef = useRef<string | null>(null);
   const deviceDateLabel = getDeviceDateLabel();
@@ -214,6 +215,14 @@ function AppShell() {
     setMessages(chatHistoryQuery.data.map((message) => ({ from: message.role === "assistant" ? "bot" : "user", text: message.content })));
   }, [chatHistoryQuery.data]);
   const showToast = (text: string) => { setToast(text); window.setTimeout(() => setToast(""), 2400); };
+  const startCheckout = async (planCode: "plus_monthly" | "plus_quarterly") => {
+    try {
+      const result = await checkoutMutation.mutateAsync({ planCode });
+      window.location.assign(result.redirectUrl);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : "شروع پرداخت ممکن نشد.");
+    }
+  };
   const navigate = (next: Screen) => { setScreen(next); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const currentPlanner = plannerSteps[plannerStep];
 
@@ -274,6 +283,18 @@ function AppShell() {
   const userGrade = user.answers["پایه و رشته"] || "ثبت نشده";
   return <div className="app-frame" dir="rtl"><aside className="sidebar"><div className="sidebar-logo"><LogoMark /></div><div className="sidebar-greeting"><span>فضای شخصی تو</span><strong>{userName}</strong></div><nav className="main-nav"><p className="nav-label">منوی اصلی</p>{navItems.map((item) => <button key={item.id} className={`nav-item ${screen === item.id ? "active" : ""}`} onClick={() => navigate(item.id)}><Icon name={item.icon} size={21} filled={screen === item.id} /><span>{item.label}</span>{item.id === "companion" && <i className="nav-dot" />}</button>)}</nav><div className="sidebar-bottom"><div className="mini-support"><div className="support-icon"><Icon name="favorite" size={18} filled /></div><div><strong>اطلاعاتت را کامل کن</strong><span>تا پاسخ دقیق بگیری</span></div><Icon name="arrow_back" size={16} /></div><button className="profile-mini" onClick={() => navigate("profile")}><span className="avatar">{getInitial(user.name)}</span><span><strong>{userName}</strong><small>{userGrade}</small></span><Icon name="more_horiz" size={20} /></button></div></aside>
     <main className="main-area"><header className="topbar"><div className="topbar-mobile-logo"><LogoMark compact /></div><div className="breadcrumbs"><span>تحصیل‌یار</span><Icon name="chevron_left" size={17} /><strong>{navItems.find((item) => item.id === screen)?.label}</strong></div><div className="topbar-actions"><button className="icon-button" aria-label="تغییر حالت شب" onClick={toggleTheme}><Icon name={theme === "dark" ? "dark_mode" : "light_mode"} size={21} filled /></button><button className="icon-button notification-button" onClick={() => showToast("هنوز یادآوری ثبت نشده است.")}><Icon name="notifications" size={21} filled /></button></div></header><div className="page-content">
+      {screen === "home" && auth.isAuthenticated && <section className="billing-checkout-card" dir="rtl">
+        <div className="billing-checkout-copy">
+          <span className="billing-eyebrow">اشتراک تحصیل‌یار</span>
+          <h2>{billingQuery.data?.isPaid ? "اشتراک پلاس فعال است" : "با پلاس، مسیرت را کامل‌تر کن"}</h2>
+          <p>{billingQuery.data?.isPaid ? "امکانات اشتراک پلاس برای حسابت فعال است." : billingQuery.data ? `تا امروز ${billingQuery.data.claimedDays} نوبت از ۷ نوبت رایگان این ماه استفاده کرده‌ای.` : "با خرید اشتراک، دسترسی پیوسته‌تری به ابزارهای هوشمند تحصیل‌یار داشته باش."}</p>
+        </div>
+        {!billingQuery.data?.isPaid && <div className="billing-checkout-actions">
+          <button type="button" disabled={checkoutMutation.isPending} onClick={() => void startCheckout("plus_monthly")}>پلاس ماهانه · ۱۴۹ هزار تومان</button>
+          <button type="button" className="billing-secondary" disabled={checkoutMutation.isPending} onClick={() => void startCheckout("plus_quarterly")}>پلاس سه‌ماهه · ۳۹۹ هزار تومان</button>
+        </div>}
+      </section>}
+
       {screen === "home" && <HomeScreen navigate={navigate} userName={userName} plan={generatedPlan} completed={completed} onComplete={toggleSession} showToast={showToast} deviceDate={deviceDateLabel} />}
       {screen === "companion" && <CompanionScreen step={plannerStep} current={currentPlanner} answers={plannerAnswers} answered={answeredProfile} messages={messages} chatInput={chatInput} planRange={planRange} onPlanRangeChange={setPlanRange} onChatInput={setChatInput} onSendMessage={sendMessage} isSending={chatMutation.isPending} onAnswer={(answer) => { if (answer) setPlannerAnswers((old) => ({ ...old, [plannerStep]: answer })); else if (plannerStep > 0) setPlannerStep((step) => step - 1); }} onNext={(answer?: string) => handlePlannerNext(answer)} isGenerating={planMutation.isPending} newPlanMode={newPlanMode} onStartNewPlan={() => setNewPlanMode(true)} onCancelNewPlan={() => setNewPlanMode(false)} onGeneratedNewPlan={(plan, answers) => { setGeneratedPlan(plan); setPlannerAnswers(answers); setNewPlanMode(false); setScreen("schedule"); showToast("برنامهٔ جدید در تب برنامهٔ درسی ذخیره شد."); }} onClearChat={() => { clearChatMutation.mutate(undefined, { onSuccess: () => { setMessages([]); showToast("چت قدیمی حذف شد."); }, onError: () => showToast("حذف چت انجام نشد؛ دوباره تلاش کن.") }); }} isClearingChat={clearChatMutation.isPending} />}
       {screen === "progress" && <ProgressScreen plan={generatedPlan} completed={completed} answers={user.answers} />}
