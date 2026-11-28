@@ -291,8 +291,10 @@ export const appRouter = router({
         const requestsPlanUpdate = isPlanUpdateRequest(input.message, history);
         const needsAI = !(requestsPlanUpdate && Object.keys(profileAnswers).length < 7);
         const quotaFeature = requestsPlanUpdate ? "plan_update" : "chat_message";
+        let quotaWasPaid = false;
         if (needsAI) {
           const quota = await consumeQuotaForUser(ctx.user.id, quotaFeature);
+          quotaWasPaid = quota.paid;
           if (!quota.allowed) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: (!quota.paid && quota.reason === "daily_limit") ? "اعتبار امروز این قابلیت تمام شده است." : "اعتبار رایگان امروزت فعال نیست یا هفت نوبت این ماه را استفاده کرده‌ای. برای ادامه، اشتراک پلاس را فعال کن." });
         }
         if (requestsPlanUpdate && Object.keys(profileAnswers).length < 7) {
@@ -366,7 +368,7 @@ export const appRouter = router({
             assistantText = formatPlanForChat(savedPlan);
             responseModel = planResponse.model;
           } catch (error) {
-            await refundFreeDailyQuota(ctx.user.id, "plan_update");
+            if (!quotaWasPaid) await refundFreeDailyQuota(ctx.user.id, "plan_update");
             if (error instanceof TRPCError) throw error;
             console.error("[Study] Could not generate and persist the chat plan:", error);
             throw new TRPCError({
@@ -390,7 +392,7 @@ export const appRouter = router({
             maxTokens: 5000,
             });
           } catch (error) {
-            await refundFreeDailyQuota(ctx.user.id, "chat_message");
+            if (!quotaWasPaid) await refundFreeDailyQuota(ctx.user.id, "chat_message");
             throw error;
           }
           const text = extractText(response.choices[0]?.message.content).trim();
@@ -416,7 +418,7 @@ export const appRouter = router({
           const existingProfile = await getStudentProfile(ctx.user.id);
           await upsertStudentProfile({ userId: ctx.user.id, name: input.answers["نام"]?.trim() || existingProfile?.name || ctx.user.name || undefined, email: existingProfile?.email ?? ctx.user.email ?? undefined, answers: input.answers });
         } catch (error) {
-          await refundFreeDailyQuota(ctx.user.id, "plan_generate");
+          if (!quota.paid) await refundFreeDailyQuota(ctx.user.id, "plan_generate");
           console.error("[Study] Could not persist profile before planning:", error);
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "ذخیرهٔ اطلاعات تحصیلی انجام نشد؛ لطفاً دوباره تلاش کن." });
         }
