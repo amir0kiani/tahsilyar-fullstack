@@ -23,7 +23,7 @@ vi.mock("./monetization", () => ({
   claimFreeDailyCredits: vi.fn(),
   consumeQuotaForUser: vi.fn().mockResolvedValue({ allowed: true, paid: true, remaining: null }),
   getFreeDailyCreditStatus: vi.fn(),
-  refundFreeDailyQuota: vi.fn(),
+  refundQuotaForUser: vi.fn(),
 }));
 
 const authenticatedUser = {
@@ -129,6 +129,21 @@ describe("study AI procedures", () => {
     expect(dbMocks.addConversationMessage).toHaveBeenCalledTimes(2);
   });
 
+  it("blocks Plus users when the monthly AI allowance is exhausted", async () => {
+    const { consumeQuotaForUser } = await import("./monetization");
+    vi.mocked(consumeQuotaForUser).mockResolvedValueOnce({
+      allowed: false,
+      paid: true,
+      reason: "monthly_limit",
+      remaining: 0,
+      limit: 600,
+      used: 600,
+    });
+    const caller = appRouter.createCaller(createContext());
+    await expect(caller.study.chat({ message: "برای امروز چه برنامه‌ای پیشنهاد می‌کنی؟" }))
+      .rejects.toMatchObject({ code: "TOO_MANY_REQUESTS", message: "سهمیه ماهانه این قابلیت در اشتراک پلاس به پایان رسیده است." });
+    expect(invokeLLMMock).not.toHaveBeenCalled();
+  });
   it("rejects plan generation until all required user answers exist", async () => {
     const caller = appRouter.createCaller(createContext());
     await expect(caller.study.generatePlan({ answers: { "بازهٔ زمانی": "۲ تا ۴ ساعت" } })).rejects.toThrow();
