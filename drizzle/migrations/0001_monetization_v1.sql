@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS subscription_plans (
   code VARCHAR(32) NOT NULL UNIQUE,
   title VARCHAR(100) NOT NULL,
   durationMonths INT NOT NULL,
+  monthlyActiveDays INT NULL,
   priceRials INT NOT NULL,
   isActive INT NOT NULL DEFAULT 1,
   createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -13,6 +14,7 @@ CREATE TABLE IF NOT EXISTS plan_entitlements (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   planId INT NOT NULL,
   featureKey VARCHAR(80) NOT NULL,
+  dailyLimit INT NULL,
   monthlyLimit INT NULL,
   enabled INT NOT NULL DEFAULT 1,
   createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -114,3 +116,61 @@ ON DUPLICATE KEY UPDATE
   durationMonths = VALUES(durationMonths),
   priceRials = VALUES(priceRials),
   isActive = VALUES(isActive);
+
+
+-- Selectable free daily credits: at most seven claimed days per Jalali month.
+CREATE TABLE IF NOT EXISTS free_daily_cycles (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  userId INT NOT NULL,
+  periodKey VARCHAR(7) NOT NULL,
+  claimedDays INT NOT NULL DEFAULT 0,
+  status ENUM('active','upgraded') NOT NULL DEFAULT 'active',
+  upgradedAt TIMESTAMP NULL,
+  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY free_daily_cycles_user_period_unique (userId, periodKey),
+  KEY free_daily_cycles_period_idx (periodKey)
+);
+
+-- One free-credit claim per user per Tehran calendar date.
+CREATE TABLE IF NOT EXISTS free_daily_claims (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  userId INT NOT NULL,
+  periodKey VARCHAR(7) NOT NULL,
+  claimDate VARCHAR(10) NOT NULL,
+  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY free_daily_claims_user_date_unique (userId, claimDate),
+  KEY free_daily_claims_user_period_idx (userId, periodKey)
+);
+
+-- Per-day usage counters; ai_usage_monthly remains the monthly aggregate/audit counter.
+CREATE TABLE IF NOT EXISTS ai_usage_daily (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  userId INT NOT NULL,
+  featureKey VARCHAR(80) NOT NULL,
+  usageDate VARCHAR(10) NOT NULL,
+  usedCount INT NOT NULL DEFAULT 0,
+  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY ai_usage_daily_user_feature_date_unique (userId, featureKey, usageDate),
+  KEY ai_usage_daily_date_idx (usageDate)
+);
+
+UPDATE subscription_plans SET monthlyActiveDays = 7 WHERE code = 'free';
+UPDATE subscription_plans SET monthlyActiveDays = NULL WHERE code IN ('plus_monthly','plus_quarterly');
+
+-- Daily free quotas; the plan-wide seven-day cap is enforced by free_daily_cycles.
+INSERT INTO plan_entitlements (planId, featureKey, dailyLimit, monthlyLimit, enabled)
+SELECT id, 'chat_message', 20, NULL, 1 FROM subscription_plans WHERE code = 'free'
+ON DUPLICATE KEY UPDATE dailyLimit = VALUES(dailyLimit), enabled = VALUES(enabled);
+
+INSERT INTO plan_entitlements (planId, featureKey, dailyLimit, monthlyLimit, enabled)
+SELECT id, 'plan_generate', 2, NULL, 1 FROM subscription_plans WHERE code = 'free'
+ON DUPLICATE KEY UPDATE dailyLimit = VALUES(dailyLimit), enabled = VALUES(enabled);
+
+INSERT INTO plan_entitlements (planId, featureKey, dailyLimit, monthlyLimit, enabled)
+SELECT id, 'plan_update', 2, NULL, 1 FROM subscription_plans WHERE code = 'free'
+ON DUPLICATE KEY UPDATE dailyLimit = VALUES(dailyLimit), enabled = VALUES(enabled);
+
+INSERT INTO plan_entitlements (planId, featureKey, dailyLimit, monthlyLimit, enabled)
+SELECT id, 'progress_analysis', 1, NULL, 1 FROM subscription_plans WHERE code = 'free'
+ON DUPLICATE KEY UPDATE dailyLimit = VALUES(dailyLimit), enabled = VALUES(enabled);
