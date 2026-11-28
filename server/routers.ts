@@ -464,7 +464,7 @@ export const appRouter = router({
             if (!plan.title.includes("هفت")) plan.title = `برنامهٔ هفتگی · ${plan.title}`;
           }
         } catch {
-          await refundFreeDailyQuota(ctx.user.id, "plan_generate");
+          if (!quota.paid) await refundFreeDailyQuota(ctx.user.id, "plan_generate");
           console.error("[Study] AI returned invalid plan JSON:", raw.slice(0, 500));
           return { title: "", summary: "پاسخ برنامه‌ریز قابل پردازش نبود؛ دوباره تلاش کن.", sessions: [], focusTip: "" };
         }
@@ -474,7 +474,7 @@ export const appRouter = router({
           if (!savedPlan) throw new Error("The generated plan was not readable after persistence");
           return savedPlan;
         } catch (error) {
-          await refundFreeDailyQuota(ctx.user.id, "plan_generate");
+          if (!quota.paid) await refundFreeDailyQuota(ctx.user.id, "plan_generate");
           console.error("[Study] Plan generation or persistence failed:", error);
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "برنامه تولید شد، اما ذخیره‌سازی آن کامل نشد؛ برنامهٔ قبلی دست‌نخورده باقی ماند." });
         }
