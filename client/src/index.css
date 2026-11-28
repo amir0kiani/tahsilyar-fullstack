@@ -317,7 +317,9 @@ em { color: var(--turquoise-dark); font-style: normal; }
 .chat-body { max-height: 520px; overflow-y: auto; scroll-behavior: smooth; }
 
 /* Tahsilyar branding and companion range controls */
-.image-logo { overflow: hidden; background: #fff; display: grid; place-items: center; }
+.image-logo { overflow: hidden; display: grid; place-items: center; }
+.image-logo.day, .brand-lockup.compact .logo-mark.image-logo.day { background: #17383d; }
+.image-logo.dark, .brand-lockup.compact .logo-mark.image-logo.dark { background: #f6ebd4; }
 .image-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .range-picker { display: grid; gap: 9px; margin: 18px 0; }
 .range-picker button { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #dcebe8; border-radius: 12px; background: #fbfefd; color: var(--deep); padding: 12px 14px; font-family: inherit; font-size: 11px; cursor: pointer; transition: .18s var(--ease); }

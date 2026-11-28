@@ -128,8 +128,9 @@ function Icon({ name, size = 20, filled = false }: { name: IconName; size?: numb
 }
 
 function LogoMark({ compact = false }: { compact?: boolean }) {
+  const { theme } = useTheme();
   return <div className={`brand-lockup ${compact ? "compact" : ""}`}>
-    <div className="logo-mark image-logo" aria-label="لوگوی تحصیل‌یار"><img src="/manus-storage/file_00000000e1cc8246a507f92f5ccd2418_b3918ea0.png" alt="تحصیل‌یار" /></div>
+    <div className={`logo-mark image-logo ${theme}`} aria-label="لوگوی تحصیل‌یار"><img src={theme === "dark" ? "/owl-logo-night.png" : "/owl-logo-day.png"} alt="تحصیل‌یار" /></div>
     {!compact && <div className="brand-copy"><strong>تحصیل‌یار</strong><span>یادگیری با آرامش</span></div>}
   </div>;
 }
