@@ -3,8 +3,6 @@ import {
   aiUsageDaily,
   freeDailyClaims,
   freeDailyCycles,
-  planEntitlements,
-  subscriptionPlans,
   userSubscriptions,
 } from "../drizzle/schema";
 import { getDb } from "./db";
@@ -70,6 +68,16 @@ export async function consumeFreeDailyQuota(userId: number, featureKey: FreeFeat
   const { date } = getTehranJalaliDate(now);
 
   return db.transaction(async (tx) => {
+    const { periodKey } = getTehranJalaliDate(now);
+    const [cycle] = await tx.select().from(freeDailyCycles)
+      .where(and(eq(freeDailyCycles.userId, userId), eq(freeDailyCycles.periodKey, periodKey)))
+      .limit(1).for("update");
+    if (!cycle || cycle.status !== "active" || cycle.claimedDays < 1) {
+      return { allowed: false, reason: cycle?.status === "upgraded" ? "upgraded" as const : "no_credit_today" as const, remaining: 0 };
+    }
+    const [todayClaim] = await tx.select().from(freeDailyClaims)
+      .where(and(eq(freeDailyClaims.userId, userId), eq(freeDailyClaims.claimDate, date))).limit(1);
+    if (!todayClaim) return { allowed: false, reason: "no_credit_today" as const, remaining: 0 };
     const [row] = await tx.select().from(aiUsageDaily)
       .where(and(eq(aiUsageDaily.userId, userId), eq(aiUsageDaily.featureKey, featureKey), eq(aiUsageDaily.usageDate, date)))
       .limit(1).for("update");
@@ -113,4 +121,30 @@ export async function markFreeCycleUpgraded(userId: number, now = new Date()) {
   const { periodKey } = getTehranJalaliDate(now);
   await db.update(freeDailyCycles).set({ status: "upgraded", upgradedAt: now })
     .where(and(eq(freeDailyCycles.userId, userId), eq(freeDailyCycles.periodKey, periodKey), eq(freeDailyCycles.status, "active")));
+}
+
+/** Paid users bypass free daily counters while their verified subscription is active. */
+export async function consumeQuotaForUser(userId: number, featureKey: FreeFeatureKey, now = new Date()) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  const [paid] = await db.select({ id: userSubscriptions.id }).from(userSubscriptions)
+    .where(and(eq(userSubscriptions.userId, userId), eq(userSubscriptions.status, "active")))
+    .limit(1);
+  if (paid) return { allowed: true, paid: true as const, remaining: null };
+  const result = await consumeFreeDailyQuota(userId, featureKey, now);
+  return { ...result, paid: false as const };
+}
+
+export async function refundFreeDailyQuota(userId: number, featureKey: FreeFeatureKey, now = new Date()) {
+  const db = await getDb();
+  if (!db) return;
+  const { date } = getTehranJalaliDate(now);
+  await db.update(aiUsageDaily)
+    .set({ usedCount: sql`${aiUsageDaily.usedCount} - 1` })
+    .where(and(
+      eq(aiUsageDaily.userId, userId),
+      eq(aiUsageDaily.featureKey, featureKey),
+      eq(aiUsageDaily.usageDate, date),
+      sql`${aiUsageDaily.usedCount} > 0`,
+    ));
 }
