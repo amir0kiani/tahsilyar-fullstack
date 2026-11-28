@@ -288,6 +288,12 @@ function AppShell() {
           <span className="billing-eyebrow">اشتراک تحصیل‌یار</span>
           <h2>{billingQuery.data?.isPaid ? "اشتراک پلاس فعال است" : "با پلاس، مسیرت را کامل‌تر کن"}</h2>
           <p>{billingQuery.data?.isPaid ? "امکانات اشتراک پلاس برای حسابت فعال است." : billingQuery.data ? `تا امروز ${billingQuery.data.claimedDays} نوبت از ۷ نوبت رایگان این ماه استفاده کرده‌ای.` : "با خرید اشتراک، دسترسی پیوسته‌تری به ابزارهای هوشمند تحصیل‌یار داشته باش."}</p>
+          {billingQuery.data?.isPaid && billingQuery.data.plusQuotas && <div className="plus-quota-list">
+            {Object.entries(billingQuery.data.plusQuotas).map(([feature, quota]) => <span key={feature}>
+              {feature === "chat_message" ? "پیام هوشمند" : feature === "plan_generate" ? "تولید برنامه" : feature === "plan_update" ? "اصلاح برنامه" : feature === "progress_analysis" ? "تحلیل پیشرفت" : feature}
+              : {quota.used.toLocaleString("fa-IR")} از {quota.limit.toLocaleString("fa-IR")}
+            </span>)}
+          </div>}
         </div>
         {!billingQuery.data?.isPaid && <div className="billing-checkout-actions">
           <button type="button" disabled={checkoutMutation.isPending} onClick={() => void startCheckout("plus_monthly")}>پلاس ماهانه · ۱۴۹ هزار تومان</button>
