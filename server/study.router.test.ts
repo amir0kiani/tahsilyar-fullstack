@@ -144,6 +144,15 @@ describe("study AI procedures", () => {
       .rejects.toMatchObject({ code: "TOO_MANY_REQUESTS", message: "سهمیه ماهانه این قابلیت در اشتراک پلاس به پایان رسیده است." });
     expect(invokeLLMMock).not.toHaveBeenCalled();
   });
+  it("refunds a Plus monthly reservation when the AI provider fails", async () => {
+    const { consumeQuotaForUser, refundQuotaForUser } = await import("./monetization");
+    vi.mocked(consumeQuotaForUser).mockResolvedValueOnce({ allowed: true, paid: true, remaining: 599, limit: 600, used: 1 });
+    vi.mocked(refundQuotaForUser).mockClear();
+    invokeLLMMock.mockRejectedValueOnce(new Error("LLM unavailable"));
+    const caller = appRouter.createCaller(createContext());
+    await expect(caller.study.chat({ message: "سلام" })).rejects.toThrow("LLM unavailable");
+    expect(refundQuotaForUser).toHaveBeenCalledWith(42, "chat_message", true);
+  });
   it("rejects plan generation until all required user answers exist", async () => {
     const caller = appRouter.createCaller(createContext());
     await expect(caller.study.generatePlan({ answers: { "بازهٔ زمانی": "۲ تا ۴ ساعت" } })).rejects.toThrow();
