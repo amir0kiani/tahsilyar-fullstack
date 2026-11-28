@@ -173,6 +173,9 @@ function AppShell() {
   const chatHistoryQuery = trpc.study.chatHistory.useQuery(undefined, { enabled: auth.isAuthenticated, retry: false });
   const planMutation = trpc.study.generatePlan.useMutation();
   const sessionStatusMutation = trpc.study.setSessionCompleted.useMutation();
+  const billingQuery = trpc.billing.freeCreditStatus.useQuery(undefined, { enabled: auth.isAuthenticated, retry: false });
+  const claimCreditsMutation = trpc.billing.claimFreeDailyCredits.useMutation({ onSuccess: () => { void billingQuery.refetch(); } });
+  const claimedDateRef = useRef<string | null>(null);
   const deviceDateLabel = getDeviceDateLabel();
   const deviceTimeZone = getDeviceTimeZone();
   const answeredProfile = useMemo(() => plannerSteps.every((_, index) => Boolean(plannerAnswers[index])), [plannerAnswers]);
