@@ -4,9 +4,9 @@ import { invokeLLM } from "./_core/llm";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
-import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getStudyPlanById, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery, getAssessmentCatalog, getAssessmentQuestions, getStudentLessonProgress, setStudentLessonProgress } from "./db";
+import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getStudyPlanById, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery, getAssessmentCatalog, getAssessmentQuestions, getStudentLessonProgress, setStudentLessonProgress, getAdminOverview, getAdminUsers } from "./db";
 
 const chatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -186,6 +186,12 @@ const formatPlanForChat = (plan: { title: string; summary: string; focusTip: str
 };
 
 export const appRouter = router({
+  admin: router({
+    overview: adminProcedure.query(async () => getAdminOverview()),
+    users: adminProcedure
+      .input(z.object({ search: z.string().max(100).default("") }))
+      .query(async ({ input }) => getAdminUsers(input.search)),
+  }),
   exams: router({
     catalog: protectedProcedure.query(() => getAssessmentCatalog()),
     lessonProgress: protectedProcedure.input(z.object({

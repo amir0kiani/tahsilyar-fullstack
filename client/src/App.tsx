@@ -1,4 +1,5 @@
 import { trpc } from "@/lib/trpc";
+import AdminPanel from "@/admin/AdminPanel";
 import AcademicLearningHub from "@/components/AcademicLearningHub";
 import ExamCenter from "@/components/ExamCenter";
 import { startLogin } from "@/const";
@@ -352,4 +353,7 @@ function ProfileScreen({ user, completed, onUpdateUser, onLogout, showToast }: {
   return <div className="screen profile-screen"><div className="profile-hero"><div className="profile-avatar-large">{getInitial(user.name)}</div><div><p className="eyebrow">پروفایل من</p><h1>{user.name || "نام ثبت نشده"}</h1><p>{user.email || "ایمیل ثبت نشده"}</p></div><button className="edit-profile" onClick={() => setEditing((value) => !value)}><Icon name="edit" size={17} />{editing ? "بستن" : "ویرایش"}</button></div>{editing && <div className="profile-edit-card card"><label>نام و نام خانوادگی<input value={name} onChange={(event) => setName(event.target.value)} /></label><label>ایمیل<input type="email" dir="ltr" value={email} onChange={(event) => setEmail(event.target.value)} /></label><button className="primary-button" disabled={saveProfile.isPending || name.trim().length < 2} onClick={() => saveProfile.mutate({ name: name.trim(), email: email.trim() || undefined, answers: user.answers })}>{saveProfile.isPending ? "در حال ذخیره..." : "ذخیرهٔ تغییرات"}<Icon name="check" size={18} /></button></div>}<div className="profile-grid"><div className="profile-summary card"><div className="card-head"><span><p className="eyebrow">اطلاعات واقعی</p><h3>پروفایل تحصیلی</h3></span><span className="soft-icon mint"><Icon name="person_outline" size={20} /></span></div>{answers.length ? <div className="profile-answer-list">{answers.map(([key, value]) => <div key={key}><span>{key}</span><strong>{value}</strong></div>)}</div> : <div className="card-empty-copy"><strong>اطلاعات تحصیلی ثبت نشده</strong><span>برای تکمیل پروفایل، به برنامه‌ریزی برو.</span></div>}<div className="profile-recorded-count">{completed.length} جلسهٔ واقعی ثبت شده</div></div><div className="profile-settings card"><p className="eyebrow">تنظیمات حساب</p><h3>کنترل اطلاعات خودت</h3>{settings.map((setting) => <button className="setting-row" key={setting.title} onClick={() => showToast(`${setting.title}: ${setting.sub}`)}><span className="setting-icon"><Icon name={setting.icon} size={19} /></span><span><strong>{setting.title}</strong><small>{setting.sub}</small></span><Icon name="chevron_left" size={19} /></button>)}<button className="logout-button" onClick={onLogout}><Icon name="logout" size={18} />خروج از حساب</button></div></div></div>;
 }
 
-export default function App() { return <ThemeProvider defaultTheme="light" switchable><AppShell /></ThemeProvider>; }
+export default function App() {
+  const isAdminRoute = typeof window !== "undefined" && window.location.pathname === "/admin";
+  return <ThemeProvider defaultTheme="light" switchable>{isAdminRoute ? <AdminPanel /> : <AppShell />}</ThemeProvider>;
+}

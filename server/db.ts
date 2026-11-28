@@ -1,4 +1,4 @@
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, like, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   academicGoals,
@@ -458,4 +458,57 @@ export async function getAssessmentCatalog() {
       track: question.track, grade: question.grade, subject: question.subject, chapter: question.chapter, sourceStatus: question.sourceStatus,
     })));
   }
+}
+
+
+/**
+ * Admin-only read models. Authorization is enforced by adminProcedure in the router;
+ * these helpers intentionally return only the account fields needed by the dashboard.
+ */
+export async function getAdminOverview() {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  const count = async (table: any, where?: any) => {
+    const rows = await db.select({ total: sql<number>`count(*)` }).from(table).where(where);
+    return Number(rows[0]?.total ?? 0);
+  };
+  const [totalUsers, studentProfilesCount, studyPlansCount, examAttemptsCount, activeQuestionsCount, activeCurriculumCount] = await Promise.all([
+    count(users),
+    count(studentProfiles),
+    count(studyPlans),
+    count(examAttempts),
+    count(examQuestionRows, eq(examQuestionRows.isActive, 1)),
+    count(curriculumChapterRows, eq(curriculumChapterRows.isActive, 1)),
+  ]);
+  return {
+    totalUsers,
+    studentProfiles: studentProfilesCount,
+    studyPlans: studyPlansCount,
+    examAttempts: examAttemptsCount,
+    activeQuestions: activeQuestionsCount,
+    activeCurriculumItems: activeCurriculumCount,
+  };
+}
+
+export async function getAdminUsers(search = "") {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not configured");
+  const term = search.trim();
+  const where = term
+    ? or(like(users.name, `%${term}%`), like(users.email, `%${term}%`))
+    : undefined;
+  const rows = await db.select({
+    id: users.id,
+    name: users.name,
+    email: users.email,
+    role: users.role,
+    createdAt: users.createdAt,
+    lastSignedIn: users.lastSignedIn,
+    profileName: studentProfiles.name,
+  }).from(users)
+    .leftJoin(studentProfiles, eq(studentProfiles.userId, users.id))
+    .where(where)
+    .orderBy(desc(users.createdAt))
+    .limit(100);
+  return rows.map((row) => ({ ...row, hasStudentProfile: Boolean(row.profileName) }));
 }
