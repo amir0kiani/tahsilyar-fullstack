@@ -98,6 +98,8 @@ export async function getFreeDailyCreditStatus(userId: number, now = new Date())
   const { date, periodKey } = getTehranJalaliDate(now);
   const [cycle] = await db.select().from(freeDailyCycles)
     .where(and(eq(freeDailyCycles.userId, userId), eq(freeDailyCycles.periodKey, periodKey))).limit(1);
+  const [paid] = await db.select({ id: userSubscriptions.id }).from(userSubscriptions)
+    .where(and(eq(userSubscriptions.userId, userId), eq(userSubscriptions.status, "active"), gt(userSubscriptions.endsAt, now))).limit(1);
   const [claim] = await db.select().from(freeDailyClaims)
     .where(and(eq(freeDailyClaims.userId, userId), eq(freeDailyClaims.claimDate, date))).limit(1);
   const usage = await db.select().from(aiUsageDaily)
@@ -106,8 +108,8 @@ export async function getFreeDailyCreditStatus(userId: number, now = new Date())
   const active = cycle?.status === "active";
   const claimedDays = cycle?.claimedDays ?? 0;
   return {
-    date, periodKey, claimedDays, remainingClaims: active ? Math.max(0, FREE_MONTHLY_CLAIM_LIMIT - claimedDays) : 0,
-    claimedToday: Boolean(claim), canClaimToday: active !== false && !claim && claimedDays < FREE_MONTHLY_CLAIM_LIMIT,
+    date, periodKey, isPaid: Boolean(paid), claimedDays, remainingClaims: paid ? 0 : active ? Math.max(0, FREE_MONTHLY_CLAIM_LIMIT - claimedDays) : 0,
+    claimedToday: Boolean(claim), canClaimToday: !paid && active !== false && !claim && claimedDays < FREE_MONTHLY_CLAIM_LIMIT,
     status: cycle?.status ?? "not_started",
     quotas: Object.fromEntries(Object.entries(FREE_DAILY_LIMITS).map(([key, limit]) => [key, {
       limit, used: used[key] ?? 0, remaining: claim ? Math.max(0, limit - (used[key] ?? 0)) : 0,
