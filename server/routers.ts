@@ -7,7 +7,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { addConversationMessage, createStudyPlan, getLatestStudyPlan, getStudyPlanById, getOrCreateConversation, getRecentConversationMessages, getStudentProfile, setStudySessionCompleted, upsertStudentProfile, clearConversation, saveExamAttempt, getExamHistory, getAcademicMastery, getAssessmentCatalog, getAssessmentQuestions, getStudentLessonProgress, setStudentLessonProgress, getAdminOverview, getAdminUsers } from "./db";
-import { claimFreeDailyCredits, consumeQuotaForUser, getFreeDailyCreditStatus, refundFreeDailyQuota } from "./monetization";
+import { claimFreeDailyCredits, consumeQuotaForUser, getFreeDailyCreditStatus, refundQuotaForUser } from "./monetization";
 import { createZarinpalCheckout } from "./zarinpal";
 
 const chatMessageSchema = z.object({
@@ -305,7 +305,7 @@ export const appRouter = router({
         if (needsAI) {
           const quota = await consumeQuotaForUser(ctx.user.id, quotaFeature);
           quotaWasPaid = quota.paid;
-          if (!quota.allowed) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: (!quota.paid && quota.reason === "daily_limit") ? "اعتبار امروز این قابلیت تمام شده است." : "اعتبار رایگان امروزت فعال نیست یا هفت نوبت این ماه را استفاده کرده‌ای. برای ادامه، اشتراک پلاس را فعال کن." });
+          if (!quota.allowed) { const message = quota.paid ? (quota.reason === "monthly_limit" ? "سهمیه ماهانه این قابلیت در اشتراک پلاس به پایان رسیده است." : "سهمیه این قابلیت برای اشتراک فعال تنظیم نشده است؛ لطفاً با پشتیبانی تماس بگیر.") : (quota.reason === "daily_limit" ? "اعتبار امروز این قابلیت تمام شده است." : "اعتبار رایگان امروزت فعال نیست یا هفت نوبت این ماه را استفاده کرده‌ای. برای ادامه، اشتراک پلاس را فعال کن."); throw new TRPCError({ code: "TOO_MANY_REQUESTS", message }); }
         }
         if (requestsPlanUpdate && Object.keys(profileAnswers).length < 7) {
           assistantText = "برای ساخت یا اصلاح برنامهٔ دقیق، ابتدا باید اطلاعات تحصیلی‌ات را کامل کنی. پایه و رشته، زمان مطالعه، دروس اولویت‌دار، هدف و امتحان پیش‌رو را در بخش برنامه‌ریزی ثبت کن.";
@@ -423,24 +423,28 @@ export const appRouter = router({
       }))
       .mutation(async ({ input, ctx }) => {
         const quota = await consumeQuotaForUser(ctx.user.id, "plan_generate");
-        if (!quota.allowed) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "اعتبار تولید برنامه امروزت تمام شده یا اعتبار رایگان این ماه در دسترس نیست. برای ادامه، اشتراک پلاس را فعال کن." });
+        if (!quota.allowed) { const message = quota.paid ? (quota.reason === "monthly_limit" ? "سهمیه ماهانه تولید برنامه در اشتراک پلاس به پایان رسیده است." : "سهمیه تولید برنامه برای اشتراک فعال تنظیم نشده است؛ لطفاً با پشتیبانی تماس بگیر.") : "اعتبار تولید برنامه امروزت تمام شده یا اعتبار رایگان این ماه در دسترس نیست. برای ادامه، اشتراک پلاس را فعال کن."; throw new TRPCError({ code: "TOO_MANY_REQUESTS", message }); }
         try {
           const existingProfile = await getStudentProfile(ctx.user.id);
           await upsertStudentProfile({ userId: ctx.user.id, name: input.answers["نام"]?.trim() || existingProfile?.name || ctx.user.name || undefined, email: existingProfile?.email ?? ctx.user.email ?? undefined, answers: input.answers });
         } catch (error) {
-          if (!quota.paid) await refundFreeDailyQuota(ctx.user.id, "plan_generate");
+          await refundQuotaForUser(ctx.user.id, "plan_generate", quota.paid);
           console.error("[Study] Could not persist profile before planning:", error);
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "ذخیرهٔ اطلاعات تحصیلی انجام نشد؛ لطفاً دوباره تلاش کن." });
         }
         const answers = Object.entries(input.answers).map(([step, answer]) => `${step}: ${answer}`).join("\n");
         const track = Object.values(input.answers).find((answer) => /انسانی|ریاضی|تجربی/.test(answer)) ?? "تجربی";
         const curriculum = curriculumFor(track);
-        const mastery = await getAcademicMastery(ctx.user.id);
+        let mastery;
+        try { mastery = await getAcademicMastery(ctx.user.id); }
+        catch (error) { await refundQuotaForUser(ctx.user.id, "plan_generate", quota.paid); throw error; }
         const lowMastery = mastery.filter((item) => item.questions >= 3 && item.accuracy < 80).slice(0, 8);
         const assessmentContext = lowMastery.length
           ? lowMastery.map((item) => `${item.subject} / ${item.chapter} / ${item.topic}: ${item.accuracy}% accuracy across ${item.questions} questions (${item.status})`).join("\\n")
           : "دادهٔ آزمون کافی برای تعیین ضعف پایدار وجود ندارد؛ ضعف یا قوت مشخصی را حدس نزن.";
-        const response = await invokeLLM({
+        let response;
+        try {
+          response = await invokeLLM({
           model: "gemini-3-flash-preview",
           messages: [
             {
@@ -459,7 +463,11 @@ export const appRouter = router({
             json_schema: { name: "personal_study_plan", strict: true, schema: planSchema },
           },
           maxTokens: 2200,
-        });
+          });
+        } catch (error) {
+          await refundQuotaForUser(ctx.user.id, "plan_generate", quota.paid);
+          throw error;
+        }
         const raw = extractText(response.choices[0]?.message.content);
         const normalizedRaw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
         let plan: { title: string; summary: string; sessions: Array<{ subject: string; topic: string; day: string; start: string; end: string; duration: string; reason: string }>; focusTip: string };
