@@ -435,7 +435,7 @@ export const appRouter = router({
         const answers = Object.entries(input.answers).map(([step, answer]) => `${step}: ${answer}`).join("\n");
         const track = Object.values(input.answers).find((answer) => /انسانی|ریاضی|تجربی/.test(answer)) ?? "تجربی";
         const curriculum = curriculumFor(track);
-        let mastery;
+        let mastery: Awaited<ReturnType<typeof getAcademicMastery>>;
         try { mastery = await getAcademicMastery(ctx.user.id); }
         catch (error) { await refundQuotaForUser(ctx.user.id, "plan_generate", quota.paid); throw error; }
         const lowMastery = mastery.filter((item) => item.questions >= 3 && item.accuracy < 80).slice(0, 8);
