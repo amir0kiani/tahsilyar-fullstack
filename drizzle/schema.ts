@@ -167,3 +167,118 @@ export const studentLessonProgress = mysqlTable("student_lesson_progress", {
   userLessonUnique: uniqueIndex("student_lesson_progress_user_lesson_unique").on(table.userId, table.grade, table.track, table.subject, table.chapter),
   userIdx: index("student_lesson_progress_user_idx").on(table.userId),
 }));
+
+
+// Monetization v1: prices are stored in Rials (integer); UI converts to Tomans.
+export const subscriptionPlans = mysqlTable("subscription_plans", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 32 }).notNull().unique(),
+  title: varchar("title", { length: 100 }).notNull(),
+  durationMonths: int("durationMonths").notNull(),
+  priceRials: int("priceRials").notNull(),
+  isActive: int("isActive").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const planEntitlements = mysqlTable("plan_entitlements", {
+  id: int("id").autoincrement().primaryKey(),
+  planId: int("planId").notNull(),
+  featureKey: varchar("featureKey", { length: 80 }).notNull(),
+  monthlyLimit: int("monthlyLimit"),
+  enabled: int("enabled").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  planFeatureUnique: uniqueIndex("plan_entitlements_plan_feature_unique").on(table.planId, table.featureKey),
+  planIdx: index("plan_entitlements_plan_idx").on(table.planId),
+}));
+
+export const userSubscriptions = mysqlTable("user_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  planId: int("planId").notNull(),
+  status: mysqlEnum("status", ["pending", "active", "expired", "cancelled", "suspended"]).default("pending").notNull(),
+  startsAt: timestamp("startsAt"),
+  endsAt: timestamp("endsAt"),
+  cancelledAt: timestamp("cancelledAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userStatusIdx: index("user_subscriptions_user_status_idx").on(table.userId, table.status),
+  endsAtIdx: index("user_subscriptions_ends_at_idx").on(table.endsAt),
+}));
+
+export const payments = mysqlTable("payments", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  subscriptionId: int("subscriptionId"),
+  planId: int("planId").notNull(),
+  provider: varchar("provider", { length: 32 }).default("zarinpal").notNull(),
+  amountRials: int("amountRials").notNull(),
+  status: mysqlEnum("status", ["pending", "succeeded", "failed", "refunded"]).default("pending").notNull(),
+  authority: varchar("authority", { length: 128 }).unique(),
+  refId: varchar("refId", { length: 128 }),
+  requestId: varchar("requestId", { length: 128 }),
+  callbackPayload: json("callbackPayload"),
+  verifiedAt: timestamp("verifiedAt"),
+  failureReason: text("failureReason"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userCreatedIdx: index("payments_user_created_idx").on(table.userId, table.createdAt),
+  statusIdx: index("payments_status_idx").on(table.status),
+}));
+
+export const aiUsageMonthly = mysqlTable("ai_usage_monthly", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  featureKey: varchar("featureKey", { length: 80 }).notNull(),
+  periodKey: varchar("periodKey", { length: 7 }).notNull(),
+  usedCount: int("usedCount").default(0).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userFeaturePeriodUnique: uniqueIndex("ai_usage_user_feature_period_unique").on(table.userId, table.featureKey, table.periodKey),
+  periodIdx: index("ai_usage_period_idx").on(table.periodKey),
+}));
+
+export const aiUsageLogs = mysqlTable("ai_usage_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  featureKey: varchar("featureKey", { length: 80 }).notNull(),
+  periodKey: varchar("periodKey", { length: 7 }).notNull(),
+  model: varchar("model", { length: 128 }),
+  inputTokens: int("inputTokens").default(0).notNull(),
+  outputTokens: int("outputTokens").default(0).notNull(),
+  units: int("units").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userPeriodIdx: index("ai_usage_logs_user_period_idx").on(table.userId, table.periodKey),
+  featureIdx: index("ai_usage_logs_feature_idx").on(table.featureKey),
+}));
+
+export const paymentWebhookEvents = mysqlTable("payment_webhook_events", {
+  id: int("id").autoincrement().primaryKey(),
+  provider: varchar("provider", { length: 32 }).notNull(),
+  eventKey: varchar("eventKey", { length: 160 }).notNull(),
+  paymentId: int("paymentId"),
+  processedAt: timestamp("processedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  providerEventUnique: uniqueIndex("payment_webhook_provider_event_unique").on(table.provider, table.eventKey),
+}));
+
+export const adminAuditLogs = mysqlTable("admin_audit_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  adminUserId: int("adminUserId").notNull(),
+  targetUserId: int("targetUserId"),
+  action: varchar("action", { length: 100 }).notNull(),
+  entityType: varchar("entityType", { length: 80 }).notNull(),
+  entityId: varchar("entityId", { length: 80 }),
+  reason: text("reason"),
+  beforeData: json("beforeData"),
+  afterData: json("afterData"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  adminCreatedIdx: index("admin_audit_admin_created_idx").on(table.adminUserId, table.createdAt),
+  targetIdx: index("admin_audit_target_idx").on(table.targetUserId),
+}));
