@@ -105,7 +105,7 @@ export async function getFreeDailyCreditStatus(userId: number, now = new Date())
   const usage = await db.select().from(aiUsageDaily)
     .where(and(eq(aiUsageDaily.userId, userId), eq(aiUsageDaily.usageDate, date)));
   const used = Object.fromEntries(usage.map((item) => [item.featureKey, item.usedCount]));
-  const active = cycle?.status === "active";
+  const active = cycle?.status !== "upgraded";
   const claimedDays = cycle?.claimedDays ?? 0;
   return {
     date, periodKey, isPaid: Boolean(paid), claimedDays, remainingClaims: paid ? 0 : active ? Math.max(0, FREE_MONTHLY_CLAIM_LIMIT - claimedDays) : 0,
