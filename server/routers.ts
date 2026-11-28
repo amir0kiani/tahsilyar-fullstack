@@ -378,7 +378,7 @@ export const appRouter = router({
             assistantText = formatPlanForChat(savedPlan);
             responseModel = planResponse.model;
           } catch (error) {
-            if (!quotaWasPaid) await refundFreeDailyQuota(ctx.user.id, "plan_update");
+            await refundQuotaForUser(ctx.user.id, "plan_update", quotaWasPaid);
             if (error instanceof TRPCError) throw error;
             console.error("[Study] Could not generate and persist the chat plan:", error);
             throw new TRPCError({
@@ -402,7 +402,7 @@ export const appRouter = router({
             maxTokens: 5000,
             });
           } catch (error) {
-            if (!quotaWasPaid) await refundFreeDailyQuota(ctx.user.id, "chat_message");
+            await refundQuotaForUser(ctx.user.id, "chat_message", quotaWasPaid);
             throw error;
           }
           const text = extractText(response.choices[0]?.message.content).trim();
@@ -482,7 +482,7 @@ export const appRouter = router({
             if (!plan.title.includes("هفت")) plan.title = `برنامهٔ هفتگی · ${plan.title}`;
           }
         } catch {
-          if (!quota.paid) await refundFreeDailyQuota(ctx.user.id, "plan_generate");
+          await refundQuotaForUser(ctx.user.id, "plan_generate", quota.paid);
           console.error("[Study] AI returned invalid plan JSON:", raw.slice(0, 500));
           return { title: "", summary: "پاسخ برنامه‌ریز قابل پردازش نبود؛ دوباره تلاش کن.", sessions: [], focusTip: "" };
         }
@@ -492,7 +492,7 @@ export const appRouter = router({
           if (!savedPlan) throw new Error("The generated plan was not readable after persistence");
           return savedPlan;
         } catch (error) {
-          if (!quota.paid) await refundFreeDailyQuota(ctx.user.id, "plan_generate");
+          await refundQuotaForUser(ctx.user.id, "plan_generate", quota.paid);
           console.error("[Study] Plan generation or persistence failed:", error);
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "برنامه تولید شد، اما ذخیره‌سازی آن کامل نشد؛ برنامهٔ قبلی دست‌نخورده باقی ماند." });
         }
