@@ -874,3 +874,7 @@ html.dark .app-frame .screen:not(.home-screen) .learning-guide-warning { backgro
   .billing-checkout-card { align-items: stretch; flex-direction: column; padding: 16px; }
   .billing-checkout-actions { display: grid; grid-template-columns: 1fr; }
 }
+
+.plus-quota-list { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 10px; }
+.plus-quota-list span { color: var(--muted-foreground, #737373); font-size: 11px; line-height: 1.7; }
+@media (max-width: 760px) { .plus-quota-list { display: grid; grid-template-columns: 1fr 1fr; } }
