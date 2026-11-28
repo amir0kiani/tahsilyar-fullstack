@@ -1,4 +1,4 @@
-import { and, eq, gt } from "drizzle-orm";
+import { and, desc, eq, gt } from "drizzle-orm";
 import type { Express, Request, Response } from "express";
 import {
   freeDailyCycles,
@@ -137,9 +137,17 @@ export function registerZarinpalRoutes(app: Express) {
       });
       const verifyCode = verified.data?.code;
       const refId = verified.data?.ref_id;
+      if (verifyCode === 101) {
+        // Never activate from "already verified" alone. A concurrent callback may
+        // still be committing the first successful verification, so keep this row
+        // pending and let the successful request finish the transaction.
+        const [latest] = await db.select({ status: payments.status }).from(payments)
+          .where(eq(payments.id, payment.id)).limit(1);
+        if (latest?.status === "succeeded") redirectPaymentResult(res, "success");
+        else res.status(202).send("پرداخت در حال نهایی‌سازی است؛ چند لحظه دیگر وضعیت را بررسی کنید.");
+        return;
+      }
       if (verifyCode !== 100 || refId === undefined || refId === null) {
-        // Code 101 means the authority was already verified elsewhere. It is only
-        // accepted above when this exact local payment has already been recorded as succeeded.
         await db.update(payments).set({
           status: "failed",
           callbackPayload: { authority, status, verifyCode: verifyCode ?? null },
@@ -166,7 +174,7 @@ export function registerZarinpalRoutes(app: Express) {
             eq(userSubscriptions.userId, lockedPayment.userId),
             eq(userSubscriptions.status, "active"),
             gt(userSubscriptions.endsAt, now),
-          )).orderBy(userSubscriptions.endsAt).limit(1).for("update");
+          )).orderBy(desc(userSubscriptions.endsAt)).limit(1).for("update");
 
         const startsAt = activeSubscription?.startsAt ?? now;
         const extensionBase = activeSubscription?.endsAt && activeSubscription.endsAt > now
