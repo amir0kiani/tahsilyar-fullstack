@@ -366,8 +366,8 @@ export const appRouter = router({
             assistantText = formatPlanForChat(savedPlan);
             responseModel = planResponse.model;
           } catch (error) {
-            if (error instanceof TRPCError) throw error;
             await refundFreeDailyQuota(ctx.user.id, "plan_update");
+            if (error instanceof TRPCError) throw error;
             console.error("[Study] Could not generate and persist the chat plan:", error);
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
@@ -375,7 +375,9 @@ export const appRouter = router({
             });
           }
         } else {
-          const response = await invokeLLM({
+          let response;
+          try {
+            response = await invokeLLM({
             model: "gemini-3-flash-preview",
             messages: [
               {
@@ -386,7 +388,11 @@ export const appRouter = router({
               { role: "user", content: input.message },
             ],
             maxTokens: 5000,
-          });
+            });
+          } catch (error) {
+            await refundFreeDailyQuota(ctx.user.id, "chat_message");
+            throw error;
+          }
           const text = extractText(response.choices[0]?.message.content).trim();
           assistantText = text || "برای پاسخ دقیق، اطلاعات بیشتری از خودت ثبت کن.";
           responseModel = response.model;
@@ -404,10 +410,13 @@ export const appRouter = router({
         planRange: z.enum(["today", "tomorrow", "week"]).default("week"),
       }))
       .mutation(async ({ input, ctx }) => {
+        const quota = await consumeQuotaForUser(ctx.user.id, "plan_generate");
+        if (!quota.allowed) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "اعتبار تولید برنامه امروزت تمام شده یا اعتبار رایگان این ماه در دسترس نیست. برای ادامه، اشتراک پلاس را فعال کن." });
         try {
           const existingProfile = await getStudentProfile(ctx.user.id);
           await upsertStudentProfile({ userId: ctx.user.id, name: input.answers["نام"]?.trim() || existingProfile?.name || ctx.user.name || undefined, email: existingProfile?.email ?? ctx.user.email ?? undefined, answers: input.answers });
         } catch (error) {
+          await refundFreeDailyQuota(ctx.user.id, "plan_generate");
           console.error("[Study] Could not persist profile before planning:", error);
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "ذخیرهٔ اطلاعات تحصیلی انجام نشد؛ لطفاً دوباره تلاش کن." });
         }
@@ -453,6 +462,7 @@ export const appRouter = router({
             if (!plan.title.includes("هفت")) plan.title = `برنامهٔ هفتگی · ${plan.title}`;
           }
         } catch {
+          await refundFreeDailyQuota(ctx.user.id, "plan_generate");
           console.error("[Study] AI returned invalid plan JSON:", raw.slice(0, 500));
           return { title: "", summary: "پاسخ برنامه‌ریز قابل پردازش نبود؛ دوباره تلاش کن.", sessions: [], focusTip: "" };
         }
@@ -462,6 +472,7 @@ export const appRouter = router({
           if (!savedPlan) throw new Error("The generated plan was not readable after persistence");
           return savedPlan;
         } catch (error) {
+          await refundFreeDailyQuota(ctx.user.id, "plan_generate");
           console.error("[Study] Plan generation or persistence failed:", error);
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "برنامه تولید شد، اما ذخیره‌سازی آن کامل نشد؛ برنامهٔ قبلی دست‌نخورده باقی ماند." });
         }
